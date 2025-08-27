@@ -68,11 +68,11 @@ go里面继承了c的指针编程风格，允许任何一个变量执行进行�
 
 ```go
 func main() {
-	var a int = 0
-	var ptr *int = nil
-	ptr = &a
-	*ptr = 1
-	fmt.Println(a, ptr, *ptr) // 程序输出：1 0xc0000100c0 1
+ var a int = 0
+ var ptr *int = nil
+ ptr = &a
+ *ptr = 1
+ fmt.Println(a, ptr, *ptr) // 程序输出：1 0xc0000100c0 1
 }
 ```
 
@@ -99,15 +99,15 @@ fmt.Println(*p) // "0"
 package main
 
 import (
-	"fmt"
+ "fmt"
 )
 
 var globalVar *int
 
 func f() {
-	var x int
-	x = 1
-	globalVar = &x
+ var x int
+ x = 1
+ globalVar = &x
 }
 
 func g() {
@@ -116,9 +116,9 @@ func g() {
 }
 
 func main() {
-	f()
-	*globalVar = 1
-	fmt.Println(*globalVar) // 程序输出： 1
+ f()
+ *globalVar = 1
+ fmt.Println(*globalVar) // 程序输出： 1
 }
 ```
 
@@ -134,9 +134,9 @@ func main() {
 ```go
 var globalVar *int
 func escape1() {
-	var x int
-	x = 1
-	globalVar = &x
+ var x int
+ x = 1
+ globalVar = &x
 }
 
 func escape2() *int {
@@ -154,7 +154,7 @@ func noEscape() int {
 
 ## 6 支持的赋值形式
 
-整体形式的形式和C++无异，编程范式为 `被赋值的变量或元组 = 需要被取值的变量，常量或其他表达式` 
+整体形式的形式和C++无异，编程范式为 `被赋值的变量或元组 = 需要被取值的变量，常量或其他表达式`
 
 ```go
 x = 1                       // 命名变量的赋值
@@ -191,11 +191,9 @@ a[i], a[j] = a[j], a[i]
 
 // 利用元组赋值轻松实现最大公约数算法
 func gcd(a int, b int) int {
-	for b != 0 {
-		a, b = b, a%b
-	}
-	return a
+ for b != 0 {
+  a, b = b, a%b
+ }
+ return a
 }
-
 ```
-
