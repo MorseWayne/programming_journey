@@ -428,25 +428,18 @@ package "Network Abstraction" #7FFFAA {
             + recv_until_closed()
             + recv()
             + get_cache_data()
-            - inner_stream: Box<dyn AsyncStream>
-        }
-        
-        interface AsyncStream {
-            + async_read()
-            + async_write()
-            + shutdown()
         }
     }
     
     ' Custom层的关系
-    Connection --> AsyncStream : uses
+    Connection --> CustomTcpStream : uses
+    Connection --> TokioTcpStream : uses
     TcpClient --> Connection : creates
     TcpServer --> Connection : creates
     
-    ' Custom实现对AsyncRead/Write的适配
-    CustomTcpStream ..|> AsyncStream : implement
-    AsyncStream ..|> AsyncRead : adapt
-    AsyncStream ..|> AsyncWrite : adapt
+    ' CustomTcpStream直接实现AsyncRead/Write
+    CustomTcpStream ..|> AsyncRead : implement
+    CustomTcpStream ..|> AsyncWrite : implement
 }
 
 package "IO" #008000 {
@@ -659,30 +652,36 @@ UserDtp --> AsyncFileIO
 - 直接实现了 `AsyncRead`、`AsyncWrite` traits
 
 **Custom TCP Layer：**
-- `CustomTcpStream`: 自定义的TCP实现，可能用于特殊网络环境
-- `AsyncStream`: 抽象接口，统一不同的流实现
-- `Connection`: 高级连接管理，封装具体的流实现
+- `CustomTcpStream`: 自定义的TCP实现，直接实现 `AsyncRead` 和 `AsyncWrite`
+- `Connection`: 高级连接管理，可以封装不同的TCP流实现
+- `TcpClient/TcpServer`: TCP客户端和服务端的管理
 
 **设计优势：**
-1. **抽象层次清晰**: Tokio traits → Tokio实现 → Custom抽象 → 业务逻辑
-2. **可替换性**: 可以在Tokio和Custom实现之间切换
-3. **测试友好**: 可以mock `AsyncStream` 接口进行单元测试
+1. **直接实现**: `CustomTcpStream` 直接实现Tokio的异步traits，无需额外抽象
+2. **可替换性**: `Connection` 可以选择使用 `TokioTcpStream` 或 `CustomTcpStream`
+3. **性能优化**: 避免了不必要的trait对象开销
 
 ```rust
-// 示例：Connection的灵活设计
+// 示例：CustomTcpStream直接实现AsyncRead
+impl AsyncRead for CustomTcpStream {
+    fn poll_read(
+        self: Pin<&mut Self>,
+        cx: &mut Context<'_>,
+        buf: &mut ReadBuf<'_>,
+    ) -> Poll<io::Result<()>> {
+        // 自定义的异步读取实现
+        self.poll_read_impl(cx, buf)
+    }
+}
+
+// Connection可以灵活选择不同的流实现
 impl Connection {
-    // 可以使用Tokio的TcpStream
-    pub fn with_tokio_stream(stream: tokio::net::TcpStream) -> Self {
-        Self {
-            inner_stream: Box::new(TokioStreamAdapter::new(stream))
-        }
+    pub fn new_with_tokio(stream: tokio::net::TcpStream) -> Self {
+        // 使用Tokio的实现
     }
     
-    // 也可以使用自定义的TcpStream
-    pub fn with_custom_stream(stream: CustomTcpStream) -> Self {
-        Self {
-            inner_stream: Box::new(stream)
-        }
+    pub fn new_with_custom(stream: CustomTcpStream) -> Self {
+        // 使用自定义实现
     }
 }
 ```
