@@ -1,6 +1,6 @@
 ---
-title: Go
-icon: /assets/icons/go.svg
+title: Rust
+icon: /assets/icons/rust.svg
 article: false
 index: false
 dir:

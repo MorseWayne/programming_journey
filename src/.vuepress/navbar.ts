@@ -8,7 +8,8 @@ export default navbar([
     icon: "/assets/icons/programming.svg",
     children: [
       "cpp/",
-      "go/"
+      "go/",
+      "rust/"
     ],
   },
   {
