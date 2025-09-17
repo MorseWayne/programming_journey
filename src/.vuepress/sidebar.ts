@@ -7,5 +7,6 @@ export default sidebar({
     "/docs/interview/" : "structure",
     "/docs/web_server/" : "structure",
     "/docs/network/" : "structure",
-    "/docs/os/" : "structure"
+    "/docs/os/" : "structure",
+    "/docs/projects/" : "structure"
 });
