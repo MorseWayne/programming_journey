@@ -1,10 +1,12 @@
 ---
-title: FTP实现
+title: 使用Rust实现FTP
 icon: /assets/icons/article.svg
 order: 1
 category:
   - Project
 date: 2025-09-10
+sticky: true
+star: true
 ---
 
 ## 1 背景介绍

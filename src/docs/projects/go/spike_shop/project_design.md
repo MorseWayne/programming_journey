@@ -1,10 +1,12 @@
 ---
-title: 项目介绍
+title: 秒杀购物系统实现
 icon: /assets/icons/article.svg
 order: 1
 category:
   - Project
 date: 2025-09-17
+sticky: true
+star: true
 ---
 
 ## 项目概览

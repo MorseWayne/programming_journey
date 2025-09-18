@@ -1,11 +1,13 @@
 ---
-title: 模拟面试
+title: Rust模拟面试
 icon: /assets/icons/article.svg
 order: 1
 category:
   - Interview
   - Rust
 date: 2025-09-12
+sticky: true
+star: true
 ---
 
 ## 问题1
