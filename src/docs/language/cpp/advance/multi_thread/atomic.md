@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 4
 category:
   - C++
+date: 2025-09-12
 ---
 
 原子变量和原子内存序是多线程无锁编程里面的重要工具，本文是对齐核心概念和使用方法的总结。

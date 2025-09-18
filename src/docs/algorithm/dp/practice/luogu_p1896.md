@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 1
 category:
   - Algorithm
+date: 2025-08-08
 ---
 
 ## [题目描述](https://www.luogu.com.cn/problem/P1896)

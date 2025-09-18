@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 4
 category:
   - OS
+date: 2025-09-04
 ---
 共享内存（Shared Memory）是一种高效的进程间通信（IPC）方式，简单来说，**它直接操作的是内存**，但它的初始化和持久化选项可以（并非必须）与文件关联
 

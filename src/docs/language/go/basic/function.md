@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 3
 category:
   - Go
+date: 2025-08-27
 ---
 
 本章谈一谈阅读了[GO语言圣经](https://golang-china.github.io/gopl-zh/ch5/ch5.html)之后，关于GO函数使用区别于其他语言的一些体会。

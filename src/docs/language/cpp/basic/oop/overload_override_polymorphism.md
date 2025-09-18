@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 2
 category:
   - C++
+date: 2025-08-08
 ---
 
 # 重写、重载与多态的区别

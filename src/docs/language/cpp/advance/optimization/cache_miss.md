@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 1
 category:
   - C++
+date: 2025-09-11
 ---
 
 本章节讨论在C++编程中，针对程序性能调优的一些手段。

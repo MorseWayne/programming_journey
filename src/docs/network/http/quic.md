@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 3
 category:
   - Network
+date: 2025-08-21
 ---
 ::: important
 本文写作思路按照[RFC9000](https://www.rfc-editor.org/rfc/rfc9000.html)对`QUIC`协议进行详细解析, 也建议大家去阅读一下原文

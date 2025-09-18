@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 6
 category:
   - Rust
+date: 2025-09-16
 ---
 
 ## Once 与 Lazy 静态初始化

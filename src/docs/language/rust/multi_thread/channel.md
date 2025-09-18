@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 4
 category:
   - Rust
+date: 2025-09-16
 ---
 
 ## 通道（Channel）

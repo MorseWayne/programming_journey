@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 1
 category:
   - Rust
+date: 2025-09-16
 ---
 
 Rust 的所有权（Ownership）、借用（Borrowing）和生命周期（Lifetimes）是其内存安全系统的三大核心机制，共同在编译时确保内存安全，无需垃圾回收（GC）。它们通过严格的规则防止了悬垂指针、数据竞争等问题。

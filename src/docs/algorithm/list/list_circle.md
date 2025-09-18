@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 1
 category:
   - Algorithm
+date: 2025-08-08
 ---
 
 判断链表是否有环以及找到环的位置的通用做法就是快慢指针，在探讨具体的算法前，我们先了解下面的基础知识，当然你也可以去阅读维基百科 [Floyd判圈算法](https://zh.wikipedia.org/wiki/Floyd%E5%88%A4%E5%9C%88%E7%AE%97%E6%B3%95)。

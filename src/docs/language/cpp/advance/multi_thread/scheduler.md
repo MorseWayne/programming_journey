@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 3
 category:
   - C++
+date: 2025-09-11
 ---
 
 Linux内核使用完全公平调度器（`CFS, Completely Fair Scheduler`）作为默认调度器，同时还支持实时调度策略。Linux将线程和进程统一看待，都称为**任务(`task`)**。

@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 3
 category:
   - C++
+date: 2025-08-11
 ---
 
 ELF（Executable and Linkable Format）是一种用于可执行文件、目标文件、共享库和核心转储的标准文件格式。在类Unix系统中，C++编译后的程序通常采用ELF格式。本文将详细介绍ELF文件的整体结构及其各部分的实际用途。

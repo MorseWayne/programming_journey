@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 5
 category:
   - Rust
+date: 2025-09-16
 ---
 
 ## 条件变量（`Condvar`）

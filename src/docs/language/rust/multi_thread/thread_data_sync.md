@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 1
 category:
   - Rust
+date: 2025-09-16
 ---
 
 ## 引言

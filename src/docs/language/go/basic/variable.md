@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 1
 category:
   - Go
+date: 2025-08-22
 ---
 
 ## 1 变量的定义

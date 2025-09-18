@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 3
 category:
   - Rust
+date: 2025-09-16
 ---
 
 ## 读写锁（RwLock）

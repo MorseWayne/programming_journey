@@ -4,6 +4,7 @@ icon: /assets/icons/article.svg
 order: 3
 category:
   - C++
+date: 2025-09-12
 ---
 
 C++中的虚函数（`virtual function`）是指在基类中使用`virtual`关键字声明的成员函数，允许在派生类中重写（`override`），并且通过基类指针或引用调用时能够实现动态多态（运行时多态）。
