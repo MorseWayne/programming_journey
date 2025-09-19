@@ -70,7 +70,7 @@ Meow! My name is kelly
 Meow! My name is kelly
 ```
 
-::: info 为什么同时支持值和指针形式调用 
+::: info 为什么同时支持值和指针形式调用
 
 通过这段代码示例，你大概了解了`GO`里面的接口的一个使用形式，
 但是，你可能疑惑，为什么 `obj` 里面既能放 `&cat` 也能放 `cat`，`GO`的编译器到底做了啥？
@@ -87,6 +87,7 @@ Meow! My name is kelly
 这是因为在 `Go` 语言中，如果你为类型 `Cat`（值接收者）实现了接口方法（如 `func (c Cat) Speak() string`），那么 `Cat` 和 `*Cat`（指针类型）都自动实现了该接口。
 
 原因如下：
+
 - 值接收者实现的方法，既可以通过值调用`cat.Speak()`，也可以通过指针调用`&cat.Speak()`，`Go` 会自动做转换。
 - 但如果你用指针接收者实现方法（如 `func (c *Cat) Speak() string`），只有 `*Cat` 实现了接口，`Cat`（值类型）不能直接赋值给接口变量。
 
