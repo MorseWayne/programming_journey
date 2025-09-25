@@ -33,4 +33,5 @@ export default navbar([
   "/docs/network/",
   "/docs/interview/",
   "/docs/projects/",
+  "/docs/personal/",
 ]);
