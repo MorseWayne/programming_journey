@@ -14,8 +14,6 @@ export default hopeTheme({
   repo: "MorseWayne/programming_journey",
   docsDir: "docs",
   darkmode: "switch",
-  toggle: true,
-
   // 导航栏
   navbar,
 
@@ -197,7 +195,7 @@ export default hopeTheme({
   // 博客相关
   blog: {
     description: "一个不太聪明的开发者",
-    intro: "/intro.html",
+    intro: "/docs/personal/intro.html",
     medias: {
       BiliBili: "https://example.com",
       Discord: "https://example.com",
