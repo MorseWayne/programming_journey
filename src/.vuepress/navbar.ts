@@ -17,7 +17,8 @@ export default navbar([
     prefix: "/docs/database/",
     icon: "/assets/icons/database.svg",
     children: [
-      "redis/"
+      "redis/",
+      "hbase/"
     ],
   },
   "/docs/algorithm/",
