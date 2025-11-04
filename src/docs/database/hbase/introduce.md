@@ -36,7 +36,7 @@ HBase 是一个面向列的数据库，它的数据模型由以下几个部分�
 - **Timestamp**: 每个单元格中的数据可以有多个版本，每个版本由一个时间戳标识。
 ![HBase Data Model](./data_model.png)
 其中，表中每一行的数据结构如下图所示：
-![Row Data Model](./row_model.png)
+![Row Data Model](./resource/row_model.png)
 
 ## 架构
 
@@ -57,7 +57,7 @@ HBase 架构主要由三个组件组成：
     - 存储 HMaster 的地址和 `-ROOT-` 表的位置。
     - 跟踪服务器故障和网络分区。
 
-![HBase Architecture](./deploy_model.png)
+![HBase Architecture](./resource/deploy_model.png)
 
 ## 何时使用HBase
 
