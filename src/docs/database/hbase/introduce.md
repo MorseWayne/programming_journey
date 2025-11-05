@@ -34,7 +34,7 @@ HBase 是一个面向列的数据库，它的数据模型由以下几个部分�
 - **Column Qualifier**: 列族中的每个列由一个列限定符标识。
 - **Cell**: 行、列族和列限定符的组合唯一确定一个单元格（Cell）。
 - **Timestamp**: 每个单元格中的数据可以有多个版本，每个版本由一个时间戳标识。
-![HBase Data Model](./data_model.png)
+![HBase Data Model](./resource/data_model.png)
 其中，表中每一行的数据结构如下图所示：
 ![Row Data Model](./resource/row_model.png)
 
