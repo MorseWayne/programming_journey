@@ -2,7 +2,7 @@ import { navbar } from "vuepress-theme-hope";
 
 export default navbar([
   "/",
-   {
+  {
     text: "编程语言",
     prefix: "/docs/language/",
     icon: "/assets/icons/programming.svg",
@@ -19,6 +19,21 @@ export default navbar([
     children: [
       "redis/",
       "hbase/"
+    ],
+  },
+  {
+    text: "中间件",
+    prefix: "/docs/middleware/",
+    icon: "/assets/icons/middleware.svg",
+    children: [
+      {
+        text: "消息队列",
+        prefix: "mq/",
+        icon: "/assets/icons/mq.svg",
+        children: [
+          "nats/"
+        ],
+      }
     ],
   },
   "/docs/algorithm/",
