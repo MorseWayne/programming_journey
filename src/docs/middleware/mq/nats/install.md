@@ -1,7 +1,7 @@
 ---
 title: NATS 安装
 icon: /assets/icons/article.svg
-order: 1
+order: 2
 category:
 
   - Middleware
