@@ -36,7 +36,17 @@ export default navbar([
       }
     ],
   },
-  "/docs/algorithm/",
+  {
+    text: "计算机基础",
+    prefix: "/docs/cs_basics/",
+    icon: "/assets/icons/brain.svg",
+    children: [
+      "algorithm/",
+      "os/",
+      "network/"
+    ],
+  },
+  "/docs/ai/",
   {
     text: "Web Server",
     prefix: "/docs/web_server/",
@@ -45,8 +55,6 @@ export default navbar([
       "nginx/"
     ],
   },
-  "/docs/os/",
-  "/docs/network/",
   "/docs/interview/",
   "/docs/projects/",
   "/docs/tools/",

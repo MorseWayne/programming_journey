@@ -4,10 +4,9 @@ export default sidebar({
     "/docs/language" : "structure",
     "/docs/database/" : "structure",
     "/docs/middleware/" : "structure",
-    "/docs/algorithm/" : "structure",
+    "/docs/cs_basics/" : "structure",
+    "/docs/ai/" : "structure",
     "/docs/interview/" : "structure",
     "/docs/web_server/" : "structure",
-    "/docs/network/" : "structure",
-    "/docs/os/" : "structure",
     "/docs/projects/" : "structure"
 });
