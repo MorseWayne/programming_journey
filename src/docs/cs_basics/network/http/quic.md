@@ -12,7 +12,7 @@ date: 2025-08-21
 
 ## 概览
 
-我在 [HTTP进化史](/docs/network/http/evolution.md#航海新时代-http3) 简单介绍了`HTTP/3`的一个基本工作机制以及它诞生的一个背景。在`HTTP/3`的标准里面，`TCP`不在作为`HTTP`的基础传输层，取而代之的是`QUIC`协议。
+我在 [HTTP进化史](/docs/cs_basics/network/http/evolution.md#航海新时代-http3) 简单介绍了`HTTP/3`的一个基本工作机制以及它诞生的一个背景。在`HTTP/3`的标准里面，`TCP`不在作为`HTTP`的基础传输层，取而代之的是`QUIC`协议。
 
 `QUIC(Quick UDP Internet Connections)`协议最开始由`Google`公司提出，并且在2021年，被IEFT组织标准化。`QUIC`协议提出的为了构建一种新的`HTTP`技术标准，来达成一种更快，更安全，更可靠的网络数据传输，从而替换掉基于`TCP` + `TLS`的主流`HTTP/2`标准。
 
@@ -96,7 +96,7 @@ STREAM Frame {
 
 ### 与TCP的对比
 
-![](/docs/network/http/resource/quic-streams.png)
+![](/docs/cs_basics/network/http/resource/quic-streams.png)
 
 从上图可以看出，针对`QUIC`协议，单个连接可以提供多个并发工作的流来模拟并行数据传输，对于TCP来说，单个流只能串行化传输业务数据，单个数据包丢失或者延迟抵达接收端会导致基于该连接的所有业务阻塞。
 

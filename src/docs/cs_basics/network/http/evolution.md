@@ -123,7 +123,7 @@ Connection: keep-alive
 
 HTTPS是通过将HTTP传输的数据通道建立在SSL之上，对HTTP的协议报文加密后在网络中进行传输，从而保证数据的传输安全。
 
-![https通信模型简单示例](/docs/network/http/resource/https-cs-model.drawio.svg)
+![https通信模型简单示例](/docs/cs_basics/network/http/resource/https-cs-model.drawio.svg)
 
 ## HTTP的救赎，REST模式
 

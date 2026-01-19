@@ -19,7 +19,7 @@ projects:
   - icon: /assets/icons/brain.svg
     name: Algorithm
     desc: 算法相关
-    link: /docs/algorithm/
+    link: /docs/cs_basics/algorithm/
 
   - icon: /assets/icons/cpp.svg
     name: C++
@@ -49,12 +49,12 @@ projects:
   - icon: /assets/icons/os.svg
     name: OS
     desc: 操作系统知识总结
-    link: /docs/os/
+    link: /docs/cs_basics/os/
   
   - icon: /assets/icons/network.svg
     name: Network
     desc: 计算机网络知识总结
-    link: /docs/network/
+    link: /docs/cs_basics/network/
 
   - icon: /assets/icons/project.svg
     name: Projects

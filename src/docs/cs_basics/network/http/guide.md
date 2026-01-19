@@ -13,7 +13,7 @@ date: 2025-08-20
 
 HTTP协议的整体架构是一个典型的**client-server**模型。例如，我们在浏览器打开了一次网页，就是浏览器作为客户端，向远端的web服务端发起了一次或者一系列的资源请求，并且由浏览器解析服务端的应答，最终在浏览器端完成网页内容的展示。
 
-![网页请求简单示意](/docs/network/http/resource/fetch-a-page.drawio.svg)
+![网页请求简单示意](/docs/cs_basics/network/http/resource/fetch-a-page.drawio.svg)
 
 最开始的HTTP是一个无状态协议(Stateless), 也就是说，处理多次请求的服务端是不会维护任何有关会话的数据的，且前后两次请求，没有直接的关联，但是 Cookie机制的出现打破了这一规则(1994由Netscape提出，在1999年的HTTP/1.1中正是被纳入协议标准)。在这里，我们不详细介绍这个机制，后续会有专门的章节来解释这个工作机制。
 
@@ -23,7 +23,7 @@ HTTP协议的整体架构是一个典型的**client-server**模型。例如，�
 
 前面我们介绍到，HTTP是一个应用层协议，由于文档传输需要高可靠性，所有HTTP的底层协议是使用的TCP协议(不包括HTTP/3.0), 其次在HTTP的演进过程中，为了避免在不信任网络中直接使用明文传输以及防止中间人攻击等网络安全问题，在HTTP的基础上诞生了HTTPS，HTTPS主要是使用了基于TCP的TLS协议，下面是一个HTTP在协议栈的一个位置分布：
 
-![HTTP在协议栈分布示意](/docs/network/http/resource/http-layers.drawio.svg)
+![HTTP在协议栈分布示意](/docs/cs_basics/network/http/resource/http-layers.drawio.svg)
 
 ## 3 系统组成
 
@@ -32,7 +32,7 @@ HTTP是一个基于CS架构模型的一个协议，这就意味着，协议的�
 在请求真正抵达服务端之前，可能会经过网关和缓存服务器等其他网络实体，我们通常把它们叫做`proxies`。
 因此，整个请求的处理过程看起来可能是下图这样的：
 
-![各个实体间的简单交互示意](/docs/network/http/resource/client-server-chain.drawio.svg)
+![各个实体间的简单交互示意](/docs/cs_basics/network/http/resource/client-server-chain.drawio.svg)
 
 接下来，我们再详细讨论再HTTP系统里面，各个实体的角色和分工：
 

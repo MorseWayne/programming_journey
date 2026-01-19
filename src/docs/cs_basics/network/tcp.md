@@ -53,7 +53,7 @@ TCP的工作可以分为**连接建立**、**数据传输**、**连接终止**�
 
 #### 1. 连接建立：三次握手（Three-Way Handshake）
 
-![三次握手](/docs/network/resource/three_way_handshake.png)
+![三次握手](/docs/cs_basics/network/resource/three_way_handshake.png)
 假设客户端是 **A**，服务器是 **B**：
 
 1. **第一次握手**：
@@ -85,7 +85,7 @@ TCP的工作可以分为**连接建立**、**数据传输**、**连接终止**�
 
 #### 3. 连接终止：四次挥手（Four-Way Handshake）
 
-![四次挥手](/docs/network/resource/four_way_handshake.png)
+![四次挥手](/docs/cs_basics/network/resource/four_way_handshake.png)
 假设客户端是 **A**，服务器是 **B**：
 
 1. **第一次挥手**：
@@ -142,7 +142,7 @@ TCP适合对数据完整性要求高的场景，而UDP适合实时性强的应�
 ### TCP的头部结构
 
 TCP段的头部至少20字节，包括：
-![TCP报文头](/docs/network/resource/tcp_header.png)
+![TCP报文头](/docs/cs_basics/network/resource/tcp_header.png)
 
 各个字段解释如下:
 
