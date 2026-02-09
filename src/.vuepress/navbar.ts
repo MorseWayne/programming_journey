@@ -46,7 +46,15 @@ export default navbar([
       "network/"
     ],
   },
-  "/docs/ai/",
+  {
+    text: "AI专题",
+    icon: "/assets/icons/brain.svg",
+    link: "/docs/ai/",
+    children: [
+      { text: "OpenCode", icon: "/assets/icons/programming.svg", link: "/docs/ai/opencode/" },
+      { text: "MCP", icon: "/assets/icons/directory.svg", link: "/docs/ai/mcp/index" },
+    ],
+  },
   {
     text: "Web Server",
     prefix: "/docs/web_server/",
