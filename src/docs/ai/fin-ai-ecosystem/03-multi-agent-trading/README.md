@@ -4,7 +4,6 @@ icon: /assets/icons/project.svg
 index: false
 dir:
   order: 4
-article: false
 ---
 
 # 多智能体交易 —— 让 AI 协作做交易决策

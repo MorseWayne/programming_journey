@@ -4,7 +4,6 @@ icon: /assets/icons/brain.svg
 index: false
 dir:
   order: 3
-article: false
 ---
 
 # AI 研究 Agent —— 智能投研助手

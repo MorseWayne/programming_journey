@@ -4,7 +4,6 @@ icon: /assets/icons/mq.svg
 index: false
 dir:
   order: 5
-article: false
 ---
 
 # 多通道 Copilot —— 随时随地的金融 AI

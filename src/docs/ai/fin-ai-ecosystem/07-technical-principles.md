@@ -4,7 +4,6 @@ icon: /assets/icons/brain.svg
 index: false
 dir:
   order: 8
-article: false
 ---
 
 # 技术原理 —— 跨项目的共同模式

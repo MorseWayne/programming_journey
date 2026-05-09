@@ -4,7 +4,6 @@ icon: /assets/icons/directory.svg
 index: false
 dir:
   order: 7
-article: false
 ---
 
 # 全局对比矩阵 —— 选型决策指南

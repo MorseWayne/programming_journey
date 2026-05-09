@@ -4,7 +4,6 @@ icon: /assets/icons/database.svg
 index: false
 dir:
   order: 6
-article: false
 ---
 
 # MCP 金融工具生态 —— Agent 的数据基础设施

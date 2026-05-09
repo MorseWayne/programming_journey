@@ -4,7 +4,6 @@ icon: /assets/icons/project.svg
 index: false
 dir:
   order: 1
-article: false
 ---
 
 # 金融 AI 生态全景

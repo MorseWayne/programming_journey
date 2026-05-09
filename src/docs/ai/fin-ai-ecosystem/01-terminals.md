@@ -4,7 +4,6 @@ icon: /assets/icons/server.svg
 index: false
 dir:
   order: 2
-article: false
 ---
 
 # 金融终端 —— Bloomberg 的开源替代

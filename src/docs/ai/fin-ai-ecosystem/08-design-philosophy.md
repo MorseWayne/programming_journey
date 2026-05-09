@@ -4,7 +4,6 @@ icon: /assets/icons/article.svg
 index: false
 dir:
   order: 9
-article: false
 ---
 
 # 设计思路 —— 架构决策与权衡
