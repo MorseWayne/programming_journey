@@ -1,7 +1,6 @@
 ---
 title: AI 研究 Agent
 icon: /assets/icons/brain.svg
-index: false
 dir:
   order: 3
 ---

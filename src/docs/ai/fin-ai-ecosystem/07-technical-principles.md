@@ -1,7 +1,6 @@
 ---
 title: 技术原理
 icon: /assets/icons/brain.svg
-index: false
 dir:
   order: 8
 ---

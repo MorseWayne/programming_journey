@@ -1,7 +1,6 @@
 ---
 title: 金融终端
 icon: /assets/icons/server.svg
-index: false
 dir:
   order: 2
 ---

@@ -1,7 +1,6 @@
 ---
 title: MCP 工具生态
 icon: /assets/icons/database.svg
-index: false
 dir:
   order: 6
 ---

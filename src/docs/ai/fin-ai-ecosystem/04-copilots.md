@@ -1,7 +1,6 @@
 ---
 title: 多通道 Copilot
 icon: /assets/icons/mq.svg
-index: false
 dir:
   order: 5
 ---

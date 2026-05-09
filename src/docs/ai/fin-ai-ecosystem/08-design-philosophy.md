@@ -1,7 +1,6 @@
 ---
 title: 设计思路
 icon: /assets/icons/article.svg
-index: false
 dir:
   order: 9
 ---

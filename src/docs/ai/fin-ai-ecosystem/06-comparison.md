@@ -1,7 +1,6 @@
 ---
 title: 全局对比
 icon: /assets/icons/directory.svg
-index: false
 dir:
   order: 7
 ---
