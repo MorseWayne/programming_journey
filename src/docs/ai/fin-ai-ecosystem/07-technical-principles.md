@@ -296,6 +296,260 @@ class RiskAssessment(BaseModel):
 
 这也是为什么 Swarm Trader 把风控做成"代码强制执行，Agent 无法覆盖"——在安全层面，确定性 > 智能。
 
+## 7. 测试策略
+
+多 Agent 系统测试比普通软件复杂——LLM 输出不确定，交互路径不固定。
+
+### 7.1 单元测试：Mock LLM 响应
+
+测试单个 Agent 时用 Mock 替代 LLM 返回，避免依赖真实调用（太慢、太贵、不稳定）。Mock LLM 返回，测试 Agent 的处理逻辑——是否正确解析 Schema、是否触发风控规则。
+
+```python
+@pytest.fixture
+def mock_llm_response():
+    return AnalystReport(ticker="AAPL", action="buy", confidence=0.85)
+
+def test_analyst_decision(mock_llm_response):
+    agent = MarketAnalystAgent()
+    result = agent.process(mock_llm_response)
+    assert result.risk_level in ["low", "medium", "high"]
+    assert result.position_size_pct <= MAX_POSITION_LIMIT
+```
+
+### 7.2 集成测试：确定性模式
+
+固定随机种子、temperature=0、使用固定数据集，让多 Agent 协作流程可重复。
+
+```python
+TEST_CONFIG = {"llm": {"temperature": 0, "seed": 42},
+               "data": {"use_mock_market": True},
+               "agents": {"max_debate_rounds": 2}}
+
+def test_full_pipeline():
+    with deterministic_mode(TEST_CONFIG):
+        result = run_trading_pipeline(ticker="NVDA")
+        assert result.final_decision.action in ["buy", "sell", "hold"]
+```
+
+### 7.3 评估框架与黄金数据集
+
+建立**黄金数据集**——人工标注标准答案，衡量 Agent 输出质量。
+
+| 评估维度 | 方法 | 指标 |
+|---------|------|------|
+| **答案准确性** | 与黄金答案对比 | Exact Match / F1 |
+| **推理合理性** | 人工评分（1-5 分） | 平均得分 |
+| **风险识别率** | 故意植入风险案例 | 召回率 |
+| **Schema 合规性** | 自动校验输出格式 | 通过率 |
+
+```python
+from deepeval.metrics import AnswerRelevancyMetric
+metric = AnswerRelevancyMetric(threshold=0.7)
+score = metric.measure(query="...", actual_output=out, expected_output="...")
+```
+
+---
+
+## 8. 监控与可观测性
+
+生产环境的多 Agent 系统没有监控，就像开车不看仪表盘。
+
+### 8.1 关键指标
+
+| 指标类别 | 具体指标 | 告警阈值 |
+|---------|---------|---------|
+| **LLM 性能** | 延迟（P50/P95/P99）、Token 消耗、调用次数 | P95 > 10s |
+| **决策质量** | 准确率（与回测对比）、置信度分布 | 准确率 < 60% |
+| **系统健康** | Agent 崩溃次数、Checkpoint 恢复次数 | 崩溃 > 3 次/小时 |
+| **成本** | 单次分析成本、日累计费用 | 日费用 > $50 |
+
+```python
+from prometheus_client import Histogram, Counter
+
+llm_latency = Histogram("llm_duration", "", ["agent", "model"])
+llm_tokens = Counter("llm_tokens", "", ["agent", "direction"])
+
+def call_llm_with_metrics(agent, prompt, model):
+    with llm_latency.labels(agent.name, model).time():
+        r = llm_client.call(prompt, model=model)
+    llm_tokens.labels(agent.name, "input").inc(r.usage.prompt_tokens)
+    llm_tokens.labels(agent.name, "output").inc(r.usage.completion_tokens)
+    return r
+```
+
+### 8.2 日志模式：结构化 + Trace ID
+
+每个 Agent 日志必须包含 **Trace ID**，才能把分散的日志串成完整调用链。交易决策出错时，通过 Trace ID 追踪每个 Agent 的中间输出和数据源——这是事后审计的基础。
+
+```python
+{"trace_id": "trace_abc123", "agent": "market_analyst",
+ "event": "llm_response", "latency_ms": 4200,
+ "tokens": {"input": 2048, "output": 512},
+ "decision": {"action": "buy", "confidence": 0.82}}
+```
+
+### 8.3 分布式追踪
+
+LangGraph 支持导出 OpenTelemetry 数据，可接入 Jaeger 或 Grafana Tempo。
+
+```
+用户请求 → Supervisor → Researcher → LLM (3.2s)
+               ↓
+         Market Analyst → yfinance API (0.8s)
+               ↓
+         Risk Guard → 风控检查 (0.1s)
+               ↓
+         Trader → 决策输出
+```
+
+---
+
+## 9. 错误恢复与优雅降级
+
+金融系统不能"一崩全崩"——数据源失效或 LLM 超时时，系统需要有退路。
+
+### 9.1 重试策略
+
+LLM 调用可能因网络抖动或 Rate Limit 失败，金融场景不能无限重试，连续三次异常后转人工审核。
+
+```python
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(min=2, max=10))
+def call_llm_with_retry(prompt, model):
+    return llm_client.call(prompt, model=model)
+```
+
+### 9.2 降级 LLM 模型
+
+主力模型不可用时自动降级到备用模型，同时提高置信度阈值。
+
+```python
+LLM_FALLBACK_CHAIN = [
+    {"model": "gpt-4o", "threshold": 0.7},
+    {"model": "gpt-4o-mini", "threshold": 0.8},
+    {"model": "local-llama-3", "threshold": 0.9}
+]
+
+def call_with_fallback(prompt):
+    for cfg in LLM_FALLBACK_CHAIN:
+        try: return llm_client.call(prompt, **cfg)
+        except Exception: continue
+    raise AllModelsUnavailable("所有模型不可用")
+```
+
+### 9.3 数据源失败的优雅降级
+
+yfinance 不可用时自动切换 Polygon；实时数据不可用时使用缓存数据并标注过期。
+
+```python
+def get_market_data(ticker):
+    for src in [YFinanceClient(), PolygonClient(), CachedDataStore()]:
+        try:
+            data = src.fetch(ticker)
+            if isinstance(src, CachedDataStore): data.stale = True
+            return data
+        except DataSourceError: continue
+    raise NoDataAvailable(f"{ticker} 无可用数据源")
+```
+
+### 9.4 Checkpoint 恢复
+
+Checkpoint 不只是"断点续跑"，也是**错误恢复**的基础设施。Agent 失败后可以从 Checkpoint 重试，或跳过失败节点继续。
+
+```python
+graph = builder.compile(checkpointer=checkpointer)
+for event in graph.stream(None, config={"configurable": {"thread_id": "001"}}, subgraphs=True):
+    if event["agent"] == "failed_agent":
+        event["state"]["fallback_used"] = True; continue
+```
+
+---
+
+## 10. LLM 可靠性
+
+金融场景中一个错误数字可能导致错误交易决策，可靠性问题比通用场景更严重。
+
+### 10.1 输出验证模式
+
+不要相信 LLM 原始输出，必须经过多层验证。
+
+```python
+from pydantic import BaseModel, field_validator
+
+class TradeDecision(BaseModel):
+    action: Literal["buy", "sell", "hold"]
+    ticker: str
+    confidence: float
+    position_size_pct: float
+
+    @field_validator("confidence")
+    @classmethod
+    def check_range(cls, v):
+        assert 0 <= v <= 1, "置信度必须在 0-1 之间"
+        return v
+
+    @field_validator("position_size_pct")
+    @classmethod
+    def check_limit(cls, v):
+        assert v <= MAX_POSITION_PCT, f"仓位不能超过 {MAX_POSITION_PCT}%"
+        return v
+```
+
+框架自动重试直到输出符合 Schema，多次失败后标记异常并告警。
+
+### 10.2 Pydantic Schema 强制
+
+LangChain / LangGraph 的 `with_structured_output` 在底层做 Schema 强制：
+
+```python
+structured_llm = llm.with_structured_output(TradeDecision, method="json_mode")
+# LLM 返回 action="买入" 而非 "buy" 时
+# 框架先尝试映射，无法映射则重新调用要求修正
+```
+
+### 10.3 置信度评分
+
+金融决策需要量化不确定性。LLM 输出置信度，低置信度时触发人工审核。
+
+```python
+def handle_decision(d: TradeDecision):
+    if d.confidence >= 0.85: execute_immediately(d)
+    elif d.confidence >= 0.6: queue_for_review(d)
+    else: reject_and_log(d)
+```
+
+**关键洞察**：置信度不能只是 LLM 的"自我感觉"，应结合历史准确率校准。如果 Agent 过去 confidence=0.8 时实际准确率只有 55%，那它的 0.8 应该被打折。
+
+### 10.4 幻觉检测
+
+金融场景的幻觉尤其危险——LLM 可能"编造"不存在的财报数据。
+
+**三层防御**：
+
+1. **事实校验层**：用结构化数据源交叉验证 LLM 引用的数字。LLM 说 "AAPL Q1 营收 950 亿"，自动查 yfinance 确认。
+
+2. **溯源要求**：要求 LLM 在输出中标注数据来源。
+
+```python
+class Fact(BaseModel):
+    statement: str
+    source: Literal["yfinance", "FMP", "SEC", "news"]
+    confidence: float
+
+class VerifiedDecision(BaseModel):
+    action: str; reasoning: str; facts: list[Fact]
+```
+
+3. **异常值检测**：输出与历史模式偏差过大时自动触发二次验证。
+
+```python
+def detect_anomaly(d, history):
+    avg = mean([x.position_size_pct for x in history])
+    if d.position_size_pct > avg * 3:
+        return AnomalyAlert(type="异常仓位", action="要求额外论证")
+```
+
 ---
 
 ## 延伸阅读
