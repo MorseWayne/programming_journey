@@ -51,7 +51,7 @@ export default navbar([
     icon: "/assets/icons/brain.svg",
     link: "/docs/ai/",
     children: [
-      { text: "TradingAgents", icon: "/assets/icons/project.svg", link: "/docs/ai/tradingagents/" },
+      { text: "金融AI生态", icon: "/assets/icons/project.svg", link: "/docs/ai/fin-ai-ecosystem/" },
       { text: "OpenCode", icon: "/assets/icons/programming.svg", link: "/docs/ai/opencode/" },
       { text: "MCP", icon: "/assets/icons/directory.svg", link: "/docs/ai/mcp/index" },
     ],
