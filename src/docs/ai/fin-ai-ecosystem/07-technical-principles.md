@@ -1,8 +1,7 @@
 ---
 title: 技术原理
 icon: /assets/icons/brain.svg
-dir:
-  order: 8
+order: 8
 ---
 
 # 技术原理 —— 跨项目的共同模式

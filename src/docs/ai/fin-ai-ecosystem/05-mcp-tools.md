@@ -1,8 +1,7 @@
 ---
 title: MCP 工具生态
 icon: /assets/icons/database.svg
-dir:
-  order: 6
+order: 6
 ---
 
 # MCP 金融工具生态 —— Agent 的数据基础设施

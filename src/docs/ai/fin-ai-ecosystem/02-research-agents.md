@@ -1,8 +1,7 @@
 ---
 title: AI 研究 Agent
 icon: /assets/icons/brain.svg
-dir:
-  order: 3
+order: 3
 ---
 
 # AI 研究 Agent —— 智能投研助手

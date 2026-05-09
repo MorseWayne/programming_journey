@@ -1,8 +1,7 @@
 ---
 title: 全局对比
 icon: /assets/icons/directory.svg
-dir:
-  order: 7
+order: 7
 ---
 
 # 全局对比矩阵 —— 选型决策指南

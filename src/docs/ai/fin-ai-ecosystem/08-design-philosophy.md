@@ -1,8 +1,7 @@
 ---
 title: 设计思路
 icon: /assets/icons/article.svg
-dir:
-  order: 9
+order: 9
 ---
 
 # 设计思路 —— 架构决策与权衡

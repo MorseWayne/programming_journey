@@ -1,8 +1,7 @@
 ---
 title: 多通道 Copilot
 icon: /assets/icons/mq.svg
-dir:
-  order: 5
+order: 5
 ---
 
 # 多通道 Copilot —— 随时随地的金融 AI
