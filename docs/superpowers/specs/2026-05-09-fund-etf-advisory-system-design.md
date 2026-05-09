@@ -39,7 +39,7 @@
 | 频率 | 动作 |
 |------|------|
 | 每日盘后 | 数据采集 → 指标计算 → LLM生成日报 → 推送 |
-| 实时 | 异常波动检测 → 即时推送 |
+| 交易时段 | 每5分钟轮询异常波动检测 → 触发阈值即时推送 |
 | 每月 | 组合体检 + 再平衡建议 |
 
 ---
@@ -49,7 +49,7 @@
 ### 数据源（全部免费）
 | 来源 | 覆盖范围 | 数据类型 |
 |------|----------|----------|
-| AKShare | A股 | ETF实时净值/折溢价、行业指数涨跌、北向资金/主力资金流向、基金规模/费率/排行、PMI/CPI/社融（不定期） |
+| AKShare | A股 | ETF实时净值/折溢价（`fund_etf_spot_em`）、行业指数涨跌、北向资金/主力资金流向、PE/PB历史分位（`stock_a_pe_and_pb`）、财经新闻（`stock_news_em`）、PMI/CPI/社融（不定期） |
 | yfinance | 全球 | 美股ETF（SPY/QQQ/IWM等）、全球指数（标普/纳指/恒生/日经）、VIX指数、汇率USD/CNY |
 | pandas-datareader (FRED) | 全球宏观 | 美债收益率曲线、美元指数 |
 
@@ -58,8 +58,9 @@
 - 结构简单，备份方便
 
 ### 采集频率
-- 每日A股收盘后（约15:30）触发采集
+- 每日A股收盘后（约15:30）触发完整采集
 - 美股数据次日早上采集（时差原因）
+- 交易时段每5分钟轮询一次异常波动检测（仅查询关键价格，不拉全量数据）
 
 ---
 
@@ -131,7 +132,67 @@
 
 ---
 
-## 6. 技术栈
+## 6. 持仓管理
+
+用户通过一个 `portfolio.yaml` 配置文件管理自己的持仓：
+
+```yaml
+holdings:
+  - code: "510300"
+    name: "沪深300ETF"
+    market: "a_share"
+    cost_basis: 3.85      # 买入均价
+    shares: 5000          # 持仓份额
+    category: "broad"     # broad/sector/theme/overseas/bond
+    notes: "定投标的，每月10号定投"
+  
+  - code: "QQQ"
+    name: "纳斯达克100ETF"
+    market: "us"
+    cost_basis: 420.0
+    shares: 50
+    category: "overseas"
+```
+
+系统读取此文件，在日报"你的持仓"部分计算当日涨跌和盈亏。Web 看板也基于此文件展示持仓收益。
+
+---
+
+## 7. 层间接口约定
+
+为保证各层独立开发和测试，定义以下数据模型作为层间契约：
+
+**数据层 → 分析层**: `DailyMarketSnapshot`
+```python
+@dataclass
+class DailyMarketSnapshot:
+    date: str                          # YYYY-MM-DD
+    indices: dict[str, float]          # {"上证指数": 3345.2, "标普500": 5234.1, ...}
+    etfs: list[ETFData]                # ETF价格/净值/折溢价列表
+    sectors: dict[str, SectorData]     # 行业板块涨跌
+    fund_flows: FundFlowData           # 北向/主力资金流向
+    macro: dict[str, float]            # VIX, 美债收益率, 汇率
+    news_headlines: list[str]          # 当日财经新闻标题（最多10条）
+    valuation: dict[str, float]        # 各指数PE/PB分位数
+```
+
+**分析层 → 交付层**: `AnalysisResult`
+```python
+@dataclass
+class AnalysisResult:
+    date: str
+    overview: MarketOverview           # 概览判断
+    trend: TrendSignal                 # 趋势信号 + 仓位建议
+    sector_opportunities: list[SectorPick]  # 板块机会（含ETF代码）
+    valuation: ValuationAssessment     # 估值温度
+    risk_alerts: list[RiskAlert]       # 风险提醒
+    portfolio_status: PortfolioStatus  # 持仓状态
+    daily_report_text: str             # LLM生成的日报全文
+```
+
+---
+
+## 8. 技术栈
 
 | 层级 | 技术 | 说明 |
 |------|------|------|
@@ -154,7 +215,7 @@
 
 ---
 
-## 7. 部署方案
+## 9. 部署方案
 
 ### 方案一：本地运行（推荐起步）
 - 方式：个人电脑运行 Python 脚本
@@ -179,7 +240,7 @@
 
 ---
 
-## 8. 开发路线图
+## 10. 开发路线图
 
 ### Phase 1: 核心管线（2-3天）
 - [ ] 数据采集模块：AKShare + yfinance 数据拉取，存入 SQLite
@@ -203,7 +264,7 @@
 
 ---
 
-## 9. 不在范围内的内容
+## 11. 不在范围内的内容
 - 自动下单/执行交易（半自动，人决策）
 - 个股分析（以基金ETF为主）
 - 高频交易策略（中长线，日频数据即可）
@@ -212,7 +273,7 @@
 
 ---
 
-## 10. 日报输出风格示例
+## 12. 日报输出风格示例
 
 ```
 📊 2026年5月9日 投资日报
