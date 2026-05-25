@@ -69,10 +69,16 @@ pi
 ```bash
 pi install npm:pi-subagents
 pi install npm:@gotgenes/pi-permission-system
-pi install npm:pi-web-access
+pi install npm:@ollama/pi-web-search
 pi install npm:@narumitw/pi-retry
 pi install npm:pi-extmgr
 pi install npm:@narumitw/pi-statusline
+pi install npm:pi-mcp-adapter
+pi install npm:@juicesharp/rpiv-todo
+pi install npm:@juicesharp/rpiv-ask-user-question
+pi install npm:context-mode
+pi install npm:pi-simplify
+pi install npm:@samfp/pi-memory
 ```
 
 安装后在 Pi 内执行：
@@ -95,10 +101,16 @@ pi list
 |----|------|
 | `pi-subagents` | 子代理编排：scout、planner、worker、reviewer 等 |
 | `@gotgenes/pi-permission-system` | 权限策略：路径、命令、外部目录访问控制 |
-| `pi-web-access` | Web 搜索、网页读取、视频/内容解析 |
+| `@ollama/pi-web-search` | Web 搜索与网页抓取（依赖本地 Ollama） |
 | `@narumitw/pi-retry` | Provider 空错误、流卡住时自动重试 |
 | `pi-extmgr` | 交互式扩展管理器 |
 | `@narumitw/pi-statusline` | 增强状态栏：模型、thinking、git、token、费用等 |
+| `pi-mcp-adapter` | MCP server 集成与按需工具访问 |
+| `@juicesharp/rpiv-todo` | 任务清单（todo）管理，支持 `/todos`、依赖关系追踪 |
+| `@juicesharp/rpiv-ask-user-question` | 缺少上下文时发起结构化澄清问题 |
+| `context-mode` | 降低上下文占用，并提供沙箱执行与 `ctx_*` 工具 |
+| `pi-simplify` | 最近改动后的代码可读性与一致性审查 (`/simplify`) |
+| `@samfp/pi-memory` | 会话级持久记忆，支持偏好/纠正历史查询 |
 
 ## 4. settings.json packages 片段
 
@@ -109,10 +121,16 @@ pi list
   "packages": [
     "npm:pi-subagents",
     "npm:@gotgenes/pi-permission-system",
-    "npm:pi-web-access",
+    "npm:@ollama/pi-web-search",
     "npm:@narumitw/pi-retry",
     "npm:pi-extmgr",
-    "npm:@narumitw/pi-statusline"
+    "npm:@narumitw/pi-statusline",
+    "npm:pi-mcp-adapter",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:context-mode",
+    "npm:pi-simplify",
+    "npm:@samfp/pi-memory"
   ]
 }
 ```
@@ -184,45 +202,37 @@ JSON
 /reload
 ```
 
-## 6. 可选：Web 搜索配置
+## 6. 可选：Web 搜索与网页读取（@ollama/pi-web-search）
 
-`pi-web-access` 默认可用 Exa MCP，无需 API Key。若你有 API Key，可创建：
-
-```bash
-cat > ~/.pi/web-search.json <<'JSON'
-{
-  "exaApiKey": "exa-...",
-  "perplexityApiKey": "pplx-...",
-  "geminiApiKey": "AIza..."
-}
-JSON
-```
-
-如果没有这些 Key，可以不创建此文件。
-
-常用命令：
+`@ollama/pi-web-search` 依赖本地 Ollama 的 web_search / web_fetch 能力，无需 API Key。安装后在对话里直接调用：
 
 ```text
-/websearch
-/curator on
-/curator off
-/search
-/google-account
+ollama_web_search
+ollama_web_fetch
 ```
 
 自然语言用法示例：
 
 ```text
-帮我搜索 React 19 的最新官方文档，总结要点并给出处
+帮我用 ollama_web_search 搜索 React 19 的最新官方文档，总结要点并给出处
 ```
 
 ```text
-读取这个链接并总结：https://example.com/article
+用 ollama_web_fetch 读取这个链接并总结：https://example.com/article
 ```
 
+## 7.1 可选：MCP 与外部工具（pi-mcp-adapter）
+
+`pi-mcp-adapter` 让 Pi 以较低上下文成本接入 MCP server。
+
+常用命令：
+
 ```text
-分析这个 YouTube 视频，告诉我里面提到的库：https://youtube.com/...
+/mcp
+/mcp setup
 ```
+
+默认通过单入口 `mcp` tool 与服务器交互，开启 `directTools` 后可直接暴露部分 MCP 工具。
 
 ## 7. 子代理 pi-subagents 用法
 

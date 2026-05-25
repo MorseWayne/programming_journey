@@ -27,7 +27,7 @@ Pi 的可定制能力主要分成五类：
 | Skills | 按需加载的专业能力说明 | PDF 处理、GitNexus 使用、shadcn 组件操作 |
 | Extensions | TypeScript 扩展，改变运行时行为 | 权限拦截、状态栏、自定义工具、Provider |
 | Themes | 终端 UI 颜色主题 | dark、light、tokyo-night |
-| Pi Packages | 把上面几类打包分发 | `pi-subagents`、`pi-web-access` |
+| Pi Packages | 把上面几类打包分发 | `pi-subagents`、`@ollama/pi-web-search`、`@juicesharp/rpiv-todo` |
 
 一句话区分：
 
@@ -192,6 +192,16 @@ Pi Package 可以通过 npm、git 或本地路径安装：
 ```bash
 pi install npm:pi-subagents
 pi install npm:@gotgenes/pi-permission-system
+pi install npm:@ollama/pi-web-search
+pi install npm:@narumitw/pi-retry
+pi install npm:pi-extmgr
+pi install npm:@narumitw/pi-statusline
+pi install npm:pi-mcp-adapter
+pi install npm:@juicesharp/rpiv-todo
+pi install npm:@juicesharp/rpiv-ask-user-question
+pi install npm:context-mode
+pi install npm:pi-simplify
+pi install npm:@samfp/pi-memory
 pi install git:github.com/user/repo@v1
 pi install ./local-pi-package
 ```
@@ -235,12 +245,18 @@ themes/
 
 | 包 | 推荐原因 |
 |----|----------|
-| `pi-subagents` | 把 scout / planner / worker / reviewer 等角色引入 Pi |
+| `pi-subagents` | 子代理编排：scout、planner、worker、reviewer 等 |
 | `@gotgenes/pi-permission-system` | 配置路径、命令、外部目录访问策略 |
-| `pi-web-access` | 搜索网页、读取链接、分析视频等 |
+| `@ollama/pi-web-search` | Web 搜索、网页抓取 |
 | `@narumitw/pi-retry` | 遇到 Provider 空错误或流卡住时自动重试 |
 | `pi-extmgr` | 用 `/extensions` 管理扩展 |
 | `@narumitw/pi-statusline` | 增强状态栏，显示模型、thinking、git、token、费用 |
+| `pi-mcp-adapter` | MCP server 管理与按需工具接入 |
+| `@juicesharp/rpiv-todo` | 任务清单工具，`/todos` 展示执行进度 |
+| `@juicesharp/rpiv-ask-user-question` | 模型缺失条件时发起结构化提问 |
+| `context-mode` | 上下文压缩 + 沙箱执行 + `ctx_*` 工具 |
+| `pi-simplify` | 一键审查并优化近期改动可读性 |
+| `@samfp/pi-memory` | 持久化偏好和纠错记忆 |
 
 这些都不是 Pi Core 的必需功能，而是我个人工作流里的“插件层”。这正是 Pi 的设计风格：核心保持小，工作流由用户组合。
 
@@ -294,10 +310,16 @@ Pi Package 和 Extension 都应该按“本地代码执行”看待。
   "packages": [
     "npm:pi-subagents",
     "npm:@gotgenes/pi-permission-system",
-    "npm:pi-web-access",
+    "npm:@ollama/pi-web-search",
     "npm:@narumitw/pi-retry",
     "npm:pi-extmgr",
-    "npm:@narumitw/pi-statusline"
+    "npm:@narumitw/pi-statusline",
+    "npm:pi-mcp-adapter",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:context-mode",
+    "npm:pi-simplify",
+    "npm:@samfp/pi-memory"
   ]
 }
 ```
