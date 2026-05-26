@@ -137,7 +137,54 @@ pi list
 
 更推荐使用 `pi install ...` 命令，避免覆盖新机器已有设置。
 
-## 5. 权限系统配置
+## 5. 全局 AGENTS.md：固化执行偏好
+
+`settings.json` 适合迁移模型、扩展包和 UI 选项；真正想让 Pi 在另一台机器上“按同一种方式做事”，应该把长期工作流偏好写进全局上下文文件：
+
+```text
+~/.pi/agent/AGENTS.md
+```
+
+Pi 启动时会加载全局 `AGENTS.md`，再加载当前项目及父目录中的 `AGENTS.md` / `CLAUDE.md`。因此全局文件适合写个人默认偏好，项目文件适合写团队约定或仓库专属规则。
+
+我当前建议写入的核心偏好是：**默认精简执行，只有高风险任务才启用完整安全流程**。
+
+```md
+# Global Pi Agent Instructions
+
+## Execution preference: lean by default
+
+Default to lean execution unless the user explicitly asks for a full safety/review workflow or the task is clearly high-risk.
+
+- Classify work before execution:
+  - Level 0: answer, read-only inspection, or simple command; no todo, ledger, subagent, or broad validation.
+  - Level 1: small, clearly scoped edit; use minimal tracking and targeted validation only.
+  - Level 2: standard coding/documentation task; use todo plus focused validation, and update persistent project ledgers only when required.
+  - Level 3: risky, multi-file architecture/refactor/release work; use the full workflow, review, broad validation, and index refresh where required.
+- Avoid subagent fanout for small or clearly scoped tasks; delegate only when it materially improves correctness, parallelism, or risk management.
+- Batch CodeGraph/GitNexus/context gathering when possible instead of repeated exploratory round trips.
+- During iteration, prefer targeted tests/checks. Reserve full test suites, clippy/lint-all, reviewer passes, and index refreshes for high-risk changes, release prep, or pre-commit checkpoints.
+- Keep project ledgers concise: record durable recovery state and validation outcomes, not process logs.
+```
+
+如果还安装了 `pi-subagents`，可以在同一个文件后面保留子代理规则，但要明确它是 Level 3 或收益明显时才使用，而不是所有任务默认 fanout。
+
+迁移到新机器时，把这个文件放入 dotfiles 管理，例如：
+
+```bash
+mkdir -p ~/.pi/agent
+ln -sf ~/dotfiles/pi/AGENTS.md ~/.pi/agent/AGENTS.md
+```
+
+也可以只复制一次：
+
+```bash
+install -D ~/dotfiles/pi/AGENTS.md ~/.pi/agent/AGENTS.md
+```
+
+这种方式比只依赖持久记忆更可重复：持久记忆是某台机器上的运行状态，而 `AGENTS.md` 是可以审查、版本化和同步的配置。
+
+## 6. 权限系统配置
 
 创建配置目录：
 
@@ -202,7 +249,7 @@ JSON
 /reload
 ```
 
-## 6. 可选：Web 搜索与网页读取（@ollama/pi-web-search）
+## 7. 可选：Web 搜索与网页读取（@ollama/pi-web-search）
 
 `@ollama/pi-web-search` 依赖本地 Ollama 的 web_search / web_fetch 能力，无需 API Key。安装后在对话里直接调用：
 
@@ -221,7 +268,7 @@ ollama_web_fetch
 用 ollama_web_fetch 读取这个链接并总结：https://example.com/article
 ```
 
-## 7.1 可选：MCP 与外部工具（pi-mcp-adapter）
+## 8. 可选：MCP 与外部工具（pi-mcp-adapter）
 
 `pi-mcp-adapter` 让 Pi 以较低上下文成本接入 MCP server。
 
@@ -234,7 +281,7 @@ ollama_web_fetch
 
 默认通过单入口 `mcp` tool 与服务器交互，开启 `directTools` 后可直接暴露部分 MCP 工具。
 
-## 7. 子代理 pi-subagents 用法
+## 9. 子代理 pi-subagents 用法
 
 无需手动调用工具，可以直接自然语言让 Pi 使用子代理：
 
@@ -266,13 +313,15 @@ ollama_web_fetch
 /parallel reviewer "检查正确性" -> reviewer "检查测试覆盖" -> reviewer "检查复杂度"
 ```
 
-推荐日常流程：
+对于 Level 3 或收益明显的复杂任务，可以使用完整子代理流程：
 
 ```text
 scout/context-builder -> planner -> worker -> reviewer
 ```
 
-## 8. 插件管理 pi-extmgr
+小任务仍建议按全局 `AGENTS.md` 的 lean-by-default 规则直接处理，避免为了流程完整而牺牲吞吐。
+
+## 10. 插件管理 pi-extmgr
 
 打开插件管理器：
 
@@ -291,7 +340,7 @@ scout/context-builder -> planner -> worker -> reviewer
 /extensions history
 ```
 
-## 9. 自动重试 pi-retry
+## 11. 自动重试 pi-retry
 
 `@narumitw/pi-retry` 安装后自动生效，用于处理模型 Provider 的空错误或流卡住问题。
 
@@ -307,7 +356,7 @@ PI_RETRY_STALL_TIMEOUT_MS=120000 pi
 PI_RETRY_STALL_TIMEOUT_MS=0 pi
 ```
 
-## 10. 状态栏 pi-statusline
+## 12. 状态栏 pi-statusline
 
 `@narumitw/pi-statusline` 安装后自动替换状态栏，显示模型、thinking、git 分支、上下文、token、费用等。
 
@@ -318,7 +367,7 @@ PI_STATUSLINE_PRESET=tokyo-night pi
 PI_STATUSLINE_PRESET=classic pi
 ```
 
-## 11. 模型与 subagents 偏好
+## 13. 模型与 subagents 偏好
 
 如果新机器模型名称一致，可以参考下面配置；否则建议通过 `/model` 重新选择。
 
@@ -372,12 +421,13 @@ PI_STATUSLINE_PRESET=classic pi
 }
 ```
 
-## 12. 验证清单
+## 14. 验证清单
 
 新机器完成后，依次检查：
 
 ```bash
 pi list
+test -f ~/.pi/agent/AGENTS.md && sed -n '1,80p' ~/.pi/agent/AGENTS.md
 ```
 
 Pi 内执行：
@@ -399,7 +449,7 @@ Pi 内执行：
 用 reviewer 检查当前项目是否有明显问题
 ```
 
-## 13. 日常维护
+## 15. 日常维护
 
 更新扩展：
 
