@@ -24,13 +24,19 @@ tag:
 - Node.js 建议 `>= 22.20.0`（Pi 源码当前要求 Node `>= 22.19.0`）
 - 已配置至少一个模型 Provider
 
-当前机器偏好如下：
+当前机器基线如下（2026-05-29 校准）：
+
+- Pi CLI：`@earendil-works/pi-coding-agent@0.77.0`
+- 安装位置：`~/.nvm/versions/node/v24.15.0/bin/pi`
+- 全局配置目录：`~/.pi/agent`
+
+当前模型偏好：
 
 ```json
 {
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "xhigh"
+  "defaultThinkingLevel": "high"
 }
 ```
 
@@ -69,16 +75,18 @@ pi
 ```bash
 pi install npm:pi-subagents
 pi install npm:@gotgenes/pi-permission-system
-pi install npm:@ollama/pi-web-search
 pi install npm:@narumitw/pi-retry
 pi install npm:pi-extmgr
-pi install npm:@narumitw/pi-statusline
 pi install npm:pi-mcp-adapter
 pi install npm:@juicesharp/rpiv-todo
 pi install npm:@juicesharp/rpiv-ask-user-question
 pi install npm:context-mode
 pi install npm:pi-simplify
 pi install npm:@samfp/pi-memory
+pi install npm:pi-neat-ui@0.3.4
+pi install npm:@juicesharp/rpiv-web-tools
+pi install npm:pi-agent-flow
+pi install npm:pi-markdown-preview
 ```
 
 安装后在 Pi 内执行：
@@ -101,16 +109,18 @@ pi list
 |----|------|
 | `pi-subagents` | 子代理编排：scout、planner、worker、reviewer 等 |
 | `@gotgenes/pi-permission-system` | 权限策略：路径、命令、外部目录访问控制 |
-| `@ollama/pi-web-search` | Web 搜索与网页抓取（依赖本地 Ollama） |
 | `@narumitw/pi-retry` | Provider 空错误、流卡住时自动重试 |
 | `pi-extmgr` | 交互式扩展管理器 |
-| `@narumitw/pi-statusline` | 增强状态栏：模型、thinking、git、token、费用等 |
 | `pi-mcp-adapter` | MCP server 集成与按需工具访问 |
 | `@juicesharp/rpiv-todo` | 任务清单（todo）管理，支持 `/todos`、依赖关系追踪 |
 | `@juicesharp/rpiv-ask-user-question` | 缺少上下文时发起结构化澄清问题 |
 | `context-mode` | 降低上下文占用，并提供沙箱执行与 `ctx_*` 工具 |
 | `pi-simplify` | 最近改动后的代码可读性与一致性审查 (`/simplify`) |
 | `@samfp/pi-memory` | 会话级持久记忆，支持偏好/纠正历史查询 |
+| `pi-neat-ui` | 更简洁的 TUI 呈现（本文固定为 `0.3.4`） |
+| `@juicesharp/rpiv-web-tools` | Web 搜索与网页读取工具 |
+| `pi-agent-flow` | `trace` / `flow` 等轻量任务流工具 |
+| `pi-markdown-preview` | 在 Pi 内预览 Markdown 内容 |
 
 ## 4. settings.json packages 片段
 
@@ -121,16 +131,18 @@ pi list
   "packages": [
     "npm:pi-subagents",
     "npm:@gotgenes/pi-permission-system",
-    "npm:@ollama/pi-web-search",
     "npm:@narumitw/pi-retry",
     "npm:pi-extmgr",
-    "npm:@narumitw/pi-statusline",
     "npm:pi-mcp-adapter",
     "npm:@juicesharp/rpiv-todo",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:context-mode",
     "npm:pi-simplify",
-    "npm:@samfp/pi-memory"
+    "npm:@samfp/pi-memory",
+    "npm:pi-neat-ui@0.3.4",
+    "npm:@juicesharp/rpiv-web-tools",
+    "npm:pi-agent-flow",
+    "npm:pi-markdown-preview"
   ]
 }
 ```
@@ -249,24 +261,21 @@ JSON
 /reload
 ```
 
-## 7. 可选：Web 搜索与网页读取（@ollama/pi-web-search）
+## 7. 可选：Web 搜索与网页读取（@juicesharp/rpiv-web-tools）
 
-`@ollama/pi-web-search` 依赖本地 Ollama 的 web_search / web_fetch 能力，无需 API Key。安装后在对话里直接调用：
-
-```text
-ollama_web_search
-ollama_web_fetch
-```
+当前机器使用 `@juicesharp/rpiv-web-tools`，提供通用的 Web 搜索与网页读取工具。安装后可以直接用自然语言调用，也可以在需要时指定工具名。
 
 自然语言用法示例：
 
 ```text
-帮我用 ollama_web_search 搜索 React 19 的最新官方文档，总结要点并给出处
+帮我用 web_search 搜索 React 19 的最新官方文档，总结要点并给出处
 ```
 
 ```text
-用 ollama_web_fetch 读取这个链接并总结：https://example.com/article
+用 web_fetch 读取这个链接并总结：https://example.com/article
 ```
+
+如果你的机器更偏好本地 Ollama，也可以改装 `@ollama/pi-web-search`；但本文配置以当前本机实际安装包为准。
 
 ## 8. 可选：MCP 与外部工具（pi-mcp-adapter）
 
@@ -280,6 +289,38 @@ ollama_web_fetch
 ```
 
 默认通过单入口 `mcp` tool 与服务器交互，开启 `directTools` 后可直接暴露部分 MCP 工具。
+
+当前机器的 `~/.pi/agent/mcp.json` 结构如下（已移除凭据）：
+
+```json
+{
+  "imports": ["claude-code"],
+  "mcpServers": {
+    "codegraph": {
+      "command": "codegraph",
+      "args": ["serve", "--mcp"],
+      "lifecycle": "lazy",
+      "idleTimeout": 10,
+      "directTools": true
+    },
+    "gitnexus": {
+      "command": "/home/quzhihao/.nvm/versions/node/v24.15.0/bin/gitnexus",
+      "args": ["mcp"],
+      "directTools": true
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp",
+      "headers": {
+        "Authorization": "<redacted>"
+      },
+      "directTools": true
+    }
+  }
+}
+```
+
+迁移时只复制 server 结构，不要复制 `Authorization` 等凭据；新机器重新完成 GitHub / Copilot 登录后再写入本地私有配置。
 
 ## 9. 子代理 pi-subagents 用法
 
@@ -311,6 +352,19 @@ ollama_web_fetch
 /subagents-doctor
 /run reviewer "审查当前 diff"
 /parallel reviewer "检查正确性" -> reviewer "检查测试覆盖" -> reviewer "检查复杂度"
+```
+
+当前机器还在 `~/.pi/agent/extensions/subagent/config.json` 中限制并发，避免子代理过度占用资源：
+
+```json
+{
+  "parallel": {
+    "maxTasks": 12,
+    "concurrency": 4
+  },
+  "maxSubagentDepth": 2,
+  "asyncByDefault": true
+}
 ```
 
 对于 Level 3 或收益明显的复杂任务，可以使用完整子代理流程：
@@ -356,15 +410,19 @@ PI_RETRY_STALL_TIMEOUT_MS=120000 pi
 PI_RETRY_STALL_TIMEOUT_MS=0 pi
 ```
 
-## 12. 状态栏 pi-statusline
+## 12. UI 与 Markdown 预览
 
-`@narumitw/pi-statusline` 安装后自动替换状态栏，显示模型、thinking、git 分支、上下文、token、费用等。
+当前机器没有继续安装 `@narumitw/pi-statusline`，而是保留 Pi 默认状态栏，并叠加两个轻量 UI 包：
 
-切换样式：
+| 包 | 作用 |
+|----|------|
+| `pi-neat-ui@0.3.4` | 优化默认 TUI 呈现，保持界面更简洁 |
+| `pi-markdown-preview` | 在 Pi 内预览 Markdown，适合写博客、文档时快速查看渲染效果 |
+
+如果你更需要增强状态栏，也可以额外安装：
 
 ```bash
-PI_STATUSLINE_PRESET=tokyo-night pi
-PI_STATUSLINE_PRESET=classic pi
+pi install npm:@narumitw/pi-statusline
 ```
 
 ## 13. 模型与 subagents 偏好
@@ -375,10 +433,20 @@ PI_STATUSLINE_PRESET=classic pi
 {
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "xhigh",
+  "defaultThinkingLevel": "high",
+  "hideThinkingBlock": false,
   "retry": {
     "enabled": true
   },
+  "autocompleteMaxVisible": 5,
+  "terminal": {
+    "showTerminalProgress": true
+  },
+  "followUpMode": "one-at-a-time",
+  "transport": "auto",
+  "enableInstallTelemetry": false,
+  "treeFilterMode": "default",
+  "theme": "dark",
   "subagents": {
     "agentOverrides": {
       "scout": {
@@ -398,12 +466,12 @@ PI_STATUSLINE_PRESET=classic pi
       },
       "worker": {
         "model": "openai-codex/gpt-5.5",
-        "thinking": "xhigh",
+        "thinking": "high",
         "fallbackModels": ["openai-codex/gpt-5.4", "openai-codex/gpt-5.3-codex"]
       },
       "reviewer": {
         "model": "openai-codex/gpt-5.5",
-        "thinking": "xhigh",
+        "thinking": "high",
         "fallbackModels": ["openai-codex/gpt-5.4", "openai-codex/gpt-5.3-codex"]
       },
       "oracle": {
@@ -412,9 +480,9 @@ PI_STATUSLINE_PRESET=classic pi
         "fallbackModels": ["openai-codex/gpt-5.4"]
       },
       "researcher": {
-        "model": "openai-codex/gpt-5.4-mini",
+        "model": "openai-codex/gpt-5.3-codex-spark",
         "thinking": "high",
-        "fallbackModels": ["openai-codex/gpt-5.3-codex-spark"]
+        "fallbackModels": ["openai-codex/gpt-5.4-mini"]
       }
     }
   }
@@ -442,7 +510,7 @@ Pi 内执行：
 再测试自然语言能力：
 
 ```text
-帮我搜索 Pi coding agent extensions 的资料，并总结
+帮我用 web_search 搜索 Pi coding agent extensions 的资料，并总结
 ```
 
 ```text
