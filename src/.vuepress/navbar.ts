@@ -54,6 +54,7 @@ export default navbar([
       { text: "金融AI生态", icon: "/assets/icons/project.svg", link: "/docs/ai/fin-ai-ecosystem/" },
       { text: "OpenCode", icon: "/assets/icons/programming.svg", link: "/docs/ai/opencode/" },
       { text: "Pi Coding Agent", icon: "/assets/icons/programming.svg", link: "/docs/ai/pi/" },
+      { text: "Claude Code", icon: "/assets/icons/programming.svg", link: "/docs/ai/claude-code/" },
       { text: "MCP", icon: "/assets/icons/directory.svg", link: "/docs/ai/mcp/index" },
     ],
   },
