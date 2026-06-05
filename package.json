@@ -27,6 +27,7 @@
     ]
   },
   "dependencies": {
-    "mermaid": "^11.9.0"
+    "mermaid": "^11.9.0",
+    "pi-neat-ui": "0.3.3"
   }
 }
