@@ -8,7 +8,9 @@ order: 4
 
 [`mattpocock/skills`](https://github.com/mattpocock/skills) 是 Matt Pocock 维护的一组面向 coding agent 的 skills。它的目标不是提供某个单点命令，而是把常见工程工作流沉淀成可复用的 agent 能力，例如需求拆解、方案拷问、PRD、triage、TDD、架构改进和文档化决策。
 
-如果你已经在 `$HOME/.agents/skills` 中安装了一批 skills，也可以通过软链接把它们暴露给 Claude Code，而不是复制到 `$HOME/.claude/skills`。这样可以避免两份 skill 内容漂移。
+最简单的安装方式是直接运行 `npx skills@latest add mattpocock/skills`，然后在交互界面里选择要安装到哪个 coding agent，例如 Claude Code、Codex 或其他已支持的 agent。
+
+只有当你已经把 skills 安装在 `$HOME/.agents/skills`，并且想让 Claude Code 复用同一份文件时，才需要考虑软链接迁移。
 
 ## 先了解仓库里有哪些 skills
 
@@ -79,10 +81,12 @@ order: 4
 
 | 场景 | 推荐方式 | 原因 |
 |---|---|---|
-| 第一次安装 `mattpocock/skills` | 使用 `npx skills@latest add mattpocock/skills` | 跟随仓库推荐流程，能选择安装到哪些 coding agents |
-| 已经有 `$HOME/.agents/skills` | 在 `$HOME/.claude/skills` 下创建单个 skill 软链接 | 避免复制，保留单一来源 |
-| 团队共享同一套 skill | 放到项目级 `.claude/skills` 或写清安装脚本 | 不依赖某个人的 home 目录 |
+| 第一次安装 `mattpocock/skills` | 运行 `npx skills@latest add mattpocock/skills`，在交互界面选择 Claude Code | 最简单，不需要手动处理目录 |
+| 已安装到其他 agent，例如 `$HOME/.agents/skills` | 可选：在 `$HOME/.claude/skills` 下创建单个 skill 软链接 | 复用同一份文件，避免复制后漂移 |
+| 团队共享同一套 skill | 优先写清安装命令和 setup 选择；必要时提交项目级 `.claude/skills` | 不依赖某个人的 home 目录 |
 | 与已有 Claude Code skill 同名 | 不迁移或改名后再迁移 | 避免触发、调用和维护上的冲突 |
+
+一句话：**能用 `npx skills@latest add` 交互安装，就不要手动迁移；只有复用已有本地 skill 目录时，才用软链接。**
 
 ## 使用 Skills CLI 安装
 
@@ -95,10 +99,12 @@ npx skills@latest add mattpocock/skills
 安装过程通常会让你选择：
 
 1. 要安装哪些 skills；
-2. 要安装到哪些 coding agents；
+2. 要安装到哪些 coding agents，例如 Claude Code、Codex 或其他支持的 agent；
 3. 是否启用仓库中的初始化 skill。
 
-安装时应选择：
+如果只是想把这套 skills 装进 Claude Code，直接在交互列表中选择 Claude Code 即可。不要先安装到 `$HOME/.agents/skills`，再手动复制或迁移到 `$HOME/.claude/skills`。
+
+安装时建议选择：
 
 ```text
 /setup-matt-pocock-skills
@@ -129,6 +135,10 @@ zoom-out
 ```
 
 ## 目录结构理解
+
+一般情况下，你不需要手动关心目录结构：`npx skills@latest add mattpocock/skills` 会在交互安装时把选中的 skills 放到目标 coding agent 对应的位置。
+
+理解目录结构主要用于排查问题，或处理“已经安装在一个 agent 目录里，想让另一个 agent 复用”的场景。
 
 `mattpocock/skills` 仓库中的 skills 按分类组织，形式类似：
 
@@ -178,7 +188,11 @@ Claude Code 用户级 skill 通常放在：
 
 所以迁移时，本质上是把符合结构的 skill 目录暴露到 Claude Code 能扫描到的位置。
 
-## 从 `$HOME/.agents/skills` 迁移到 Claude Code
+## 可选：从 `$HOME/.agents/skills` 迁移到 Claude Code
+
+再次强调：如果 `npx skills@latest add mattpocock/skills` 的交互界面里已经选择了 Claude Code，就不需要做本节操作。
+
+本节只适合一种情况：你已经有一份可用的 `~/.agents/skills/<skill-name>`，并希望 Claude Code 复用同一份 skill 内容，而不是再安装或复制一份。
 
 如果你的本机已经有：
 
@@ -299,7 +313,7 @@ ls -l "$HOME/.claude/skills/grill-with-docs/SKILL.md"
 - 当前 Claude Code 会话是否需要重启；
 - 是否与已有同名 skill 冲突。
 
-## 删除迁移链接
+## 快速删除软链接迁移
 
 如果只是删除软链接，不会删除 `$HOME/.agents/skills` 中的真实 skill：
 
@@ -307,10 +321,30 @@ ls -l "$HOME/.claude/skills/grill-with-docs/SKILL.md"
 rm "$HOME/.claude/skills/grill-with-docs"
 ```
 
-删除前可以确认它确实是软链接：
+更明确的写法是：
 
 ```bash
-test -L "$HOME/.claude/skills/grill-with-docs" && echo "is symlink"
+unlink "$HOME/.claude/skills/grill-with-docs"
+```
+
+如果要删除所有指向 `$HOME/.agents/skills` 的 Claude Code 软链接，先预览：
+
+```bash
+find "$HOME/.claude/skills" \
+  -maxdepth 1 \
+  -type l \
+  -lname "$HOME/.agents/skills/*" \
+  -print
+```
+
+确认后删除：
+
+```bash
+find "$HOME/.claude/skills" \
+  -maxdepth 1 \
+  -type l \
+  -lname "$HOME/.agents/skills/*" \
+  -delete
 ```
 
 不要对真实目录使用 `rm -rf`，除非你确认要删除源 skill。
