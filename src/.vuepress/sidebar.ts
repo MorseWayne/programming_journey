@@ -1,12 +1,20 @@
-import{ sidebar } from "vuepress-theme-hope";
+import { sidebar } from "vuepress-theme-hope";
 
 export default sidebar({
-    "/docs/language" : "structure",
-    "/docs/database/" : "structure",
-    "/docs/middleware/" : "structure",
-    "/docs/cs_basics/" : "structure",
-    "/docs/ai/" : "structure",
-    "/docs/interview/" : "structure",
-    "/docs/web_server/" : "structure",
-    "/docs/projects/" : "structure"
+  "/docs/ai/": "structure",
+  "/docs/cs_basics/": "structure",
+  "/docs/database/": "structure",
+  "/docs/interview/": "structure",
+  "/docs/language/": "structure",
+  "/docs/middleware/": "structure",
+  "/docs/personal/": "structure",
+  "/docs/projects/": "structure",
+  "/docs/tools/": "structure",
+  "/docs/web_server/": "structure",
+  "/article/": false,
+  "/category/": false,
+  "/docs/": false,
+  "/star/": false,
+  "/tag/": false,
+  "/timeline/": false,
 });

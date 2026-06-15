@@ -356,4 +356,4 @@ AI-Trader 是一个全新品类的项目——它不是"帮你构建交易 Agent
 ## 延伸阅读
 
 - 深入了解 TradingAgents 的内部实现 → [TradingAgents 深度剖析](./tradingagents/README.md)
-- 想对比更多维度？→ [06 全局对比](./06-comparison.md)
+- 想对比更多维度？→ [06 全局对比](../06-comparison.md)

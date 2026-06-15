@@ -11,14 +11,14 @@
     "docs:update-package": "pnpm dlx vp-update"
   },
   "devDependencies": {
-    "@vuepress/bundler-vite": "2.0.0-rc.24",
-    "@vuepress/plugin-pwa": "2.0.0-rc.112",
-    "@waline/client": "^3.6.0",
-    "katex": "^0.16.22",
-    "sass-embedded": "^1.90.0",
-    "vue": "^3.5.18",
-    "vuepress": "2.0.0-rc.24",
-    "vuepress-theme-hope": "2.0.0-rc.94"
+    "@vuepress/bundler-vite": "2.0.0-rc.30",
+    "@vuepress/plugin-pwa": "2.0.0-rc.130",
+    "@waline/client": "^3.15.2",
+    "katex": "^0.16.47",
+    "sass-embedded": "^1.100.0",
+    "vue": "^3.5.38",
+    "vuepress": "2.0.0-rc.30",
+    "vuepress-theme-hope": "2.0.0-rc.107"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -27,7 +27,7 @@
     ]
   },
   "dependencies": {
-    "mermaid": "^11.9.0",
+    "mermaid": "^11.15.0",
     "pi-neat-ui": "0.3.3"
   }
 }
