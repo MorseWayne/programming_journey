@@ -10,6 +10,71 @@ order: 4
 
 如果你已经在 `$HOME/.agents/skills` 中安装了一批 skills，也可以通过软链接把它们暴露给 Claude Code，而不是复制到 `$HOME/.claude/skills`。这样可以避免两份 skill 内容漂移。
 
+## 先了解仓库里有哪些 skills
+
+截至 2026-06-15，`mattpocock/skills` 仓库的 `skills/` 目录按用途分为 `engineering`、`productivity`、`personal`、`misc`、`in-progress` 和 `deprecated` 等分类。迁移前建议先理解每个 skill 的定位，再决定是否安装到 Claude Code。
+
+### Engineering：工程工作流
+
+| Skill | 用途 |
+|---|---|
+| `setup-matt-pocock-skills` | 初始化仓库级 agent skills 配置，写入 issue tracker、triage 标签和领域文档布局等上下文。 |
+| `diagnose` | 用“复现 → 最小化 → 假设 → 插桩 → 修复 → 回归测试”的纪律化循环排查 bug 和性能回归。 |
+| `grill-with-docs` | 结合 `CONTEXT.md` 和 ADR 拷问方案，澄清领域术语，并在决策形成时更新文档。 |
+| `improve-codebase-architecture` | 基于领域语言和 ADR 寻找架构加深机会，提升模块深度、可测试性和 agent 可导航性。 |
+| `prototype` | 在正式实现前做一次性原型，用终端程序或多套 UI 变体验证状态、业务逻辑或界面方向。 |
+| `tdd` | 以 red-green-refactor 循环进行测试驱动开发，适合 test-first 的功能开发和 bug 修复。 |
+| `to-issues` | 把计划、规格或 PRD 拆成可独立领取的 issue，强调 tracer-bullet 式垂直切片。 |
+| `to-prd` | 将当前对话上下文整理成 PRD，并发布到项目 issue tracker。 |
+| `triage` | 用状态机和 triage 角色管理 issue 创建、归类、准备和流转。 |
+| `zoom-out` | 在不熟悉代码区域时拉高抽象层，给出相关模块、调用者和更大的上下文地图。 |
+
+### Productivity：个人生产力
+
+| Skill | 用途 |
+|---|---|
+| `caveman` | 进入极简回答模式，持续输出更短、更直接、无客套但保持技术准确的回应。 |
+| `grill-me` | 对计划或设计持续追问，沿决策树逐个解决分支，直到双方达成清晰共识。 |
+| `handoff` | 把当前对话压缩成交接文档，方便另一个 agent 或后续会话继续工作。 |
+| `teach` | 在当前 workspace 中进行长期教学，维护 mission、resources、lessons 和 learning records。 |
+| `write-a-skill` | 创建新的 agent skill，包含结构设计、progressive disclosure 和资源打包规范。 |
+
+### Personal：写作与知识库
+
+| Skill | 用途 |
+|---|---|
+| `edit-article` | 编辑和改进文章草稿，重排章节、增强清晰度并收紧表达。 |
+| `obsidian-vault` | 在 Obsidian vault 中搜索、创建和组织笔记，使用 wikilinks 和索引笔记。 |
+
+### Misc：工具化任务
+
+| Skill | 用途 |
+|---|---|
+| `git-guardrails-claude-code` | 为 Claude Code 配置 hooks，在执行前阻止危险 git 命令，例如 push、reset --hard、clean 和 branch -D。 |
+| `migrate-to-shoehorn` | 把 TypeScript 测试中的 `as` 类型断言迁移到 `@total-typescript/shoehorn`。 |
+| `scaffold-exercises` | 按课程结构创建 section、problem、solution 和 explainer 等练习目录，并满足 lint 规则。 |
+| `setup-pre-commit` | 在当前仓库配置 Husky、lint-staged、Prettier、类型检查和测试等 pre-commit 流程。 |
+
+### In-progress：仍在演进的 skills
+
+| Skill | 用途 |
+|---|---|
+| `review` | 从指定 commit、branch、tag 或 merge-base 起审查变更，并按 Standards 和 Spec 两条轴线并行评估。 |
+| `writing-beats` | 将原始素材组织成 beat-by-beat 的文章旅程，每次只写一个 beat，再选择下一个转向。 |
+| `writing-fragments` | 通过追问挖掘写作碎片，把观点、场景、句子和半成品想法追加到原始素材文档。 |
+| `writing-shape` | 把 markdown 原料通过对话逐段塑造成可发布文章，逐步讨论开头、段落和表达格式。 |
+
+### Deprecated：已弃用或不建议新装的 skills
+
+| Skill | 用途 |
+|---|---|
+| `design-an-interface` | 用并行 sub-agents 为模块生成多种差异化接口设计，并比较 API 或模块形态。 |
+| `qa` | 通过对话式 QA 收集 bug 或问题，并结合代码库上下文创建 GitHub issues。 |
+| `request-refactor-plan` | 通过访谈生成小步提交式 refactor 计划，并作为 GitHub issue 记录。 |
+| `ubiquitous-language` | 从当前对话抽取 DDD 风格统一语言，标记歧义并保存到 `UBIQUITOUS_LANGUAGE.md`。 |
+
+新安装时，优先关注 `engineering`、`productivity`、`personal` 和 `misc` 中仍活跃的 skills；`in-progress` 可以按需试用，`deprecated` 通常只在维护旧流程时保留。
+
 ## 推荐结论
 
 | 场景 | 推荐方式 | 原因 |
