@@ -66,7 +66,15 @@ export default navbar([
       "nginx/"
     ],
   },
-  "/docs/interview/",
+  {
+    text: "个人成长",
+    icon: "/assets/icons/job.svg",
+    children: [
+      { text: "我是谁", icon: "user", link: "/docs/personal/intro" },
+      { text: "HR 高频问题", icon: "/assets/icons/article.svg", link: "/docs/personal/hr" },
+      { text: "职业规划", icon: "/assets/icons/job.svg", link: "/docs/personal/career/" },
+    ],
+  },
   "/docs/projects/",
   "/docs/tools/",
 ]);
