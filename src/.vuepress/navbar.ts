@@ -55,6 +55,7 @@ export default navbar([
       { text: "OpenCode", icon: "/assets/icons/programming.svg", link: "/docs/ai/opencode/" },
       { text: "Pi Coding Agent", icon: "/assets/icons/programming.svg", link: "/docs/ai/pi/" },
       { text: "Claude Code", icon: "/assets/icons/programming.svg", link: "/docs/ai/claude-code/" },
+      { text: "VS Code Copilot", icon: "/assets/icons/programming.svg", link: "/docs/ai/vscode-copilot/" },
       { text: "MCP", icon: "/assets/icons/directory.svg", link: "/docs/ai/mcp/index" },
     ],
   },
