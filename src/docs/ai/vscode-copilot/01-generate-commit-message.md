@@ -190,13 +190,28 @@ git commit -m "fix(auth): reject expired sessions before refreshing tokens"
 
 ## 6. 配置生成风格
 
-如果团队使用 Conventional Commits，可以在 VS Code 设置中加入生成要求：
+如果团队使用 Conventional Commits，可以在 VS Code 设置中加入生成要求。更推荐把语言、格式、正文结构和禁止套话一次性写清楚：
 
 ```json
 {
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "text": "Generate commit messages using Conventional Commits. Keep the subject concise. Use English. Add a body only when the reason for the change is not obvious."
+      "text": "Generate commit messages in Simplified Chinese. Language mixing rule: use Chinese only for grammatical connectors and behavioral descriptions (如'新增'、'修复'、'将…改为…'). Keep English for ALL of the following — do NOT translate any of them to Chinese:\n1. Anything that appears as a code identifier (function, class, method, variable, package, file name)\n2. Industry-standard technical terms (RPC, gRPC, HTTP, API, JSON, CRUD, ORM, CI/CD, etc.)\n3. Architecture/infra concepts (service, node, host, cluster, handler, router, client, middleware, etc.)\n4. Project-specific domain nouns (read them from code — if the codebase calls it 'Event Host', write 'Event Host', not '事件主机')\n\nPrinciple: if a developer would say it in English during a technical discussion, keep it in English."
+    },
+    {
+      "text": "Format:\n\n<type>: <简明主题行>\n\n<structured body>\n\nSubject line: one concise sentence summarizing the change. Max 72 chars. No period at end.\n\nBody must use structured sections with headers. Use this template:\n\n背景:\n<why — 1-2 sentences explaining the motivation, problem, or requirement>\n\n方案:\n1. <first key change>\n2. <second key change>\n3. <more if needed>\n\n影响:\n<scope of impact — what components/behaviors are affected>\n\nRules:\n- '背景' is always required.\n- '方案' uses a numbered list of concrete changes (not vague summaries).\n- '影响' is optional — include only when the change has non-obvious side effects or cross-component impact.\n- Each list item should be one specific fact, not a paragraph."
+    },
+    {
+      "text": "Body content focus by type:\n- feat: 背景=需求动机; 方案=实现要点和设计决策\n- fix: 背景=问题现象和根因; 方案=修复措施\n- refactor: 背景=重构动机; 方案=结构变化\n- perf: 背景=性能瓶颈; 方案=优化策略\n- Other types: 背景+方案, keep brief"
+    },
+    {
+      "text": "Types (pick exactly one): feat, fix, docs, refactor, perf, dx, workflow, types, wip, test, build, ci, chore, deps, release."
+    },
+    {
+      "text": "Output only the raw commit message. No preamble, no explanation, no markdown fences."
+    },
+    {
+      "text": "Strictly forbidden: vague filler phrases that carry no information. Examples of banned patterns: '确保正确性和健壮性', '增强灵活性和可扩展性', '提高代码质量', '优化用户体验'. Every sentence in the body must convey a concrete, specific fact — what was wrong, what changed, or why."
     }
   ]
 }
@@ -216,20 +231,19 @@ git commit -m "fix(auth): reject expired sessions before refreshing tokens"
 | `fix` | 修复问题 |
 | `docs` | 文档修改 |
 | `refactor` | 重构，不改变外部行为 |
+| `perf` | 性能优化 |
+| `dx` | 开发体验改进 |
+| `workflow` | 开发或发布流程调整 |
+| `types` | 类型定义或类型推导相关修改 |
+| `wip` | 暂存中的未完成改动 |
 | `test` | 测试相关 |
+| `build` | 构建系统或构建脚本 |
+| `ci` | CI 配置或流水线 |
 | `chore` | 构建、依赖、工具或杂项维护 |
+| `deps` | 依赖升级或依赖锁文件变化 |
+| `release` | 版本发布相关修改 |
 
-如果团队提交信息要求中文，也可以把配置改成：
-
-```json
-{
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "text": "使用中文生成提交信息，采用 Conventional Commits 格式。标题保持简短，必要时再补充正文说明变更原因。"
-    }
-  ]
-}
-```
+这套配置适合中文团队：语法和行为描述用中文，但代码标识符、技术术语、架构概念和项目领域名词保留英文。这样生成的提交信息更接近日常技术讨论，也能避免把 `handler`、`router`、`Event Host` 这类词硬翻译成不自然的中文。
 
 ## 7. AI Co-author 标记
 
