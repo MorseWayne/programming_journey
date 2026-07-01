@@ -82,7 +82,113 @@ fix bug
 
 如果一次提交里同时包含重构、修复、文档更新和格式化，Copilot 很难生成精准信息。先拆提交，再生成信息，效果会好很多。
 
-## 5. 配置生成风格
+## 5. 完整示例：从修改到提交
+
+假设你正在维护一个登录模块。原来的问题是：用户 token 过期后，前端仍然会尝试刷新 token，导致接口连续报错。你这次只想提交一个修复。
+
+### 5.1 查看本次改动
+
+修改完成后，Source Control 里可能看到两个文件发生变化：
+
+```text
+M  src/auth/session.ts
+M  src/auth/session.test.ts
+```
+
+对应的核心 diff 可以理解成：
+
+```diff
+// src/auth/session.ts
+ export async function refreshSession(session: Session) {
++  if (session.expiresAt <= Date.now()) {
++    throw new SessionExpiredError();
++  }
++
+   return requestNewToken(session.refreshToken);
+ }
+```
+
+```diff
+// src/auth/session.test.ts
++it("rejects expired sessions before refreshing tokens", async () => {
++  const session = createSession({ expiresAt: Date.now() - 1000 });
++
++  await expect(refreshSession(session)).rejects.toThrow(SessionExpiredError);
++});
+```
+
+这两个文件属于同一个意图：修复过期 session 的刷新逻辑，并补充测试。可以一起暂存。
+
+### 5.2 暂存相关文件
+
+在 VS Code Source Control 中点击这两个文件旁边的 `+`，或者在终端执行：
+
+```bash
+git add src/auth/session.ts src/auth/session.test.ts
+```
+
+此时暂存区只包含这次修复，不包含格式化、文档或其他无关改动。
+
+### 5.3 让 Copilot 生成提交信息
+
+回到 Source Control 的 commit message 输入框，点击 Copilot 生成按钮。它可能生成类似内容：
+
+```text
+Fix session refresh for expired tokens
+```
+
+这个结果方向正确，但还可以更符合团队规范。如果你使用 Conventional Commits，可以改成：
+
+```text
+fix(auth): reject expired sessions before refreshing tokens
+```
+
+这个版本更清楚：
+
+| 部分 | 说明 |
+|------|------|
+| `fix` | 表示这是一个 bug 修复 |
+| `auth` | 标出影响范围是认证模块 |
+| `reject expired sessions` | 说明具体行为变化 |
+| `before refreshing tokens` | 说明修复发生在刷新 token 之前 |
+
+### 5.4 什么时候需要正文
+
+如果这次改动会影响调用方，或者原因不明显，可以保留一段正文：
+
+```text
+fix(auth): reject expired sessions before refreshing tokens
+
+Expired sessions should fail fast instead of calling the refresh endpoint.
+This avoids repeated refresh attempts and makes the error path explicit.
+```
+
+如果改动很直接，只保留第一行也可以。不要为了显得正式而写无意义正文。
+
+### 5.5 完成提交
+
+最后再看一眼暂存区，确认只有这两个文件：
+
+```bash
+git diff --cached --name-only
+```
+
+预期输出是：
+
+```text
+src/auth/session.ts
+src/auth/session.test.ts
+```
+
+确认无误后提交：
+
+```bash
+git commit -m "fix(auth): reject expired sessions before refreshing tokens"
+```
+
+这个完整流程的重点不是“让 Copilot 替你写一句话”，而是把提交边界、生成草稿、人工修订和最终提交串起来。
+
+## 6. 配置生成风格
 
 如果团队使用 Conventional Commits，可以在 VS Code 设置中加入生成要求：
 
@@ -125,7 +231,7 @@ fix bug
 }
 ```
 
-## 6. AI Co-author 标记
+## 7. AI Co-author 标记
 
 VS Code 还提供了一个与 AI 生成内容相关的 Git 设置：
 
@@ -145,7 +251,7 @@ VS Code 还提供了一个与 AI 生成内容相关的 Git 设置：
 
 如果团队对 AI 参与代码生成有审计、署名或合规要求，建议明确配置这个选项，而不是依赖默认行为。
 
-## 7. 提交前检查清单
+## 8. 提交前检查清单
 
 使用 Copilot 生成 commit message 后，至少检查下面几项：
 
@@ -171,7 +277,7 @@ Explain how to generate commit messages from staged changes and how to
 configure Conventional Commits instructions in VS Code.
 ```
 
-## 8. 常见问题
+## 9. 常见问题
 
 ### 为什么没有生成按钮？
 
@@ -195,7 +301,7 @@ configure Conventional Commits instructions in VS Code.
 
 看团队约定。开源项目和跨国团队通常更适合英文；个人项目或中文团队可以使用中文。关键不是语言，而是提交信息要稳定、准确、可检索。
 
-## 9. 小结
+## 10. 小结
 
 VS Code Copilot 的 commit message 生成功能，真正提升的是“从 diff 到提交语义”的整理效率。最佳实践是先拆清楚提交边界，再让 Copilot 根据 staged changes 生成草稿，最后由开发者检查、润色并提交。
 
