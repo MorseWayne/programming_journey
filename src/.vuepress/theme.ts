@@ -4,15 +4,15 @@ import navbar from "./navbar.js";
 import sidebar from "./sidebar.js";
 
 export default hopeTheme({
-  hostname: "https://rookiiie.top",
+  hostname: "https://morsewayne.github.io",
   author: {
     name: "MorseWayne",
-    url: "https://rookiiie.top",
+    url: "https://github.com/MorseWayne",
   },
 
   logo: "/books.svg",
   repo: "MorseWayne/programming_journey",
-  docsDir: "docs",
+  docsDir: "src",
   darkmode: "switch",
   // 导航栏
   navbar,
@@ -51,19 +51,13 @@ export default hopeTheme({
         plantuml: "text",
       },
     },
-    align: true,
-    attrs: true,
-    codeTabs: true,
     component: true,
-    demo: true,
     figure: true,
     gfm: true,
     imgLazyload: true,
     imgSize: true,
-    include: true,
     mark: true,
     plantuml: true,
-    spoiler: true,
     stylize: [
       {
         matcher: "Recommended",
@@ -77,11 +71,7 @@ export default hopeTheme({
         },
       },
     ],
-    sub: true,
-    sup: true,
-    tabs: true,
     tasklist: true,
-    vPre: true,
 
     // 取消注释它们如果你需要 TeX 支持
     math: {
@@ -121,6 +111,8 @@ export default hopeTheme({
 
   // 在这里配置主题提供的插件
   plugins: {
+    slimsearch: true,
+
     // 启用博客功能
     blog: true,
     // 注意: 仅用于测试! 你必须自行生成并在生产环境中使用自己的评论服务

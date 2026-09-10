@@ -16,6 +16,7 @@ export default defineUserConfig({
         rolldownOptions: {
           checks: {
             invalidAnnotation: false,
+            pluginTimings: false,
           },
         },
       },
