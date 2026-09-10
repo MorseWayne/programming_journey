@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "source": {
+    "kind": "deeptutor-notebook",
+    "mastery_path_id": "unified_1786677706798_7ba146d5"
+  },
+  "records": [
+    {
+      "notebook_id": "0969091a",
+      "record_id": "e62b5d8f",
+      "source_title": "Go 基础笔记（一）：包、程序入口、变量与常量（完整）",
+      "target": "src/docs/language/go/basic/variable.md",
+      "source_created_at": 1787222209.846544,
+      "source_sha256": "f15c27446c0d6eaa7f2cd296898c86a97a762491111c273e87095d13594b5b7e",
+      "synced_target_sha256": "a93fdbae581c0c99a2fc8cf3adc51f6a30692ccc02e94c5c71f1a80de45c6225"
+    },
+    {
+      "notebook_id": "0969091a",
+      "record_id": "02e83f98",
+      "source_title": "Go：多返回值、defer、panic 与 recover",
+      "target": "src/docs/language/go/basic/defer_panic_recover.md",
+      "source_created_at": 1788857360.2807865,
+      "source_sha256": "291b1f6dd2d01db991ec66bc7e51988f63f9502dd78b189535ade0c6fdd401c3",
+      "synced_target_sha256": "2c495ddb12698ee808219405c2a266ebdeb7b1203a4504ba647b3288ebb696cc"
+    },
+    {
+      "notebook_id": "0969091a",
+      "record_id": "882f7738",
+      "source_title": "Go：数组、切片与底层数组关系（重组版）",
+      "target": "src/docs/language/go/basic/array_slice.md",
+      "source_created_at": 1788926333.893188,
+      "source_sha256": "b2df775c80f5a9bb6316c6bf40b6335b5de7af3b65d5897d3f7507eade7c09b5",
+      "synced_target_sha256": "dbef17dc3909fde518ef36efa0a849905e563914d5041959663f84ef9380d5ab"
+    }
+  ]
+}
