@@ -31,6 +31,15 @@
       "source_created_at": 1788926333.893188,
       "source_sha256": "b2df775c80f5a9bb6316c6bf40b6335b5de7af3b65d5897d3f7507eade7c09b5",
       "synced_target_sha256": "dbef17dc3909fde518ef36efa0a849905e563914d5041959663f84ef9380d5ab"
+    },
+    {
+      "notebook_id": "0969091a",
+      "record_id": "d9c4ad46",
+      "source_title": "Go：map 从基础到实战",
+      "target": "src/docs/language/go/basic/map.md",
+      "source_created_at": 1789380918.226389,
+      "source_sha256": "478983befcedfc7fb372deccf9dac9a8e630d1512e148e883e6d904306886529",
+      "synced_target_sha256": "16e1130d362ede06e6617c14e17a2d383c403565c31f059b45b4607cf3ae1920"
     }
   ]
 }
