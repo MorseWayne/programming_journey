@@ -40,6 +40,15 @@
       "source_created_at": 1789380918.226389,
       "source_sha256": "478983befcedfc7fb372deccf9dac9a8e630d1512e148e883e6d904306886529",
       "synced_target_sha256": "16e1130d362ede06e6617c14e17a2d383c403565c31f059b45b4607cf3ae1920"
+    },
+    {
+      "notebook_id": "0969091a",
+      "record_id": "baed2824",
+      "source_title": "Go：结构体、方法与指针接收者",
+      "target": "src/docs/language/go/basic/struct_method_pointer_receiver.md",
+      "source_created_at": 1789555250.2905574,
+      "source_sha256": "a18787631aca50d4af870c11229356dcc7c29b0a9d4c2e9fa330382df7dd6e7d",
+      "synced_target_sha256": "0e63f0ac7019458b829f11cb683e8381a1d3e5296382a4c4e0f50e3d340b9456"
     }
   ]
 }
