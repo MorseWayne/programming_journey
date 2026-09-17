@@ -12,7 +12,7 @@
       "target": "src/docs/language/go/basic/variable.md",
       "source_created_at": 1787222209.846544,
       "source_sha256": "f15c27446c0d6eaa7f2cd296898c86a97a762491111c273e87095d13594b5b7e",
-      "synced_target_sha256": "ef12049db7eb91385fe77b07e04590f495bd6c1ac84b5ddae1d87bf9c493fbb3"
+      "synced_target_sha256": "7487ef9be6a3f9f95e0d2c625cd9a5ec4ed194880564cf2693e8efe63193116c"
     },
     {
       "notebook_id": "0969091a",
@@ -21,7 +21,7 @@
       "target": "src/docs/language/go/basic/defer_panic_recover.md",
       "source_created_at": 1788857360.2807865,
       "source_sha256": "291b1f6dd2d01db991ec66bc7e51988f63f9502dd78b189535ade0c6fdd401c3",
-      "synced_target_sha256": "e901deb932b2ad6214fa821403715f9e1a1a72a1c48c52936b2ef06ec5480350"
+      "synced_target_sha256": "0110737fe679e226e13ca29d20c155c091531c3fe64b285d7e5d5bef8d60693d"
     },
     {
       "notebook_id": "0969091a",
@@ -30,7 +30,7 @@
       "target": "src/docs/language/go/basic/array_slice.md",
       "source_created_at": 1788926333.893188,
       "source_sha256": "b2df775c80f5a9bb6316c6bf40b6335b5de7af3b65d5897d3f7507eade7c09b5",
-      "synced_target_sha256": "636fe4262e4c88dc296c2b383a4feb24c2b68b2de54506d8b7fc294b053b814c"
+      "synced_target_sha256": "2036e72bd6e7a555b864427bfcdaa591100b74ee552c1cfbfc44ff333f0ee898"
     },
     {
       "notebook_id": "0969091a",
@@ -39,7 +39,7 @@
       "target": "src/docs/language/go/basic/map.md",
       "source_created_at": 1789380918.226389,
       "source_sha256": "478983befcedfc7fb372deccf9dac9a8e630d1512e148e883e6d904306886529",
-      "synced_target_sha256": "b14d84ffd8c12d5d0af279c1e56084c0b5dbd80bacdff01648c0619d700b517f"
+      "synced_target_sha256": "6434babc7c6e0709f7dc464624e07947242f3b590ca68d13b763b276a0bb0a13"
     },
     {
       "notebook_id": "0969091a",
@@ -48,7 +48,7 @@
       "target": "src/docs/language/go/basic/struct_method_pointer_receiver.md",
       "source_created_at": 1789555250.2905574,
       "source_sha256": "a18787631aca50d4af870c11229356dcc7c29b0a9d4c2e9fa330382df7dd6e7d",
-      "synced_target_sha256": "eb21c11c7e38c4c1a327be2b2fa4c3adb4fe6d0b48680d637ccda362e0670c3b"
+      "synced_target_sha256": "11dc7b42f1386b9c57940c2dd89779573fc694b63aba457e3145aaf36c4585df"
     }
   ]
 }
