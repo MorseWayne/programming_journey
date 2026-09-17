@@ -55,6 +55,18 @@ map[string]int      // map
 func()               // 函数
 ```
 
+`map` 本身也不能彼此用 `==` 比较，只能与 `nil` 比较：
+
+```go
+left := map[string]int{"a": 1}
+right := map[string]int{"a": 1}
+
+// left == right // 编译错误：map 只能与 nil 比较
+fmt.Println(left == nil) // false
+```
+
+若需要比较内容，应逐项比较；Go 1.21 起，值类型可比较时也可使用 `maps.Equal(left, right)`。
+
 ---
 
 ## 3. 创建与初始化
@@ -88,6 +100,7 @@ users := make(map[int]string, 1000)
 ```
 
 这里的 `1000` 只是容量提示，`len(users)` 仍然是 `0`；它可以减少大量写入时的内部扩容开销。
+它不是元素数量上限，仍可继续写入更多元素。
 
 ### `nil map`
 
@@ -196,7 +209,7 @@ delete(scores, "小李")
 clear(scores)
 ```
 
-`clear(scores)` 后 `scores` 仍然是已初始化的 `map`，不是 `nil`。若需要置为 `nil`：
+`clear` 自 Go 1.21 可用。`clear(scores)` 后 `scores` 仍然是已初始化的 `map`，不是 `nil`；对 `nil map` 调用 `clear` 也是安全的。若需要置为 `nil`：
 
 ```go
 scores = nil
@@ -248,7 +261,7 @@ for _, name := range names {
 
 ---
 
-## 9. 引用语义：赋值和传参会共享数据
+## 9. 赋值和传参会共享同一个 `map`
 
 ```go
 func addScore(scores map[string]int) {
@@ -260,7 +273,7 @@ addScore(scores)
 fmt.Println(scores["小李"]) // 90
 ```
 
-函数拿到 `map` 后能直接修改调用方的数据。若需要独立副本，应显式复制：
+Go 的参数传递始终是值传递；这里复制的是 `map` 值，而该值仍指向同一份映射数据，所以函数能直接修改调用方看到的内容。若需要独立副本，应显式复制：
 
 ```go
 clone := make(map[string]int, len(scores))
@@ -269,9 +282,11 @@ for key, value := range scores {
 }
 ```
 
-也可以使用：
+Go 1.21 起也可以使用标准库 `maps` 包：
 
 ```go
+import "maps"
+
 clone := maps.Clone(scores)
 ```
 
@@ -337,7 +352,7 @@ users[1].Age = 21
 
 ## 12. 并发安全：普通 `map` 不能无保护地并发读写
 
-普通 `map` 在多个 goroutine 同时读写时会发生数据竞争，甚至可能触发运行时错误。
+多个 goroutine **只读**同一个、且没有任何写入的普通 `map` 是安全的；一旦有 goroutine 写入，所有同时发生的读或写都必须同步。否则会产生数据竞争，并可能触发运行时错误。
 
 常见做法是配合 `sync.RWMutex`：
 
@@ -363,7 +378,7 @@ func (c *Counter) Get(key string) int {
 - 修改：`Lock` / `Unlock`
 - 只读：`RLock` / `RUnlock`
 
-`sync.Map` 面向特定并发使用模式，不是普通 `map` 的默认替代品；多数业务代码中，`map + sync.RWMutex` 更直接、可控。
+`sync.Map` 面向特定并发使用模式，例如键基本只写一次而大量读取，或多个 goroutine 操作互不重叠的键。它不提供普通 `map` 的类型化 API，也不应成为默认替代品；多数业务代码中，`map + sync.RWMutex` 更直接、可控。
 
 ---
 
@@ -390,7 +405,7 @@ func (c *Counter) Get(key string) int {
    cache = make(map[string][]byte, expectedSize)
    ```
 
-5. **遍历中删除已有键是允许的；遍历时新插入的键本轮是否会被访问并不确定。**不要依赖这种行为。
+5. **遍历中删除尚未访问的键时，该键不会被访问；遍历时新插入的键本轮是否会被访问并不确定。**不要依赖这种行为。
 
 ---
 
@@ -463,5 +478,5 @@ for key, value := range m {
 2. 写入前必须初始化；`nil map` 只能读、删、遍历，不能写。
 3. 不存在的键读取到零值；需要区分“零值”和“不存在”时，用 `value, ok`。
 4. 遍历顺序不保证固定。
-5. 传参和赋值通常共享同一个 `map`；要隔离就显式复制。
-6. 普通 `map` 不能被多个 goroutine 无保护地同时读写。
+5. 传参和赋值会共享同一个 `map`；要隔离就显式复制，`maps.Clone` 也是浅拷贝。
+6. 多 goroutine 只读可以；只要存在并发写入，普通 `map` 的读写都必须同步。

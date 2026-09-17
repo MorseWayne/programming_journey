@@ -47,6 +47,38 @@ var user User
 // user.Name == ""
 ```
 
+需要指针时，通常直接取字面量地址；`new` 则创建零值并返回其地址：
+
+```go
+user := &User{ID: 1001, Name: "小李"}
+emptyUser := new(User) // 等价于 &User{}
+```
+
+它们只负责分配和初始化零值，不做业务校验；需要保证业务不变量时，再使用后文的 `NewXxx`。
+
+### 复制结构体时，字段按值复制
+
+```go
+original := User{ID: 1001, Name: "小李"}
+copy := original
+copy.Name = "小王"
+
+fmt.Println(original.Name) // 小李
+fmt.Println(copy.Name)     // 小王
+```
+
+结构体赋值会复制每个字段。若字段本身是指针、切片或 `map`，复制的是这些字段的值，内部数据仍可能共享；因此“复制了结构体”不等于“深拷贝了整棵数据”。
+
+结构体能否使用 `==` 也由字段决定：所有字段都可比较时，两个结构体可以逐字段比较；只要包含切片、`map` 或函数等不可比较字段，就不能直接比较。
+
+```go
+type Point struct{ X, Y int }
+fmt.Println(Point{1, 2} == Point{1, 2}) // true
+
+type Labels struct{ Values []string }
+// Labels{} == Labels{} // 编译错误：切片不可比较
+```
+
 ### 访问与修改字段
 
 ```go
@@ -94,7 +126,7 @@ p.Name = "小王" // 等价于 (*p).Name = "小王"
 
 Go 自动处理许多解引用细节。指针的本质是保存对象地址，从而能操作同一个对象。
 
-### 值传递与指针传递
+### 参数传递：都传值，区别在被复制的值
 
 ```go
 func renameByValue(u User) {
@@ -105,6 +137,8 @@ func renameByPointer(u *User) {
     u.Name = "小王" // 改原对象
 }
 ```
+
+Go 没有“按引用传参”：两次调用都会复制实参。前者复制整个 `User`，因此只改副本；后者复制的是指针值，两个指针仍指向同一个 `User`，所以可修改原对象。
 
 ---
 
@@ -123,6 +157,18 @@ func (u User) DisplayName() string {
 ```go
 fmt.Println(user.DisplayName())
 ```
+
+方法不只属于结构体，也可定义在当前包声明的命名类型上：
+
+```go
+type UserID int64
+
+func (id UserID) Valid() bool {
+    return id > 0
+}
+```
+
+接收者的基础类型必须是当前包定义的命名类型；不能直接为导入类型、接口类型或“指针类型本身”新增方法。可以为 `T` 或 `*T` 声明方法，其中 `T` 是该命名类型。
 
 选择建议：
 
@@ -183,6 +229,43 @@ fmt.Println(counter.Value) // 2
 
 **实用规则：** 一个类型只要有修改状态的指针接收者方法，其他方法通常也统一使用指针接收者。
 
+### 方法集决定接口是否实现
+
+接收者选择不仅影响能否修改数据，还决定类型的方法集：
+
+- `T` 的方法集只包含接收者为 `T` 的方法；
+- `*T` 的方法集同时包含接收者为 `T` 和 `*T` 的方法。
+
+```go
+type Named interface {
+    Name() string
+}
+
+type Renamable interface {
+    Rename(string)
+}
+
+type User struct{ name string }
+
+func (u User) Name() string         { return u.name }
+func (u *User) Rename(name string)  { u.name = name }
+
+var _ Named = User{}
+var _ Named = (*User)(nil)
+var _ Renamable = (*User)(nil)
+// var _ Renamable = User{} // 编译错误：User 的方法集不含 Rename
+```
+
+可取地址的变量能写 `user.Rename("小王")`，是编译器自动补上 `&user` 的调用便利；这条便利**不适用于接口赋值**。因此，当接口需要指针接收者方法时，应传递 `*User`。
+
+选择接收者时先表达语义，再考虑复制成本：
+
+| 情况 | 通常选择 |
+|---|---|
+| 小型、不可变、具有值语义的类型，如坐标、时间段 | 值接收者 |
+| 方法要修改状态、类型含锁，或复制成本明显 | 指针接收者 |
+| 两者都可行 | 保持同一类型的接收者风格一致，并确认接口需求 |
+
 ---
 
 ## 7. 业务建模：用方法保护状态变化
@@ -191,21 +274,21 @@ fmt.Println(counter.Value) // 2
 type Order struct {
     ID       string
     Amount   int64 // 金额以“分”存储，避免 float64 精度问题
-    Paid     bool
-    Canceled bool
+    paid     bool
+    canceled bool
 }
 
 func (o *Order) Pay() error {
     if o == nil {
         return errors.New("订单不能为空")
     }
-    if o.Canceled {
+    if o.canceled {
         return errors.New("订单已取消，不能支付")
     }
-    if o.Paid {
+    if o.paid {
         return errors.New("订单已经支付")
     }
-    o.Paid = true
+    o.paid = true
     return nil
 }
 
@@ -213,10 +296,10 @@ func (o *Order) Cancel() error {
     if o == nil {
         return errors.New("订单不能为空")
     }
-    if o.Paid {
+    if o.paid {
         return errors.New("已支付订单不能取消")
     }
-    o.Canceled = true
+    o.canceled = true
     return nil
 }
 ```
@@ -224,7 +307,7 @@ func (o *Order) Cancel() error {
 比起让外部代码直接修改：
 
 ```go
-order.Paid = true
+order.paid = true // 同一包内的代码仍可绕过校验
 ```
 
 更推荐：
@@ -235,7 +318,7 @@ if err := order.Pay(); err != nil {
 }
 ```
 
-这样状态校验与修改逻辑集中在类型内部，不会散落在业务各处。
+字段使用小写后，其他包无法直接跳过校验；状态校验与修改逻辑集中在类型方法中。包内代码仍能访问未导出字段，因此这是一种边界设计，而不是运行时强制保护。
 
 ---
 
@@ -255,7 +338,7 @@ func NewUser(id int64, name string) (*User, error) {
 }
 ```
 
-简单数据对象可直接用字面量初始化；有业务不变量时再用 `NewXxx` 集中保证合法性。
+简单数据对象可直接用字面量初始化；有业务不变量时再用 `NewXxx` 集中保证合法性。构造函数不一定必须返回指针：是否返回 `User` 或 `*User` 仍应由值语义、可变性和接口需求决定。
 
 ---
 

@@ -20,6 +20,26 @@ func divide(a, b int) (int, error) {
 }
 ```
 
+函数签名依次写参数和结果类型；相邻且类型相同的参数可共用类型：
+
+```go
+func sum(a, b int) int {
+    return a + b
+}
+```
+
+Go 不支持函数重载或默认参数。需要可选配置时，通常使用配置结构体、函数选项或拆分为语义明确的函数，而不是依赖同名函数的不同参数列表。
+
+调用方应先处理错误，再使用结果：
+
+```go
+quotient, err := divide(10, 0)
+if err != nil {
+    return fmt.Errorf("计算平均值：%w", err)
+}
+fmt.Println(quotient)
+```
+
 ### 常见用途
 
 - **`(结果, error)`**：把正常结果与失败原因一起交给调用方。一般只有 `err == nil` 时才直接使用主结果。
@@ -31,12 +51,20 @@ func divide(a, b int) (int, error) {
   ```
 - **多个同等重要的结果**：如函数同时返回最小值和最大值。
 
+`error` 是一个接口值；惯例是把它放在最后。`nil` 表示没有错误，非 `nil` 表示调用方需要决定如何处理，不能只依据主结果是否为零值判断成功与否。
+
 ### 实践要点
 
 - 不要随意忽略 `error`：`file, _ := os.Open(path)` 会隐藏失败。
 - 给错误加上下文，并需要时用 `%w` 保留错误链：
   ```go
   return fmt.Errorf("打开配置文件 %q：%w", path, err)
+  ```
+- 使用 `%w` 包装后，导入 `errors` 和 `io/fs`，用 `errors.Is` 或 `errors.As` 判断底层错误，而不是比较格式化后的错误文本：
+  ```go
+  if errors.Is(err, fs.ErrNotExist) {
+      // 文件不存在的专门处理
+  }
   ```
 - 具名返回值适合短小、语义明确的函数；复杂函数尽量显式写 `return result, err`，避免裸 `return` 降低可读性。
 
@@ -114,7 +142,10 @@ n = 2
 
 ```go
 for _, path := range paths {
-    file, _ := os.Open(path)
+    file, err := os.Open(path)
+    if err != nil {
+        return err
+    }
     defer file.Close() // 会一直积累到外层函数返回才关闭
 }
 ```
@@ -161,7 +192,7 @@ func writeFile(path string, data []byte) (err error) {
 
 ## 4. `panic` 时的 `defer`
 
-`panic` 表示程序正常流程无法继续的异常情况，例如下标越界，或代码主动调用 `panic(...)`。
+`panic` 表示当前 goroutine 的正常控制流被中断，例如下标越界，或代码主动调用 `panic(...)`。它可用于报告运行时错误和程序定义的严重违例，但不是可预期业务失败的常规表达方式。
 
 发生 `panic` 后：
 
@@ -230,7 +261,19 @@ main 继续执行
 ### 严格限制
 
 - `recover` 必须在发生 panic 的**同一个 goroutine** 中使用；
-- 必须从延迟执行的函数中调用，才可以真正恢复 panic。
+- 必须由延迟执行的函数**直接调用**，才可以真正恢复 panic；经由另一个普通函数间接调用时，`recover()` 返回 `nil`。
+
+下面的 `recover` 虽然发生在延迟函数调用链里，却不是直接调用，因此不能恢复 panic：
+
+```go
+func indirectRecover() any {
+    return recover()
+}
+
+defer func() {
+    fmt.Println(indirectRecover()) // nil，panic 继续传播
+}()
+```
 
 错误示例：外层 goroutine 无法捕获新 goroutine 的 panic。
 
@@ -266,7 +309,7 @@ go func() {
 | 下标越界、内部状态违例等程序缺陷 | `panic` |
 | 服务/任务执行的最外层，避免一次异常拖垮整个进程 | 谨慎使用 `recover` |
 
-`recover` 不是正常错误处理的替代品。可预期的失败应优先通过 `error` 显式返回。
+`recover` 不是正常错误处理的替代品。可预期的失败应优先通过 `error` 显式返回。即使在服务入口处恢复了 panic，也应记录足够的上下文；不要在内部任意恢复后假定对象状态仍然可继续使用。
 
 示例：在任务边界将 panic 转成 error：
 
@@ -298,8 +341,10 @@ func main() {
 
 `log.Fatal(...)` 内部也会调用 `os.Exit(1)`，所以同样会跳过 `defer`。如果必须保证收尾逻辑，通常让内部函数返回 `error`，在最外层统一完成清理后再决定是否退出。
 
+不要把它和 `runtime.Goexit` 混淆：`runtime.Goexit` 会终止**当前 goroutine**，但仍会执行该 goroutine 已登记的 `defer`。
+
 ---
 
 ## 一句话记忆
 
-> 成功获取资源后立刻 `defer` 释放；`defer` 在函数返回前按 LIFO 执行，panic 时也会执行。`recover` 只用于同一 goroutine 的延迟函数，并应放在系统边界，而非常规错误处理流程中。
+> 成功获取资源后立刻 `defer` 释放；`defer` 在函数返回前按 LIFO 执行，panic 时也会执行。`recover` 只在同一 goroutine 中、由延迟函数直接调用时生效，并应放在系统边界，而非常规错误处理流程中。
