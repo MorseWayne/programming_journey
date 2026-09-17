@@ -203,6 +203,37 @@ func (id UserID) Valid() bool {
 
 接收者的基础类型必须是当前包定义的命名类型；不能直接为导入类型、接口类型或“指针类型本身”新增方法。可以为 `T` 或 `*T` 声明方法，其中 `T` 是该命名类型。
 
+#### 常见反例与正确做法
+
+1. **不能为导入类型（跨包类型）定义方法**：避免命名冲突与破坏依赖包封装。
+   ```go
+   // 编译错误：cannot define new methods on non-local type time.Duration
+   // func (d time.Duration) HoursFloat() float64 { ... }
+
+   // 正确：定义本地新类型，或使用普通函数
+   type MyDuration time.Duration
+   func (d MyDuration) HoursFloat() float64 { return time.Duration(d).Hours() }
+   ```
+2. **不能为接口类型定义方法**：接口仅定义协议契约，不包含具体实现存储。
+   ```go
+   type Greeter interface{ Greet() string }
+   // 编译错误：invalid receiver type Greeter (Greeter is an interface type)
+   // func (g Greeter) SayHello() { ... }
+
+   // 正确：写成接受该接口的函数，或使用接口嵌入扩展规范
+   func SayHello(g Greeter) { fmt.Println(g.Greet()) }
+   ```
+3. **不能为“指针类型本身”定义方法**：避免造成 `**T` 二级指针及方法集歧义。
+   ```go
+   type IntPtr *int
+   // 编译错误：invalid receiver type IntPtr (IntPtr is a pointer type)
+   // func (p IntPtr) Double() int { ... }
+
+   // 正确：基类型定义为非指针类型，需要时使用指针接收者 (*T)
+   type MyInt int
+   func (p *MyInt) Double() int { return int(*p) * 2 }
+   ```
+
 选择建议：
 
 - 与某类型核心业务含义紧密相关的行为，用方法；
