@@ -258,6 +258,21 @@ var _ Renamable = (*User)(nil)
 
 可取地址的变量能写 `user.Rename("小王")`，是编译器自动补上 `&user` 的调用便利；这条便利**不适用于接口赋值**。因此，当接口需要指针接收者方法时，应传递 `*User`。
 
+自动取址只适用于可取地址的值。临时值和 `map` 元素不是可取地址变量，不能直接调用指针接收者方法：
+
+```go
+type Profile struct{ Name string }
+
+func (p *Profile) Rename(name string) { p.Name = name }
+
+// Profile{Name: "小李"}.Rename("小王") // 编译错误：临时值不可取地址
+
+profiles := map[int]Profile{1: {Name: "小李"}}
+// profiles[1].Rename("小王") // 编译错误：map 元素不可取地址
+```
+
+对 `map[int]Profile`，应“取出 → 调用/修改 → 写回”；若刻意让 `map` 保存共享、可修改对象，才使用 `map[int]*Profile`，并承担相应的并发同步责任。
+
 选择接收者时先表达语义，再考虑复制成本：
 
 | 情况 | 通常选择 |
@@ -359,6 +374,22 @@ if user == nil {
 }
 ```
 
+调用指针接收者方法本身可以传入 `nil`；是否安全由方法实现决定。因此，能处理空值的查询方法可以显式定义其语义：
+
+```go
+func (p *Profile) DisplayName() string {
+    if p == nil {
+        return ""
+    }
+    return p.Name
+}
+
+var profile *Profile
+fmt.Println(profile.DisplayName()) // 安全，输出空字符串
+```
+
+但这不是自动安全机制：方法中一旦解引用 `u` 而未检查，仍会 panic。对外 API 应统一约定 `nil` 是返回错误、返回零值，还是根本不允许传入。
+
 ### 9.2 `map` 中的结构体不能直接修改字段
 
 ```go
@@ -439,7 +470,21 @@ type Article struct {
 // article.CreatedAt 等价于 article.Timestamp.CreatedAt
 ```
 
-Go 偏好组合。嵌入适合复用一组小而稳定的字段或方法，不应堆叠成复杂继承体系。
+嵌入类型的方法也可能被提升到外层类型：若 `Timestamp` 有 `Created()` 方法，可直接调用 `article.Created()`。这只是选择器便利，不是继承；外层同名字段或方法会优先，多个嵌入类型提供同名成员时选择器会歧义，必须写出完整路径。
+
+```go
+type A struct{}
+func (A) ID() string { return "a" }
+
+type B struct{}
+func (B) ID() string { return "b" }
+
+type C struct { A; B }
+// C{}.ID() // 编译错误：ID 不明确
+fmt.Println(C{}.A.ID()) // a
+```
+
+嵌入 `T` 或 `*T` 还会影响提升后方法集和接口实现；需要把嵌入类型作为接口值传递时，应像普通接收者一样检查 `T` 与 `*T` 的方法集。Go 偏好组合，但不应堆叠成复杂继承体系。
 
 ---
 
