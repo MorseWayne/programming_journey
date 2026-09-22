@@ -3,6 +3,11 @@ import { navbar } from "vuepress-theme-hope";
 export default navbar([
   "/",
   {
+    text: "平台工程课程",
+    icon: "/assets/icons/server.svg",
+    link: "/docs/platform_engineering/",
+  },
+  {
     text: "编程语言",
     prefix: "/docs/language/",
     icon: "/assets/icons/programming.svg",

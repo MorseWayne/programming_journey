@@ -16,6 +16,11 @@ bgImageStyle:
 heroText: Programming Journey
 tagline: 学海浩瀚，贵在恒常
 projects:
+  - icon: /assets/icons/server.svg
+    name: 平台与 AI 工程课程
+    desc: 从原理、实验到完整交付的 18 课
+    link: /docs/platform_engineering/
+
   - icon: /assets/icons/brain.svg
     name: Algorithm
     desc: 算法相关

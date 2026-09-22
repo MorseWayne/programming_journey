@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arena-lab
+  labels: {app: arena-lab}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: arena-lab}
+  template:
+    metadata:
+      labels: {app: arena-lab}
+    spec:
+      terminationGracePeriodSeconds: 15
+      containers:
+        - name: arena
+          image: arena-lab:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8097
+          readinessProbe:
+            httpGet: {path: /readyz, port: 8097}
+            periodSeconds: 2
+          livenessProbe:
+            httpGet: {path: /healthz, port: 8097}
+            initialDelaySeconds: 3
+          resources:
+            requests: {cpu: 100m, memory: 32Mi}
+            limits: {cpu: 500m, memory: 128Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arena-lab
+spec:
+  selector: {app: arena-lab}
+  ports:
+    - port: 8097
+      targetPort: 8097

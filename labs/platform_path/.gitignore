@@ -1,0 +1,6 @@
+*.test
+*.pprof
+__pycache__/
+*.pyc
+*.db
+*.db-*
