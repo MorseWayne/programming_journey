@@ -3,7 +3,7 @@ title: 金融 AI 生态全景
 icon: /assets/icons/project.svg
 index: false
 dir:
-  order: 1
+  order: 6
 ---
 
 # 金融 AI 生态全景

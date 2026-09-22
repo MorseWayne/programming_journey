@@ -1,5 +1,5 @@
 ---
-title: Web-Server
+title: Web 服务
 icon: /assets/icons/server.svg
 article: false
 index: false

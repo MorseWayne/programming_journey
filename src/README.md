@@ -17,56 +17,31 @@ heroText: Programming Journey
 tagline: 学海浩瀚，贵在恒常
 projects:
   - icon: /assets/icons/server.svg
-    name: 平台与 AI 工程课程
-    desc: 从原理、实验到完整交付的 18 课
+    name: 系统课程
+    desc: 从 Go 后端到平台与 AI 工程，按路线学习
     link: /docs/platform_engineering/
 
   - icon: /assets/icons/brain.svg
-    name: Algorithm
-    desc: 算法相关
-    link: /docs/cs_basics/algorithm/
-
-  - icon: /assets/icons/cpp.svg
-    name: C++
-    desc: C++知识总结
-    link: /docs/language/cpp/
-
-  - icon: /assets/icons/rust.svg
-    name: Rust
-    desc: Rust知识总结
-    link: /docs/language/rust/
-
-  - icon: /assets/icons/go.svg
-    name: Go
-    desc: Go知识总结
-    link: /docs/language/go/
-
-  - icon: /assets/icons/redis.svg
-    name: Redis
-    desc: Redis知识总结
-    link: /docs/database/redis/
+    name: 基础知识
+    desc: 计算机基础与编程语言
+    link: /docs/#基础知识
 
   - icon: /assets/icons/server.svg
-    name: Web Server
-    desc: Web Server知识总结
-    link: /docs/web_server/
+    name: 后端技术
+    desc: 数据库、中间件与 Web 服务
+    link: /docs/#后端技术
 
-  - icon: /assets/icons/os.svg
-    name: OS
-    desc: 操作系统知识总结
-    link: /docs/cs_basics/os/
-  
-  - icon: /assets/icons/network.svg
-    name: Network
-    desc: 计算机网络知识总结
-    link: /docs/cs_basics/network/
+  - icon: /assets/icons/brain.svg
+    name: AI 专题
+    desc: MCP、AI 编程工具与行业案例
+    link: /docs/ai/
 
   - icon: /assets/icons/project.svg
-    name: Projects
-    desc: 个人项目
-    link: /docs/projects/
+    name: 实践与成长
+    desc: 项目、工具、面试与职业规划
+    link: /docs/#实践与成长
 
-  - icon: /assets/icons/job.svg
-    name: Interview
-    desc: 面试相关
-    link: /docs/interview/
+  - icon: /assets/icons/directory.svg
+    name: 全部内容
+    desc: 浏览所有专题入口
+    link: /docs/
