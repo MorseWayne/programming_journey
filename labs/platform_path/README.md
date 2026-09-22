@@ -2,7 +2,13 @@
 
 正文：`src/docs/platform_engineering/`，站点入口 `/docs/platform_engineering/`。
 
-## 核心实验
+## 从最小模型开始
+
+第一阶段先阅读 `foundations/account.go`，学习时运行 `go run ./cmd/foundations` 与 `go test ./foundations -v`。该模型只包含顺序账户，回执、并发与持久化在后续阶段逐步加入。
+
+新增的 `sql/index_lab.sql` 用于第 5 课索引造数，`sql/cache_race.sh` 用于第 7 课迟到回填时间线。它们是教学配套文件，本轮内容修订未执行这些新增实验，输出见正文预期。
+
+## 后续核心实验
 
 ```bash
 GOWORK=off go test -race ./...

@@ -1,75 +1,135 @@
 ---
-title: 05 按访问方式设计数据与索引
+title: 05 数据建模与索引：从访问需求理解存储
 icon: /assets/icons/article.svg
 order: 5
 date: 2026-09-22
 ---
 
-## 本课问题与前置
+[阶段三导读](./stages/03_data.md) · 前置：[运行与性能](./04_performance.md)
 
-余额放进 map 很直观，为什么到数据库里还要设计主键、索引和事务？本课先解决“数据如何定位”，下一课再讨论多次写入怎样一起成功。
+## 需求场景：账户多了，邮件也多了
 
-前置：第 1–4 课，知道表由行和列组成。建议用时 4 小时。目标：把请求转换为查询条件，解释复合索引顺序，核对执行计划。
+平台要查询一个玩家的余额、找回一次领取的结果、列出尚未发送的通知，还要显示玩家最近 50 封邮件。数据量小时遍历也能返回正确结果，增长后却可能越来越慢。
 
-## 从查询倒推数据
+本课从“业务怎样找数据”推导表和索引。完成后应能说明数据身份、访问路径、排序与唯一性范围，并用执行计划核对猜想。数据库环境见[环境页](./environment.md)。
 
-Arena 有三个查询：按游戏和玩家找余额；按游戏和请求 ID 找回执；按发送状态与事件编号找待发送事件。这对应三种不同身份，而不是一个万能 ID。
+## 基础理论：先分清事实、身份与查询
+
+**实体**是业务中需要区分的对象，如玩家账户。**属性**描述对象，例如余额。**身份**回答它是哪一个对象。**关系**描述对象之间的关联，例如一笔奖励属于哪个玩家。
+
+同一个 `u1` 在 game-a 和 game-b 中可以是不同账户，因此账户身份是 `(ns, uid)`。一次操作的回执则用 `(ns, request_id)` 找到。将 uid 和 request_id 混用，会把“同一个玩家”误当成“同一笔奖励”。
+
+| 业务事实 | 唯一性范围 | 常用查询 |
+|---|---|---|
+| 当前余额 | 游戏与玩家 | 按 ns、uid 精确查 |
+| 一次操作的结果 | 游戏与请求 | 按 ns、request_id 精确查 |
+| 待通知事件 | 事件身份 | 按发送状态分批扫描 |
+| 玩家邮件 | 游戏、玩家和邮件 | 按玩家查最近一页 |
+
+身份设计还包含大小写、空格、编码和长度规则。数据库按某种排序规则比较字符串；应用若认为 `U1` 与 `u1` 不同，数据库却把它们当相同，业务约定就会冲突。课程关键身份列采用 ASCII 二进制比较，并限制到教学用 ASCII ID。
+
+## 表、约束与数据冗余
+
+关系表由行与列组成。主键唯一标识一行；唯一约束保护其他不能重复的业务组合；检查约束限制单行值的合法范围。应用校验能提供友好反馈，数据库约束保护所有写入入口。
+
+课程使用三张表：钱包记录当前余额，回执记录请求参数与首次结果，outbox 记录需要继续通知的事实。为什么不只用一张余额表？因为余额变成 20 后，已经无法从余额判断哪笔请求贡献了其中的 10。
+
+保存回执中的历史余额是有意保留操作结果：旧请求重试时返回首次结果，而不是声称当前余额就是那笔请求的结果。重复存储需要明确更新规则，不能让两份“当前值”各自变化却没有权威来源。
+
+### SQL 的基础阅读方式
 
 ```sql
-SELECT balance FROM wallets WHERE ns='game-a' AND uid='u1';
-SELECT * FROM receipts WHERE ns='game-a' AND request_id='r1';
-SELECT * FROM outbox WHERE sent=FALSE ORDER BY event_id LIMIT 100;
+SELECT balance
+FROM wallets
+WHERE ns='game-a' AND uid='u1';
 ```
 
-**主键**唯一标识一行。`PRIMARY KEY(ns,uid)` 让两个游戏中的 u1 保持独立。**索引**是额外维护的数据结构，用写入成本和空间换取定位效率。InnoDB 主键组织数据，二级索引还关联主键；索引越多并非越快。
+FROM 指定数据来源，WHERE 指定筛选条件，SELECT 指定输出列。实际执行顺序由数据库优化器决定，不等于按文本从上到下执行。
 
-`(sent,event_id)` 按发送状态再按事件编号组织，适合筛选未发送并取一批。`(event_id,sent)` 是否更合适，要看访问方式；不能因为包含同样两列就当作等价。
+没有 ORDER BY 的结果不应依赖顺序。LIMIT 限制返回数量，也不保证数据库只检查同样数量的行。要解释成本，需要继续看访问路径。
 
-## 行模型、键值模型与访问限制
+## 索引的基本原理
 
-关系型数据库可以组合条件、连接和事务；HBase 的设计更强调按行键组织访问。行键会影响扫描局部性和热点分布；单调递增前缀可能集中写入，打散前缀又可能增加范围查询成本。[HBase 行键设计](https://hbase.apache.org/book.html#rowkey.design)提供了这些取舍的原理。
+没有合适索引时，数据库可能扫描很多行才能找到目标。索引为某些键维护额外的定位结构，以空间和写入维护成本换取查找效率。
 
-因此，从“用了哪个数据库”继续追问：常见读取是什么？一致性范围是什么？最热 key 是哪个？数据保留多久？增长后怎样分区？
+InnoDB 的常规索引采用 B+ 树结构。内部节点帮助缩小查找范围，叶子按键排序，适合范围扫描。树节点以页组织，一次页读取包含多个键，减少逐条访问存储的成本。
 
-## 实验：建立表并观察计划
+主键索引的叶子保存行数据；二级索引记录索引键和主键值。通过二级索引找到主键后，可能还需要访问主键索引取得其他列；若需要的列已包含在索引中，可以减少这一步。
 
-先完成[环境页](./environment.md)的数据库启动与初始化。以下均从 `labs/platform_path` 运行：
+这些概念用于解释为什么主键宽度、查询列和索引数量影响成本。不能只凭“B+ 树是对数查找”就推断一次查询的真实延迟，缓存命中、扫描范围、回表和锁等待同样重要。
+
+## 机制推导：复合索引的列顺序
+
+`(ns, uid)` 可以理解为先按 ns 分组，再在组内按 uid 排序。查某游戏的某玩家能缩小到精确位置；只给 uid 而不给 ns，通常不能直接使用同样的前缀定位方式。优化器可能采用其他策略，最终以计划为准。
+
+待发事件按 `(sent, event_id)` 建索引，目的是先定位未发送集合，再按 ID 取一批。如果改成 `(event_id, sent)`，数据先按事件排序，筛选发送状态时访问范围可能不同。
+
+**选择性**描述条件能筛掉多少数据。只有 true/false 的列单独索引未必有很高价值，但与后续排序和范围条件组合后仍可能适合某类查询。
+
+### 从邮件分页推导游标
+
+查询最近邮件可以使用 `(ns, uid, mail_id)`，并通过已看到的最后一条 ID 继续向前翻页：
+
+```sql
+-- 设计示例：mails 表由学习者在业务练习中创建。
+SELECT mail_id, subject
+FROM mails
+WHERE ns='game-a' AND uid='u1' AND mail_id < 900
+ORDER BY mail_id DESC
+LIMIT 50;
+```
+
+大 OFFSET 分页通常需要跳过很多符合条件的记录；游标让下一页从确定位置继续。若按创建时间排序，需要用唯一 ID 打破时间相同的并列，并在游标里保存完整排序依据。
+
+游标不是权限凭证。即使客户端提供合法 mail_id，查询仍需带上可信租户和用户范围。
+
+## 实验：先看小表，再增加数据量
+
+完成 schema 初始化后，从实验目录运行：
 
 ```bash
+cd labs/platform_path
 docker compose exec -T mysql mysql -uroot -pjourney-local-only journey_lab -e \
  "EXPLAIN SELECT balance FROM wallets WHERE ns='game-a' AND uid='u1';"
 docker compose exec -T mysql mysql -uroot -pjourney-local-only journey_lab -e \
  "EXPLAIN SELECT * FROM outbox WHERE sent=FALSE ORDER BY event_id LIMIT 100;"
 ```
 
-预期余额查询能够使用复合主键。空表或极小表的计划可能选择扫描，不能据此判定索引错误。记录实际 `key`、估计行数和 `Extra`；估计值不是实际执行计时。
+记录 key、估计行数和 Extra。极小表或空表选择扫描未必是错误，优化器在比较成本。EXPLAIN 中的估计行数也不是实际执行统计。
 
-练习：在专用实验库生成 10,000 条虚构余额。依次比较按 `ns,uid` 查询、仅按 uid 查询、对 uid 使用函数查询。使用 SQL 客户端的 `EXPLAIN ANALYZE` 观察真实行数与耗时，它会实际执行查询，因此这里仅对 SELECT 使用。
+运行配套造数脚本，它只向 `index-lab` 虚构租户补充 10,000 行：
 
-<details>
-<summary>可用的造数语句与提示</summary>
-
-```sql
-INSERT IGNORE INTO wallets(ns,uid,balance)
-SELECT 'index-lab', CONCAT('u', a.n+10*b.n+100*c.n+1000*d.n), 100
-FROM
- (SELECT 0 n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) a
-CROSS JOIN
- (SELECT 0 n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) b
-CROSS JOIN
- (SELECT 0 n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) c
-CROSS JOIN
- (SELECT 0 n UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) d;
+```bash
+docker compose exec -T mysql mysql -uroot -pjourney-local-only journey_lab < sql/index_lab.sql
 ```
 
-造数完成后执行 `ANALYZE TABLE wallets` 更新统计信息，再对照访问方式。不同机器上的微秒差距不是结论；扫描行数与访问路径更能解释机制。
+随后在 SQL 客户端分别执行：
+
+```sql
+EXPLAIN ANALYZE SELECT balance FROM wallets WHERE ns='index-lab' AND uid='u4321';
+EXPLAIN ANALYZE SELECT balance FROM wallets WHERE uid='u4321';
+EXPLAIN ANALYZE SELECT balance FROM wallets WHERE ns='index-lab' AND LOWER(uid)='u4321';
+```
+
+它会实际执行 SELECT。比较访问路径、实际扫描行数和时间，说明条件变化怎样影响索引可用性。不同机器的微秒差距并非重点；先解释数据库做了多少工作。
+
+## 工程深化：与 HBase 和键值存储对照
+
+HBase 更强调按行键组织访问，行键同时影响定位、扫描局部性与数据分布。连续写入集中到少量键范围时可能形成热点；加盐打散可以分散写入，也会增加范围扫描与合并成本。
+
+按“游戏、玩家、时间”组织邮件可能有利于玩家历史读取，但不一定有利于按全局时间查所有邮件。先列访问需求，再讨论是否增加派生索引、异步同步或独立查询模型。[HBase 旧版手册的行键设计](https://hbase.apache.org/book.html#rowkey.design)可用于深化这一取舍。
+
+有索引不等于有跨行事务，有 CAS 也不等于任意多对象更新可以一起提交。存储模型、访问路径和一致性范围需要分别分析。
+
+## 业务迁移与验收
+
+为名字注册与模糊搜索分别写出身份、唯一性规则和读取方式。名字是否可用应依据能够保护唯一性的权威约束；稍后更新的搜索索引用于发现，不能直接充当并发创建的唯一性裁决。
+
+<details>
+<summary>练习反馈：为何不能给 uid 单独加全局唯一约束？</summary>
+
+那会阻止不同游戏各自拥有 u1，改变业务身份的范围。索引设计既影响性能，也可能改变允许的数据集合；两方面都要验收。
 
 </details>
 
-## 检查与迁移
-
-为什么给 uid 单独加唯一索引会破坏多游戏设计？因为它将唯一性范围扩大到所有游戏。为什么查出结果正确还不够？因为随着规模增长，扫描成本可能不可接受。
-
-为“按玩家查询最近 50 封邮件”设计字段与索引，说明排序、游标和跨游戏边界。参考方向是 `(ns,uid,mail_id)`，而不是仅按全局 mail_id 查完后在内存过滤。
-
-达标证据：三条查询的索引理由与执行计划。下一课：[事务与幂等](./06_transactions.md)。
+提交三类查询的索引理由、造数后的计划、邮件游标方案，并解释一次写入需要维护哪些结构。下一课：[事务与幂等](./06_transactions.md)。
