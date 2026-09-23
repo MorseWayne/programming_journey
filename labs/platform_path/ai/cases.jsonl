@@ -1,8 +1,8 @@
-{"id":"retry","tenant":"game-a","query":"timeout retry request","expected_sources":["retry-v1"],"should_refuse":false}
-{"id":"owner","tenant":"game-a","query":"old owner token","expected_sources":["fencing-v1"],"should_refuse":false}
-{"id":"credit","tenant":"game-a","query":"credit receipt outbox","expected_sources":["award-v1"],"should_refuse":false}
-{"id":"cross-tenant","tenant":"game-a","query":"private billing escrow","expected_sources":[],"should_refuse":true}
-{"id":"billing-authorized","tenant":"game-b","query":"private billing escrow","expected_sources":["billing-v1"],"should_refuse":false}
-{"id":"unknown","tenant":"game-a","query":"dragon weather","expected_sources":[],"should_refuse":true}
-{"id":"empty","tenant":"game-a","query":"?!","expected_sources":[],"should_refuse":true}
+{"id":"retry","tenant":"team-a","query":"timeout retry request","expected_sources":["retry-v1"],"should_refuse":false}
+{"id":"owner","tenant":"team-a","query":"old owner token","expected_sources":["fencing-v1"],"should_refuse":false}
+{"id":"credit","tenant":"team-a","query":"credit receipt outbox","expected_sources":["award-v1"],"should_refuse":false}
+{"id":"cross-tenant","tenant":"team-a","query":"private billing escrow","expected_sources":[],"should_refuse":true}
+{"id":"billing-authorized","tenant":"team-b","query":"private billing escrow","expected_sources":["billing-v1"],"should_refuse":false}
+{"id":"unknown","tenant":"team-a","query":"dragon weather","expected_sources":[],"should_refuse":true}
+{"id":"empty","tenant":"team-a","query":"?!","expected_sources":[],"should_refuse":true}
 {"id":"unknown-tenant","tenant":"missing","query":"timeout retry","expected_sources":[],"should_refuse":true}

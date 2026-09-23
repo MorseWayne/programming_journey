@@ -1,115 +1,128 @@
 ---
-title: 实践说明与按阶段准备环境
+title: 实践环境：从个人小程序到整合示例
 icon: /assets/icons/article.svg
 order: 0.5
-date: 2026-09-22
+date: 2026-09-23
 ---
 
-## 按学习进度准备
+## 第一次只准备 Go 与编辑器
 
-本页是学习者需要动手时使用的操作说明。课程正文、推导、时间线和业务练习均可先静态阅读，外部环境按对应阶段准备。
+详细章稿从 [01.01](./curriculum/01_go/01_program_toolchain.md)创建个人 arena-hello 目录，再按 01.02 使用 arena-types、01.03 使用 im-control、01.04 使用 im-collections、01.05 使用 im-identity。若使用 A 篇衔接材料，则按 [A01](./beginner/01_first_program.md)创建 go-course 模块，逐步建立 main.go、points.go 和 points_test.go。采用当前章节的目录约定即可。
 
-| 阶段 | 练习材料 | 动手时需要的条件 |
+后端、数据库和 AI 工具按进度引入。以下命令是学习时执行的说明，预期输出与自己的实际结果分别记录。
+
+## IM 主项目的环境边界
+
+[OpenIM 参照版本](./curriculum/im_reference.md)的 go.mod 声明 Go 1.25.0，并有 MongoDB、Redis、Kafka、etcd 等依赖。到需要复现上游行为的章节再按固定版本准备；初学 Go 与本地消息模型不要求先部署整套服务。
+
+本页下方的 labs/platform_path 和 MySQL 命令属于已有通用机制实验，并非 OpenIM 的启动说明。SQL 教学模型与 OpenIM 的 MongoDB 消息路径分别学习，不能混用模块、端口或配置。
+
+| 学习位置 | 工作目录 | 所需环境 |
 |---|---|---|
-| 一：运行与契约 | 顺序账户、共享与复制 | Go 1.24+ |
-| 二：并发与性能 | 工作池、帧解析、基准 | Go；race 需平台支持和 C 工具链 |
-| 三：持久化 | 索引、事务与缓存 | Docker 与 Compose；独立 MySQL/Redis |
-| 四：分布式机制 | 重放、fencing 时间线 | Go；真实多进程集成为后续实践 |
-| 五：平台运行 | HTTP、退出和接口 | Go；集群部分另需 Docker、kubectl、kind |
-| 六：AI 工程 | 检索、SQLite、评测 | Python 3.11+；核心练习不调用模型 |
-| 七：综合实践 | 个人选定的业务项目 | 按方案准备并记录依赖 |
+| 01.01–01.05 长篇正文 | 章内指定的个人 arena-hello、arena-types、im-control、im-collections、im-identity 目录 | Go、编辑器与终端 |
+| 02.01 数学计数模型 | 个人 im-cost 模块 | 纸面推导可先完成；代码示例用 Go |
+| 03.01 系统资源模型 | 个人 im-resource 模块 | 纸面推导可先完成；不需要硬件实验或外部服务 |
+| 10.01 需求小模型 | 个人 im-requirements 模块 | Go、编辑器与终端；纸面部分可先阅读 |
+| 10.03 Git 起步 | 仓库之外新建的 im-git-practice | Git 2.28+；基础部分无需远端 |
+| A01–A10 | 个人 go-course 模块 | Go、编辑器与终端 |
+| B01 的账户示例 | 本仓库 labs/platform_path | Go 1.24+ |
+| B02–B03 | 个人 go-course 模块 | Go；浏览器或 curl |
+| B04–B05 | 本仓库 labs/platform_path | Docker、Compose、本地 MySQL |
+| B06–B07 | 个人 go-course 模块 | Go |
+| C 篇整合示例 | 本仓库 labs/platform_path | 按课选择 Go、MySQL/Redis 或条件集群 |
+| D 篇离线工具 | 本仓库 labs/platform_path | Python 3.11+，核心例子只用标准库 |
 
-配套示例在仓库根的 `labs/platform_path/`。下文命令用于你学习时执行；教学模型、预期结果与实际运行记录应分别理解。
+## 两个目录为何不同
 
-## 第一阶段：先运行最小示例
+个人目录帮助你从空白文件理解包与模块；教材 labs 保存后续的参考模型。它们各有自己的 go.mod，不能把一个模块的 import 路径直接写进另一个却不解释依赖。
+
+A01 介绍路径，A08 介绍模块。如果遇到找不到文件或包，先检查当前目录和 go.mod，再检查代码。
+
+## B01：第一次阅读参考账户
+
+从教材仓库根目录执行：
 
 ```bash
 cd labs/platform_path
-go version
 GOWORK=off go run ./cmd/foundations
 GOWORK=off go test ./foundations -v
 ```
 
-如果父目录存在 go.work，GOWORK=off 让本模块独立运行；后续命令可以保留这个前缀。foundations 只讲顺序账户；根目录 Ledger 的回执、事件与锁在后续章节逐步引入。
+GOWORK=off 让当前模块独立运行，避免父目录 go.work 影响；使用的 shell 写法见 B04。这里只读 foundations 的顺序账户，完整 Ledger 的回执与事件等到 C 篇。
 
-## 第二与第四阶段：按课选择实验
+## B04–B05：数据库入门
 
-以下命令均在 `labs/platform_path` 执行。同一终端已经进入后，无需反复 cd。
-
-| 课程 | 练习入口 |
-|---|---|
-| 00–01 | `go run ./cmd/foundations`；`go test ./foundations -run '^TestCreditContract$' -v` |
-| 02 | `go test ./foundations -run '^TestAccountCopy$' -v`；`go test -run '^TestOwnership$' -v` |
-| 03 | `go test -race -run '^TestPipeline' -v` |
-| 04 | `go test -run '^TestFrame' -v`；`go test -run '^$' -bench BenchmarkGrant -benchmem -count=3` |
-| 06 内存对照 | `go test -race -run '^TestConcurrentDuplicate$' -v`，其余见[第 6 课](./06_transactions.md) |
-| 08 | `go test -run '^TestOutboxCrashWindow$' -v` |
-| 09 | `go test -race -run '^TestFencing$' -v` |
-| 10 | `go run ./cmd/latency` |
-| 11–12 | `go test -run '^TestHTTPIsolationAndDrain$' -v`；`go run ./cmd/server` |
-
-排队网页实验可直接在第 3 课操作；其模型检查入口是 `node --test queue-model.test.mjs`。
-
-## 第三阶段：课程专用数据库
-
-需要 Docker 与 Compose，并为数据库预留约 2–3GB 可用内存。首次使用可能下载镜像，实际资源使用与环境有关。
+先读 [B04 环境概念](./backend_basics/04_local_tools.md)，再操作。进入 labs/platform_path 后：
 
 ```bash
 docker compose config --quiet
 docker compose up -d --wait --wait-timeout 90
+docker compose exec mysql mysql -uroot -pjourney-local-only journey_lab
+```
+
+进入 SQL 客户端后，按 B05 创建 beginner_tasks 等虚构练习表。课程数据库名是 journey_lab，公开的本地示例密码只用于该练习环境。
+
+MySQL 的宿主机端口为 34067，Redis 为 36379；容器网络、端口映射和数据卷已在 B04 解释。已有同名练习数据时，先查询再决定如何继续，重复 INSERT 可能触发主键冲突。
+
+结束 SQL 客户端用 exit。回到终端后，`docker compose stop` 停止课程服务并保留 volume。
+
+## C05–C07：初始化进阶数据模型
+
+这组表与 B05 的入门表不同。完成 B05 后再按 C05、C06 需要初始化：
+
+```bash
 docker compose exec -T mysql mysql -uroot -pjourney-local-only < sql/schema.sql
 docker compose exec -T mysql mysql -uroot -pjourney-local-only journey_lab < sql/procedures.sql
 ```
 
-环境名为 journey-platform-lab；MySQL 绑定本机 34067，Redis 绑定 36379。示例密码是公开的本地实验值，操作对象应始终是课程环境。
-
-按章节选择：
+`<` 把文件内容作为命令输入，-T 适合这类非交互输入。不要把它与进入客户端后手工输入 SQL 的方式混淆。
 
 ```bash
-# 第 5 课：添加 index-lab 虚构数据，观察执行计划。
+# C05：虚构索引数据。
 docker compose exec -T mysql mysql -uroot -pjourney-local-only journey_lab < sql/index_lab.sql
-# 第 6 课：重复、冲突、并发与回滚。
+# C06：事务、重复、冲突与回滚。
 bash sql/check.sh
-# 第 7 课：固定顺序复现迟到缓存回填。
+# C07：稳定复现迟到缓存回填。
 bash sql/cache_race.sh
 ```
 
-索引脚本补充固定虚构租户；事务脚本和缓存脚本为每次执行使用独立练习身份。它们会写入教学数据，数据库 volume 保留这些数据；缓存实验的键自动过期。
+这些脚本会写入专用练习数据。MySQL 数据卷保留记录；缓存实验键带过期时间。镜像采用 MySQL 8.4、Redis 7.4 系列，个人验证时记录实际版本与配置。
 
-需要两会话实验时，分别打开两个终端：
+## C 篇按课查命令
+
+以下入口都在 labs/platform_path，不是个人 go-course：
+
+| 课程 | 示例入口 |
+|---|---|
+| C01 | `go test ./foundations -run '^TestCreditContract$' -v` |
+| C02 | `go test -run '^TestOwnership$' -v` |
+| C03 | `go test -race -run '^TestPipeline' -v` |
+| C04 | `go test -run '^TestFrame' -v`；`go test -run '^$' -bench BenchmarkGrant -benchmem` |
+| C06 | `go test -race -run '^TestConcurrentDuplicate$' -v` 与 SQL 脚本 |
+| C08 | `go test -run '^TestOutboxCrashWindow$' -v` |
+| C09 | `go test -race -run '^TestFencing$' -v` |
+| C10 | `go run ./cmd/latency` |
+| C11–C12 | `go test -run '^TestHTTPIsolationAndDrain$' -v`；`go run ./cmd/server` |
+
+race 需要对应平台支持与 C 工具链。基准参数由 C04 解释，运行时先记录环境，不把一个数字直接当成业务容量。
+
+整合 HTTP 服务默认监听 127.0.0.1:8097，和 B03 自己写的 8080 示例不同。使用环境变量 ARENA_ADDRESS 可以改变整合示例地址。它仍使用内存状态，连接 SQL 是 D06 的后续实践。
+
+C11 中 Kubernetes 步骤需要另行准备个人本地环境，独立记录完成情况。
+
+## D 篇离线实践
 
 ```bash
-docker compose exec mysql mysql -uroot -pjourney-local-only journey_lab
-```
-
-练习结束可停止课程容器，保留已有数据：
-
-```bash
-docker compose stop
-```
-
-镜像使用 MySQL 8.4 与 Redis 7.4 系列。补丁更新可能改变具体镜像，可在自己的实验记录中保存 digest。
-
-## 第五阶段：本机 HTTP 与条件集群练习
-
-`go run ./cmd/server` 默认监听 127.0.0.1:8097。若端口占用，可用 `ARENA_ADDRESS=127.0.0.1:8098 go run ./cmd/server`，并对应修改 curl 地址。
-
-HTTP 默认使用内存状态，没有连接 SQL。重启清空是当前模型行为；连接持久存储是综合实践任务。第 11 课提供个人 kind 集群的可选步骤，集群实践与本机实践单独记录完成情况。
-
-## 第六阶段：离线 AI 模型
-
-```bash
-python3 --version
 python3 -m unittest discover -s ai -v
-python3 ai/agent_lab.py retrieve --tenant game-a --query "timeout retry"
+python3 ai/agent_lab.py retrieve --tenant team-a --query "timeout retry"
 python3 ai/agent_lab.py evaluate
 python3 ai/agent_lab.py workflow-demo
 ```
 
-这些练习只用标准库、英文词项检索和 SQLite。真实模型、embedding、外部工具和 SDK 接入是后续条件实践，应单独记录成本与效果。
+先完成 D01 的 Python 基础。这里使用英文词项检索与 SQLite，不调用真实模型；生成、embedding 和外部工具接入有独立要求。
 
-## 遇到环境问题时
+## 记录实际完成范围
 
-先记录命令、工作目录、版本与具体错误。连接失败与事务逻辑失败不同；没有环境时，将相应实验标为未验证，继续可独立完成的理论、预测和业务分析。
+环境问题、代码错误、业务规则失败分别记录。没有执行的步骤保持未验证，可以先完成对应推导与练习设计。
 
-参考示例与验证范围见[交付记录](./verification.md)。不要因为代码或配置文件存在，就把对应业务能力记为已完成。
+本轮教材的实际检查范围见[修订记录](./verification.md)，个人学习结果放在[进度页](./progress.md)。

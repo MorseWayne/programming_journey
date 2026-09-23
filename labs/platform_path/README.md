@@ -1,12 +1,12 @@
-# 平台与 AI 工程课程实验
+# Go 系统课程的整合教学示例
 
 正文：`src/docs/platform_engineering/`，站点入口 `/docs/platform_engineering/`。
 
 ## 从最小模型开始
 
-第一阶段先阅读 `foundations/account.go`，学习时运行 `go run ./cmd/foundations` 与 `go test ./foundations -v`。该模型只包含顺序账户，回执、并发与持久化在后续阶段逐步加入。
+完成 A 篇后，在 B01 阅读 `foundations/account.go`，学习时运行 `go run ./cmd/foundations` 与 `go test ./foundations -v`。该模型只包含顺序账户，回执、并发与持久化在后续阶段逐步加入。
 
-新增的 `sql/index_lab.sql` 用于第 5 课索引造数，`sql/cache_race.sh` 用于第 7 课迟到回填时间线。它们是教学配套文件，本轮内容修订未执行这些新增实验，输出见正文预期。
+新增的 `sql/index_lab.sql` 用于 C05索引造数，`sql/cache_race.sh` 用于 C07迟到回填时间线。它们是教学配套文件，本轮内容修订未执行这些新增实验，输出见正文预期。
 
 ## 后续核心实验
 
@@ -33,7 +33,7 @@ docker compose stop
 ## 模型边界
 
 - Go Ledger、Sink、FencedStore 是内存参考模型，没有持久化或分布式共识。
-- HTTP 与 SQL 过程尚未连接，连接它们是综合项目 C 层练习。
+- HTTP 与 SQL 过程尚未连接，连接它们是D06 综合实践的持久化练习。
 - Python 是英文关键词检索，不是 embedding 或 LLM；八条用例通过率不是模型效果。
 - SQLite 模拟幂等工具，真实工具需要相应接口或恢复方案。
 - Kubernetes 清单演示单副本生命周期，内存版本不能靠增加副本获得共享状态。

@@ -1,0 +1,83 @@
+{
+  "chapter": "02.01",
+  "stage": "S1",
+  "business_scope": "Mathematical count of a bounded, static IM fan-out snapshot; no network actions or upstream performance claims",
+  "prerequisites": [
+    "01.01–01.03 first-pass scalar values, conditions, loops, ordinary functions",
+    "01.04 arrays, slices, range, len and empty input"
+  ],
+  "first_pass": [
+    "Discrete objects, sets, distinct elements, empty set, order versus membership",
+    "Relations as ordered pairs with explicit completeness assumptions",
+    "Propositions, conjunction/disjunction/negation, universal/existential intuition",
+    "User/device/message/task/attempt/batch units and disjoint counting",
+    "Finite sums, pair counts, powers, logarithmic halving and rounding",
+    "Input dimensions n/m/D/B/Q; basic-operation cost model versus elapsed time",
+    "O upper bound, Omega lower bound, Theta tight bound with fixed constants and thresholds",
+    "Bounded scalar/slice counting function with validity flag and overflow-safe limits"
+  ],
+  "second_pass": [
+    "Worst case over fixed-size input domain",
+    "Average linear scan only under stated location/absence distribution",
+    "Amortized insertion under an explicitly hypothetical doubling-capacity model",
+    "Finite probability space, events, random variables, expectation and linearity without independence",
+    "Conditional probability and when event probabilities may be multiplied",
+    "Induction, loop invariants, termination and validated arithmetic preconditions"
+  ],
+  "canonical_fanout_model": {
+    "n": "message count",
+    "m": "distinct receiver-user entries after excluding sender",
+    "d_i": "online device count for receiver i",
+    "D": "sum of d_i",
+    "B": "total body bytes",
+    "Q": "n*D initial tasks only for the same target snapshot",
+    "sender": "all sender devices excluded in baseline; optional sender synchronization explicitly changes model",
+    "example": "n=3, counts=[2,0,1], D=3, Q=9",
+    "attempts": "A=Q+R when each initial task gets its first attempt, R=total actual extra attempts",
+    "batches": "ceil(Q/b) is minimum packing count under free grouping; retry time dependencies can increase actual batches"
+  },
+  "counter_contract": {
+    "message_count": "0..1000",
+    "receiver_entries": "0..1000",
+    "devices_per_entry": "0..10",
+    "max_result": 10000000,
+    "return_order": [
+      "count",
+      "valid"
+    ],
+    "zero_messages": "still validate provided receiver counts",
+    "scope": "counts only; neither creates task records nor sends messages"
+  },
+  "boundaries": [
+    "Go ^ is not mathematical exponentiation",
+    "ceil(log2 n) only for upward-halving model to <=1; n=0 separately defined",
+    "m remains receiver-user entry count, never silently redefined as device count",
+    "Only a task upper limit yields O bound, not automatically Theta",
+    "Zero inner dimension can leave n outer-loop operations",
+    "Teaching function hard bounds are distinct from unbounded abstract asymptotic model",
+    "Observed ratio does not prove future probability or frequency convergence",
+    "At-most-one retry differs from actually executing an extra attempt",
+    "Amortized constant does not imply single-operation worst-case constant or Go growth factor guarantee"
+  ],
+  "not_yet_prerequisites": [
+    "map/struct/pointer syntax",
+    "methods/interfaces/testing.T",
+    "binary search interval implementation",
+    "processes/threads/concurrency/network/storage",
+    "production online snapshot or queue implementation",
+    "probability limit theorems or unbounded retry models"
+  ],
+  "next_steps": [
+    "02.02 linear structures",
+    "02.03 searches and full loop invariants",
+    "02.04 hashing after its Go prerequisites"
+  ],
+  "upstream_inspection": "No new OpenIM implementation facts asserted in this chapter. IM models are original teaching assumptions.",
+  "validation": "Static review and document checks only; no curriculum code execution, tests, build or deployment.",
+  "shared_integration_pending": [],
+  "shared_integration": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_02"
+  }
+}

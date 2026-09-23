@@ -43,9 +43,9 @@ func (a *API) reward(w http.ResponseWriter, r *http.Request) {
 	}
 	switch strings.TrimPrefix(auth, "Bearer ") {
 	case "lab-a-token":
-		ns = "game-a"
+		ns = "team-a"
 	case "lab-b-token":
-		ns = "game-b"
+		ns = "team-b"
 	default:
 		http.Error(w, "unauthorized", 401)
 		return

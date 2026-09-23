@@ -1,0 +1,39 @@
+{
+  "chapter": "01.04",
+  "business_scope": "bounded local in-memory conversation text lists and code-point previews",
+  "first_pass": [
+    "array types/literals/elements/zero values/index bounds and value copying",
+    "slice types/literals, len/cap, make, append, ellipsis expansion",
+    "two-index slicing; index bound is len while reslicing bound may reach cap",
+    "slice range, value copies, blank identifier, ordering and fixed iteration range",
+    "nil versus non-nil empty slices; no slice-to-slice equality",
+    "string arbitrary immutable bytes; byte/rune; UTF-8 validation and code-point counting",
+    "string range byte offsets, []byte/[]rune conversions and valid code-point preview",
+    "bounded filtering with separate batch error and per-item rejection counts"
+  ],
+  "second_pass": [
+    "slice descriptor copies share underlying array elements",
+    "Go function parameters remain passed by value; return updated slice descriptions",
+    "append with insufficient capacity uses a new underlying array; no fixed growth factor",
+    "copy uses existing destination length and copies element values",
+    "full slice expressions restrict capacity but initially share existing elements",
+    "small subslices may retain large underlying arrays; copying does not guarantee immediate GC",
+    "code points versus grapheme clusters and display width; no automatic Unicode normalization"
+  ],
+  "not_yet_prerequisites": [
+    "map syntax/key comparability/comma-ok lookup",
+    "struct fields and object identity",
+    "pointer operators & and *",
+    "methods/interfaces/errors.Is/testing.T",
+    "concurrency/network/storage/delivery/read guarantees",
+    "production grapheme segmentation implementation"
+  ],
+  "next_chapter": "01.05 map, struct and pointers; stable conversation/message identity rather than slice position",
+  "upstream_inspection": "Pinned server sync_msg.go only: GetSeqMessage append batch, GetMaxSeq range then append, PullMessageBySeqs empty-list branch; no SDK/end-to-end verification.",
+  "coordinator_integration_pending": [],
+  "shared_integration": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_01"
+  }
+}

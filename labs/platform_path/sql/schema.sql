@@ -28,4 +28,4 @@ CREATE TABLE IF NOT EXISTS outbox (
   UNIQUE KEY uq_request (ns, request_id),
   KEY ix_pending (sent, event_id)
 ) ENGINE=InnoDB;
-INSERT IGNORE INTO wallets(ns,uid,balance) VALUES ('game-a','u1',100),('game-b','u1',100);
+INSERT IGNORE INTO wallets(ns,uid,balance) VALUES ('team-a','u1',100),('team-b','u1',100);

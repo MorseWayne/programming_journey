@@ -18,7 +18,7 @@ tagline: 学海浩瀚，贵在恒常
 projects:
   - icon: /assets/icons/server.svg
     name: 系统课程
-    desc: 从 Go 后端到平台与 AI 工程，按路线学习
+    desc: Go 系统课程：入门正文、14 卷专业知识与工程实践
     link: /docs/platform_engineering/
 
   - icon: /assets/icons/brain.svg

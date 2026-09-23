@@ -1,0 +1,50 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_5ed7873614",
+  "page_id": "pg_d247886121",
+  "page_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "6804ff72cf6b20f3e3fcf3390944d934b3af774e21f538a925ad2921dc54c7b0",
+  "original_sha256": "1a2c9b804684857867c9acbbe58e032eff982a3f45e654a41f3e87bf12da0aca",
+  "reviewed_sha256": "7d5c0d959e258c2a5ade636e3dcef067859a5ab082fff743394cb944876d2d77",
+  "original_characters": 38711,
+  "reviewed_characters": 26891,
+  "reviewed_chinese_characters": 13845,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent configuration and model unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/01_discrete_cost.md",
+  "course_sha256": "9e2933b574b532b46de30c0e87120264ffbb123cba18358b6eeb6057cd4c2be6",
+  "source_reference": {
+    "scope": "Original bounded IM mathematical teaching models; primary course material used to verify topics and definitions; no textbook or repository ingested as a knowledge base.",
+    "primary_sources": [
+      "https://algs4.cs.princeton.edu/14analysis/",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/",
+      "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-spring-2015/pages/readings/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "reviewed_sections": 9,
+  "layered_exercises": 16,
+  "counter_examples": 12,
+  "upstream_implementation_claims": false,
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_02",
+    "scope": [
+      "prerequisites independent of sibling drafts",
+      "technical and exercise review",
+      "shared navigation and learning status",
+      "local links, structure, source hashes and route coverage"
+    ],
+    "code_execution": false,
+    "site_build": false
+  }
+}

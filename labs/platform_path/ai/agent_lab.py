@@ -23,10 +23,10 @@ class Document:
 
 
 DOCUMENTS = (
-    Document("retry-v1", "game-a", "A request timeout has an unknown result. Retry with the same request id."),
-    Document("fencing-v1", "game-a", "The storage rejects an old owner write with a stale fencing token."),
-    Document("award-v1", "game-a", "A credit transaction stores a receipt and an outbox event together."),
-    Document("billing-v1", "game-b", "Private billing escrow reconciliation belongs to game-b."),
+    Document("retry-v1", "team-a", "A request timeout has an unknown result. Retry with the same request id."),
+    Document("fencing-v1", "team-a", "The storage rejects an old owner write with a stale fencing token."),
+    Document("award-v1", "team-a", "A credit transaction stores a receipt and an outbox event together."),
+    Document("billing-v1", "team-b", "Private billing escrow reconciliation belongs to team-b."),
 )
 
 
@@ -168,7 +168,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
     retrieval = sub.add_parser("retrieve")
-    retrieval.add_argument("--tenant", default="game-a")
+    retrieval.add_argument("--tenant", default="team-a")
     retrieval.add_argument("--query", required=True)
     evaluation = sub.add_parser("evaluate")
     evaluation.add_argument("--cases", type=Path, default=Path(__file__).with_name("cases.jsonl"))
@@ -183,13 +183,13 @@ def main() -> None:
             path = Path(directory) / "workflow.db"
             flow = Workflow(path)
             try:
-                flow.create_ticket("game-a", "op-1", {"summary": "inspect latency"},
+                flow.create_ticket("team-a", "op-1", {"summary": "inspect latency"},
                                    approved=True, fail_after_effect=True)
             except RuntimeError:
                 pass
             # A fresh object simulates re-opening durable state.
             resumed = Workflow(path)
-            result = resumed.create_ticket("game-a", "op-1", {"summary": "inspect latency"},
+            result = resumed.create_ticket("team-a", "op-1", {"summary": "inspect latency"},
                                            approved=True)
             result["effects_after_resume"] = resumed.effect_count()
     print(json.dumps(result, ensure_ascii=False, indent=2))

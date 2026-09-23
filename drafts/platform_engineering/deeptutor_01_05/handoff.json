@@ -1,0 +1,47 @@
+{
+  "chapter": "01.05",
+  "business_scope": "local conversation and per-conversation message identities, membership flags and bounded in-memory insertion",
+  "first_pass": [
+    "map type/literal/make/read/write/delete/len; allocation hint is not a size limit",
+    "comma-ok distinguishes missing keys from stored zero values",
+    "nil map read/range/len/delete versus write panic; map only comparable with nil",
+    "comparable scalar/array/struct keys; map range order unspecified",
+    "named struct declarations, keyed initialization, fields and zero values",
+    "struct value copying; identity differs from all-fields equality",
+    "address and pointer concepts; &x, *T, *p, struct pointer selector shorthand, &T{} and brief new(T)",
+    "nil pointer versus pointer to zero struct; pointer equality for nonzero-size objects",
+    "parameters passed by value, including pointer and map values; rebinding versus target/entry mutation",
+    "returning a local address valid; scope and physical allocation distinct",
+    "map of value structs requires read-modify-write for scalar field changes",
+    "map of pointer structs: missing versus stored nil versus usable target; old aliases survive deletion/rebinding"
+  ],
+  "second_pass": [
+    "struct fields containing map/slice continue sharing after outer value copying",
+    "map value struct containing slice can still modify shared slice elements; assigning slice descriptor requires read-modify-write",
+    "explicit clone for map[string]bool and []string fields, preserving nil versus non-nil empty",
+    "copying pointer elements does not clone pointees; no universal deep-copy promise",
+    "nested message map entry mutation visible without writing outer struct back"
+  ],
+  "not_yet_prerequisites": [
+    "method declarations/receivers/method sets",
+    "interfaces/type assertions/typed-nil interfaces",
+    "generic types or reflect/unsafe",
+    "testing.T, concurrency synchronization, persistence, authentication and delivery protocols",
+    "production ID generation/global uniqueness or full network idempotency"
+  ],
+  "validation_contract": {
+    "order": "conversation registration/classification before text; text checks positive byte limit, nonempty raw body, byte bound, valid UTF-8",
+    "space": "not trimmed",
+    "local_addition": "registered active local sender, per-conversation unique message ID, initialized collections, positive count limit; duplicate ID rejected",
+    "effects": "one nested map write after ordinary rejection checks, sequential local model only",
+    "initial_state": "known-valid stored records created through the same local rule; detected invalid state rejected but not repaired"
+  },
+  "next_chapter": "01.06 methods and interfaces; start from ordinary functions operating on concrete types; pointer/value receiver behavior must preserve these value-copy rules",
+  "upstream_inspection": "Only GetSeqMessage at pinned server sync_msg.go: initialized map[string]*PullMsgs, comma-ok, create missing result object, update through pointer; no full RPC/SDK audit",
+  "coordinator_integration_pending": [],
+  "shared_integration": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_02"
+  }
+}

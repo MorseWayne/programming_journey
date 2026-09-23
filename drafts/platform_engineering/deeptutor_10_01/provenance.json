@@ -1,0 +1,49 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_1308784dc5",
+  "page_id": "pg_6a8f828a7e",
+  "page_status": "ready",
+  "blocks_ready": 7,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "dc8683f4f98a4135fcea97c7ad462910dbadd4defdad0e170c765c2cd83dd981",
+  "original_sha256": "484839cea60d06aa626c6e16383e22cca0508be5a605b06f564965637fbbb74e",
+  "reviewed_sha256": "ded38f055cbf9503c0db1c8108e952adbd3910c686a81356d5812b1887617be6",
+  "original_characters": 39651,
+  "reviewed_characters": 22754,
+  "reviewed_chinese_characters": 12113,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent configuration and model unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/01_verifiable_requirements.md",
+  "course_sha256": "0c22887805a11f6e13390ed68d81c6bd908b970e76de84267c13385cf38208c9",
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "internal/rpc/msg/send.go"
+    ],
+    "input_scope": "Only independently reviewed SendMsg control-flow summary inserted; no repository or books imported."
+  },
+  "editorial_rule_adjustment": "Align rejection priority with chapter 01.03: unknown session first, then invalid limit, empty body, too long. Preserve generation request and original unchanged.",
+  "acceptance_cases": 24,
+  "layered_exercises": 14,
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_01",
+    "scope": [
+      "prerequisites and shared IM rules",
+      "technical and exercise review",
+      "shared navigation and learning status",
+      "local links, document structure and source hashes"
+    ],
+    "code_execution": false,
+    "site_build": false
+  }
+}

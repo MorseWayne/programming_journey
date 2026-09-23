@@ -1,0 +1,21 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_893025d8fe",
+  "page_id": "pg_046f4beefa",
+  "page_status": "ready",
+  "blocks_ready": 7,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "original_sha256": "a2014092546f8769352e31fc321f96f22280a53883eec5c0a28a61ed6912ebb2",
+  "reviewed_sha256": "7a9a5bc040ecd120d11e30c81b00dcc3355fe0bb240ceafdc3afecc2d0e40334",
+  "original_characters": 17157,
+  "reviewed_characters": 12208,
+  "reviewed_chinese_characters": 6736,
+  "code_execution": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process normalization of token-limit aliases; persistent DeepTutor configuration and source unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/01_program_toolchain.md",
+  "course_sha256": "d9ef8cdd9d32f1f578c07fb25855ec83f7fc35110e477a2f191f32bed5884571"
+}

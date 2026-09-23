@@ -1,0 +1,91 @@
+{
+  "code": "01.04",
+  "title": "数组、切片与文本：组织会话消息",
+  "summary": "从固定数组与下标进入切片、遍历、共享与复制，再区分字节、码点和视觉字符，用有界本地消息列表与预览综合。共享机制列为第二遍深化。",
+  "previous": "01.03 控制流与函数",
+  "output_dir": "/tmp/deeptutor-course-01-04-output",
+  "chapter_id": "ch_go_im_collections_text",
+  "sections": [
+    {
+      "title": "一、从一条消息到固定数组",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：先解释集合/元素/下标/从0计数/长度/半开区间。var messages [3]string零值与[3]string{\"你好\",\"收到\",\"稍后聊\"}字面量，长度是数组类型一部分，[2]string与[3]string不同。先回顾int赋值复制再讲数组赋值逐元素复制，字符串值不可修改，不等于复制所有字节；不用指针语法。动态下标0<=i<len(arr)，越界panic与常量数组下标编译错误区分。完整程序打印元素与赋值后修改副本，预期表逐行。数组适合固定大小，不把它说成能append。",
+      "target_words": 1600,
+      "role": "core"
+    },
+    {
+      "title": "二、切片、长度、容量和追加",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：定义[]string与[3]string差别，先切片字面量，再make([]string,2,4)，len当前可索引范围，cap从当前起点可到达底层数组末尾。make的len元素都已存在并是零值，make(...,0,4)后只能append不能s[0]赋值。append返回新切片值必须接收，添加一个/多个和另一切片展开more...逐一解释。再讲s[low:high]含low不含high，切片upper可至cap但索引始终<len；不鼓励意外读出额外空元素。禁止断言扩容总翻倍或精确cap，用显式预分配例保证输出。nil/空切片仅先提下一节详讲。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "三、按顺序遍历、筛选与空列表",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：从三段for引入for i, body := range messages，i索引body元素值副本，_忽略不需要结果。range body赋值不改列表，messages[i]才修改列表；不用结构体指针示例。只讨论顺序slice遍历，开始range表达式求值，追加不让新元素自动被这一轮访问；不鼓励边遍历边删。筛选非空消息使用新结果make([]string,0,len(input))和append，函数参数[]string解释声明。nil切片var msgs []string与[]string{}、make([]string,0)区别，len/cap0，可range/append，切片仅可与nil比较，不能互相==。局部顺序不是消息网络全局序。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "四、第二遍深化：共享、扩容与独立副本",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：先用画格子文字图解释内存位置/引用直觉，明确本节不用&或*语法。切片值描述起点/len/cap，赋值复制切片描述并共享元素；不能说Go按引用传参，函数仍值传递。complete例base:=make([]string,2,4),view:=base[:1],view=append(view,\"替换\")会写base[1]；容量满append必用新底层数组，旧视图不自动跟上。函数修改元素对调用方可见，但append返回的新len不自动反映调用方，普通函数返回[]string由调用方接收。copy先make目标len，返回min长度不会扩容，dst:=make([]string,0,3)copy0陷阱。fullslice s[:len(s):len(s)]限制cap使追加脱离但现存元素仍共享。小子切片可能使大底层数组保留，copy独立列表减少数组保留但string文本存储可能仍共享且不可修改；不保证立即GC。",
+      "target_words": 2000,
+      "role": "core"
+    },
+    {
+      "title": "五、字符串、UTF-8与三种长度",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：string不可修改的任意字节序列，不保证合法UTF8；UTF8把Unicode码点编码1到4字节，byte=uint8，rune=int32并不等于视觉字符。s:=\"A你🙂\" len8，range返回字节偏移0,1,4和码点，用fmt.Printf(\"%d %U %c\\n\",i,r)，解释%U/%c。[]byte(s)得到可改字节片段值，[]rune(s)按UTF8解码码点序列；重新string转换，原s不变，避免声称所有实现必总分配。\"e\\u0301\"3字节2码点、\"é\"2字节1码点但常见显示近似，都非自动规范化；旗帜/ZWJ表情可能多码点显示一组；字素簇与显示列宽不等。RuneCountInString为码点计数，有效UTF8先ValidString。",
+      "target_words": 2000,
+      "role": "core"
+    },
+    {
+      "title": "六、文本边界：校验与消息预览",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：导入unicode/utf8讲utf8.ValidString与RuneCountInString，不预设接口错误。s:=\"你好\";s[:4]可能截破码点，切字符串按字节即使越界没发生也可能UTF8无效。完整函数previewRunes(text string,limit int)(string,bool)：limit>=0和ValidString先验，[]rune后若len<=limit返回原串否则string(runes[:limit])，limit0合法返回空；bool代表输入是否有效，不是是否截断，用名字/注释说明。这只是码点前缀不会保证字素簇完整；不要加省略号却声称它计入字节预算，正文校验不能悄悄截断再当原消息。text:=string([]byte{0xff})明确无效UTF8；范围遍历无效序列为RuneError且前进一字节，未验证不能假装修复无损。控制原始字节上限后再转换避免巨大分配，不写复杂流式算法。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "七、综合：本地历史与OpenIM源码对照",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：完整程序用validateText(string,int)(bool,string)与acceptedMessages([]string,int)([]string,int)顺序过滤空文本/字节上限/无效UTF8并输出接受数拒绝数及预览，不引入map/struct/指针或error构造。所有limits无效应独立拒绝配置，不能静默把每个元素当非法；保持01.03规则空格仍合法。本例是有界内存本地列表，未持久/网络。10+边界表覆盖nil列表/空串/中文6字节/超限/无效UTF8/len/cap/copy共享/预览0和负数。已实际核对OpenIM v3.8.3-patch.16提交f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/sync_msg.go：GetSeqMessage中pullMsgs.Msgs = append(pullMsgs.Msgs, msgs...)把取回的消息切片追加至响应；GetMaxSeq先range conversationIDs，循环中append通知会话ID，range不会把新增ID再纳入原轮；PullMessageBySeqs用len(msgs)==0分支处理空结果。只呈现这些已读语句的思想，map/指针/RPC/认证/序号协议后续解释。教学[]string是简化，不能说上游真实消息只存string或有本章字节限制；未核对SDK和端到端保证。",
+      "target_words": 2000,
+      "role": "core"
+    },
+    {
+      "title": "八、分层练习、解析与下一步",
+      "focus": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。 本节范围：至少12题从预测到改错/独立变式/业务迁移，逐题有提示和答案原因。覆盖array值复制、slice共享、cap不等索引、append接收、range值副本、copy目标len0、cap满时append新数组确定例、fullslice仍共享现存元素、nil/empty比较、A你🙂字节8/码点3/索引0,1,4、组合字符2码点、无效UTF8、预览边界、过滤函数契约。不要互相复制同一题，不用指针语法、struct、map。说明进01.05前要能画slice共享和独立副本、函数返回新slice、识别字节/码点/字素簇差别；下一章用map查会话和struct组织消息身份，当前列表下标不是永久消息ID。",
+      "target_words": 2000,
+      "role": "core"
+    }
+  ],
+  "learning_objectives": [
+    "一、从一条消息到固定数组",
+    "二、切片、长度、容量和追加",
+    "三、按顺序遍历、筛选与空列表",
+    "四、第二遍深化：共享、扩容与独立副本",
+    "五、字符串、UTF-8与三种长度",
+    "六、文本边界：校验与消息预览",
+    "七、综合：本地历史与OpenIM源码对照",
+    "八、分层练习、解析与下一步"
+  ],
+  "request": {
+    "user_intent": "用中文为 Go 初学者写系统教材 01.04《数组、切片与文本：组织会话消息》。读者已学01.01工具链、01.02变量/类型/字符串len按字节/数值范围、01.03 if/switch/for/break/continue/普通函数与多返回值。尚未学array/slice/range/map/struct/指针语法/方法/接口/并发/网络/数据库。先定义首次出现的概念与符号再用，顺序由具体到机制再到业务选择。用虚构IM会话 c-a、用户u-a/u-b、消息文本，无真实公司数据。只做内存消息列表与预览，本地加入列表不是已发送/持久化/对端已收。完整程序必须package/import/main，片段标注main内或包级及依赖import；故意错误另列。输出标预期，未运行。避免重复前节定义，不引入框架或未教语法。先修中的递归闭包不作为必需。本章每节应有需求/定义/推导/完整或明确位置的示例/反例/反馈，至少一张追踪表。\n一、从一条消息到固定数组：先解释集合/元素/下标/从0计数/长度/半开区间。var messages [3]string零值与[3]string{\"你好\",\"收到\",\"稍后聊\"}字面量，长度是数组类型一部分，[2]string与[3]string不同。先回顾int赋值复制再讲数组赋值逐元素复制，字符串值不可修改，不等于复制所有字节；不用指针语法。动态下标0<=i<len(arr)，越界panic与常量数组下标编译错误区分。完整程序打印元素与赋值后修改副本，预期表逐行。数组适合固定大小，不把它说成能append。\n二、切片、长度、容量和追加：定义[]string与[3]string差别，先切片字面量，再make([]string,2,4)，len当前可索引范围，cap从当前起点可到达底层数组末尾。make的len元素都已存在并是零值，make(...,0,4)后只能append不能s[0]赋值。append返回新切片值必须接收，添加一个/多个和另一切片展开more...逐一解释。再讲s[low:high]含low不含high，切片upper可至cap但索引始终<len；不鼓励意外读出额外空元素。禁止断言扩容总翻倍或精确cap，用显式预分配例保证输出。nil/空切片仅先提下一节详讲。\n三、按顺序遍历、筛选与空列表：从三段for引入for i, body := range messages，i索引body元素值副本，_忽略不需要结果。range body赋值不改列表，messages[i]才修改列表；不用结构体指针示例。只讨论顺序slice遍历，开始range表达式求值，追加不让新元素自动被这一轮访问；不鼓励边遍历边删。筛选非空消息使用新结果make([]string,0,len(input))和append，函数参数[]string解释声明。nil切片var msgs []string与[]string{}、make([]string,0)区别，len/cap0，可range/append，切片仅可与nil比较，不能互相==。局部顺序不是消息网络全局序。\n四、第二遍深化：共享、扩容与独立副本：先用画格子文字图解释内存位置/引用直觉，明确本节不用&或*语法。切片值描述起点/len/cap，赋值复制切片描述并共享元素；不能说Go按引用传参，函数仍值传递。complete例base:=make([]string,2,4),view:=base[:1],view=append(view,\"替换\")会写base[1]；容量满append必用新底层数组，旧视图不自动跟上。函数修改元素对调用方可见，但append返回的新len不自动反映调用方，普通函数返回[]string由调用方接收。copy先make目标len，返回min长度不会扩容，dst:=make([]string,0,3)copy0陷阱。fullslice s[:len(s):len(s)]限制cap使追加脱离但现存元素仍共享。小子切片可能使大底层数组保留，copy独立列表减少数组保留但string文本存储可能仍共享且不可修改；不保证立即GC。\n五、字符串、UTF-8与三种长度：string不可修改的任意字节序列，不保证合法UTF8；UTF8把Unicode码点编码1到4字节，byte=uint8，rune=int32并不等于视觉字符。s:=\"A你🙂\" len8，range返回字节偏移0,1,4和码点，用fmt.Printf(\"%d %U %c\\n\",i,r)，解释%U/%c。[]byte(s)得到可改字节片段值，[]rune(s)按UTF8解码码点序列；重新string转换，原s不变，避免声称所有实现必总分配。\"e\\u0301\"3字节2码点、\"é\"2字节1码点但常见显示近似，都非自动规范化；旗帜/ZWJ表情可能多码点显示一组；字素簇与显示列宽不等。RuneCountInString为码点计数，有效UTF8先ValidString。\n六、文本边界：校验与消息预览：导入unicode/utf8讲utf8.ValidString与RuneCountInString，不预设接口错误。s:=\"你好\";s[:4]可能截破码点，切字符串按字节即使越界没发生也可能UTF8无效。完整函数previewRunes(text string,limit int)(string,bool)：limit>=0和ValidString先验，[]rune后若len<=limit返回原串否则string(runes[:limit])，limit0合法返回空；bool代表输入是否有效，不是是否截断，用名字/注释说明。这只是码点前缀不会保证字素簇完整；不要加省略号却声称它计入字节预算，正文校验不能悄悄截断再当原消息。text:=string([]byte{0xff})明确无效UTF8；范围遍历无效序列为RuneError且前进一字节，未验证不能假装修复无损。控制原始字节上限后再转换避免巨大分配，不写复杂流式算法。\n七、综合：本地历史与OpenIM源码对照：完整程序用validateText(string,int)(bool,string)与acceptedMessages([]string,int)([]string,int)顺序过滤空文本/字节上限/无效UTF8并输出接受数拒绝数及预览，不引入map/struct/指针或error构造。所有limits无效应独立拒绝配置，不能静默把每个元素当非法；保持01.03规则空格仍合法。本例是有界内存本地列表，未持久/网络。10+边界表覆盖nil列表/空串/中文6字节/超限/无效UTF8/len/cap/copy共享/预览0和负数。已实际核对OpenIM v3.8.3-patch.16提交f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/sync_msg.go：GetSeqMessage中pullMsgs.Msgs = append(pullMsgs.Msgs, msgs...)把取回的消息切片追加至响应；GetMaxSeq先range conversationIDs，循环中append通知会话ID，range不会把新增ID再纳入原轮；PullMessageBySeqs用len(msgs)==0分支处理空结果。只呈现这些已读语句的思想，map/指针/RPC/认证/序号协议后续解释。教学[]string是简化，不能说上游真实消息只存string或有本章字节限制；未核对SDK和端到端保证。\n八、分层练习、解析与下一步：至少12题从预测到改错/独立变式/业务迁移，逐题有提示和答案原因。覆盖array值复制、slice共享、cap不等索引、append接收、range值副本、copy目标len0、cap满时append新数组确定例、fullslice仍共享现存元素、nil/empty比较、A你🙂字节8/码点3/索引0,1,4、组合字符2码点、无效UTF8、预览边界、过滤函数契约。不要互相复制同一题，不用指针语法、struct、map。说明进01.05前要能画slice共享和独立副本、函数返回新slice、识别字节/码点/字素簇差别；下一章用map查会话和struct组织消息身份，当前列表下标不是永久消息ID。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  },
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "internal/rpc/msg/sync_msg.go"
+    ],
+    "functions": [
+      "GetSeqMessage",
+      "GetMaxSeq",
+      "PullMessageBySeqs"
+    ],
+    "input_scope": "Only inspected function summaries supplied in prompt; not imported as a knowledge base."
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "code": "01.05",
+  "title": "map、结构体与指针：组织消息身份与会话状态",
+  "summary": "从稳定消息身份进入map键值与缺失，组合结构体，再建立地址和参数复制模型；区分map值结构体与指针结构体的更新，第二遍分析嵌套共享，最后实现本地会话消息索引。",
+  "previous": "01.04 数组、切片与文本",
+  "output_dir": "/tmp/deeptutor-course-01-05-output",
+  "chapter_id": "ch_go_im_maps_structs_pointers",
+  "sections": [
+    {
+      "title": "一、从列表位置到按身份查找",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：先用切片排序/过滤会改变下标说明下标不是永久消息ID，定义用户/会话/消息ID三个职责，消息ID唯一范围要明确。map是键到值的关联集合，map[string]string语法key和value逐个解释，make与字面量、m[key]读写替换、len键数量、delete缺失无影响；string ID不是要做算术的数量。用conversationTitle map标会话别名开始，不引入struct/pointers。map赋值共享entries而非深复制先直觉，函数仍值传递详细后续。make大小hint非限制、map没有cap；不承诺严格O(1)，算法卷讲哈希。",
+      "target_words": 1700,
+      "role": "core"
+    },
+    {
+      "title": "二、缺失、零值、nil和键规则",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：map[string]int本地草稿计数，c-a存在0与c-b缺失读取都0，v,ok:=m[k]区分；map[string]bool成员标志缺失和明确false区分，不直接等同可信身份。var m map[string]int零值nil，读/len/range/delete可用但写panic，make或字面量后可写，nil不等业务失败。map仅可与nil比较，不能map==map。key必须可比较，string/int/bool、元素可比较的array、字段全可比较的struct可做键但struct等第三节详讲；slice/map/function不能做key，先用map[[]string]int故意编译错误。range map无规定顺序，不能预测输出固定排序、不能作为消息顺序；显示给定keys切片并查map可稳定，排序算法之后学。遍历不修改map为教学契约。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "三、用结构体把一条消息组织完整",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：type Message struct {ID string; ConversationID string; SenderID string; Body string}从type名称struct字段/点号逐个解释，包级类型命名函数可见，首字母大小写这里只说明跨包导出后续，不引入方法。具名初始化Message{ID:\"m-a\",...}明确字段、零值Message{}与不代表合法业务消息。字段访问修改，结构体赋值逐字段复制；纯string字段修改副本不替换原，ID相等不等对象地址相等，业务身份不靠全字段==。定义可比较MessageKey{ConversationID,MessageID string}作为复合键演示两个会话相同本地ID不冲突；不简单用字符串拼接易歧义。Message只string可比较，含slice/map结构体不可整体==。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "四、地址、指针与nil：找到要修改的变量",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：先定义变量位置/地址/指针值的关系，不显示或预测固定地址数字。用count:=1;p:=&count;*p=2逐符号解释&T取变量地址、*int指针类型、*p解引用是变量。再用type Draft struct{Body string};p:=&draft;(*p).Body与p.Body简写，&Draft{...}创建值并得指针不是指针转换。var p *Draft零值nil，p!=nil先查再解引用，nilpointer和pointertozeroDraft不同，p==q比较是否指同变量不是字段相等，只非零大小Draft例避免零尺寸特例。不引入unsafe或指针算术；指针不能替代业务ID。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "五、函数参数仍按值传递",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：完整ordinaryfunc byValue(d Draft)改变副本不改调用方；byPointer(p *Draft)nil先查后p.Body修改，结果有副作用应命名清楚；指针值也复制，rebind(p *Draft){p=&Draft{Body:\"新\"}}只改形参，不改调用方指针；overwrite(p *Draft){*p=Draft{Body:\"替换\"}}改所指变量，图表区别。修改是显式业务责任不说指针一律性能更好。func newDraft(body string)*Draft{d:=Draft{Body:body};return &d}合法，名字作用域结束不等内存立刻销毁，编译器负责有效生命周期，不断言所有地址变量永远堆或栈。map参数m[k]=v影响共享map，m=make(...)只改局部变量，nilmap在函数内make须返回给调用方接收。",
+      "target_words": 2000,
+      "role": "core"
+    },
+    {
+      "title": "六、map里的结构体：取出改回与指针值",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：先已教Message/Conversation小结构体，例如type Conversation struct{Title string;DraftCount int}。map[string]Conversation查询值复制，m[\"c-a\"].Title=\"new\"和&m[\"c-a\"]编译错误：map元素不可寻址但m[key]=whole允许；不要把桶搬迁算法当语言保证理由。正确value,ok:=m[key]检查后value.Title=...;m[key]=value，逐行表展示漏写回不生效；缺失时不能默默造零状态。map[string]*Conversation先make，再&Conversation字面量；v,oklookup区分missing、存在nil、nonnull，即ok真不能保证pointer非nil。p.Title修改所指对象即共享，delete仅删除mapentry现有其他pointer仍有效，不能说销毁对象或清空所有别名；map重设key为新pointer旧alias不自动跟。比较value vs pointer接口契约控制副作用无接口语法。",
+      "target_words": 2000,
+      "role": "core"
+    },
+    {
+      "title": "七、第二遍深化：结构体复制与嵌套共享",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：type Conversation struct{ID string;Members map[string]bool;Drafts []string}复制结构体后ID标量字段独立，Members map底层entries共享，Drafts slice底层元素共享；逐步表不要以一处copy称全部深拷贝。实现普通cloneConversation(src Conversation)Conversation，先dst:=src，Members非nil时make+range逐entry复制保留nil策略；Drafts非nil时make len+copy保留nil/empty区别；当前元素bool/string所以可独立替换，后续nestedpointer需逐层设计不是通用deepcopy。map成员修改/切片元素替换/append长度写回区别，copy struct里的slice描述不更新原len但cap够可能写原底层。边界nil集合、空集合、nilpointer分开；采用显式读取快照或允许修改的函数约定，不能readonlykeyword或并发安全。",
+      "target_words": 2100,
+      "role": "core"
+    },
+    {
+      "title": "八、综合会话索引与OpenIM对照",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：完整小程序可用type Message四string字段；type Conversation {ID,Kind string;Members map[string]bool;Messages map[string]Message}。conversations map[string]Conversation两个虚构会话，记录只本地初始化；Messages按会话内部ID唯一，不保证全局唯一。新增要求会话已登记、Kind single/group、会话ID与索引key一致、Members与Messages非nil，msg.ID非空、SenderID非空且Members中ok且true、maxMessages正且达到上限拒绝、重复ID拒绝而非网络幂等。本地输入SenderID未经网络认证须明确。先验证全部条件再写入conv.Messages[msg.ID]=msg，无错误之后才改；仅本地顺序模型无并发原子性/事务保证。统一validateText规则且先会话类型再文本；避免ID空串自动当有效。用12+输入边界表区分missing/zero/nil、复制/别名、重复消息、中文6字节、UTF8、不同会话相同ID允许；修改无效原状态时仅拒绝不修复。来源仅实际读固定OpenIM v3.8.3-patch.16 commit f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/sync_msg.go GetSeqMessage：响应Msgs和NotificationMsgs是make创建的map[string]*sdkws.PullMsgs；按ConversationID做comma-ok，缺失则&sdkws.PullMsgs{}并放入map，再经指针更新Msgs/IsEnd/EndSeq。只摘已教的map查找/对象创建思想，不教完整RPC/context；未审整个仓库或SDK，课程Messages正文/权限/容量规则不是OpenIM协议。",
+      "target_words": 2200,
+      "role": "core"
+    },
+    {
+      "title": "九、分层练习与下一章准备",
+      "focus": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。 本节范围：14题以上，由预测→改错→独立函数→业务迁移，每题有提示和答案原因，避免每小节重复同组题。覆盖mapmissingzero、nilreadwrite、deletealias、range无序、comparablekey/复合键；结构体值复制与嵌套共享；&/*/nil与零值对象；函数指针复制/rebind与*p修改；returnlocaladdress合法；map结构体不可寻址、取出改回；map指针ok但nil；clone保留nil与独立map/slice；业务ID永久与下标变化；本地成员标志不是认证；先校验后修改保证仅在单线程模型且原始状态有效范围。下一章方法/接收者/接口；不预教interface或method语法。给进入01.06的真实先修清单。",
+      "target_words": 2100,
+      "role": "core"
+    }
+  ],
+  "learning_objectives": [
+    "一、从列表位置到按身份查找",
+    "二、缺失、零值、nil和键规则",
+    "三、用结构体把一条消息组织完整",
+    "四、地址、指针与nil：找到要修改的变量",
+    "五、函数参数仍按值传递",
+    "六、map里的结构体：取出改回与指针值",
+    "七、第二遍深化：结构体复制与嵌套共享",
+    "八、综合会话索引与OpenIM对照",
+    "九、分层练习与下一章准备"
+  ],
+  "request": {
+    "user_intent": "为Go初学者用中文写长篇系统课程01.05《map、结构体与指针：组织消息身份与会话状态》。先修01.01-01.04：变量/数值/字符串、if/for/普通函数与多返回值，数组切片len/cap/make/append/copy/range/_、参数值复制/切片底层共享、string字节与UTF8校验。未学map/struct/&/*/方法/接口/泛型/并发/网络/数据库，本章逐一定义map/struct/指针后才能使用。先简单类型和场景，复杂共享第二遍深化。虚构IM用户u-a/u-b、会话c-a/c-b、消息m-a/m-b，ID是稳定身份不是切片下标；用户/设备/连接/会话不要混淆。仅顺序本地内存模型，不声称鉴权、持久性、发送或已读保证。完整程序有package/import/main及全部类型；片段标位置/import；故意错误单列；所有输出是预期未运行。基础定义、需求、推导、追踪表、反例、反馈交替，不反复复制定义和同题。共同文本规则maxBytes>0→原文非空→字节len不超限→01.04新增UTF8有效性；恰好上限合法，不trim空格。稳定身份和索引不可偷偷发明上游协议。\n一、从列表位置到按身份查找：先用切片排序/过滤会改变下标说明下标不是永久消息ID，定义用户/会话/消息ID三个职责，消息ID唯一范围要明确。map是键到值的关联集合，map[string]string语法key和value逐个解释，make与字面量、m[key]读写替换、len键数量、delete缺失无影响；string ID不是要做算术的数量。用conversationTitle map标会话别名开始，不引入struct/pointers。map赋值共享entries而非深复制先直觉，函数仍值传递详细后续。make大小hint非限制、map没有cap；不承诺严格O(1)，算法卷讲哈希。\n二、缺失、零值、nil和键规则：map[string]int本地草稿计数，c-a存在0与c-b缺失读取都0，v,ok:=m[k]区分；map[string]bool成员标志缺失和明确false区分，不直接等同可信身份。var m map[string]int零值nil，读/len/range/delete可用但写panic，make或字面量后可写，nil不等业务失败。map仅可与nil比较，不能map==map。key必须可比较，string/int/bool、元素可比较的array、字段全可比较的struct可做键但struct等第三节详讲；slice/map/function不能做key，先用map[[]string]int故意编译错误。range map无规定顺序，不能预测输出固定排序、不能作为消息顺序；显示给定keys切片并查map可稳定，排序算法之后学。遍历不修改map为教学契约。\n三、用结构体把一条消息组织完整：type Message struct {ID string; ConversationID string; SenderID string; Body string}从type名称struct字段/点号逐个解释，包级类型命名函数可见，首字母大小写这里只说明跨包导出后续，不引入方法。具名初始化Message{ID:\"m-a\",...}明确字段、零值Message{}与不代表合法业务消息。字段访问修改，结构体赋值逐字段复制；纯string字段修改副本不替换原，ID相等不等对象地址相等，业务身份不靠全字段==。定义可比较MessageKey{ConversationID,MessageID string}作为复合键演示两个会话相同本地ID不冲突；不简单用字符串拼接易歧义。Message只string可比较，含slice/map结构体不可整体==。\n四、地址、指针与nil：找到要修改的变量：先定义变量位置/地址/指针值的关系，不显示或预测固定地址数字。用count:=1;p:=&count;*p=2逐符号解释&T取变量地址、*int指针类型、*p解引用是变量。再用type Draft struct{Body string};p:=&draft;(*p).Body与p.Body简写，&Draft{...}创建值并得指针不是指针转换。var p *Draft零值nil，p!=nil先查再解引用，nilpointer和pointertozeroDraft不同，p==q比较是否指同变量不是字段相等，只非零大小Draft例避免零尺寸特例。不引入unsafe或指针算术；指针不能替代业务ID。\n五、函数参数仍按值传递：完整ordinaryfunc byValue(d Draft)改变副本不改调用方；byPointer(p *Draft)nil先查后p.Body修改，结果有副作用应命名清楚；指针值也复制，rebind(p *Draft){p=&Draft{Body:\"新\"}}只改形参，不改调用方指针；overwrite(p *Draft){*p=Draft{Body:\"替换\"}}改所指变量，图表区别。修改是显式业务责任不说指针一律性能更好。func newDraft(body string)*Draft{d:=Draft{Body:body};return &d}合法，名字作用域结束不等内存立刻销毁，编译器负责有效生命周期，不断言所有地址变量永远堆或栈。map参数m[k]=v影响共享map，m=make(...)只改局部变量，nilmap在函数内make须返回给调用方接收。\n六、map里的结构体：取出改回与指针值：先已教Message/Conversation小结构体，例如type Conversation struct{Title string;DraftCount int}。map[string]Conversation查询值复制，m[\"c-a\"].Title=\"new\"和&m[\"c-a\"]编译错误：map元素不可寻址但m[key]=whole允许；不要把桶搬迁算法当语言保证理由。正确value,ok:=m[key]检查后value.Title=...;m[key]=value，逐行表展示漏写回不生效；缺失时不能默默造零状态。map[string]*Conversation先make，再&Conversation字面量；v,oklookup区分missing、存在nil、nonnull，即ok真不能保证pointer非nil。p.Title修改所指对象即共享，delete仅删除mapentry现有其他pointer仍有效，不能说销毁对象或清空所有别名；map重设key为新pointer旧alias不自动跟。比较value vs pointer接口契约控制副作用无接口语法。\n七、第二遍深化：结构体复制与嵌套共享：type Conversation struct{ID string;Members map[string]bool;Drafts []string}复制结构体后ID标量字段独立，Members map底层entries共享，Drafts slice底层元素共享；逐步表不要以一处copy称全部深拷贝。实现普通cloneConversation(src Conversation)Conversation，先dst:=src，Members非nil时make+range逐entry复制保留nil策略；Drafts非nil时make len+copy保留nil/empty区别；当前元素bool/string所以可独立替换，后续nestedpointer需逐层设计不是通用deepcopy。map成员修改/切片元素替换/append长度写回区别，copy struct里的slice描述不更新原len但cap够可能写原底层。边界nil集合、空集合、nilpointer分开；采用显式读取快照或允许修改的函数约定，不能readonlykeyword或并发安全。\n八、综合会话索引与OpenIM对照：完整小程序可用type Message四string字段；type Conversation {ID,Kind string;Members map[string]bool;Messages map[string]Message}。conversations map[string]Conversation两个虚构会话，记录只本地初始化；Messages按会话内部ID唯一，不保证全局唯一。新增要求会话已登记、Kind single/group、会话ID与索引key一致、Members与Messages非nil，msg.ID非空、SenderID非空且Members中ok且true、maxMessages正且达到上限拒绝、重复ID拒绝而非网络幂等。本地输入SenderID未经网络认证须明确。先验证全部条件再写入conv.Messages[msg.ID]=msg，无错误之后才改；仅本地顺序模型无并发原子性/事务保证。统一validateText规则且先会话类型再文本；避免ID空串自动当有效。用12+输入边界表区分missing/zero/nil、复制/别名、重复消息、中文6字节、UTF8、不同会话相同ID允许；修改无效原状态时仅拒绝不修复。来源仅实际读固定OpenIM v3.8.3-patch.16 commit f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/sync_msg.go GetSeqMessage：响应Msgs和NotificationMsgs是make创建的map[string]*sdkws.PullMsgs；按ConversationID做comma-ok，缺失则&sdkws.PullMsgs{}并放入map，再经指针更新Msgs/IsEnd/EndSeq。只摘已教的map查找/对象创建思想，不教完整RPC/context；未审整个仓库或SDK，课程Messages正文/权限/容量规则不是OpenIM协议。\n九、分层练习与下一章准备：14题以上，由预测→改错→独立函数→业务迁移，每题有提示和答案原因，避免每小节重复同组题。覆盖mapmissingzero、nilreadwrite、deletealias、range无序、comparablekey/复合键；结构体值复制与嵌套共享；&/*/nil与零值对象；函数指针复制/rebind与*p修改；returnlocaladdress合法；map结构体不可寻址、取出改回；map指针ok但nil；clone保留nil与独立map/slice；业务ID永久与下标变化；本地成员标志不是认证；先校验后修改保证仅在单线程模型且原始状态有效范围。下一章方法/接收者/接口；不预教interface或method语法。给进入01.06的真实先修清单。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  },
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "internal/rpc/msg/sync_msg.go"
+    ],
+    "functions": [
+      "GetSeqMessage"
+    ],
+    "input_scope": "Only inspected function summaries supplied; not a repository knowledge-base import."
+  }
+}

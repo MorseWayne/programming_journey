@@ -1,68 +1,81 @@
 ---
-title: 从 Go 后端到平台与 AI 工程
+title: Go 系统课程：从零起步到高级工程实践
 icon: /assets/icons/server.svg
 article: false
 index: false
 order: 11
-date: 2026-09-22
+date: 2026-09-23
 ---
 
-这套课程面向已有 Go 开发经历、希望理解和改进整个公共服务平台的学习者。我们从一次业务操作如何改变数据讲起，逐步研究多人同时操作、进程重启、远程调用失败、平台升级，以及 AI 工具如何可靠交付。
+这是一套面向 Go 技术栈初学者的长期系统课程。先学会读写并解释程序，再建立算法、计算机系统、网络、数据库和并发基础，逐步训练完整功能交付、故障分析、性能判断、平台演进和架构决策。
 
-课程以 LGIM 涉及的问题类型为背景：聊天与会话、邮件与奖励、匹配与有状态对象、搜索与数据同步、多游戏接入和内部工具。练习使用原创的 **Arena 公共服务平台**与虚构数据；课程中的流量、目标和故障均为教学设定，需要迁移到实际工作时重新确认。
+课程以 OpenIM 为公开项目参照，围绕虚构 IM 的消息、会话、连接、群组、多端同步和故障恢复组织理论与实践。所有组织、身份、消息和业务规则均为教学设定。
 
-## 先理解需求，再进入技术
+## 先看哪里
 
-从[业务场景地图](./business_map.md)认识使用方、业务动作和失败代价，再阅读[学习方法与入门诊断](./study_guide.md)。实验环境按阶段准备，第一阶段只需 Go。
+- 了解主项目：[OpenIM 选型、固定版本与源码阅读地图](./curriculum/im_reference.md)。
 
-同一项“领取奖励”需求会随业务发展逐步增加条件：
+- 从详细章稿起步：[01.01 程序、源代码与一次运行](./curriculum/01_go/01_program_toolchain.md)，接着学习 [01.02 类型与数据表示](./curriculum/01_go/02_types_data.md)与 [01.03 IM 控制流与函数](./curriculum/01_go/03_control_functions.md)。
+- 阅读较短的入门衔接课：[A01 文件、终端与第一段程序](./beginner/01_first_program.md)。
+- 了解完整系列：[14 卷总纲与学习路线](./curriculum/README.md)。
+- 决定下一步学什么：[阶段、先修与实践顺序](./curriculum/learning_path.md)。
+- 查看经典书籍如何融合：[调研依据与知识覆盖](./curriculum/source_review.md)。
+- 判断当前有哪些正文：[编写状态与能力验收](./curriculum/assessment.md)。
+
+当前已有 **9 章独立长篇正文、35 课入门与衔接正文、14 篇分卷专题讲义**，以及 **14 卷共 168 个章节单元的教学设计**。168 个单元均已列出具体 IM 练习与验收目标；正文完成 01.01–01.05、02.01、03.01、10.01、10.03；本批新增对象与指针、数学成本、数据与存储层次三章。前两章和部分旧短课、core 的原案例继续作为基础补充，其余长篇按先修关系展开。
+
+## 每个领域都独立展开
+
+| 卷 | 课程领域与分章设计 | 当前可读正文 |
+|---|---|---|
+| 01 | [Go 语言、标准库与程序设计](./curriculum/01_go/README.md) | [01.01](./curriculum/01_go/01_program_toolchain.md) · [01.02](./curriculum/01_go/02_types_data.md) · [01.03](./curriculum/01_go/03_control_functions.md) · [01.04](./curriculum/01_go/04_collections_text.md) · [01.05](./curriculum/01_go/05_maps_structs_pointers.md) · [专题讲义](./curriculum/01_go/core.md) |
+| 02 | [数学基础、数据结构与问题求解](./curriculum/02_algorithms/README.md) | [02.01 数学与成本](./curriculum/02_algorithms/01_discrete_cost.md) · [专题讲义](./curriculum/02_algorithms/core.md) |
+| 03 | [计算机系统、操作系统与 Linux](./curriculum/03_systems/README.md) | [03.01 数据与存储](./curriculum/03_systems/01_data_instructions_storage.md) · [专题讲义](./curriculum/03_systems/core.md) |
+| 04 | [网络协议与网络编程](./curriculum/04_networks/README.md) | [专题讲义](./curriculum/04_networks/core.md) |
+| 05 | [Go 并发、运行时与内存管理](./curriculum/05_runtime/README.md) | [专题讲义](./curriculum/05_runtime/core.md) |
+| 06 | [数据库、消息存储与查询执行](./curriculum/06_databases/README.md) | [专题讲义](./curriculum/06_databases/core.md) |
+| 07 | [缓存、消息队列与数据流](./curriculum/07_cache_messaging/README.md) | [专题讲义](./curriculum/07_cache_messaging/core.md) |
+| 08 | [分布式系统、一致性与故障恢复](./curriculum/08_distributed/README.md) | [专题讲义](./curriculum/08_distributed/core.md) |
+| 09 | [Go 后端应用、API 与应用安全](./curriculum/09_backend_security/README.md) | [专题讲义](./curriculum/09_backend_security/core.md) |
+| 10 | [测试、Git、代码质量与团队交付](./curriculum/10_engineering/README.md) | [10.01 需求](./curriculum/10_engineering/01_verifiable_requirements.md) · [10.03 Git](./curriculum/10_engineering/03_git_state.md) · [专题讲义](./curriculum/10_engineering/core.md) |
+| 11 | [性能工程、可观测性与可靠性](./curriculum/11_reliability/README.md) | [专题讲义](./curriculum/11_reliability/core.md) |
+| 12 | [容器、Kubernetes 与平台运行](./curriculum/12_platform/README.md) | [专题讲义](./curriculum/12_platform/core.md) |
+| 13 | [软件设计、架构决策与高级工程实践](./curriculum/13_architecture/README.md) | [专题讲义](./curriculum/13_architecture/core.md) |
+| 14 | [AI 基础、检索、Agent 与应用评测](./curriculum/14_ai/README.md) | [专题讲义](./curriculum/14_ai/core.md) |
+
+每卷分起步、原理、工程和进阶四层。各章明确需要讲清的机制、先修与实践成果；复杂章可以继续拆成多课，避免一次堆入太多新概念。
+
+## 初学者怎样进入这个系列
+
+入门课号 A/B/C/D 用于定位现有讲解，它们是完整系列的基础与桥接材料：
+
+| 入口 | 作用 |
+|---|---|
+| [A01–A10：Go 入门](./beginner/README.md) | 文件、变量、函数、集合、指针、接口、错误、包、测试与 JSON |
+| [B01–B07：后端基础](./backend_basics/README.md) | 进程、网络、HTTP、环境、SQL、goroutine 与取消 |
+| [C01–C12：系统机制衔接](./stages/01_foundations.md) | 状态、性能、事务、消息、归属、观测、发布与契约 |
+| [D05–D06：方案与综合实践](./stages/07_capstone.md) | 需求、取舍、迁移与工程答辩 |
+| [D01–D04：AI 方向扩展](./stages/06_ai.md) | Python、检索、工具与评测 |
+
+按[分阶段学习路线](./curriculum/learning_path.md)跨卷推进：S0–S7 构成 Go 后端主线，AI 按方向选学。路线明确当前可读材料、尚缺章稿、每次新增的业务问题和阶段验收；无需先通读全部衔接课或整卷讲义。
+
+## 理论与实践怎样连接
 
 ```text
-单次操作结果正确
-  → 多人同时操作仍正确
-  → 重启后结果保留
-  → 超时重试不重复领取
-  → 多个服务协作时可恢复
-  → 发布、扩容和接入新游戏仍保持约定
+消息校验 → 本地会话与历史 → HTTP 查询与 WebSocket 单聊
+→ 身份、群成员权限与持久消息 → 群聊、慢客户端与性能诊断
+→ 消息可靠性、离线补拉与多端同步 → 扩容发布与故障恢复 → IM 架构答辩
+
+方向扩展：模型与数据基础 → 评测基线 → 资料助手 → 受控工具
 ```
 
-每一步都先解释新问题为何出现，再学习解决它需要的理论。AI 部分沿用身份、状态、恢复和验证这些基础，进一步处理证据质量与不确定输出。
+每次增加机制前，先指出旧方案在哪个新条件下失效。实践包含正常路径、失败变式、恢复和方案取舍，保留能够由他人复核的证据。
 
-## 七个学习阶段
+## 配套阅读
 
-侧栏按以下阶段组织。进入一个阶段时，先读阶段导读；完成阶段任务后，再进入下一层。
+- [学习方法](./study_guide.md)与[虚构业务地图](./business_map.md)
+- [概念与先修索引](./concept_map.md)
+- [实践环境](./environment.md)与[个人学习记录](./progress.md)
+- [资料导航](./references.md)、[教学设计](./teaching_research.md)与[验证范围](./verification.md)
 
-| 阶段 | 从什么业务问题出发 | 核心理论 | 学习内容与交付 |
-|---|---|---|---|
-| [一：从需求到单进程模型](./stages/01_foundations.md) | 一次奖励到底算不算成功 | 进程、内存、状态转换、契约、所有权 | 00–02 课；顺序账户模型与失败测试 |
-| [二：并发、网络与性能](./stages/02_concurrency.md) | 活动同时开服，排队和延迟怎么控制 | 并发与并行、同步、排队、调度、字节流 | 03–04 课；有界工作池与性能证据 |
-| [三：持久化与数据正确性](./stages/03_data.md) | 奖励、邮件在重启和重试后仍正确 | 数据模型、索引、事务、隔离、日志与缓存 | 05–07 课；持久事务与恢复表 |
-| [四：跨服务协作与状态归属](./stages/04_distributed.md) | 请求超时、通知重复、旧节点继续写 | 部分失败、交付语义、幂等、租约与 fencing | 08–09 课；故障时间线与恢复验证 |
-| [五：平台运行与持续演进](./stages/05_platform.md) | 服务如何测量、发布、支持多个游戏 | SLI/SLO、生命周期、身份、兼容性 | 10–12 课；业务监控与发布方案 |
-| [六：AI 应用的工程交付](./stages/06_ai.md) | 助手怎样可靠检索、回答与执行任务 | Python、检索、生成、工作流、评测 | 13–16 课；有证据、可恢复的工具原型 |
-| [七：从业务问题到完整方案](./stages/07_capstone.md) | 在真实约束下决定改什么、怎样交付 | 需求分析、权衡、迁移、验证与反馈 | 17–18 课；方案、系统演示与答辩 |
-
-## 一课内部也有层次
-
-- **基础必修：** 解释概念的含义、适用前提和最小例子，建立能够预测结果的模型。
-- **机制推导：** 改变一个条件，看到原方案失效，再推导下一种机制；与小实验穿插进行。
-- **业务应用：** 把机制放回邮件、聊天、匹配等需求，说明选择理由、边界和验收方式。
-- **工程深化：** 研究更复杂的规模、故障或迁移。标为深化的内容可以第二轮学习。
-
-学习顺序是“提出需求 → 预测现象 → 理解机制 → 实验验证 → 修改条件 → 应用到业务”。每课的独立练习需要自己留下结果，运行参考测试只完成其中一部分。
-
-## 怎样安排时间
-
-先按阶段完成证据，不按日历强行推进。原先的 24 周、每周 6–8 小时只是安排示例；扩写后的课程包含更多推导、变式和业务任务，实际节奏由先修能力与投入时间决定。
-
-第一轮完整走基础和核心实验；第二轮选择工作中最需要的场景深入。第 13 课可在第三阶段后预习，检索课仍依赖身份与超时知识，工具执行课依赖事务和故障恢复。
-
-## 学习材料与实验
-
-- [第一阶段导读](./stages/01_foundations.md)：从这里开始正式学习。
-- [环境与逐课命令](./environment.md)：按需启动 Go、SQL、Redis 和 Python 实验。
-- [进度与复习](./progress.md)：记录解释、预测、实验和业务迁移证据。
-- [资料导航](./references.md)与[教学设计](./teaching_research.md)：核对原理并选择深化材料。
-- [验证记录](./verification.md)：查看教材实验实际验证过什么。
-
-实验在 `labs/platform_path/`。第一阶段的 `foundations/` 只包含顺序账户，不提前引入完整服务；后续再逐步阅读 Ledger、SQL、HTTP 和 Python 工作流。数据库、Kubernetes 和真实模型分别有环境要求，其完成情况应独立记录。
+高级工程能力通过多次交付、评审、故障处理和约束变化来检验。课程提供知识与练习结构，学习记录说明自己在哪些条件下完成了验证。

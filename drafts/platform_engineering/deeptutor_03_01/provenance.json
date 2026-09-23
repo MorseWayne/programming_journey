@@ -1,0 +1,76 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_8b4ae38436",
+  "page_id": "pg_378c5bc6dc",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "b9a0333b39bb18850325332b25163359229f93b29181eb15021a641970a98f4a",
+  "original_sha256": "2f69a3b9c34cda4604ac6a2f1087612ae1182f18fed2c171ff3a3d56b285bd40",
+  "reviewed_sha256": "1490f31b2ea2edaa2248e5fec225647f17537439de94b729307d69e4fb687ff5",
+  "original_characters": 38493,
+  "reviewed_characters": 23506,
+  "reviewed_chinese_characters": 11847,
+  "code_execution": false,
+  "system_experiments": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent configuration unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/01_data_instructions_storage.md",
+  "course_sha256": "1bb9f65250f263fb3609b13a9e9a3bc1cc6142335b3a89903ca560d4cf9e7fbb",
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "internal/rpc/msg/sync_msg.go"
+    ],
+    "functions": [
+      "GetSeqMessage"
+    ],
+    "input_scope": "Function source read from existing pinned local archive; factual batch/append summary supplied to generator. No repository imported as knowledge base, no resource or delivery audit.",
+    "foundations": [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/intro.pdf",
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf",
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-beyondphys-policy.pdf",
+      "https://physics.nist.gov/cuu/Units/binary.html",
+      "https://go.dev/blog/strings",
+      "https://go.dev/doc/asm",
+      "https://go.dev/ref/spec"
+    ]
+  },
+  "upstream_file_sha256": "15367aac4914fbb9804c4d1ff18cceb1e97145b7fb4bcd51370f6c720a3cb2bb",
+  "review_notes_file": "review_notes.md",
+  "handoff_file": "handoff.md",
+  "exercise_count": 16,
+  "capacity_boundary_cases": 4,
+  "complete_go_programs": 3,
+  "static_checks": {
+    "local_links_checked": 8,
+    "fences": "balanced",
+    "details": 16,
+    "tables": "consistent",
+    "private_identifier_scan": "passed",
+    "prose_arithmetic_and_paper_cache_trace": "passed",
+    "go_programs_executed": false
+  },
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_02",
+    "scope": [
+      "prerequisites independent of sibling drafts",
+      "technical and exercise review",
+      "shared navigation and learning status",
+      "local links, structure, source hashes and route coverage"
+    ],
+    "code_execution": false,
+    "site_build": false
+  }
+}

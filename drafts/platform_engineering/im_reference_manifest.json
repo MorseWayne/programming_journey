@@ -1,0 +1,93 @@
+{
+  "reviewed_on": "2026-09-23",
+  "selected_project": "openimsdk/open-im-server",
+  "repository_url": "https://github.com/openimsdk/open-im-server",
+  "tag": "v3.8.3-patch.16",
+  "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+  "release_published_at": "2026-03-19T07:24:53Z",
+  "declared_go_version": "1.25.0",
+  "source_archive_sha256": "609172ab72a162806d17886ec2e31c319e06a37e85ae780accd2049cb99014eb",
+  "popularity_source": "GitHub rendered repository pages; approximate display, not a quality score",
+  "candidate_stars_approx": {
+    "openimsdk/open-im-server": "16.7k",
+    "WuKongIM/WuKongIM": "4.9k",
+    "tinode/chat": "13.5k"
+  },
+  "review_scope": "README and deployment/dependency declarations plus selected server message, storage, push and synchronization functions; not a full audit or runtime verification",
+  "sdk_review_status": "official repository identified; compatible SDK revision and client implementation to be pinned before its chapter",
+  "code_executed": false,
+  "project_deployed": false,
+  "source_snapshot_committed": false,
+  "source_files": [
+    {
+      "path": "go.mod",
+      "sha256": "d8e5bfc44bff14cca3c2891d6f732bc1e783e3465d2dc53ca57da8cbd4ed1ae7",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/go.mod"
+    },
+    {
+      "path": "docker-compose.yml",
+      "sha256": "f8dc4b39f0ea65346e01942b1687b2f537493bb7d035cd9e74fd59e4c93f557b",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/docker-compose.yml"
+    },
+    {
+      "path": "internal/msggateway/client.go",
+      "sha256": "50609f062a3fe3cb50203a7e77248b935cfa2bfcefada1c53e026b5923b60735",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msggateway/client.go"
+    },
+    {
+      "path": "internal/msggateway/message_handler.go",
+      "sha256": "aaf8ebddfdd615d8079354a4f9e07ce0d62de56d11d2239fab8ff840228d8bf5",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msggateway/message_handler.go"
+    },
+    {
+      "path": "internal/rpc/msg/send.go",
+      "sha256": "ed3de3e29db25681d646da9c82cd156faecc3a50d331629c0343fd089de1bd2a",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go"
+    },
+    {
+      "path": "pkg/common/storage/controller/msg.go",
+      "sha256": "08959f31cf71de1ecfb19e059dd262881f4acbf3cdfa63cfaac74323200899ce",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/pkg/common/storage/controller/msg.go"
+    },
+    {
+      "path": "internal/msgtransfer/init.go",
+      "sha256": "afc4265e62174e7aa8748512fa9b455ce3f91367f77c8363805197b80cbfb196",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/init.go"
+    },
+    {
+      "path": "internal/msgtransfer/online_history_msg_handler.go",
+      "sha256": "2db73ba805bad026e741018a74b0db981509573ff50d65750245edbb40bd09aa",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_history_msg_handler.go"
+    },
+    {
+      "path": "internal/msgtransfer/online_msg_to_mongo_handler.go",
+      "sha256": "4d6759c2e5de473ada58d3c2264e1832bd24c5056cf32b4a89bea3f2a77bb796",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    },
+    {
+      "path": "pkg/common/storage/controller/msg_transfer.go",
+      "sha256": "58d9c9a132aaaf39b74eaaa2dc7e2a5d71e5b333f335bb584828f0aa2da71172",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/pkg/common/storage/controller/msg_transfer.go"
+    },
+    {
+      "path": "internal/push/push_handler.go",
+      "sha256": "0c507c86c027cc03cb0f3244baaa6e79ee04793a88d4e4e7bf5d3d39cf98e205",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/push/push_handler.go"
+    },
+    {
+      "path": "internal/rpc/msg/sync_msg.go",
+      "sha256": "15367aac4914fbb9804c4d1ff18cceb1e97145b7fb4bcd51370f6c720a3cb2bb",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/sync_msg.go"
+    },
+    {
+      "path": "internal/rpc/conversation/sync.go",
+      "sha256": "06be00fc373e2278f4cdaf77bdac6d32c784dd3e48935916ab54264c9cd956c7",
+      "url": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/conversation/sync.go"
+    }
+  ],
+  "course_files": [
+    "src/docs/platform_engineering/curriculum/im_reference.md",
+    "src/docs/platform_engineering/curriculum/learning_path.md",
+    "src/docs/platform_engineering/business_map.md"
+  ]
+}

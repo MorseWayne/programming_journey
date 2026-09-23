@@ -1,11 +1,22 @@
 ---
-title: 13 Python 工程基础：从数据、异常到资源边界
+title: D01 Python 工程基础：从数据、异常到资源边界
 icon: /assets/icons/article.svg
 order: 13
 date: 2026-09-22
 ---
 
-[阶段六导读](./stages/06_ai.md) · 前置：[契约](./01_contracts.md)、[所有权](./02_ownership.md)、[事务](./06_transactions.md)
+[D01–D04 单元导读](./stages/06_ai.md) · 前置：[契约](./01_contracts.md)、[所有权](./02_ownership.md)、[事务](./06_transactions.md)
+
+## 先修回顾
+
+本课会直接使用下列知识；不熟悉时先阅读链接中的完整讲解。
+
+| 已学内容 | 本课用它做什么 |
+|---|---|
+| [A04 函数](./beginner/04_functions.md) | 区分参数、返回与效果 |
+| [A05 集合](./beginner/05_collections.md) | 理解列表与映射 |
+| [A07 错误与 defer](./beginner/07_interfaces_errors.md) | 比较异常与资源清理 |
+| [C06 事务](./06_transactions.md) | 理解提交边界 |
 
 ## 需求场景：把资料变成一个可测试的工具
 
@@ -24,7 +35,7 @@ other["summary"] = "inspect retry"
 print(request["summary"])  # inspect retry
 ```
 
-这与第 2 课的别名分析相通。`dict.copy()` 复制外层映射，嵌套列表或字典仍可能共享。参数传递也应明确函数是否允许修改传入对象。
+这与C02 课的别名分析相通。`dict.copy()` 复制外层映射，嵌套列表或字典仍可能共享。参数传递也应明确函数是否允许修改传入对象。
 
 ### 常用结构与操作
 
@@ -73,6 +84,28 @@ except ValueError as exc:
 
 参数错误通常需要改输入；权限错误需要合法授权；依赖临时失败可能有界重试；结果未知则需要查询或稳定幂等身份。异常类型本身不能替代业务语义分析。
 
+## class、对象与方法
+
+Python 的 class 可以定义对象类型。self 代表当前对象，`__init__` 在创建对象时进行初始化。先用一个完整小例子对应 A06 的结构体与方法：
+
+```python
+class Task:
+    def __init__(self, title):
+        self.title = title
+        self.done = False
+
+    def finish(self):
+        self.done = True
+
+task = Task("学习 Python")
+task.finish()
+print(task.title, task.done)
+```
+
+保存为自己的 practice.py，学习时用 `python3 practice.py` 运行，预期输出标题与 True。Python 方法通过 self 访问对象字段；这里没有 Go 的字段静态声明形式。
+
+`@...` 写在定义前通常表示装饰器，用来对定义应用额外处理。接下来用的 dataclass 提供常见数据类方法，先理解它负责什么，再深入实现。
+
 ## 数据模型：纯函数与外部效果
 
 纯函数依据输入计算结果，便于构造小测试；文件、网络、数据库写入会改变或依赖外部环境，需要单独管理失败与生命周期。
@@ -104,10 +137,10 @@ with closing(sqlite3.connect("/tmp/arena-python-practice.db")) as db:
 ```bash
 cd labs/platform_path
 python3 -m unittest discover -s ai -v
-python3 ai/agent_lab.py retrieve --tenant game-a --query "timeout retry"
+python3 ai/agent_lab.py retrieve --tenant team-a --query "timeout retry"
 ```
 
-预期测试通过，检索来源包含 retry-v1，没有网络请求或模型调用。先阅读 Document、tokens、retrieve、answer，再读 Workflow；流程恢复会在第 15 课展开。
+预期测试通过，检索来源包含 retry-v1，没有网络请求或模型调用。先阅读 Document、tokens、retrieve、answer，再读 Workflow；流程恢复会在D03 课展开。
 
 独立练习：为 validate_summary 补齐正常、缺失、空白、错误类型四类测试。当前 Workflow 只检查 summary 是否为字符串，未严格拒绝空白字符串；把本课规则接进去是一个明确的改进练习。
 
@@ -116,7 +149,7 @@ python3 ai/agent_lab.py retrieve --tenant game-a --query "timeout retry"
 
 学习标准库实验时不需要第三方包。后续接入 SDK 时，创建独立环境并固定依赖版本，记录模型、提示与数据版本。async/await 可以组织异步等待，但不会自动使 CPU 密集计算变快，也不自动保证任务可取消和外部效果可撤销。
 
-先沿用第 3 课的方法，列出输入量、并发上限、超时、资源释放和退出路径，再选择异步实现。
+先沿用C03 课的方法，列出输入量、并发上限、超时、资源释放和退出路径，再选择异步实现。
 
 </details>
 

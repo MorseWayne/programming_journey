@@ -14,7 +14,7 @@ func TestHTTPIsolationAndDrain(t *testing.T) {
 		status      int
 	}{
 		{"", `{"user":"u1","request_id":"r1","amount":10}`, 401},
-		{"lab-a-token", `{"namespace":"game-b","user":"u1","request_id":"r1","amount":10}`, 403},
+		{"lab-a-token", `{"namespace":"team-b","user":"u1","request_id":"r1","amount":10}`, 403},
 		{"lab-a-token", `{"user":"u1","request_id":"r1","amount":10}`, 200},
 		{"lab-a-token", `{"user":"u1","request_id":"r1","amount":20}`, 409},
 		{"lab-a-token", `{"user":"u1","request_id":"r2","amount":10} {}`, 400},

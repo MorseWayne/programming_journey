@@ -1,0 +1,81 @@
+{
+  "chapter": "10.01",
+  "stage": "S0",
+  "business_scope": "local IM input requirements, local sequential record only; no network, identity verification, durable storage, device delivery or read acknowledgement",
+  "prerequisites": [
+    "01.01 toolchain basics",
+    "01.02 scalar values, string byte length, comparisons",
+    "01.03 first-pass branches, ordinary functions and multiple returns"
+  ],
+  "first_pass": [
+    "Clarifying ambiguous business requirements into explicit observable rules",
+    "Inputs, outputs, state and scope of an operation",
+    "Acceptance condition versus caller precondition; postconditions and invariants",
+    "Decision tables with mutually exclusive and exhaustive rows for the stated domain",
+    "Equivalence classes, boundary values, counterexamples and multi-error priority",
+    "Failure preserves named business values while diagnostic output is allowed",
+    "Requirement-derived expected results separated from actual execution evidence"
+  ],
+  "engineering_extension": [
+    "Requirement and case identifiers with version traceability",
+    "Parameterized limit changes do not necessarily change validator logic",
+    "IM acceptance, durability, per-device receipt and read events require distinct contracts and evidence"
+  ],
+  "canonical_local_validation": {
+    "order": [
+      "unknown session",
+      "nonpositive maxBytes",
+      "zero-byte raw body",
+      "byte length over limit"
+    ],
+    "session_kinds": [
+      "single",
+      "group"
+    ],
+    "body_transform": "none",
+    "equal_limit": "allowed",
+    "success_return": [
+      true,
+      ""
+    ],
+    "failure_codes": [
+      "BAD_KIND",
+      "BAD_LIMIT",
+      "EMPTY",
+      "TOO_LONG"
+    ]
+  },
+  "new_local_state_model": {
+    "valid_count": "0..10 inclusive",
+    "successful_update": "only when input valid and old count 0..9; count+1, lastAccepted=body, preserve draft",
+    "full_state": "10 is valid but LOCAL_FULL",
+    "invalid_initial_state": "outside 0..10 returns BAD_STATE after valid input; rejection preserves the bad value and is not repair",
+    "rejection_preserves": [
+      "draft",
+      "lastAccepted",
+      "acceptedCount"
+    ],
+    "scope": "single sequential local operation; no general concurrency/transaction guarantee"
+  },
+  "not_yet_prerequisites": [
+    "testing.T and automated test syntax",
+    "arrays/slices/maps",
+    "structs/pointers/interfaces",
+    "networking/authentication/storage",
+    "Unicode validation implementation",
+    "distributed recovery"
+  ],
+  "next_steps": [
+    "01.04–01.06 collections and object basics",
+    "10.03 local version history",
+    "10.02 test methods after its syntax prerequisites are taught"
+  ],
+  "upstream_inspection": "Only SendMsg control flow at pinned server commit; factual summary supplied to generator, repository not imported as knowledge base.",
+  "validation": "Static document checks and manual derivation only; no Go program execution, compilation, tests or site build.",
+  "shared_integration_pending": [],
+  "shared_integration": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_01"
+  }
+}

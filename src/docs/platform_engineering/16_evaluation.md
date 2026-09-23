@@ -1,11 +1,21 @@
 ---
-title: 16 评测与交付：用业务失败定义改进标准
+title: D04 评测与交付：用业务失败定义改进标准
 icon: /assets/icons/article.svg
 order: 16
 date: 2026-09-22
 ---
 
-[阶段六导读](./stages/06_ai.md) · 前置：[业务指标](./10_observability.md)、[RAG](./14_rag.md)、[工具恢复](./15_agents.md)
+[D01–D04 单元导读](./stages/06_ai.md) · 前置：[业务指标](./10_observability.md)、[RAG](./14_rag.md)、[工具恢复](./15_agents.md)
+
+## 先修回顾
+
+本课会直接使用下列知识；不熟悉时先阅读链接中的完整讲解。
+
+| 已学内容 | 本课用它做什么 |
+|---|---|
+| [C10 指标](./10_observability.md) | 定义分子、分母与样本 |
+| [D02 检索](./14_rag.md) | 区分候选与答案 |
+| [D03 工具](./15_agents.md) | 检查实际效果 |
 
 ## 需求场景：演示答对三个问题，能否交给团队使用
 
@@ -67,7 +77,7 @@ python3 ai/agent_lab.py evaluate --cases /tmp/arena-my-cases.jsonl
 每行使用 id、tenant、query、expected_sources、should_refuse。新增样本应先标注预期，再看系统输出。
 
 ```json
-{"id":"partial-evidence","tenant":"game-a","query":"timeout dragon","expected_sources":[],"should_refuse":true}
+{"id":"partial-evidence","tenant":"team-a","query":"timeout dragon","expected_sources":[],"should_refuse":true}
 ```
 
 这个例子故意超出资料能够回答的范围，当前基线可能失败。它用于揭示“有重合词就接受”的缺陷，不应为了维持 100% 而把预期改成通过。
@@ -117,4 +127,4 @@ python3 ai/agent_lab.py evaluate --cases /tmp/arena-my-cases.jsonl
 
 </details>
 
-完成[第六阶段验收](./stages/06_ai.md)后，进入[需求与架构决策](./17_architecture.md)。
+完成[D01–D04 验收](./stages/06_ai.md)后，进入[需求与架构决策](./17_architecture.md)。

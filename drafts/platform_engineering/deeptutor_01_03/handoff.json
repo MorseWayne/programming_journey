@@ -1,0 +1,27 @@
+{
+  "chapter": "01.03",
+  "business_scope": "local IM text validation and session routing only",
+  "first_pass": [
+    "if/else/else if and early return",
+    "expression switch, default, multi-value case",
+    "bounded for; break/continue/return scope",
+    "ordinary function declaration/call; value parameters",
+    "multiple returns and explicit validation contract",
+    "separating deterministic validation from effects"
+  ],
+  "second_pass": [
+    "bounded recursion and logical call frames",
+    "function values and anonymous functions",
+    "closures capture variables; factory calls have distinct parameter variables"
+  ],
+  "not_yet_prerequisites": [
+    "arrays/slices/maps/range",
+    "structs/pointers/methods/interfaces",
+    "testing.T",
+    "goroutines/context implementation",
+    "network sending or authentication",
+    "storage/delivery/read guarantees"
+  ],
+  "next_chapter": "01.04 arrays, slices and text; model multiple messages before iterating a collection",
+  "upstream_inspection": "Only SendMsg/SendMessage control structure summaries at the pinned server commit; no SDK or end-to-end verification."
+}

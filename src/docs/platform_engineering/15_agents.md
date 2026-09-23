@@ -1,17 +1,27 @@
 ---
-title: 15 工具与 Agent：把执行过程设计成可恢复的工作流
+title: D03 工具与 Agent：把执行过程设计成可恢复的工作流
 icon: /assets/icons/article.svg
 order: 15
 date: 2026-09-22
 ---
 
-[阶段六导读](./stages/06_ai.md) · 前置：[事务](./06_transactions.md)、[部分失败](./08_rpc_messages.md)、[Python](./13_python.md)、[证据检索](./14_rag.md)
+[D01–D04 单元导读](./stages/06_ai.md) · 前置：[事务](./06_transactions.md)、[部分失败](./08_rpc_messages.md)、[Python](./13_python.md)、[证据检索](./14_rag.md)
+
+## 先修回顾
+
+本课会直接使用下列知识；不熟悉时先阅读链接中的完整讲解。
+
+| 已学内容 | 本课用它做什么 |
+|---|---|
+| [C06 幂等](./06_transactions.md) | 理解稳定操作身份 |
+| [C08 提交窗口](./08_rpc_messages.md) | 分析效果与确认分离 |
+| [D01 Python](./13_python.md) | 读懂持久工作流示例 |
 
 ## 需求场景：助手已经创建工单，却再次执行
 
 助手从排障资料中发现需要跟进的问题，经用户同意创建工单。工具执行成功之后、工作流保存完成状态之前，进程崩溃。恢复后，本地只看得到“待执行”。
 
-这是第 8 课副作用与确认之间的窗口在 AI 工程中的再次出现。本课从工具、状态机和权限讲起，推导怎样恢复并限制重复效果。
+这是C08 课副作用与确认之间的窗口在 AI 工程中的再次出现。本课从工具、状态机和权限讲起，推导怎样恢复并限制重复效果。
 
 ## 基础理论：模型、工作流与执行系统
 
@@ -78,7 +88,7 @@ python3 ai/agent_lab.py workflow-demo
 python3 -m unittest discover -s ai -v
 ```
 
-预期 demo 返回 ticket_id 为 game-a/op-1，effects_after_resume 为 1。程序先在工具提交后注入异常，再创建新对象重新打开同一 SQLite 文件，恢复时复用原工具结果。
+预期 demo 返回 ticket_id 为 team-a/op-1，effects_after_resume 为 1。程序先在工具提交后注入异常，再创建新对象重新打开同一 SQLite 文件，恢复时复用原工具结果。
 
 这里用异常模拟崩溃窗口，没有杀死操作系统进程；文件重开验证持久状态的读取。它也没有模型自主规划或真实外部工单服务，不应据此声称完整 Agent 已通过生产验证。
 

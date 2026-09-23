@@ -1,15 +1,24 @@
 ---
-title: 14 RAG 基础：从检索到有证据的回答
+title: D02 RAG 基础：从检索到有证据的回答
 icon: /assets/icons/article.svg
 order: 14
 date: 2026-09-22
 ---
 
-[阶段六导读](./stages/06_ai.md) · 前置：[超时语义](./08_rpc_messages.md)、[可信身份](./12_platform_design.md)、[Python](./13_python.md)
+[D01–D04 单元导读](./stages/06_ai.md) · 前置：[超时语义](./08_rpc_messages.md)、[可信身份](./12_platform_design.md)、[Python](./13_python.md)
+
+## 先修回顾
+
+本课会直接使用下列知识；不熟悉时先阅读链接中的完整讲解。
+
+| 已学内容 | 本课用它做什么 |
+|---|---|
+| [D01 Python](./13_python.md) | 读懂词集合与字典 |
+| [C12 身份](./12_platform_design.md) | 区分请求字段与可信权限 |
 
 ## 需求场景：助手需要解释“超时后能否重新发奖”
 
-工程师需要当前平台规则，而资料里有旧版说明、不同游戏的私有文档和不完整片段。一个看起来流畅的回答，可能遗漏“必须使用原请求 ID”这个关键前提。
+工程师需要当前平台规则，而资料里有旧版说明、不同团队的私有文档和不完整片段。一个看起来流畅的回答，可能遗漏“必须使用原请求 ID”这个关键前提。
 
 本课先区分模型生成与资料检索，再从可解释的基线逐步理解 RAG。目标是能解释文档怎样变成候选证据，为什么相似不等于正确，以及何时应该承认证据不足。
 
@@ -46,7 +55,9 @@ RAG 在生成之前检索相关资料，并将资料提供给模型作为上下�
 
 ### embedding 与相似度
 
-embedding 将文本映射成数值向量，用距离或相似度表达模型学到的关联。余弦相似度比较方向，可以写为点积除以两个向量长度之积。
+embedding 将文本映射成数值向量，即一组按固定顺序排列的数，例如 `(0.8,0.6)`。检索用距离或相似度表达模型学到的关联。
+
+点积是对应分量相乘后相加；几何长度是各分量平方相加再开平方。因此 `(0.8,0.6)` 有两个分量，其几何长度为 `sqrt(0.8²+0.6²)=1`。余弦相似度用点积除以两个向量几何长度之积，比较方向。零向量没有可按此式计算的有效方向，需要另行处理。
 
 教学向量 `(1,0)` 与 `(0.8,0.6)` 的长度均为 1，相似度为 0.8；与 `(0,1)` 的相似度为 0。这个计算只解释几何关系，不能把某个维度直接理解为“真实性”或“权限”。
 
@@ -68,15 +79,15 @@ chunk 是可单独检索的片段。按固定长度切分可能把规则和例�
 
 如果无权访问的文档已经进入模型上下文，再让模型“不要透露”并不能作为权限边界。执行系统应在检索或取文档阶段落实授权，并在展示和工具操作时继续检查。
 
-课程先按 tenant 过滤再排序。tenant 在命令行演示中由实验者提供；面向真实用户时必须来自第 12 课讨论的可信身份，不能允许用户任意改参数越权。
+课程先按 tenant 过滤再排序。tenant 在命令行演示中由实验者提供；面向真实用户时必须来自C12 课讨论的可信身份，不能允许用户任意改参数越权。
 
 ## 实验一：相关、无权与合法跨租户查询
 
 ```bash
 cd labs/platform_path
-python3 ai/agent_lab.py retrieve --tenant game-a --query "old owner token"
-python3 ai/agent_lab.py retrieve --tenant game-a --query "private billing escrow"
-python3 ai/agent_lab.py retrieve --tenant game-b --query "private billing escrow"
+python3 ai/agent_lab.py retrieve --tenant team-a --query "old owner token"
+python3 ai/agent_lab.py retrieve --tenant team-a --query "private billing escrow"
+python3 ai/agent_lab.py retrieve --tenant team-b --query "private billing escrow"
 ```
 
 第一条应命中 fencing-v1，第二条拒绝，第三条找到 billing-v1。结果状态 evidence_found 仅表示找到了候选证据，当前程序没有生成自然语言答案。
@@ -84,7 +95,7 @@ python3 ai/agent_lab.py retrieve --tenant game-b --query "private billing escrow
 ## 实验二：主动制造“相关但不足”
 
 ```bash
-python3 ai/agent_lab.py retrieve --tenant game-a --query "timeout dragon"
+python3 ai/agent_lab.py retrieve --tenant team-a --query "timeout dragon"
 ```
 
 基线可能因为 timeout 命中资料，但资料无法解释 dragon。这个反例说明“至少重合一个词”不能判断材料是否覆盖完整问题。
@@ -101,7 +112,7 @@ python3 ai/agent_lab.py retrieve --tenant game-a --query "timeout dragon"
 
 逐条核对答案断言：哪段材料支持它？材料是否包含所需前提？引用是否真的对应这句话？一句话附了引用，并不意味着引用支持其中所有内容。
 
-资料中的“忽略规则”“创建工单”等文本属于待处理数据，不应因此获得执行权限。模型建议调用工具后仍需要独立的执行边界，第 15 课展开。
+资料中的“忽略规则”“创建工单”等文本属于待处理数据，不应因此获得执行权限。模型建议调用工具后仍需要独立的执行边界，D03 课展开。
 
 <details>
 <summary>业务深化：版本与引用失效</summary>

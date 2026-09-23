@@ -1,0 +1,63 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_9de60bf128",
+  "page_id": "pg_e52528f488",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "b053d71769eb56483706612f8146bb6595705cfacaab5cf903e532ad11a0724a",
+  "original_sha256": "05826f1fad506b2ba1452b067c6390ab65c57930e8f30cc0c1ac7a66a2560300",
+  "reviewed_sha256": "fc4b5ef9e5c667dd688b7f8ecc1498cab9cfa78ab97089b2bddf7e82a2fc614a",
+  "original_characters": 42530,
+  "reviewed_characters": 22236,
+  "reviewed_chinese_characters": 10494,
+  "code_execution": false,
+  "git_exercise_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent configuration unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/03_git_state.md",
+  "course_sha256": "7840c2ba44fbf92291b0ea70a4a1f434369d26962f42d971f25f8dc017300bb4",
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "input_scope": "Version identifier from reviewed course map only; no upstream source imported or business changes audited.",
+    "git_sources": [
+      "https://git-scm.com/book/en/v2",
+      "https://git-scm.com/docs/git-restore",
+      "https://git-scm.com/docs/git-reset",
+      "https://git-scm.com/docs/git-revert"
+    ]
+  },
+  "review_notes_file": "review_notes.md",
+  "handoff_file": "handoff.md",
+  "exercise_count": 15,
+  "business_boundary_cases": 8,
+  "static_checks": {
+    "local_links_checked": 8,
+    "fences": "balanced",
+    "details": 15,
+    "tables": "consistent",
+    "source_hashes": "recorded",
+    "private_identifier_scan": "passed"
+  },
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_01",
+    "scope": [
+      "prerequisites and shared IM rules",
+      "technical and exercise review",
+      "shared navigation and learning status",
+      "local links, document structure and source hashes"
+    ],
+    "code_execution": false,
+    "site_build": false
+  }
+}

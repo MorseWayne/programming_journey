@@ -1,0 +1,89 @@
+{
+  "code": "10.03",
+  "title": "Git 状态与版本记录：保存和解释一次 IM 规则修改",
+  "summary": "先以纯文本IM规则在个人目录学习工作区、暂存区、提交和差异，再以第二遍阅读理解分支、恢复、远端与共享历史。",
+  "previous": "01.01 文件编辑与终端",
+  "output_dir": "/tmp/deeptutor-engineering-chapter-10-03",
+  "chapter_id": "ch_engineering_im_git_state",
+  "sections": [
+    {
+      "title": "从一次消息规则修改理解版本管理",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：先列需求v1单条非空UTF8文本最大6字节、v2改12字节、v3补充空格仍按原字节计数。关注为什么改、改了什么、能否找到旧版。解释文件保存不同于提交，Git是工具、仓库是本地历史存储、GitHub是托管平台。工作区、暂存区(index)、提交三者是同一文件的不同版本，不是文件被物理搬走。提交是被跟踪文件树快照加作者/时间/说明/父提交等；快照是逻辑模型，不能说每次复制完整目录，也不把未跟踪文件自动提交。先给W/I/H三列快照表和改文件→add→commit的流向图，C1/C2是示意别名非真实hash。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "建立个人练习仓库与第一份规则",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：完整终端起步：从一个不属于已有仓库的个人练习父目录，mkdir im-git-practice;cd im-git-practice;pwd;git --version;git init -b main;git config --local user.name \"IM Learner\";git config --local user.email \"learner@example.invalid\"。每条命令解释，不用shell&&或重定向写文件，要求编辑器创建message-rules.txt逐行给内容。说明.git隐藏元数据目录不可当业务文件改。git status --short未跟踪??、git add -- message-rules.txt暂存A空格、git diff --cached -- message-rules.txt、git commit -m \"docs: record initial IM text rules\"、git status；初次HEAD尚无提交，避免在初次提交前restore --staged默认HEAD教程。默认分支名不假设master。无Git时指官方安装文档，不无授权装软件。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "暂存区、差异与一次有意的提交",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：v1最大6字节改v2最大12字节，先git diff -- file解释工作区vs索引；git add后再改v3补充空格规则，产生MM，准确解释X索引对HEAD、Y工作区对索引（普通非合并状态）。git diff --cached看HEAD→索引，git diff看索引→工作区，git diff HEAD看HEAD→工作区（未跟踪不显示），用状态表追踪三个版本。此时commit只存v2，工作区保留v3未暂存，不能说commit包含所有保存文件。diff -/+/上下文和hunk头含义，不把差异当业务正确证明；git add可重新暂存当前文件，禁止把add等同选择文件未来全部修改。",
+      "target_words": 2200,
+      "role": "core"
+    },
+    {
+      "title": "历史、提交身份与可解释的修改",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：承上把v3作为另一次提交，git log --oneline --decorate --graph、git log -3、git show HEAD -- message-rules.txt、git show HEAD:message-rules.txt、git diff HEAD~1 HEAD -- file。先解释HEAD通常指向当前分支、分支指向提交、HEAD~1父提交（首提交没有父），短hash只是显示缩写不能假设固定值或固定40所有仓库。历史图parent方向与时间排布分清，作者配置不是身份认证或权限。提交信息动机/行为变化/证据，比较bad update与good消息规则变化，Git不证明UTF8规则或业务正确。git status干净不等于远端同步、已测试、已部署。",
+      "target_words": 1700,
+      "role": "core"
+    },
+    {
+      "title": "第二遍阅读：分支、合并和冲突",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：本地clean先修，git switch -c clarify-space建立分支，编辑文件补充空格规则、add/commit、git switch main、git merge --ff-only clarify-space，解释快进只移动main而不造合并提交的条件。C1/C2为画图占位不可复制为命令。分叉图同一行6→12和6→24解释三方合并基准、冲突标记不是代码；处理步骤先status/diff、编辑保留经需求确认结果、去标记、add标记已解决、commit。冲突解决不是选最长/最新自动正确，merge --abort只在正进行合并且起点干净教学状态下恢复，不能声称恢复所有改动。switch不会自动清空未提交修改，可能携带或因覆盖而拒绝；本课要求clean防混淆。完整merge/rebase策略留10.06。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "第二遍阅读：恢复文件与撤销提交",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：核心区分restore、reset、revert，给source/destination/ref/history/工作区影响表。假设已有C1且H=6,I=12,W=24：git restore --staged -- file从HEAD到index仅取消暂存保留W24；git restore -- file从index到工作区因此W12；不能说默认restore总从HEAD恢复。git restore --source=HEAD -- file显式从HEAD恢复工作区覆盖未提交内容，先检查保留必要副本。git reset --soft HEAD~1移动分支不改I/W；--mixed默认会重置索引保留W；--hard会覆盖跟踪文件并可能删除阻挡写入的未跟踪文件/目录，不提供盲复制默认恢复方案。已共享提交通常git revert --no-edit HEAD创建反向提交保留历史；前提clean且普通单父无后续依赖演示，revert也可能冲突，不等同把数据库/线上业务回滚。reflog记录本地引用移动有限保留，不是任意文件备份，未add/commit的内容和从未跟踪文件不能承诺恢复。",
+      "target_words": 2200,
+      "role": "core"
+    },
+    {
+      "title": "第二遍阅读：远端、fetch、pull与push",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：首先本地仓库无需GitHub账户。解释origin是远端地址别名、origin/main是本地保存的远端跟踪引用并非实时服务器分支；画本地main、本地origin/main、服务器main三份位置；clone获取仓库及初始配置但不把全部远端分支变成本地活动分支。远端用概念模拟无需真实URL/token；给git remote -v与git fetch origin（已配置有权访问后可执行）、git log --oneline --graph --decorate --all、git diff main origin/main、git merge --ff-only origin/main、git pull --ff-only、git push origin main作用表。fetch通常只更新对象和相关远端跟踪引用、不把改动合入当前工作区；pull=fetch后按参数/配置集成，不固定说必merge；push传已提交对象更新远端引用，不上传未提交文件，不等同服务部署。push非快进拒绝先获取历史、协作确认，不建议force。远端更新同样不保管没提交本地内容。",
+      "target_words": 1800,
+      "role": "core"
+    },
+    {
+      "title": "综合练习、边界复盘与OpenIM阅读",
+      "focus": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。 本节范围：设计至少12道分层题和答案反馈：预测W/I/H、MM后提交结果、两个diff、首次commit前HEAD不存在、未跟踪不在diff、clean不等于已推送、作者名不是认证、忽略已跟踪文件、restore不同源、共享revert、fetch后main不动、分叉拒绝ffonly、冲突业务决策。解释.gitignore用忽略个人notes.local.txt例子，规则影响未跟踪匹配文件不自动移除已跟踪文件；不要真实token。综合产物3个可解释提交+一页规则变更说明+状态表，不要求Go测试代码，手工需求边界表如空串/你好/四字中文/空格。OpenIM固定公开版本v3.8.3-patch.16提交f6411a8a1a31d3df36f4c2b3ad28481a94141e1f，说明tag和commit用于定位同一源码，公开网页可阅读版本和文件差异，本章未审计实际提交业务变化不编造，读源码不是Git入门前提；后续10.06深化评审、合并和rebase。",
+      "target_words": 2000,
+      "role": "core"
+    }
+  ],
+  "learning_objectives": [
+    "从一次消息规则修改理解版本管理",
+    "建立个人练习仓库与第一份规则",
+    "暂存区、差异与一次有意的提交",
+    "历史、提交身份与可解释的修改",
+    "第二遍阅读：分支、合并和冲突",
+    "第二遍阅读：恢复文件与撤销提交",
+    "第二遍阅读：远端、fetch、pull与push",
+    "综合练习、边界复盘与OpenIM阅读"
+  ],
+  "request": {
+    "user_intent": "用中文写面向Go初学者的完整教材10.03《Git状态与版本记录：保存和解释一次IM规则修改》。唯一先修是会编辑保存纯文本、打开终端、cd进入目录；不要求Go函数、测试、团队协作基础。每个新术语先定义，再说明需求、推导机制、完整流程、状态表、反例和练习反馈。以虚构的im-git-practice独立个人练习目录和message-rules.txt演进为主线。练习命令全部是给学习者将来执行的示例和预期，明确未在编写时运行；不要求真实公司仓库、账号、邮箱、凭据或远端，不把个人工作目录混成课程仓库。不执行Go程序。Git命令必须注明在哪个目录、前置状态、会修改什么。只讲本节范围，避免重复定义。基础层只用本地Git；远端和冲突放第二遍。临时身份user-a和learner@example.invalid只用仓库内git config --local，不修改全局设置。Git需2.28+以使用init -b、switch、restore；git --version本章起步自查。所有业务规则是教学设定，不声称来自OpenIM。\n章名：10.03 Git状态与版本记录。只生成本章。\n1. 从一次消息规则修改理解版本管理：先列需求v1单条非空UTF8文本最大6字节、v2改12字节、v3补充空格仍按原字节计数。关注为什么改、改了什么、能否找到旧版。解释文件保存不同于提交，Git是工具、仓库是本地历史存储、GitHub是托管平台。工作区、暂存区(index)、提交三者是同一文件的不同版本，不是文件被物理搬走。提交是被跟踪文件树快照加作者/时间/说明/父提交等；快照是逻辑模型，不能说每次复制完整目录，也不把未跟踪文件自动提交。先给W/I/H三列快照表和改文件→add→commit的流向图，C1/C2是示意别名非真实hash。\n2. 建立个人练习仓库与第一份规则：完整终端起步：从一个不属于已有仓库的个人练习父目录，mkdir im-git-practice;cd im-git-practice;pwd;git --version;git init -b main;git config --local user.name \"IM Learner\";git config --local user.email \"learner@example.invalid\"。每条命令解释，不用shell&&或重定向写文件，要求编辑器创建message-rules.txt逐行给内容。说明.git隐藏元数据目录不可当业务文件改。git status --short未跟踪??、git add -- message-rules.txt暂存A空格、git diff --cached -- message-rules.txt、git commit -m \"docs: record initial IM text rules\"、git status；初次HEAD尚无提交，避免在初次提交前restore --staged默认HEAD教程。默认分支名不假设master。无Git时指官方安装文档，不无授权装软件。\n3. 暂存区、差异与一次有意的提交：v1最大6字节改v2最大12字节，先git diff -- file解释工作区vs索引；git add后再改v3补充空格规则，产生MM，准确解释X索引对HEAD、Y工作区对索引（普通非合并状态）。git diff --cached看HEAD→索引，git diff看索引→工作区，git diff HEAD看HEAD→工作区（未跟踪不显示），用状态表追踪三个版本。此时commit只存v2，工作区保留v3未暂存，不能说commit包含所有保存文件。diff -/+/上下文和hunk头含义，不把差异当业务正确证明；git add可重新暂存当前文件，禁止把add等同选择文件未来全部修改。\n4. 历史、提交身份与可解释的修改：承上把v3作为另一次提交，git log --oneline --decorate --graph、git log -3、git show HEAD -- message-rules.txt、git show HEAD:message-rules.txt、git diff HEAD~1 HEAD -- file。先解释HEAD通常指向当前分支、分支指向提交、HEAD~1父提交（首提交没有父），短hash只是显示缩写不能假设固定值或固定40所有仓库。历史图parent方向与时间排布分清，作者配置不是身份认证或权限。提交信息动机/行为变化/证据，比较bad update与good消息规则变化，Git不证明UTF8规则或业务正确。git status干净不等于远端同步、已测试、已部署。\n5. 第二遍阅读：分支、合并和冲突：本地clean先修，git switch -c clarify-space建立分支，编辑文件补充空格规则、add/commit、git switch main、git merge --ff-only clarify-space，解释快进只移动main而不造合并提交的条件。C1/C2为画图占位不可复制为命令。分叉图同一行6→12和6→24解释三方合并基准、冲突标记不是代码；处理步骤先status/diff、编辑保留经需求确认结果、去标记、add标记已解决、commit。冲突解决不是选最长/最新自动正确，merge --abort只在正进行合并且起点干净教学状态下恢复，不能声称恢复所有改动。switch不会自动清空未提交修改，可能携带或因覆盖而拒绝；本课要求clean防混淆。完整merge/rebase策略留10.06。\n6. 第二遍阅读：恢复文件与撤销提交：核心区分restore、reset、revert，给source/destination/ref/history/工作区影响表。假设已有C1且H=6,I=12,W=24：git restore --staged -- file从HEAD到index仅取消暂存保留W24；git restore -- file从index到工作区因此W12；不能说默认restore总从HEAD恢复。git restore --source=HEAD -- file显式从HEAD恢复工作区覆盖未提交内容，先检查保留必要副本。git reset --soft HEAD~1移动分支不改I/W；--mixed默认会重置索引保留W；--hard会覆盖跟踪文件并可能删除阻挡写入的未跟踪文件/目录，不提供盲复制默认恢复方案。已共享提交通常git revert --no-edit HEAD创建反向提交保留历史；前提clean且普通单父无后续依赖演示，revert也可能冲突，不等同把数据库/线上业务回滚。reflog记录本地引用移动有限保留，不是任意文件备份，未add/commit的内容和从未跟踪文件不能承诺恢复。\n7. 第二遍阅读：远端、fetch、pull与push：首先本地仓库无需GitHub账户。解释origin是远端地址别名、origin/main是本地保存的远端跟踪引用并非实时服务器分支；画本地main、本地origin/main、服务器main三份位置；clone获取仓库及初始配置但不把全部远端分支变成本地活动分支。远端用概念模拟无需真实URL/token；给git remote -v与git fetch origin（已配置有权访问后可执行）、git log --oneline --graph --decorate --all、git diff main origin/main、git merge --ff-only origin/main、git pull --ff-only、git push origin main作用表。fetch通常只更新对象和相关远端跟踪引用、不把改动合入当前工作区；pull=fetch后按参数/配置集成，不固定说必merge；push传已提交对象更新远端引用，不上传未提交文件，不等同服务部署。push非快进拒绝先获取历史、协作确认，不建议force。远端更新同样不保管没提交本地内容。\n8. 综合练习、边界复盘与OpenIM阅读：设计至少12道分层题和答案反馈：预测W/I/H、MM后提交结果、两个diff、首次commit前HEAD不存在、未跟踪不在diff、clean不等于已推送、作者名不是认证、忽略已跟踪文件、restore不同源、共享revert、fetch后main不动、分叉拒绝ffonly、冲突业务决策。解释.gitignore用忽略个人notes.local.txt例子，规则影响未跟踪匹配文件不自动移除已跟踪文件；不要真实token。综合产物3个可解释提交+一页规则变更说明+状态表，不要求Go测试代码，手工需求边界表如空串/你好/四字中文/空格。OpenIM固定公开版本v3.8.3-patch.16提交f6411a8a1a31d3df36f4c2b3ad28481a94141e1f，说明tag和commit用于定位同一源码，公开网页可阅读版本和文件差异，本章未审计实际提交业务变化不编造，读源码不是Git入门前提；后续10.06深化评审、合并和rebase。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  },
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "input_scope": "Version identifier from reviewed course map only; no upstream source imported or business changes audited.",
+    "git_sources": [
+      "https://git-scm.com/book/en/v2",
+      "https://git-scm.com/docs/git-restore",
+      "https://git-scm.com/docs/git-reset",
+      "https://git-scm.com/docs/git-revert"
+    ]
+  }
+}

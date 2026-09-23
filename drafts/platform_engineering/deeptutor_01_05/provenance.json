@@ -1,0 +1,69 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_de4bd95084",
+  "page_id": "pg_3412c125d8",
+  "page_status": "ready",
+  "blocks_ready": 9,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "9577bccc0aa2004e56c8edfc79145d76260d266b0edae25907e74565ea63b0bb",
+  "original_sha256": "0157e1f31c20e1bf73003009978c5f9b514dd9bbfb7c31e2f44b691d6f6cdc53",
+  "reviewed_sha256": "ed675f170062a3c654f7a0d3ddcef07e033100cf48460cb8f13e89733a46b869",
+  "original_characters": 51315,
+  "reviewed_characters": 36806,
+  "reviewed_chinese_characters": 12689,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent configuration unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/05_maps_structs_pointers.md",
+  "course_sha256": "809e8956f52fd0a9671e1e672086b62871ba12eb16a047e1168698657fa6ebb0",
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "internal/rpc/msg/sync_msg.go"
+    ],
+    "functions": [
+      "GetSeqMessage"
+    ],
+    "input_scope": "Only inspected function summaries supplied; not a repository knowledge-base import."
+  },
+  "source_file_sha256": {
+    "internal/rpc/msg/sync_msg.go": "15367aac4914fbb9804c4d1ff18cceb1e97145b7fb4bcd51370f6c720a3cb2bb"
+  },
+  "chapter_sections": 9,
+  "layered_exercises": 16,
+  "integrated_boundary_cases": 18,
+  "static_checks": {
+    "errors": [],
+    "code_blocks": 59,
+    "go_blocks": 42,
+    "complete_programs_not_executed": 23,
+    "folded_answers": 16,
+    "markdown_links_checked": 12,
+    "local_links": "passed",
+    "table_columns": "passed",
+    "hashes": "passed",
+    "privacy": "passed",
+    "reviewed_course_body_consistency": "passed",
+    "global_sidebar_check": "coordinator pending"
+  },
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "parallel_batch_02",
+    "scope": [
+      "prerequisites independent of sibling drafts",
+      "technical and exercise review",
+      "shared navigation and learning status",
+      "local links, structure, source hashes and route coverage"
+    ],
+    "code_execution": false,
+    "site_build": false
+  }
+}

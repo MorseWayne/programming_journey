@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func request(id string) RewardRequest { return RewardRequest{"game-a", "u1", id, 10} }
+func request(id string) RewardRequest { return RewardRequest{"team-a", "u1", id, 10} }
 func TestContract(t *testing.T) {
 	for _, r := range []RewardRequest{{}, {"a", "u", "r", 0}, {"a", "u", "r", -1}} {
 		if !errors.Is(r.Validate(), ErrInvalid) {
@@ -47,7 +47,7 @@ func TestConcurrentDuplicate(t *testing.T) {
 		}()
 	}
 	wg.Wait()
-	if l.Balance("game-a", "u1") != 10 || len(l.Pending()) != 1 {
+	if l.Balance("team-a", "u1") != 10 || len(l.Pending()) != 1 {
 		t.Fatal("duplicate effect")
 	}
 }
@@ -60,11 +60,11 @@ func TestConflictAndTenant(t *testing.T) {
 		t.Fatal(err)
 	}
 	r = request("same")
-	r.Namespace = "game-b"
+	r.Namespace = "team-b"
 	if _, err := l.Grant(r); err != nil {
 		t.Fatal(err)
 	}
-	if l.Balance("game-b", "u1") != 10 {
+	if l.Balance("team-b", "u1") != 10 {
 		t.Fatal("tenant collision")
 	}
 }
@@ -73,7 +73,7 @@ func TestReceiptIsOriginalResult(t *testing.T) {
 	_, _ = l.Grant(request("r1"))
 	_, _ = l.Grant(request("r2"))
 	r, _ := l.Grant(request("r1"))
-	if r.Balance != 10 || !r.Duplicate || l.Balance("game-a", "u1") != 20 {
+	if r.Balance != 10 || !r.Duplicate || l.Balance("team-a", "u1") != 20 {
 		t.Fatal(r)
 	}
 }

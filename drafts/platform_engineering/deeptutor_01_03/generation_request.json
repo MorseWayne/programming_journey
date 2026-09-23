@@ -1,0 +1,87 @@
+{
+  "code": "01.03",
+  "title": "控制流与函数：把 IM 消息规则写清楚",
+  "summary": "从本地消息校验按顺序学习if、switch、有限for与普通函数；再解释多返回值和副作用，第二遍进入递归与闭包。通过分层练习和已核对OpenIM入口理解控制流，暂不发送网络消息。",
+  "previous": "01.02 类型与数据表示",
+  "output_dir": "/tmp/deeptutor-go-chapter-01-03",
+  "chapter_id": "ch_go_im_control_functions",
+  "sections": [
+    {
+      "title": "从消息规则到分支与提前返回",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：从空文本、最大字节上限和未知会话类型的需求表开始，解释顺序执行与控制流。复习if后深入if/else/else if、独立if和互斥分支差别，短路和检查顺序，花括号和作用域。用body:= \"你好\"、maxBytes:=6展示len=6和边界合法，maxBytes<=0拒绝配置，空文本拒绝；规则是原始字节非空，不自动去空格。区分return结束当前函数与仅打印错误。if初始化短声明可放深化，说明声明范围及遮蔽风险，不预设函数模型。",
+      "target_words": 1600,
+      "role": "core"
+    },
+    {
+      "title": "用switch表达会话分流",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：解释switch表达式、case、default，普通switch匹配后不会自动执行下一case；无表达式switch等价于true、从上往下第一匹配。以single/group/notification本地字符串为教学分类，明确它不等同上游SessionType编码。对照独立if重复动作，解释不可在switch中把break当成跳出外层for；该细节等下一节回访。不要使用fallthrough实现业务路由，可说明若见到需另读语义。完整程序只输出计划路径。",
+      "target_words": 1500,
+      "role": "core"
+    },
+    {
+      "title": "for循环与有限重复",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：先讲for初始化;条件;后置、计数变量、i++作为语句、每轮条件检查，展示三次本地消息校验或三次模拟处理（没有真实发送重试）。逐行表包含i初值、条件、循环体、后置及退出值。讲条件形式for和break/continue，continue仍进入三段式for后置，break只退出最近for/switch/select。解释<与<=、没推进变量、边界0和负数导致的问题；两层循环只用小整数可用于两设备三次模拟，避免数组/range前置。循环停止性要说清，每轮怎样逼近终点；不引入真实网络重试。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "函数、参数、返回与调用过程",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：从重复文本校验提取普通命名函数，逐符号讲func、函数名、参数名字与类型、返回类型、函数体、return。函数声明在包级，不能在main内直接声明命名函数。区分定义与调用、实参与形参；值传递先用int和string，不能将其扩展为所有可变对象完全独立。完整程序逐次调用len规则，跟踪main→helper→return，解释局部名字相同可属于不同调用。调用栈只作逻辑模型，不断言每个局部变量总在物理栈中或返回就立即回收。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "多返回值、校验契约与副作用",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：定义validateText(body string,maxBytes int)(bool,string)，先检查maxBytes>0，再检查非空与len<=maxBytes，通过返回true和空reason；拒绝返回false和可读原因。解释接收多个结果、顺序一致、所有返回路径匹配签名。纯校验不输出不发送，main决定显示；副作用用终端打印或修改外部计数解释，不用指针。解释return在helper只结束helper，main仍需根据ok拒绝再return。先从失败规则写手工用例表；正式testing放后续，不要求理解testing.T。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "第二遍阅读：递归与调用栈",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：只在普通函数掌握后学习递归。用有界计数countSteps(remaining int) int展示base remaining==0返回0，否则1+countSteps(remaining-1)。main先约束输入0到10，逐层展开3/2/1/0与返回0/1/2/3。说明这个人为小模型只为观察调用，不是高效批处理或真实消息重试实现。每层参数与返回等待不同，停止条件与严格减小量，负数无检查可能无穷递归，过深递归风险。比较同一计数的循环写法；不依赖数组树或真实网络。",
+      "target_words": 1500,
+      "role": "core"
+    },
+    {
+      "title": "第二遍阅读：函数值与闭包",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：从变量保存函数、函数类型func(string) bool、调用时参数结果匹配开始，再解释匿名函数与返回函数的工厂。makeLengthRule(limit int) func(string) bool返回使用limit的闭包；limit<=0应产生永不通过的规则或在示例说明有效输入契约，不能声称closure自动校验配置。先写匿名函数调用，再看闭包。闭包捕获变量不是自动拍照：limit:=6; allow:=func(text string)bool{return len(text)>0 && len(text)<=limit};limit=5会改变对你好的判断。不同makeLengthRule调用拥有各自参数变量。只讨论顺序执行；不引入goroutine/for-range版本陷阱。函数值除了和nil比较，不应把两个函数做==，不要求现在深入。",
+      "target_words": 1900,
+      "role": "core"
+    },
+    {
+      "title": "综合校验、OpenIM对照与分层练习",
+      "focus": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。 本节范围：提供完整main和两个普通函数：routeSession(kind string) string用switch返回本地标签未知空串；validateText(body string,maxBytes int)(bool,string)表达规则。main从固定kind、body、maxBytes开始，先拒绝未知会话再处理校验，最后只打印本地校验通过/待发送。可用已学Atoi把上限文本解析，先err后结果；不写真正网络。逐步追踪六种边界：single你好6合法、single你好5超限、空文本、上限0、未知kind、含空格body按本题规则可合法。至少10道由预测到独立变式的练习带提示反馈，涵盖if、switch、循环边界/continue、定义调用、返回传播、参数复制、递归边界、闭包变化、业务保证。核对源码事实：OpenIM v3.8.3-patch.16 commit f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/send.go 的SendMsg首先检查req.MsgData != nil，然后依据SessionType用switch分到single/notification/group，default返回错误；internal/msggateway/message_handler.go的SendMessage按解码、校验、RPC调用、编码逐段检查err并返回。这是已读函数的摘要，不是全项目审计。只用控制流思想对照，protobuf、指针、RPC在后续章节说明。教学字符串分类与上游常量编码不同，maxBytes规则是教学设定，不声称来自OpenIM。本次不给初学者完整复杂上游函数。源码链接固定提交，来源事实和简化清楚分开。",
+      "target_words": 2000,
+      "role": "core"
+    }
+  ],
+  "learning_objectives": [
+    "从消息规则到分支与提前返回",
+    "用switch表达会话分流",
+    "for循环与有限重复",
+    "函数、参数、返回与调用过程",
+    "多返回值、校验契约与副作用",
+    "第二遍阅读：递归与调用栈",
+    "第二遍阅读：函数值与闭包",
+    "综合校验、OpenIM对照与分层练习"
+  ],
+  "request": {
+    "user_intent": "用中文为Go零基础学习者写完整教材。本章01.03承接01.01与01.02：读者已会文件/目录/main/import/fmt、变量/类型/常量、整数与浮点边界、字符串/len字节数、比较/逻辑/最小if、Atoi双返回值与nil检查、main里的return。尚未学循环、自定义函数、集合、结构体、指针、方法、接口、并发、网络或数据库。新符号在使用前解释；用定义、动机、推演、例子、反例和练习反馈交替组织。完整程序包含package/import/main；片段写清位置和imports；错误例另列。不要依赖切片/map/range、struct、goroutine或框架。输出标为预期，不运行代码或搭建系统。使用虚构IM用户u-a/u-b、文本消息和会话类型single/group；不含真实组织背景。此章只做本地校验与路径选择，不发送网络消息；校验通过不可写成对端已收到。去掉重复标题与重复定义。本节只展开自己的范围，已经讲过的定义简短回顾。\n章名：01.03 控制流与函数：把 IM 消息规则写清楚。只生成本章。\n固定源码核对摘要：OpenIM固定提交f6411a8a1a31d3df36f4c2b3ad28481a94141e1f中，SendMsg先检查MsgData非nil，再按SessionType分流，未知类型返回错误；网关SendMessage对解码、校验、RPC调用分别检查错误。本章仅借鉴控制流组织，教学maxBytes与字符串single/group为课程设定。\n每节内容：\n1. 从消息规则到分支与提前返回：从空文本、最大字节上限和未知会话类型的需求表开始，解释顺序执行与控制流。复习if后深入if/else/else if、独立if和互斥分支差别，短路和检查顺序，花括号和作用域。用body:= \"你好\"、maxBytes:=6展示len=6和边界合法，maxBytes<=0拒绝配置，空文本拒绝；规则是原始字节非空，不自动去空格。区分return结束当前函数与仅打印错误。if初始化短声明可放深化，说明声明范围及遮蔽风险，不预设函数模型。\n2. 用switch表达会话分流：解释switch表达式、case、default，普通switch匹配后不会自动执行下一case；无表达式switch等价于true、从上往下第一匹配。以single/group/notification本地字符串为教学分类，明确它不等同上游SessionType编码。对照独立if重复动作，解释不可在switch中把break当成跳出外层for；该细节等下一节回访。不要使用fallthrough实现业务路由，可说明若见到需另读语义。完整程序只输出计划路径。\n3. for循环与有限重复：先讲for初始化;条件;后置、计数变量、i++作为语句、每轮条件检查，展示三次本地消息校验或三次模拟处理（没有真实发送重试）。逐行表包含i初值、条件、循环体、后置及退出值。讲条件形式for和break/continue，continue仍进入三段式for后置，break只退出最近for/switch/select。解释<与<=、没推进变量、边界0和负数导致的问题；两层循环只用小整数可用于两设备三次模拟，避免数组/range前置。循环停止性要说清，每轮怎样逼近终点；不引入真实网络重试。\n4. 函数、参数、返回与调用过程：从重复文本校验提取普通命名函数，逐符号讲func、函数名、参数名字与类型、返回类型、函数体、return。函数声明在包级，不能在main内直接声明命名函数。区分定义与调用、实参与形参；值传递先用int和string，不能将其扩展为所有可变对象完全独立。完整程序逐次调用len规则，跟踪main→helper→return，解释局部名字相同可属于不同调用。调用栈只作逻辑模型，不断言每个局部变量总在物理栈中或返回就立即回收。\n5. 多返回值、校验契约与副作用：定义validateText(body string,maxBytes int)(bool,string)，先检查maxBytes>0，再检查非空与len<=maxBytes，通过返回true和空reason；拒绝返回false和可读原因。解释接收多个结果、顺序一致、所有返回路径匹配签名。纯校验不输出不发送，main决定显示；副作用用终端打印或修改外部计数解释，不用指针。解释return在helper只结束helper，main仍需根据ok拒绝再return。先从失败规则写手工用例表；正式testing放后续，不要求理解testing.T。\n6. 第二遍阅读：递归与调用栈：只在普通函数掌握后学习递归。用有界计数countSteps(remaining int) int展示base remaining==0返回0，否则1+countSteps(remaining-1)。main先约束输入0到10，逐层展开3/2/1/0与返回0/1/2/3。说明这个人为小模型只为观察调用，不是高效批处理或真实消息重试实现。每层参数与返回等待不同，停止条件与严格减小量，负数无检查可能无穷递归，过深递归风险。比较同一计数的循环写法；不依赖数组树或真实网络。\n7. 第二遍阅读：函数值与闭包：从变量保存函数、函数类型func(string) bool、调用时参数结果匹配开始，再解释匿名函数与返回函数的工厂。makeLengthRule(limit int) func(string) bool返回使用limit的闭包；limit<=0应产生永不通过的规则或在示例说明有效输入契约，不能声称closure自动校验配置。先写匿名函数调用，再看闭包。闭包捕获变量不是自动拍照：limit:=6; allow:=func(text string)bool{return len(text)>0 && len(text)<=limit};limit=5会改变对你好的判断。不同makeLengthRule调用拥有各自参数变量。只讨论顺序执行；不引入goroutine/for-range版本陷阱。函数值除了和nil比较，不应把两个函数做==，不要求现在深入。\n8. 综合校验、OpenIM对照与分层练习：提供完整main和两个普通函数：routeSession(kind string) string用switch返回本地标签未知空串；validateText(body string,maxBytes int)(bool,string)表达规则。main从固定kind、body、maxBytes开始，先拒绝未知会话再处理校验，最后只打印本地校验通过/待发送。可用已学Atoi把上限文本解析，先err后结果；不写真正网络。逐步追踪六种边界：single你好6合法、single你好5超限、空文本、上限0、未知kind、含空格body按本题规则可合法。至少10道由预测到独立变式的练习带提示反馈，涵盖if、switch、循环边界/continue、定义调用、返回传播、参数复制、递归边界、闭包变化、业务保证。核对源码事实：OpenIM v3.8.3-patch.16 commit f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/send.go 的SendMsg首先检查req.MsgData != nil，然后依据SessionType用switch分到single/notification/group，default返回错误；internal/msggateway/message_handler.go的SendMessage按解码、校验、RPC调用、编码逐段检查err并返回。这是已读函数的摘要，不是全项目审计。只用控制流思想对照，protobuf、指针、RPC在后续章节说明。教学字符串分类与上游常量编码不同，maxBytes规则是教学设定，不声称来自OpenIM。本次不给初学者完整复杂上游函数。源码链接固定提交，来源事实和简化清楚分开。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  },
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "internal/rpc/msg/send.go",
+      "internal/msggateway/message_handler.go"
+    ],
+    "input_scope": "Reviewed factual summaries inserted into prompt; repository not imported as a knowledge base."
+  }
+}
