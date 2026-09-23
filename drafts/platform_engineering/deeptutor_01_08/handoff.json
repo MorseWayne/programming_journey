@@ -1,0 +1,10 @@
+{
+  "chapter": "01.08",
+  "business_scope": "bounded local JSON or JSON-Lines history import/export only; no network, authentication, durable-write, crash-atomic, delivery or synchronization guarantee",
+  "first_pass": ["record format and schema", "exported fields and JSON tags", "decode then validate", "RFC3339 time", "Scanner and byte limits", "file read/write boundaries", "flag input validation"],
+  "second_pass": ["strict unknown fields and trailing JSON", "format compatibility", "partial write boundary"],
+  "not_yet_prerequisites": ["package API design", "tests", "network and HTTP", "concurrency", "database and durable transactions"],
+  "next_chapter": "01.09 package design and dependency evolution",
+  "upstream_inspection": "No OpenIM implementation fact asserted; standard-library documentation only.",
+  "shared_integration_pending": []
+}

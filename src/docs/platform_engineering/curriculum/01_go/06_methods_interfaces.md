@@ -732,7 +732,7 @@ AuditedStore 在委托 Put 前就 `Writes++`，而底层因重复键拒绝。此
 
 你应能说明：接收者为什么也是参数；为什么 `*MemoryStore` 能满足读写接口而 `MemoryStore` 值不能；接口如何隐藏实现而不隐藏业务保证；nil 接口和 typed nil 何时不同；类型断言为何不能替代接口设计。
 
-下一章 01.07 将讲错误与资源生命周期，届时会用 error、defer 和 Reader/Writer 解释文件操作的失败与关闭责任。当前内存存储不等同于文件实现。
+下一章是[01.07 错误与资源生命周期](./07_errors_resources.md)：用 error、defer 和 Reader/Writer 解释文件操作的失败与关闭责任。当前内存存储不等同于文件实现。
 
 ## 核对资料
 

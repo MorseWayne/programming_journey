@@ -1,0 +1,47 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_5ec996fea6",
+  "page_id": "pg_4109365a8b",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "9a79708fb546f9cfb9897433ef8355c545943891a9a99efe6869c514bb057d6c",
+  "original_sha256": "4279499966218981cf80c29be4bce8525b1c8fe008a8650cdeaf74ff2c0a0b93",
+  "reviewed_sha256": "9dd3d6fe65884167549b4dcf7d65b1a999de5bf72102296f37a004f7827bc141",
+  "original_characters": 40037,
+  "reviewed_characters": 16643,
+  "reviewed_chinese_characters": 5433,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent DeepTutor configuration and source unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/07_errors_resources.md",
+  "course_sha256": "64c9f3b18d0a425f076af2941dba6fa67a4fcbd4e93d388fed542c1ebda66d7e",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/errors",
+      "https://pkg.go.dev/io",
+      "https://pkg.go.dev/os",
+      "https://go.dev/ref/spec#Defer_statements",
+      "https://go.dev/ref/spec#Handling_panics"
+    ],
+    "input_scope": "Standard-library and language-specification facts only. No OpenIM implementation fact, runtime observation, storage guarantee or delivery guarantee is asserted."
+  },
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "scope": [
+      "beginner prerequisites, static example review and IM scope",
+      "error-chain, defer, I/O, close-responsibility and panic-boundary review",
+      "navigation, learning-path, progress and source-archive integration",
+      "local links, document structure, source hashes and route coverage"
+    ],
+    "code_execution": false,
+    "site_build": false
+  }
+}

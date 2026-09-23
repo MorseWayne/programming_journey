@@ -1,0 +1,86 @@
+{
+  "code": "01.07",
+  "title": "错误与资源生命周期：让本地历史的失败原因与关闭责任可追踪",
+  "chapter_id": "ch_go_errors_resources",
+  "summary": "承接方法和接口，建立 error、错误包装、defer、io.Reader/io.Writer/io.Closer 与 os.File 的基本模型。使用虚构 IM 的本地消息历史说明失败原因、资源取得后的关闭责任和读取边界；不涉及网络、并发、数据库、JSON 编码或真实消息送达。",
+  "output_dir": "/tmp/deeptutor-go-chapter-01-07",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/errors",
+      "https://pkg.go.dev/io",
+      "https://pkg.go.dev/os",
+      "https://go.dev/ref/spec#Defer_statements",
+      "https://go.dev/ref/spec#Handling_panics"
+    ],
+    "input_scope": "Use Go specification and standard-library documentation for error, defer, Reader, Writer, Closer and File facts. The OpenIM fixed snapshot is only a later reading target; do not infer project runtime, storage, delivery or failure guarantees."
+  },
+  "learning_objectives": [
+    "用 error 而非 bool、字符串混合返回表达可处理的失败",
+    "区分可供程序分支的错误身份和给人阅读的上下文文本",
+    "理解 sentinel error、fmt.Errorf 的 %w、errors.Is 与 errors.As 的不同用途",
+    "解释 defer 的求值时机、LIFO 顺序和资源所有者的关闭责任",
+    "读懂 io.Reader、io.Writer、io.Closer 的结果，先处理 n > 0 的数据再处理 err",
+    "用 os.Open 与 File.Close 表达本地历史读取的资源生命周期",
+    "说明 panic/recover 与普通业务失败的边界",
+    "为下一章的文件格式、JSON 和时间保留清晰前提"
+  ],
+  "sections": [
+    {
+      "title": "一、为什么 bool 和说明文字不足以表达失败",
+      "target_words": 2000,
+      "role": "core",
+      "focus": "面向已完成01.01-01.06的Go初学者：会函数、多返回值、map/struct/指针、方法、小接口和typed nil；尚未学error、defer、文件I/O、并发、网络、JSON、数据库。写中文长篇教材。以虚构IM c-a/u-a/m-a的本地消息历史为动机：Find的false只适合区分缺失，Put的(bool,string)把机器分支和展示文案混合，调用者难以稳定判断原因。先从成功/失败/失败原因/调用者责任定义，介绍预声明error是接口，nil表示没有错误，惯例把error放在最后一个结果。逐符号解释errors.New、var ErrMessageNotFound、return Message{}, ErrMessageNotFound；同一errors.New每次是不同错误值，故需要可比较的哨兵错误时复用同一个变量。解释错误文本不能作为业务判断依据，不能用panic处理用户输入、文件不存在或重复消息。完整程序含package/import/main，片段说明位置；仅静态推导，不执行。明确本地保存成功不能推导服务端受理、持久化、设备接收或已读。"
+    },
+    {
+      "title": "二、把失败向上交还：立即检查、上下文与错误链",
+      "target_words": 2200,
+      "role": "core",
+      "focus": "先讲调用栈中谁最了解失败、谁最能决定下一步；函数发现但不能处理时返回err，调用者紧邻调用处用if err != nil处理或再返回。给错误示例：忽略err继续使用零值、用err.Error比较文字、用fmt.Errorf没有%w导致原始身份无法被errors.Is识别。讲fmt.Errorf(\"读取会话 %q 的本地历史: %w\", conversationID, err)在保留可读上下文同时包装原因；解释%v只是文本格式化不建立可遍历的包装关系。再讲errors.Is检查错误链中是否匹配ErrMessageNotFound或fs.ErrNotExist，errors.As取得特定错误类型的附加字段，使用var pathErr *fs.PathError; errors.As(err, &pathErr)的指针层级逐步解释；不要引入Go 1.26的AsType，保持教材在广泛版本可读。强调是否暴露/包装底层错误是API契约，不能随手包装并让调用方依赖内部实现。用四层流程validate→store→load→main追踪一条重复消息和一条文件缺失路径。"
+    },
+    {
+      "title": "三、defer：在取得资源后立刻登记退出动作",
+      "target_words": 2200,
+      "role": "core",
+      "focus": "从函数有多个return分支时容易漏Close切入，定义资源是取得后必须结束使用的对象；本章重点文件，也说明以后连接、锁等有各自规则。解释defer f.Close()：defer语句执行时调用表达式的函数值和参数已求值，实际Close在外围函数return、到达末尾或panic展开时执行；多个defer按后进先出。用defer fmt.Println(i)循环小例逐步表解释求值与执行差异，再指出循环中无界defer会拖延释放，应在每次迭代的小函数中限定作用域。解释defer不是后台任务、不在当前代码行立即关闭、也不替代所有错误处理。将Open成功后立刻defer Close绑定到同一资源所有者；Open失败时f为不可用，不能defer f.Close。给具名返回值和defer修改返回值的复杂示例只作警示，初学者默认避免在defer中篡改结果。讲Close返回error：只读场景可示范记录/选择策略，写入或提交型资源要按契约决定是否把Close错误返回；不要笼统说Close错误总能忽略。"
+    },
+    {
+      "title": "四、I/O 是分次读写：Reader、Writer、Closer 的小接口",
+      "target_words": 2300,
+      "role": "core",
+      "focus": "先定义I/O、字节、缓冲区和一次调用不等于完整文件。逐符号讲io.Reader的Read(p []byte)(n int,err error)、io.Writer的Write(p []byte)(n int,err error)、io.Closer的Close() error，和01.06的小接口相连。Reader读到n>0且err非nil时，调用者先使用p[:n]，再看err；EOF代表正常输入结束，结构化数据预期中途结束可用ErrUnexpectedEOF等表达，不能把任何err都称网络失败。解释0,nil不代表EOF。Writer的n与输入长度、短写及错误的关系；不要把一次Write成功说成磁盘稳定存储。用strings.NewReader和strings.Builder或bytes.Buffer为内存教学实现，完整程序展示copyHistory(reader io.Reader, writer io.Writer)如何循环、累积/写入并区分EOF；禁止把它扩展为网络流或并发安全。解释接口只描述能力，关闭责任来自取得者和函数契约，Reader本身不必可关闭。"
+    },
+    {
+      "title": "五、文件句柄的生命周期：打开、使用、关闭与责任转移",
+      "target_words": 2300,
+      "role": "core",
+      "focus": "从虚构本地文件history-c-a.log读取历史，先清楚界定它只是本机文件，不是服务器历史、消息协议或可靠交付。讲os.Open(name)(*os.File,error)：成功后File可读，失败时检查err；File同时可作为Reader和Closer。完整函数loadLocalHistory(path string)(string,error)用os.Open、defer f.Close、io.ReadAll，包装Open和Read的错误，并解释io.ReadAll仅适用于明确的小教学输入，真实大文件需大小限制和流式处理。再给更谨慎的具名/匿名返回模型，展示怎样在主操作成功后处理Close错误、主操作失败时主错误优先的决策，明确这是函数合同而非万能模板。解释谁创建谁负责关闭，若函数把*os.File返回给调用者则责任一起转移，文档要写清；不能同时由两层盲目关闭。讨论相对路径由工作目录解释，路径不存在/权限等由errors.Is/As表达，错误信息不能泄漏不必要内部路径给不可信使用者这一点只作边界提醒。"
+    },
+    {
+      "title": "六、第二遍：错误身份、业务决定与可观测上下文",
+      "target_words": 1900,
+      "role": "core",
+      "focus": "第二遍建立错误分类表：可预期业务规则ErrInvalidMessage、ErrDuplicateMessage、查询缺失ErrMessageNotFound、环境错误如文件不存在、程序缺陷。说明同一个外层操作能失败并不说明状态没有变化；本章小函数先校验后写入，只给本地内存规则，跨资源原子性和重试留后续事务/可靠性章节。用errors.Is选择分支：缺失历史可显示首次使用的空状态，重复消息可拒绝，其他错误上报给上层；不要将所有错误吞掉并返回空历史。讲errors.As适合读取类型附带字段以诊断，例如*fs.PathError的Op/Path，使用它之前先判断ok且不得把类型细节变为脆弱业务协议。解释日志、用户提示、指标各需要不同上下文，但本章不接入日志库/监控。给调用边界表：函数内部、命令入口、未来HTTP边界各应做什么；HTTP未学习，只描述未来位置。"
+    },
+    {
+      "title": "七、第二遍：panic 与 recover 的狭窄边界",
+      "target_words": 1700,
+      "role": "core",
+      "focus": "先区分返回error的预期失败和panic的异常控制流。展示panic会展开当前goroutine的defer，recover只有在被defer调用的函数中且同一goroutine正在panic时才能得到panic值并停止展开的规则；本章没有goroutine实践，只用同步函数概念解释。给最小隔离示例safeBoundary(func())(panicked bool)，但强调它不用于普通验证或文件错误，不能把recover当作继续使用未知状态的许可，恢复后只应在边界记录、隔离、返回受控结果。不要写defer recover一行而不检查返回值；不将runtime panic、map并发写、nil指针等描述成可安全恢复的业务流程。为本地IM模型列出哪些情况用error（空键、重复、文件不存在、读取失败），哪些是代码缺陷（违背内部不变量）并指出缺陷应先修复而非掩盖。"
+    },
+    {
+      "title": "八、综合：可追踪本地历史读取与分层练习",
+      "target_words": 2500,
+      "role": "core",
+      "focus": "给一段完整独立程序：虚构MessageKey/Message、MemoryStore、ErrInvalidMessage/ErrDuplicateMessage/ErrMessageNotFound、Put/Find返回error，loadLocalHistory用os.Open/defer Close/io.ReadAll与fmt.Errorf %w，main仅展示预期分支、不执行。逐行追踪三个情景：重复本地写入、缺失内存消息、history-c-a.log不存在；分开说明错误链、errors.Is、可能的errors.As诊断与关闭顺序。不要引入JSON、时间、并发、HTTP、数据库或真实OpenIM运行。至少18组带反馈的分层练习，覆盖nil error、sentinel身份、错误字符串、%w和%v、逐层return、defer参数求值和LIFO、Open失败不能关闭、Close责任转移、n>0且EOF、0,nil、短写、EOF与UnexpectedEOF、PathError诊断、panic/recover边界、重复消息状态不变、本地文件不等于服务端历史。给官方errors/io/os/spec链接；OpenIM只作为固定版本中未来阅读错误返回与资源所有权的提问，不声称已核对具体行为。总结下一章要讲文件格式、JSON和时间，说明本章只处理字节流和生命周期。"
+    }
+  ],
+  "request": {
+    "user_intent": "请生成完整中文教材《01.07 错误与资源生命周期：让本地历史的失败原因与关闭责任可追踪》。这是面向Go技术栈初学者的系统课程，承接01.01-01.06，严格由浅入深，内容丰富。所有IM身份、消息、路径和规则均为虚构教学设定。\n\n1. 一、为什么 bool 和说明文字不足以表达失败：面向已完成01.01-01.06的Go初学者：会函数、多返回值、map/struct/指针、方法、小接口和typed nil；尚未学error、defer、文件I/O、并发、网络、JSON、数据库。写中文长篇教材。以虚构IM c-a/u-a/m-a的本地消息历史为动机：Find的false只适合区分缺失，Put的(bool,string)把机器分支和展示文案混合，调用者难以稳定判断原因。先从成功/失败/失败原因/调用者责任定义，介绍预声明error是接口，nil表示没有错误，惯例把error放在最后一个结果。逐符号解释errors.New、var ErrMessageNotFound、return Message{}, ErrMessageNotFound；同一errors.New每次是不同错误值，故需要可比较的哨兵错误时复用同一个变量。解释错误文本不能作为业务判断依据，不能用panic处理用户输入、文件不存在或重复消息。完整程序含package/import/main，片段说明位置；仅静态推导，不执行。明确本地保存成功不能推导服务端受理、持久化、设备接收或已读。\n2. 二、把失败向上交还：立即检查、上下文与错误链：先讲调用栈中谁最了解失败、谁最能决定下一步；函数发现但不能处理时返回err，调用者紧邻调用处用if err != nil处理或再返回。给错误示例：忽略err继续使用零值、用err.Error比较文字、用fmt.Errorf没有%w导致原始身份无法被errors.Is识别。讲fmt.Errorf(\"读取会话 %q 的本地历史: %w\", conversationID, err)在保留可读上下文同时包装原因；解释%v只是文本格式化不建立可遍历的包装关系。再讲errors.Is检查错误链中是否匹配ErrMessageNotFound或fs.ErrNotExist，errors.As取得特定错误类型的附加字段，使用var pathErr *fs.PathError; errors.As(err, &pathErr)的指针层级逐步解释；不要引入Go 1.26的AsType，保持教材在广泛版本可读。强调是否暴露/包装底层错误是API契约，不能随手包装并让调用方依赖内部实现。用四层流程validate→store→load→main追踪一条重复消息和一条文件缺失路径。\n3. 三、defer：在取得资源后立刻登记退出动作：从函数有多个return分支时容易漏Close切入，定义资源是取得后必须结束使用的对象；本章重点文件，也说明以后连接、锁等有各自规则。解释defer f.Close()：defer语句执行时调用表达式的函数值和参数已求值，实际Close在外围函数return、到达末尾或panic展开时执行；多个defer按后进先出。用defer fmt.Println(i)循环小例逐步表解释求值与执行差异，再指出循环中无界defer会拖延释放，应在每次迭代的小函数中限定作用域。解释defer不是后台任务、不在当前代码行立即关闭、也不替代所有错误处理。将Open成功后立刻defer Close绑定到同一资源所有者；Open失败时f为不可用，不能defer f.Close。给具名返回值和defer修改返回值的复杂示例只作警示，初学者默认避免在defer中篡改结果。讲Close返回error：只读场景可示范记录/选择策略，写入或提交型资源要按契约决定是否把Close错误返回；不要笼统说Close错误总能忽略。\n4. 四、I/O 是分次读写：Reader、Writer、Closer 的小接口：先定义I/O、字节、缓冲区和一次调用不等于完整文件。逐符号讲io.Reader的Read(p []byte)(n int,err error)、io.Writer的Write(p []byte)(n int,err error)、io.Closer的Close() error，和01.06的小接口相连。Reader读到n>0且err非nil时，调用者先使用p[:n]，再看err；EOF代表正常输入结束，结构化数据预期中途结束可用ErrUnexpectedEOF等表达，不能把任何err都称网络失败。解释0,nil不代表EOF。Writer的n与输入长度、短写及错误的关系；不要把一次Write成功说成磁盘稳定存储。用strings.NewReader和strings.Builder或bytes.Buffer为内存教学实现，完整程序展示copyHistory(reader io.Reader, writer io.Writer)如何循环、累积/写入并区分EOF；禁止把它扩展为网络流或并发安全。解释接口只描述能力，关闭责任来自取得者和函数契约，Reader本身不必可关闭。\n5. 五、文件句柄的生命周期：打开、使用、关闭与责任转移：从虚构本地文件history-c-a.log读取历史，先清楚界定它只是本机文件，不是服务器历史、消息协议或可靠交付。讲os.Open(name)(*os.File,error)：成功后File可读，失败时检查err；File同时可作为Reader和Closer。完整函数loadLocalHistory(path string)(string,error)用os.Open、defer f.Close、io.ReadAll，包装Open和Read的错误，并解释io.ReadAll仅适用于明确的小教学输入，真实大文件需大小限制和流式处理。再给更谨慎的具名/匿名返回模型，展示怎样在主操作成功后处理Close错误、主操作失败时主错误优先的决策，明确这是函数合同而非万能模板。解释谁创建谁负责关闭，若函数把*os.File返回给调用者则责任一起转移，文档要写清；不能同时由两层盲目关闭。讨论相对路径由工作目录解释，路径不存在/权限等由errors.Is/As表达，错误信息不能泄漏不必要内部路径给不可信使用者这一点只作边界提醒。\n6. 六、第二遍：错误身份、业务决定与可观测上下文：第二遍建立错误分类表：可预期业务规则ErrInvalidMessage、ErrDuplicateMessage、查询缺失ErrMessageNotFound、环境错误如文件不存在、程序缺陷。说明同一个外层操作能失败并不说明状态没有变化；本章小函数先校验后写入，只给本地内存规则，跨资源原子性和重试留后续事务/可靠性章节。用errors.Is选择分支：缺失历史可显示首次使用的空状态，重复消息可拒绝，其他错误上报给上层；不要将所有错误吞掉并返回空历史。讲errors.As适合读取类型附带字段以诊断，例如*fs.PathError的Op/Path，使用它之前先判断ok且不得把类型细节变为脆弱业务协议。解释日志、用户提示、指标各需要不同上下文，但本章不接入日志库/监控。给调用边界表：函数内部、命令入口、未来HTTP边界各应做什么；HTTP未学习，只描述未来位置。\n7. 七、第二遍：panic 与 recover 的狭窄边界：先区分返回error的预期失败和panic的异常控制流。展示panic会展开当前goroutine的defer，recover只有在被defer调用的函数中且同一goroutine正在panic时才能得到panic值并停止展开的规则；本章没有goroutine实践，只用同步函数概念解释。给最小隔离示例safeBoundary(func())(panicked bool)，但强调它不用于普通验证或文件错误，不能把recover当作继续使用未知状态的许可，恢复后只应在边界记录、隔离、返回受控结果。不要写defer recover一行而不检查返回值；不将runtime panic、map并发写、nil指针等描述成可安全恢复的业务流程。为本地IM模型列出哪些情况用error（空键、重复、文件不存在、读取失败），哪些是代码缺陷（违背内部不变量）并指出缺陷应先修复而非掩盖。\n8. 八、综合：可追踪本地历史读取与分层练习：给一段完整独立程序：虚构MessageKey/Message、MemoryStore、ErrInvalidMessage/ErrDuplicateMessage/ErrMessageNotFound、Put/Find返回error，loadLocalHistory用os.Open/defer Close/io.ReadAll与fmt.Errorf %w，main仅展示预期分支、不执行。逐行追踪三个情景：重复本地写入、缺失内存消息、history-c-a.log不存在；分开说明错误链、errors.Is、可能的errors.As诊断与关闭顺序。不要引入JSON、时间、并发、HTTP、数据库或真实OpenIM运行。至少18组带反馈的分层练习，覆盖nil error、sentinel身份、错误字符串、%w和%v、逐层return、defer参数求值和LIFO、Open失败不能关闭、Close责任转移、n>0且EOF、0,nil、短写、EOF与UnexpectedEOF、PathError诊断、panic/recover边界、重复消息状态不变、本地文件不等于服务端历史。给官方errors/io/os/spec链接；OpenIM只作为固定版本中未来阅读错误返回与资源所有权的提问，不声称已核对具体行为。总结下一章要讲文件格式、JSON和时间，说明本章只处理字节流和生命周期。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

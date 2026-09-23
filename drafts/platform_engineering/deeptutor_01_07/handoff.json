@@ -1,0 +1,32 @@
+{
+  "chapter": "01.07",
+  "business_scope": "local in-memory messages and local file reading only; no authentication, network request, server acceptance, durable-write guarantee, device delivery or read acknowledgement",
+  "first_pass": [
+    "error as the final result and nil as no returned error",
+    "sentinel errors and immediate caller-side checks",
+    "resource ownership, defer evaluation and LIFO execution",
+    "Reader, Writer, Closer and partial read/write results",
+    "os.Open, local history reading and explicit close responsibility"
+  ],
+  "second_pass": [
+    "fmt.Errorf %w and error-chain contract boundaries",
+    "errors.Is for causes and errors.As for typed diagnostic fields",
+    "Close-error priority for a documented write contract",
+    "panic and recover as a narrow exceptional boundary"
+  ],
+  "not_yet_prerequisites": [
+    "JSON and message file format compatibility",
+    "time and timestamp semantics",
+    "package API design and test frameworks",
+    "goroutine creation, synchronization, cancellation and network I/O",
+    "database transactions, durable writes, request idempotency and delivery protocols"
+  ],
+  "next_chapter": "01.08 standard-library cooperation: define formats, JSON, time, size limits and import/export contracts before extending local history",
+  "upstream_inspection": "No new OpenIM implementation fact is asserted. This chapter uses only Go specification and standard-library documentation; OpenIM remains a future fixed-version reading target.",
+  "shared_integration_pending": [],
+  "shared_integration": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "batch": "single_chapter_continuation"
+  }
+}

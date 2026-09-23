@@ -1,0 +1,87 @@
+{
+  "code": "01.08",
+  "title": "常用标准库协作：把本地消息历史变成可检查的记录",
+  "chapter_id": "ch_go_standard_library",
+  "summary": "承接错误、I/O 与关闭责任，逐步建立字节、记录边界、JSON、时间、大小限制、文件写入和命令行参数的协作模型。使用虚构 IM 的本地历史导入导出；不涉及 HTTP、网络、并发、数据库、身份认证、稳定持久化或消息送达。",
+  "output_dir": "/tmp/deeptutor-go-chapter-01-08",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/encoding/json",
+      "https://pkg.go.dev/bufio",
+      "https://pkg.go.dev/time",
+      "https://pkg.go.dev/flag",
+      "https://pkg.go.dev/os",
+      "https://pkg.go.dev/io"
+    ],
+    "input_scope": "Use standard-library documentation only. Do not infer OpenIM, HTTP, network, storage, delivery, authentication or concurrency behavior."
+  },
+  "learning_objectives": [
+    "区分内存对象、字节、记录边界、文件格式和业务有效性",
+    "用导出字段与 JSON tag 明确一个小型历史文件的字段名",
+    "区分 JSON 可解码、格式符合、字段完整和业务规则通过",
+    "用 time.Time、RFC3339、时区和 layout 表达明确的时间含义",
+    "理解 Scanner 的逐行读取、长度上限与 Err 检查",
+    "在读入前后执行大小限制，避免把截断误当成功",
+    "说明 WriteFile 的覆盖、截断和部分写入边界",
+    "用 flag 在命令入口收集参数，再交给普通函数验证"
+  ],
+  "sections": [
+    {
+      "title": "一、从一段字节到一条可解释的本地历史记录",
+      "target_words": 2000,
+      "role": "core",
+      "focus": "面向已完成01.01-01.07的Go初学者：会函数、map/struct/方法/接口、error、defer、Reader/Writer/Closer、os.Open和ReadAll；尚未系统学习JSON、time、bufio、flag、包设计、测试、并发、HTTP、数据库。写丰富中文教材且所有示例静态推导。先定义内存对象、字节、文本、记录、文件、格式、schema、业务规则；JSON语法通过不等于字段齐全/消息可写入。使用虚构c-a/u-a/m-a与本地history-c-a.json；明确不是服务端历史、消息协议或送达凭证。先对比朴素一行文本的歧义（正文含换行、字段边界、版本）与一个小JSON对象；JSON不是加密、验证或存储可靠性。解释先修复01.07错误路径，后续每层先解码再验证。"
+    },
+    {
+      "title": "二、结构体、导出字段与 JSON tag：先写清文件契约",
+      "target_words": 2300,
+      "role": "core",
+      "focus": "从HistoryFile与StoredMessage两个结构体开始，字段包含Version、ConversationID、Messages和ID/SenderID/Body/CreatedAt；JSON tag 如json:\"conversation_id\"逐个解释反引号标签、JSON字段名、导出大写字段和小写未导出字段。明确tag不是验证、访问控制或版本迁移。讲json.Marshal/MarshalIndent从Go值产生字节、json.Unmarshal把字节写入指针指向的值；Unmarshal成功不代表业务合法。建立版本=1、会话ID非空、消息ID会话内不重复、正文非空、CreatedAt必须为RFC3339的明确本章教学契约。解释缺字段、零值、JSON null、空数组、空字符串不能无声等同；不要过深讲json v2、泛型或自定义MarshalJSON。给完整内存编码/解码程序，标注预期JSON仅演示，不执行。"
+    },
+    {
+      "title": "三、解码后仍要验证：未知字段、尾随值与错误位置",
+      "target_words": 2200,
+      "role": "core",
+      "focus": "先讲语法有效、类型匹配、结构字段、业务不变量四层；json.Unmarshal默认会忽略没有对应字段的对象键，不能自动将它称作安全/兼容。引入json.NewDecoder(reader)、Decode(&value)、DisallowUnknownFields作为本章严格文件导入选择，解释必须在Decode前设置；讲Decoder面对多个JSON值时，一次Decode不代表文件只有一个值，给使用第二次Decode和io.EOF确认无尾随JSON值的概念性函数，完整代码避免未定义变量。错误包装保留“读取/解析/验证哪个会话文件”的上下文。解释对不可信大输入先限尺寸，完整业务验证后再采用返回值；不要把decoder的严格未知字段规则等同为长期兼容策略，未来版本需明确迁移。"
+    },
+    {
+      "title": "四、时间不是字符串装饰：时刻、时区、格式与排序边界",
+      "target_words": 2200,
+      "role": "core",
+      "focus": "定义时刻（instant）、显示文本、地点/时区、Duration而不做定时器并发。以u-a在2026-09-23T09:30:00Z发送为例，解释Z是UTC、同一时刻可有不同显示、没有偏移的日期时间不能自动推断用户所在时区。教time.Time、time.Now仅作为当前本机时刻来源但示例不调用实际结果；time.RFC3339是可用协议布局，time.Parse(time.RFC3339,text)返回Time,error；layout不是yyyy/mm/dd占位符而是参考时刻2006-01-02 15:04:05 -0700的样子。解释Format/Parse对称契约，解析成功不证明顺序、真实发送时间或可信身份。给明确UTC字符串排序陷阱：若都固定RFC3339 UTC且同精度，字典序可与时间序一致是此文件契约；混合偏移或不同精度不得据此推断。"
+    },
+    {
+      "title": "五、逐行导入与大小限制：bufio、Scanner 和受控输入",
+      "target_words": 2300,
+      "role": "core",
+      "focus": "先说明单个JSON文件和每行一个JSON记录（JSON Lines）是不同格式，不能把二者混读。定义行终止符、空行、本章JSON Lines规则：每个非空行一个StoredMessage JSON对象，行中不得含未转义真实换行。讲bufio.Scanner默认按行分词且剥离行终止，循环Scan后必须Err；Scanner有最大token大小，使用Buffer(initial,max)在开始扫描前设置上限。让maxLineBytes+1的边界推导清晰：实际允许正文的字节上限/序列化行上限分别定义，不能只限正文。给逐行函数scanMessages(r io.Reader,maxLineBytes int)([]StoredMessage,error)，只接收受控小输入，先检查max正数，再调用scanner.Buffer，再对每行json.Unmarshal、validateMessage。解释Scanner错误或超长不应悄悄跳过，行号用于错误上下文。不要用Scanner处理无限长/任意格式数据；大对象和网络流在后续I/O章节讨论。"
+    },
+    {
+      "title": "六、文件导入导出：读取上限、写入覆盖与失败状态",
+      "target_words": 2300,
+      "role": "core",
+      "focus": "承接01.07资源责任：os.Open成功后defer Close，io.LimitReader(reader,max+1)配合io.ReadAll后检查len(data)>max来拒绝超限而非静默截断；max是正整数，单位是字节。说明只限制读入本身不替代JSON解码/业务校验。导出先在内存json.MarshalIndent，再os.WriteFile(path,data,0o600)；解释权限参数受umask影响仅是创建时，已存在文件权限不因此改变；WriteFile不存在则创建、存在则先截断，且多系统调用失败中间可留部分写入，因而本章只承诺“函数返回nil时WriteFile完成”，不承诺崩溃原子、稳定介质、备份、并发安全或多端同步。比较ReadFile/WriteFile封装打开/关闭的方便与显式文件的责任边界。不要教临时文件rename原子方案的具体实现，只列为以后可靠文件更新主题。"
+    },
+    {
+      "title": "七、命令行参数是输入，不是配置真相：flag 与普通函数",
+      "target_words": 1900,
+      "role": "core",
+      "focus": "解释程序名、flag、位置参数、默认值和解析顺序；flag.String/Int返回指针，所有flag定义后flag.Parse，随后才读取结果。完整main定义-path、-max-bytes、-format，检查flag.NArg为0、max>0、format为json或jsonl；main将值传给loadHistory/loadJSONLines等普通函数，而不是在底层调用flag.Parse。说明默认值不是已验证业务规则，空path/非法数字/未知格式都要返回错误或入口报告；不运行代码、不列真实命令输出。全局flag适合单一命令小例，多个子命令/可测试逻辑以后用FlagSet和包设计。环境变量、配置文件、HTTP参数和身份认证不在本章。"
+    },
+    {
+      "title": "八、综合：可检查的本地历史导入导出与分层练习",
+      "target_words": 2600,
+      "role": "core",
+      "focus": "给完整独立的静态程序：HistoryFile/StoredMessage、validateHistory、readLimited、decodeHistory（Decoder DisallowUnknownFields且检测尾随JSON）、loadHistoryFile、writeHistoryFile、main中用flag参数收集但只显示分支。不把多个main拼接。用Version=1、c-a、m-a、u-a、RFC3339 UTC时间；每一处error用上下文包装。逐步追踪正常小文件、未知字段、缺少消息ID、超max、文件不存在、已有文件被覆盖六种路径，明确状态和保证范围。至少20道带反馈的分层练习，覆盖导出字段/JSON tag、nil/空/缺失、Unmarshal成功后验证、未知字段、第二个JSON值、RFC3339/时区/布局、Scanner Err/上限/行号、JSON和JSONL混读、LimitReader静默截断风险、WriteFile截断/部分写、flag解析与验证、路径责任、本地导出不等于稳定持久或发送。最后列官方JSON/bufio/time/flag/os/io来源；HTTP只指向S2后再学，不写handler或请求代码。"
+    }
+  ],
+  "request": {
+    "user_intent": "请生成完整中文教材《01.08 常用标准库协作：把本地消息历史变成可检查的记录》。这是面向Go技术栈初学者的系统课程，承接01.01-01.07，严格由浅入深，内容丰富。所有IM身份、消息、路径和规则均为虚构教学设定。\n\n1. 一、从一段字节到一条可解释的本地历史记录：面向已完成01.01-01.07的Go初学者：会函数、map/struct/方法/接口、error、defer、Reader/Writer/Closer、os.Open和ReadAll；尚未系统学习JSON、time、bufio、flag、包设计、测试、并发、HTTP、数据库。写丰富中文教材且所有示例静态推导。先定义内存对象、字节、文本、记录、文件、格式、schema、业务规则；JSON语法通过不等于字段齐全/消息可写入。使用虚构c-a/u-a/m-a与本地history-c-a.json；明确不是服务端历史、消息协议或送达凭证。先对比朴素一行文本的歧义（正文含换行、字段边界、版本）与一个小JSON对象；JSON不是加密、验证或存储可靠性。解释先修复01.07错误路径，后续每层先解码再验证。\n2. 二、结构体、导出字段与 JSON tag：先写清文件契约：从HistoryFile与StoredMessage两个结构体开始，字段包含Version、ConversationID、Messages和ID/SenderID/Body/CreatedAt；JSON tag 如json:\"conversation_id\"逐个解释反引号标签、JSON字段名、导出大写字段和小写未导出字段。明确tag不是验证、访问控制或版本迁移。讲json.Marshal/MarshalIndent从Go值产生字节、json.Unmarshal把字节写入指针指向的值；Unmarshal成功不代表业务合法。建立版本=1、会话ID非空、消息ID会话内不重复、正文非空、CreatedAt必须为RFC3339的明确本章教学契约。解释缺字段、零值、JSON null、空数组、空字符串不能无声等同；不要过深讲json v2、泛型或自定义MarshalJSON。给完整内存编码/解码程序，标注预期JSON仅演示，不执行。\n3. 三、解码后仍要验证：未知字段、尾随值与错误位置：先讲语法有效、类型匹配、结构字段、业务不变量四层；json.Unmarshal默认会忽略没有对应字段的对象键，不能自动将它称作安全/兼容。引入json.NewDecoder(reader)、Decode(&value)、DisallowUnknownFields作为本章严格文件导入选择，解释必须在Decode前设置；讲Decoder面对多个JSON值时，一次Decode不代表文件只有一个值，给使用第二次Decode和io.EOF确认无尾随JSON值的概念性函数，完整代码避免未定义变量。错误包装保留“读取/解析/验证哪个会话文件”的上下文。解释对不可信大输入先限尺寸，完整业务验证后再采用返回值；不要把decoder的严格未知字段规则等同为长期兼容策略，未来版本需明确迁移。\n4. 四、时间不是字符串装饰：时刻、时区、格式与排序边界：定义时刻（instant）、显示文本、地点/时区、Duration而不做定时器并发。以u-a在2026-09-23T09:30:00Z发送为例，解释Z是UTC、同一时刻可有不同显示、没有偏移的日期时间不能自动推断用户所在时区。教time.Time、time.Now仅作为当前本机时刻来源但示例不调用实际结果；time.RFC3339是可用协议布局，time.Parse(time.RFC3339,text)返回Time,error；layout不是yyyy/mm/dd占位符而是参考时刻2006-01-02 15:04:05 -0700的样子。解释Format/Parse对称契约，解析成功不证明顺序、真实发送时间或可信身份。给明确UTC字符串排序陷阱：若都固定RFC3339 UTC且同精度，字典序可与时间序一致是此文件契约；混合偏移或不同精度不得据此推断。\n5. 五、逐行导入与大小限制：bufio、Scanner 和受控输入：先说明单个JSON文件和每行一个JSON记录（JSON Lines）是不同格式，不能把二者混读。定义行终止符、空行、本章JSON Lines规则：每个非空行一个StoredMessage JSON对象，行中不得含未转义真实换行。讲bufio.Scanner默认按行分词且剥离行终止，循环Scan后必须Err；Scanner有最大token大小，使用Buffer(initial,max)在开始扫描前设置上限。让maxLineBytes+1的边界推导清晰：实际允许正文的字节上限/序列化行上限分别定义，不能只限正文。给逐行函数scanMessages(r io.Reader,maxLineBytes int)([]StoredMessage,error)，只接收受控小输入，先检查max正数，再调用scanner.Buffer，再对每行json.Unmarshal、validateMessage。解释Scanner错误或超长不应悄悄跳过，行号用于错误上下文。不要用Scanner处理无限长/任意格式数据；大对象和网络流在后续I/O章节讨论。\n6. 六、文件导入导出：读取上限、写入覆盖与失败状态：承接01.07资源责任：os.Open成功后defer Close，io.LimitReader(reader,max+1)配合io.ReadAll后检查len(data)>max来拒绝超限而非静默截断；max是正整数，单位是字节。说明只限制读入本身不替代JSON解码/业务校验。导出先在内存json.MarshalIndent，再os.WriteFile(path,data,0o600)；解释权限参数受umask影响仅是创建时，已存在文件权限不因此改变；WriteFile不存在则创建、存在则先截断，且多系统调用失败中间可留部分写入，因而本章只承诺“函数返回nil时WriteFile完成”，不承诺崩溃原子、稳定介质、备份、并发安全或多端同步。比较ReadFile/WriteFile封装打开/关闭的方便与显式文件的责任边界。不要教临时文件rename原子方案的具体实现，只列为以后可靠文件更新主题。\n7. 七、命令行参数是输入，不是配置真相：flag 与普通函数：解释程序名、flag、位置参数、默认值和解析顺序；flag.String/Int返回指针，所有flag定义后flag.Parse，随后才读取结果。完整main定义-path、-max-bytes、-format，检查flag.NArg为0、max>0、format为json或jsonl；main将值传给loadHistory/loadJSONLines等普通函数，而不是在底层调用flag.Parse。说明默认值不是已验证业务规则，空path/非法数字/未知格式都要返回错误或入口报告；不运行代码、不列真实命令输出。全局flag适合单一命令小例，多个子命令/可测试逻辑以后用FlagSet和包设计。环境变量、配置文件、HTTP参数和身份认证不在本章。\n8. 八、综合：可检查的本地历史导入导出与分层练习：给完整独立的静态程序：HistoryFile/StoredMessage、validateHistory、readLimited、decodeHistory（Decoder DisallowUnknownFields且检测尾随JSON）、loadHistoryFile、writeHistoryFile、main中用flag参数收集但只显示分支。不把多个main拼接。用Version=1、c-a、m-a、u-a、RFC3339 UTC时间；每一处error用上下文包装。逐步追踪正常小文件、未知字段、缺少消息ID、超max、文件不存在、已有文件被覆盖六种路径，明确状态和保证范围。至少20道带反馈的分层练习，覆盖导出字段/JSON tag、nil/空/缺失、Unmarshal成功后验证、未知字段、第二个JSON值、RFC3339/时区/布局、Scanner Err/上限/行号、JSON和JSONL混读、LimitReader静默截断风险、WriteFile截断/部分写、flag解析与验证、路径责任、本地导出不等于稳定持久或发送。最后列官方JSON/bufio/time/flag/os/io来源；HTTP只指向S2后再学，不写handler或请求代码。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

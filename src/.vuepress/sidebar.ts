@@ -148,6 +148,8 @@ export default sidebar({
             "curriculum/01_go/04_collections_text",
             "curriculum/01_go/05_maps_structs_pointers",
             "curriculum/01_go/06_methods_interfaces",
+            "curriculum/01_go/07_errors_resources",
+            "curriculum/01_go/08_standard_library",
             "curriculum/01_go/core"
           ]
         },
