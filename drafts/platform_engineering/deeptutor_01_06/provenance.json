@@ -1,0 +1,47 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_55c6883f0c",
+  "page_id": "pg_eb3f9f3221",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "534d53fa9eef27122522c79d2def2797d356ecdd25e7962546fab61d8fc5e2e2",
+  "original_sha256": "c33a2b3b46856c2bd6bec3a1fcf254418b98fa73adb5240db006582ee0d3e34d",
+  "reviewed_sha256": "ecb0088e41c94e72d8ebaec927c57bb40adc7b216fc3f541998a72ae069e8239",
+  "original_characters": 42964,
+  "reviewed_characters": 18575,
+  "reviewed_chinese_characters": 6266,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "compatibility_adapter": "one-process token alias normalization; persistent DeepTutor configuration and source unchanged",
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/06_methods_interfaces.md",
+  "course_sha256": "228b7d8ff20ea77bebe35502c5a064c70012d4a5a5b55454c64559403e78f28a",
+  "coordinator_review": {
+    "status": "complete",
+    "date": "2026-09-23",
+    "scope": [
+      "prerequisites and shared IM rules",
+      "method-set, typed-nil and interface-boundary review",
+      "navigation, route, progress and source integration",
+      "local links, document structure and hashes"
+    ],
+    "code_execution": false,
+    "site_build": false
+  },
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "pkg/common/storage/controller/msg.go",
+      "pkg/common/storage/controller/msg_transfer.go"
+    ],
+    "input_scope": "Reviewed method-interface facts supplied in the generation prompt; repository not imported as a knowledge base and no reliability audit performed."
+  }
+}

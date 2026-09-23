@@ -1,0 +1,85 @@
+{
+  "code": "01.06",
+  "title": "方法与接口：让会话存储依赖能力而非具体实现",
+  "chapter_id": "ch_go_methods_interfaces",
+  "summary": "承接会话、消息、map、结构体和指针，先用方法给本地消息存储命名行为，再用小接口表达读取和写入能力。解释值/指针接收者、方法集、动态类型和值、nil、断言与接口组合；使用虚构 IM 内存存储，明确没有网络、持久、送达或已读保证。",
+  "output_dir": "/tmp/deeptutor-go-chapter-01-06",
+  "source_reference": {
+    "repository": "openimsdk/open-im-server",
+    "tag": "v3.8.3-patch.16",
+    "commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "files": [
+      "pkg/common/storage/controller/msg.go",
+      "pkg/common/storage/controller/msg_transfer.go"
+    ],
+    "input_scope": "Reviewed facts only: CommonMsgDatabase and MsgTransferDatabase are method-only interfaces; constructors return interface values backed by concrete pointer implementations. No SDK, storage, Kafka, RPC or delivery behavior is inferred."
+  },
+  "learning_objectives": [
+    "从直接操作会话 map 过渡到具有明确职责的普通方法",
+    "区分值接收者、指针接收者和方法调用的目标",
+    "用方法集解释为什么 *T 与 T 满足接口的情况不同",
+    "用小接口表达消息读取和写入能力，并理解隐式实现",
+    "读懂接口值的动态类型、动态值、nil 与 typed nil 边界",
+    "谨慎使用类型断言和接口组合，避免用具体类型破坏抽象",
+    "用内存消息存储完成本地写入/查询，并将保证范围说清楚"
+  ],
+  "sections": [
+    {
+      "title": "一、从会话 map 的直接操作到命名行为",
+      "target_words": 1800,
+      "role": "core",
+      "focus": "读者已掌握01.01-01.05：普通函数、map、结构体、指针、值复制、nil与本地消息加入；尚未学方法、接口、error、文件I/O、并发、网络或数据库。用中文完整教材叙述，所有新符号使用前解释，完整Go程序含package/import/main，片段明确位置，错误例单列，输出仅为预期且不执行。使用虚构IM c-a/u-a/m-a，原文规则为会话先登记分类、正文上限正数/原始非空/字节不超限/合法UTF-8。先用直接map查找和写入的重复情景提出问题：规则函数与某个存储值如何组织。定义数据、行为、职责、依赖；不要把方法或接口说成自动持久化/可替换。示例仅内存、顺序执行，明确本地写入不是服务端受理、持久、设备接收或已读。"
+    },
+    {
+      "title": "二、方法与接收者：把操作关联到一个类型",
+      "target_words": 2100,
+      "role": "core",
+      "focus": "从type MemoryStore struct{ messages map[MessageKey]Message }开始，定义MessageKey和Message字段，方法声明func (s *MemoryStore) Put(msg Message) (bool,string)与Find(key MessageKey)(Message,bool)。逐符号解释func、圆括号里的接收者变量/类型、方法名、参数、结果。构造NewMemoryStore返回*MemoryStore，Put可在messages nil时创建map，故使用指针接收者，使字段替换持续到调用者；Find对nil接收者按本章约定返回零消息,false。解释m.Put(msg)是选择方法的简写，不是某种新传参机制；接收者也是参数，参数仍按值传递。画调用者/接收者/共享目标表；当前方法只本地存储，不检查成员或真实消息协议。说明普通函数仍适合没有所属数据的规则，不要把所有函数改方法。"
+    },
+    {
+      "title": "三、值接收者、指针接收者与方法集",
+      "target_words": 2200,
+      "role": "core",
+      "focus": "先定义值接收者和指针接收者各自接收的值；用Info() string值接收者和Put()指针接收者对MemoryStore说明T方法集只含T接收者、*T含T和*T接收者。给编译期错误示例var store MessageStore=MemoryStore{}，原因是接口要求Put而MemoryStore值方法集不含指针接收者方法；&MemoryStore{}可满足。说明可寻址值调用指针方法的便利与接口赋值不同，不能混为规则。不要错误说指针接收者总为性能或所有修改必需；选择首先看语义、是否要初始化/替换字段、复制代价。方法接收者也按值传递；重绑定接收者指针不改调用者，修改所指字段才可见。"
+    },
+    {
+      "title": "四、小接口与隐式实现：按需要依赖能力",
+      "target_words": 2200,
+      "role": "core",
+      "focus": "先定义MessageReader{Find(MessageKey)(Message,bool)}、MessageWriter{Put(Message)(bool,string)}、MessageStore嵌入两者。解释接口列出调用者需要的方法，不声明实现字段；具体类型无需写implements，只要方法集包含要求方法就隐式实现。用MemoryStore和DisabledStore（明确拒绝所有Put、Find总缺失的教学类型）说明同一MessageStore可有不同动态具体类型；调用者函数saveThenFind(store MessageStore,msg Message)只依赖接口。解释接口组合/嵌入得到的方法要求是组合，不等于复制一份数据或自动获得权限。避免接口过大，接口放在使用方一侧是下一层设计原则而非必须背的规则。完整程序用接口变量指向内存实现和禁用实现，预测不同本地结果，绝不声称替换内存实现就已有文件/数据库可靠性。"
+    },
+    {
+      "title": "五、接口值、动态类型、动态值与 nil",
+      "target_words": 2100,
+      "role": "core",
+      "focus": "建立接口值可理解为动态类型和动态值的组合，使用var reader MessageReader得到真正nil接口；var memory *MemoryStore=nil; reader=memory得到动态类型*MemoryStore而动态值nil，故reader!=nil。说明这不是语言漏洞；接口nil检查只检查接口本身，具体指针是否nil仍需要相应处理。用本章Find显式处理nil接收者的例子说明调用是否安全取决方法实现，不能把它推广为所有指针方法可安全调用；也不要用reflect。给安全构造函数/边界检查建议。区分nil接口、存在但零值消息、缺失键、存在nil指针map值。正文须提供表格与故意错误路径，保持初学者可读。"
+    },
+    {
+      "title": "六、第二遍：类型断言与动态具体类型",
+      "target_words": 1700,
+      "role": "core",
+      "focus": "在接口已理解后解释assertion store.(*MemoryStore)的意义：只在调用者确实需要MemoryStore特有诊断时尝试取得动态具体值。先讲comma-ok形式memory,ok:=store.(*MemoryStore)，断言失败得到nil/false，不panic；单结果断言失败会panic，本章不用作常规分支。以StoreLabel()等接口可有共同行为说明多数业务函数不需断言。区分具体类型断言、接口断言；不引入type switch可作为预告。说明assertion获得*MemoryStore后还需检查memory==nil。反例是为读取/写入功能先断言具体类型，破坏DisabledStore的可替换性。"
+    },
+    {
+      "title": "七、第二遍：接口组合、嵌入与嵌套 nil 边界",
+      "target_words": 1900,
+      "role": "core",
+      "focus": "深入接口嵌入的MessageStore组合，明确它要求同时具备Reader/Writer方法。再有限讨论结构体嵌入：type AuditedStore struct{ MessageStore; Writes int }，提升嵌入接口的方法以供调用，但直接嵌入不会自动增加Writes，包装方法需要显式调用并处理nil嵌入字段；本章可以只给小片段，不做完整Decorator。说明接口字段为nil与接口字段装typed nil的差别，调用前要建立构造契约。不要讲方法集的全部提升规则、泛型或反射；不要将嵌入说成继承、权限或并发安全。"
+    },
+    {
+      "title": "八、综合：本地会话存储、OpenIM对照与分层练习",
+      "target_words": 2400,
+      "role": "core",
+      "focus": "给完整独立程序：MessageKey、Message、MemoryStore、NewMemoryStore、Put/Find、Reader/Writer/Store接口、saveThenFind；本地规则仅检查非空Key/Body与重复，maxBytes等文本验证可写为已通过前置并明确没有在本章重复实现。测试内存实现、禁用实现、nil接口/typed nil查询各用独立情景，不拼多个main。逐行追踪动态类型、方法调用和返回。至少16组边界/分层练习带反馈，覆盖指针/值方法集、内存初始化、重复键、缺失、DisabledStore、typed nil、断言、组合接口、嵌入nil、方法与普通函数、业务保证、接口替换。实际源码事实仅限固定OpenIM提交的CommonMsgDatabase和MsgTransferDatabase为方法接口，构造函数返回接口值且具体实现使用指针接收者；这说明可由接口隐藏实现，不能推导其所有存储/队列/可靠性保证。链接固定提交。总结下一章错误与资源，说明error、defer、文件实现仍未讲。"
+    }
+  ],
+  "request": {
+    "user_intent": "请生成完整中文教材《01.06 方法与接口：让会话存储依赖能力而非具体实现》。这是Go初学者的系统课程单章，承接01.01-01.05。\n\n1. 一、从会话 map 的直接操作到命名行为：读者已掌握01.01-01.05：普通函数、map、结构体、指针、值复制、nil与本地消息加入；尚未学方法、接口、error、文件I/O、并发、网络或数据库。用中文完整教材叙述，所有新符号使用前解释，完整Go程序含package/import/main，片段明确位置，错误例单列，输出仅为预期且不执行。使用虚构IM c-a/u-a/m-a，原文规则为会话先登记分类、正文上限正数/原始非空/字节不超限/合法UTF-8。先用直接map查找和写入的重复情景提出问题：规则函数与某个存储值如何组织。定义数据、行为、职责、依赖；不要把方法或接口说成自动持久化/可替换。示例仅内存、顺序执行，明确本地写入不是服务端受理、持久、设备接收或已读。\n2. 二、方法与接收者：把操作关联到一个类型：从type MemoryStore struct{ messages map[MessageKey]Message }开始，定义MessageKey和Message字段，方法声明func (s *MemoryStore) Put(msg Message) (bool,string)与Find(key MessageKey)(Message,bool)。逐符号解释func、圆括号里的接收者变量/类型、方法名、参数、结果。构造NewMemoryStore返回*MemoryStore，Put可在messages nil时创建map，故使用指针接收者，使字段替换持续到调用者；Find对nil接收者按本章约定返回零消息,false。解释m.Put(msg)是选择方法的简写，不是某种新传参机制；接收者也是参数，参数仍按值传递。画调用者/接收者/共享目标表；当前方法只本地存储，不检查成员或真实消息协议。说明普通函数仍适合没有所属数据的规则，不要把所有函数改方法。\n3. 三、值接收者、指针接收者与方法集：先定义值接收者和指针接收者各自接收的值；用Info() string值接收者和Put()指针接收者对MemoryStore说明T方法集只含T接收者、*T含T和*T接收者。给编译期错误示例var store MessageStore=MemoryStore{}，原因是接口要求Put而MemoryStore值方法集不含指针接收者方法；&MemoryStore{}可满足。说明可寻址值调用指针方法的便利与接口赋值不同，不能混为规则。不要错误说指针接收者总为性能或所有修改必需；选择首先看语义、是否要初始化/替换字段、复制代价。方法接收者也按值传递；重绑定接收者指针不改调用者，修改所指字段才可见。\n4. 四、小接口与隐式实现：按需要依赖能力：先定义MessageReader{Find(MessageKey)(Message,bool)}、MessageWriter{Put(Message)(bool,string)}、MessageStore嵌入两者。解释接口列出调用者需要的方法，不声明实现字段；具体类型无需写implements，只要方法集包含要求方法就隐式实现。用MemoryStore和DisabledStore（明确拒绝所有Put、Find总缺失的教学类型）说明同一MessageStore可有不同动态具体类型；调用者函数saveThenFind(store MessageStore,msg Message)只依赖接口。解释接口组合/嵌入得到的方法要求是组合，不等于复制一份数据或自动获得权限。避免接口过大，接口放在使用方一侧是下一层设计原则而非必须背的规则。完整程序用接口变量指向内存实现和禁用实现，预测不同本地结果，绝不声称替换内存实现就已有文件/数据库可靠性。\n5. 五、接口值、动态类型、动态值与 nil：建立接口值可理解为动态类型和动态值的组合，使用var reader MessageReader得到真正nil接口；var memory *MemoryStore=nil; reader=memory得到动态类型*MemoryStore而动态值nil，故reader!=nil。说明这不是语言漏洞；接口nil检查只检查接口本身，具体指针是否nil仍需要相应处理。用本章Find显式处理nil接收者的例子说明调用是否安全取决方法实现，不能把它推广为所有指针方法可安全调用；也不要用reflect。给安全构造函数/边界检查建议。区分nil接口、存在但零值消息、缺失键、存在nil指针map值。正文须提供表格与故意错误路径，保持初学者可读。\n6. 六、第二遍：类型断言与动态具体类型：在接口已理解后解释assertion store.(*MemoryStore)的意义：只在调用者确实需要MemoryStore特有诊断时尝试取得动态具体值。先讲comma-ok形式memory,ok:=store.(*MemoryStore)，断言失败得到nil/false，不panic；单结果断言失败会panic，本章不用作常规分支。以StoreLabel()等接口可有共同行为说明多数业务函数不需断言。区分具体类型断言、接口断言；不引入type switch可作为预告。说明assertion获得*MemoryStore后还需检查memory==nil。反例是为读取/写入功能先断言具体类型，破坏DisabledStore的可替换性。\n7. 七、第二遍：接口组合、嵌入与嵌套 nil 边界：深入接口嵌入的MessageStore组合，明确它要求同时具备Reader/Writer方法。再有限讨论结构体嵌入：type AuditedStore struct{ MessageStore; Writes int }，提升嵌入接口的方法以供调用，但直接嵌入不会自动增加Writes，包装方法需要显式调用并处理nil嵌入字段；本章可以只给小片段，不做完整Decorator。说明接口字段为nil与接口字段装typed nil的差别，调用前要建立构造契约。不要讲方法集的全部提升规则、泛型或反射；不要将嵌入说成继承、权限或并发安全。\n8. 八、综合：本地会话存储、OpenIM对照与分层练习：给完整独立程序：MessageKey、Message、MemoryStore、NewMemoryStore、Put/Find、Reader/Writer/Store接口、saveThenFind；本地规则仅检查非空Key/Body与重复，maxBytes等文本验证可写为已通过前置并明确没有在本章重复实现。测试内存实现、禁用实现、nil接口/typed nil查询各用独立情景，不拼多个main。逐行追踪动态类型、方法调用和返回。至少16组边界/分层练习带反馈，覆盖指针/值方法集、内存初始化、重复键、缺失、DisabledStore、typed nil、断言、组合接口、嵌入nil、方法与普通函数、业务保证、接口替换。实际源码事实仅限固定OpenIM提交的CommonMsgDatabase和MsgTransferDatabase为方法接口，构造函数返回接口值且具体实现使用指针接收者；这说明可由接口隐藏实现，不能推导其所有存储/队列/可靠性保证。链接固定提交。总结下一章错误与资源，说明error、defer、文件实现仍未讲。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
