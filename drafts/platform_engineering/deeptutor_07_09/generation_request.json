@@ -1,0 +1,72 @@
+{
+  "code": "07.09",
+  "title": "积压与坏消息：最老事件为何一直没处理",
+  "chapter_id": "ch_backlog_poison_messages",
+  "summary": "面向Go初学者，沿IM热会话事件流推导积压速率、最老年龄、暂时/永久错误、重试预算、坏消息隔离与受控重放。",
+  "objectives": [
+    "手算120/s到达与90/s处理的十分钟积压",
+    "区分一次性积压排空与持续超载",
+    "区分lag数量和最老未完成年龄",
+    "分类暂时、永久和结果未知错误",
+    "设计三次总尝试及隔离而不假ACK成功",
+    "解释毒消息对同键E11顺序的影响",
+    "建立DLQ重放与权威对账闭环"
+  ],
+  "sources": [
+    "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+    "https://redis.io/docs/latest/commands/xpending/",
+    "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/consumers.md",
+    "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/streams.md"
+  ],
+  "sections": [
+    {
+      "title": "一、积压先看速率与业务年龄",
+      "words": 2600,
+      "focus": "承接07.08 c-a P0 E9/E10、未来S3 m-9；虚构热会话c-g分区P0到达120事件/s，消费者安全处理90/s，从零积压无丢弃/重试，10分钟600s后(120-90)*600=18000未完成；若停止到达理想18000/90=200s排空，持续到达则不收敛。count lag与oldest unfinished age不同。"
+    },
+    {
+      "title": "二、待处理、在途、重试和已确认分开",
+      "words": 2900,
+      "focus": "Kafka分区end/committed offset衡量位置差，Redis Streams XPENDING只已投递未ACK，NATS pending/ackwait按配置；业务最老未完成年龄需自定义事件/处理时间口径与时钟误差。不能把broker lag=设备未读或所有事件必须保留。"
+    },
+    {
+      "title": "三、暂时故障与永久坏消息分类",
+      "words": 2900,
+      "focus": "E-bad在c-a P0 offset44、E11 offset45。暂时SearchIndex不可用可有限重试退避；永久坏schema/无效字段重试不修复；外部写结果未知先查幂等目标，不能无条件重做。记录错误身份、版本与负载，不把所有错误归retry。"
+    },
+    {
+      "title": "四、三次尝试与坏消息隔离",
+      "words": 3100,
+      "focus": "玩具E-bad最多3次总投递含首尝试，仍失败→进入受控quarantine/DLQ记录event_id/源offset/错误/版本/处理责任，不能只ACK当成功。NATS MaxDeliver上限后消息仍在stream/有advisory而非自动业务DLQ。修复后受控重放须幂等和权限。"
+    },
+    {
+      "title": "五、顺序合同：E-bad阻塞E11还是跳过",
+      "words": 3000,
+      "focus": "如果c-a要求SearchIndex按seq连续，offset44坏消息未决时E11/45不能无条件对外覆盖并提交46；可以暂停该key、其他c-b分区继续；若衍生索引允许隔离跳过，则需显式缺口、修复票据和后续重建，用户权威历史不丢。勿静默commit46跳过44。"
+    },
+    {
+      "title": "六、重试风暴与容量保护",
+      "words": 3000,
+      "focus": "到达120/s>90/s本就增长，重试额外流量加压；有界max attempts/backoff+jitter、在途上限和按错误类型降级，不把毒消息无限快重投。批量和并发增加未必修c-g单key顺序瓶颈，业务P95/错误与负载同窗验证。"
+    },
+    {
+      "title": "七、死信重放与对账闭环",
+      "words": 3100,
+      "focus": "DLQ/quarantine不是垃圾桶或成功终点。最小元数据event_id=m-9:v1 etc无私有正文，原因、源位置、尝试次数、修复负责人，修复后按权威DB消息版本重放，记录结果并对账搜索/通知；过保留窗需从权威源重建，不能假设broker永存。"
+    },
+    {
+      "title": "八、22题与值班交接",
+      "words": 2800,
+      "focus": "交付18000/200s算式、oldest age单独测量、E-bad三次失败隔离、E11顺序门、Kafka/Redis/NATS统计边界与验证矩阵；22题概念算式故障处置附反馈。静态不运行broker/Go/DB/负载/站点，下一07.10 outbox。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.09 积压与坏消息》，面向Go初学者，八节丰富理论、手算与22道分层练习反馈。承接07.08：虚构c-g热分区事件到达120/s，处理安全速率90/s，从0积压、无丢弃/重试，10分钟600s后(120-90)*600=18000未完成；若此刻停止新到达，理想18000/90=200s清完；若持续120/s不收敛。lag数量与最老未完成年龄不同，不能从count直接当用户P95；Kafka end/committed offset、Redis XPENDING已投递未ACK、NATS pending按各产品口径。c-a P0中毒事件E-bad offset44，后项E11 offset45。暂时索引依赖错误有限退避重试；永久坏schema不靠重试修；外部结果未知先查幂等目标。玩具最多3次总尝试含首次仍失败→隔离并保存event_id/source_offset/错误/版本/责任，不把ACK当业务成功。NATS MaxDeliver达到后消息仍在stream/advisory，不自动成应用DLQ。同会话顺序若严格，E-bad未决不得静默commit next offset46越过44，E11应等或显式缺口修复政策，c-b其他分区可前进。隔离后修复与权威DB消息版本对账/重放，私有正文不随便进DLQ，broker保留有限。静态不运行Redis/Kafka/NATS/Go/DB/负载/站点。下一07.10 outbox。\n1. 一、积压先看速率与业务年龄: 承接07.08 c-a P0 E9/E10、未来S3 m-9；虚构热会话c-g分区P0到达120事件/s，消费者安全处理90/s，从零积压无丢弃/重试，10分钟600s后(120-90)*600=18000未完成；若停止到达理想18000/90=200s排空，持续到达则不收敛。count lag与oldest unfinished age不同。\n2. 二、待处理、在途、重试和已确认分开: Kafka分区end/committed offset衡量位置差，Redis Streams XPENDING只已投递未ACK，NATS pending/ackwait按配置；业务最老未完成年龄需自定义事件/处理时间口径与时钟误差。不能把broker lag=设备未读或所有事件必须保留。\n3. 三、暂时故障与永久坏消息分类: E-bad在c-a P0 offset44、E11 offset45。暂时SearchIndex不可用可有限重试退避；永久坏schema/无效字段重试不修复；外部写结果未知先查幂等目标，不能无条件重做。记录错误身份、版本与负载，不把所有错误归retry。\n4. 四、三次尝试与坏消息隔离: 玩具E-bad最多3次总投递含首尝试，仍失败→进入受控quarantine/DLQ记录event_id/源offset/错误/版本/处理责任，不能只ACK当成功。NATS MaxDeliver上限后消息仍在stream/有advisory而非自动业务DLQ。修复后受控重放须幂等和权限。\n5. 五、顺序合同：E-bad阻塞E11还是跳过: 如果c-a要求SearchIndex按seq连续，offset44坏消息未决时E11/45不能无条件对外覆盖并提交46；可以暂停该key、其他c-b分区继续；若衍生索引允许隔离跳过，则需显式缺口、修复票据和后续重建，用户权威历史不丢。勿静默commit46跳过44。\n6. 六、重试风暴与容量保护: 到达120/s>90/s本就增长，重试额外流量加压；有界max attempts/backoff+jitter、在途上限和按错误类型降级，不把毒消息无限快重投。批量和并发增加未必修c-g单key顺序瓶颈，业务P95/错误与负载同窗验证。\n7. 七、死信重放与对账闭环: DLQ/quarantine不是垃圾桶或成功终点。最小元数据event_id=m-9:v1 etc无私有正文，原因、源位置、尝试次数、修复负责人，修复后按权威DB消息版本重放，记录结果并对账搜索/通知；过保留窗需从权威源重建，不能假设broker永存。\n8. 八、22题与值班交接: 交付18000/200s算式、oldest age单独测量、E-bad三次失败隔离、E11顺序门、Kafka/Redis/NATS统计边界与验证矩阵；22题概念算式故障处置附反馈。静态不运行broker/Go/DB/负载/站点，下一07.10 outbox。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

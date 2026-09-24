@@ -162,4 +162,4 @@ E9 可能重放，索引须按稳定身份/版本幂等处理。</details>
 
 不看答案时，能手算 P0:E9/E10、P1:F1 的顺序域，解释 100/10 ms 并发为何让结果从 10 回到 9；能指出 `commit(44)` 跳过 pending E9、批量重试重复 E9 和再平衡旧 W1 迟到写的风险，才算完成第一轮。第二轮由学习者在隔离环境用受控门闩、分区/位点和目标版本记录核对，本文没有替代运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 07.09 将从热分区、最老事件年龄和失败类型进入积压与坏消息处理；07.10 再处理数据库与消息中间件的提交边界。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[07.09 积压与坏消息](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/09_backlog_poison_messages.md)将从热分区、最老事件年龄和失败类型进入积压与坏消息处理；07.10 再处理数据库与消息中间件的提交边界。

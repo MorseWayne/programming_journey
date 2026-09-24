@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a48d74420d",
+  "page_id": "pg_ab4ce49982",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+      "https://redis.io/docs/latest/commands/xpending/",
+      "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/consumers.md",
+      "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/streams.md"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "1a769e616c6356efcfe08e2c0597b9038480c449d05c2281c8a450b396959cdb",
+  "original_characters": 30488,
+  "generation_request_sha256": "808ffe94843d4ad574674373ac4520680f3b4817aa6f0d866d87a5c20405c9a5",
+  "reviewed_sha256": "7aa751115aadbcf2147d5a69d1c2b830be39a2ed88df173faaf75f25a8b9961e",
+  "reviewed_characters": 7904,
+  "reviewed_chinese_characters": 3416,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/09_backlog_poison_messages.md",
+  "course_sha256": "497ff9600fdf92fb7a4e9fa2c53c76dab01b7f04a820df9d3dff9189e8764d46"
+}

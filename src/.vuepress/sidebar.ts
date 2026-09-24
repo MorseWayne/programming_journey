@@ -257,6 +257,7 @@ export default sidebar({
             "curriculum/07_cache_messaging/06_message_abstractions",
             "curriculum/07_cache_messaging/07_ack_retry_dedup",
             "curriculum/07_cache_messaging/08_order_concurrent_consumption",
+            "curriculum/07_cache_messaging/09_backlog_poison_messages",
             "curriculum/07_cache_messaging/core"
           ]
         },

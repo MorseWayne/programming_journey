@@ -1,0 +1,29 @@
+{
+  "chapter": "07.09",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced backlog and poison-event lesson using fictional c-g and E-bad/E11",
+  "prerequisites": [
+    "07.07 ACK, retry and versioned deduplication",
+    "07.08 same-key order and committed-offset boundary",
+    "11.02 rate, distribution and tail-latency interpretation"
+  ],
+  "first_pass": [
+    "120/s arrival minus 90/s completion over 600s gives 18000",
+    "only stopped arrivals allow ideal 200-second drain at 90/s",
+    "count lag versus oldest-unfinished-age measurement"
+  ],
+  "second_pass": [
+    "temporary, permanent and unknown-side-effect error classification",
+    "E-bad offset44 three total attempts then controlled quarantine",
+    "E11 offset45 strict-order gate versus explicit derived-view gap policy",
+    "DLQ repair, replay, authoritative version check and reconciliation"
+  ],
+  "not_yet_prerequisites": [
+    "07.10 DB-to-broker outbox boundary",
+    "07.11 materialized view and late-event rebuild",
+    "real backlog and poison-event observations by the learner"
+  ],
+  "next_chapter": "07.10 transaction boundary and outbox",
+  "upstream_inspection": "No OpenIM implementation claim; Kafka, Redis and NATS primary documentation supports only their own lag/pending/retry semantics.",
+  "shared_integration_pending": []
+}
