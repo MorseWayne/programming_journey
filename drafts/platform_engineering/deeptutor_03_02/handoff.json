@@ -1,0 +1,12 @@
+{
+  "chapter": "03.02",
+  "stage": "S2",
+  "business_scope": "fictional local imhistory check on a v1 JSON file <=1 MiB; Linux conceptual syscall model, no real process trace or network service",
+  "prerequisites": ["03.01 data, bytes and address intuition", "01.01 source and executable basics", "01.07 errors and resources", "01.08 files, JSON and time", "01.12 local CLI contract"],
+  "first_pass": ["source/executable/process/thread/goroutine", "shell to Go runtime to main to run to exit", "user/kernel boundary and syscall request", "os.Open versus JSON validity"],
+  "second_pass": ["virtual address view versus physical memory and file offset", "file handle and Linux descriptor intuition", "bounded read and complete validation timeline", "I/O/content/usage error mapping and evidence limits"],
+  "not_yet_prerequisites": ["03.03 Linux PID, environment, signal, descriptor observation", "03.04 thread scheduling", "03.05 address translation", "03.07–03.09 file and I/O internals", "04 network and online IM"],
+  "next_chapter": "03.03 Linux processes and resources, with read-only observation of PID, cwd, environment, signals and descriptors",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

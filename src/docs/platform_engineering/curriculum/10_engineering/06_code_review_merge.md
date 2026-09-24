@@ -270,4 +270,4 @@ rebase 发生冲突时，按 `git status` 指示编辑、`git add`，再 `git re
 - [Git `merge` 文档](https://git-scm.com/docs/git-merge)和[`rebase` 文档](https://git-scm.com/docs/git-rebase)：冲突继续、撤销与跳过的命令边界。
 - [GitHub Pull Request Review 文档](https://docs.github.com/en/pull-requests/reference/pull-request-reviews)：平台上的评审概念；课程不假定当前仓库启用了特定审批规则。
 
-S1 的本地工具主线到这里具备需求、实现边界、测试、重构和协作说明。下一阶段按[学习路线](../learning_path.md)从进程、线程、网络与同步前置进入 S2，再逐步扩展到在线 IM。
+S1 的本地工具主线到这里具备需求、实现边界、测试、重构和协作说明。下一阶段先读[03.02 进程与系统调用](../03_systems/02_process_syscalls.md)，再按[学习路线](../learning_path.md)补线程、网络与同步前置，逐步扩展到在线 IM。

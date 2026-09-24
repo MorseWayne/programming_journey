@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_6e1413a929",
+  "page_id": "pg_cd98bb5a4e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "41691ea4303e4ec4647ad1604f00ed9f32797582dbc907e1d81f370f4a4f08d7",
+  "original_characters": 35990,
+  "code_execution": false,
+  "system_experiments": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+      "https://man7.org/linux/man-pages/man2/syscalls.2.html",
+      "https://man7.org/linux/man-pages/man2/open.2.html",
+      "https://man7.org/linux/man-pages/man5/proc.5.html",
+      "https://pkg.go.dev/os#Open",
+      "https://pkg.go.dev/os#Exit"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "051f3855d7286d7134f147882d2f4cf1652a73788287f0df8b82209adba31d18",
+  "reviewed_sha256": "ced3d03f81c32649965d1520de7c17f0a8ba0cda5b0c4622eb2bcb18457b1413",
+  "reviewed_characters": 12429,
+  "reviewed_chinese_characters": 6318,
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/02_process_syscalls.md",
+  "course_sha256": "78cfd1aba26d30677834403ced2b617571b3bd6e5ab7072e070884a241aaeb51"
+}
