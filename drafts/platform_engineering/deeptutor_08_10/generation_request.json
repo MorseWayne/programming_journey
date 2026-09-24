@@ -1,0 +1,74 @@
+{
+  "code": "08.10",
+  "title": "成员变化与演进：新旧节点怎样共同处理m-9",
+  "chapter_id": "ch_membership_evolution",
+  "summary": "面向Go初学者，用虚构IM桶b1和m-9编辑/后续消息，区分共识投票成员变化、应用存储迁移与事件协议滚动升级，推演快照/增量/回退。",
+  "objectives": [
+    "区分投票成员、存储桶与协议三个版本轴",
+    "手算旧新多数并理解联合配置",
+    "解释Raft InstallSnapshot元数据与应用数据快照",
+    "设计v1/v2事件语义兼容顺序",
+    "推演b1影子搬迁和E9/E10在途",
+    "为回退和对账指定真实证据"
+  ],
+  "sources": [
+    "https://raft.github.io/raft.pdf",
+    "https://etcd.io/docs/v3.6/learning/design-learner/",
+    "https://etcd.io/docs/v3.6/op-guide/runtime-configuration/",
+    "https://protobuf.dev/programming-guides/proto3/",
+    "https://www.postgresql.org/docs/current/logical-replication.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、先分清三种同时发生的变更",
+      "words": 2900,
+      "focus": "虚构IM b1包含c-a/c-g，m-9/c-a/seq9已提交，迁移期间m-9编辑v2与m-10/seq10；区分Raft投票成员C_old→C_new、应用DB桶b1 N1→N3、事件/HTTP协议旧新版本，三套边界不能混。当前S2 accepted_in_memory与拟议S3 stored_in_teaching_db不变。"
+    },
+    {
+      "title": "二、投票成员变化不能逐机改分母",
+      "words": 3100,
+      "focus": "Raft纸上C_old={R1,R2,R3},C_new={R2,R3,R4},各q2；直接共存时旧{R1,R2}与新{R3,R4}可不相交。Raft原论文joint consensus过渡期间旧新分别取多数，提交新配置后才单用新集合；etcd learner非投票先追日志再promote是产品例子，不能和Raft论文joint过程一概等同。"
+    },
+    {
+      "title": "三、日志快照安装与应用数据快照分开",
+      "words": 3200,
+      "focus": "Raft教学快照lastIncludedIndex12,lastIncludedTerm4只含已提交且已apply前缀，新R4若落后可InstallSnapshot后再追13+；不把快照索引12当c-a业务seq12。应用DB b1从N1到N3的S0/L0快照+增量是另一层，包含消息当前版本/权限/outbox；不能只复制Raft快照就说IM数据已搬。"
+    },
+    {
+      "title": "四、协议旧新兼容不是能parse就能正确",
+      "words": 3300,
+      "focus": "教学E9事件v1含message_id,seq，v2新增message_version/visibility；Protobuf binary新增字段可wire-safe但旧消费者忽略version会把迟到v1覆盖v2，JSON转码可能丢unknown。字段编号不能重用/删后reserved。expand-migrate-contract：新消费者双读且旧事件缺version查权威，升级完成后新生产者发v2，保留旧事件回放/补偿直到窗口过，才收缩旧支持。HTTP S2/S3/R9与事件v1/v2是不同版本轴。"
+    },
+    {
+      "title": "五、滚动切换时间线和在途E9/E10",
+      "words": 3300,
+      "focus": "M0 epoch7 N1 b1唯一owner，S0快照含m9v1 seq9；M1获取无缝L0增量，期间编辑m9v2与m10seq10；M2 N3影子追齐ID/seq/version/权限/outbox，旧新二进制混部只用兼容格式；M3围栏N1写、阻止旧relay双发，发布epoch8 N3；M4旧客户端重定向/状态未知按稳定ID查；M5观察与清理。E9 P0:42 E10 P0:43不因DB桶搬迁自动改分区，旧v1回放不覆盖v2。"
+    },
+    {
+      "title": "六、失败、回退与数据对账",
+      "words": 3000,
+      "focus": "新R4未追平不可promote，配置错误致失多数要停操作；快照安装中断重试要验证校验/lastIncluded；L0断档不切换，重快照；新节点已接受写后不能简单把路由指回旧N1/旧epoch，要新epoch并反向追增量。对账ID集、version、seq缺口、删除/权限、outbox/派生，count同不够。"
+    },
+    {
+      "title": "七、OpenIM证据边界与验收指标",
+      "words": 2900,
+      "focus": "固定OpenIM send.go MsgToMQ后返回和Mongo消费BatchInsertChat2DB两处，不能推断其Raft成员/快照/升级协议；其proto类型存在不能断言当前事件v2。本章协议E9v1/v2皆教学假设。观测raft member/quorum/snapshot progress、b1 replication lag/route epoch/stale rejects、old/new schema decode/unknown, search/notify/设备独立证据。"
+    },
+    {
+      "title": "八、22题与滚动迁移交付",
+      "words": 3000,
+      "focus": "22题基础8/算配置与快照8/业务评审6，答案覆盖旧新q2不相交、joint双多数、learner catchup、lastIncluded index term、S0/L0、wire-safe vs semantic-safe、unknown fields JSON、旧v1不可覆盖v2、epoch回退、S2/S3/OpenIM。交付三轴矩阵、M0-M5时序与可回退门，静态不运行Raft/DB/Go/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.10 成员变化与演进》，面向Go初学者，八节理论丰富、IM业务递进，22题带反馈。必须区分三种变化：独立教学Raft复制组投票成员C_old={R1,R2,R3}到C_new={R2,R3,R4}，旧新各q2，直接共存的旧多数{R1,R2}和新多数{R3,R4}不相交；Raft论文joint consensus过渡期间须旧新各多数，etcd learner先非投票追平再promote是具体产品，不等同完整joint机制。Raft快照lastIncludedIndex12/Term4只含已提交应用前缀，R4落后时InstallSnapshot再追13+，不能把Raft index12当IM seq。应用存储b1从N1 epoch7迁到N3 epoch8，S0快照包含c-a m-9 v1 seq9，期间m-9编辑v2与m-10 seq10进入L0后增量，目标要追ID/seq/version/权限/outbox，旧owner围栏，旧relay不能双发，Kafka E9 P0:42/E10 P0:43与DB桶独立。事件教学v1仅message_id/seq，v2增message_version/visibility；Protobuf binary新增字段wire-safe但旧消费者忽略语义关键字段不安全，JSON可能丢unknown，字段号不可重用。先新消费者兼容读，再新生产者发v2，待回放窗口/修复后删旧路径，HTTP当前S2 6字节accepted_in_memory、拟议S3 stored_in_teaching_db与事件v1/v2不是同一版本轴。切换后N3已接新写回退不能指回N1旧epoch，须新epoch和反向追赶。固定OpenIM send.go MsgToMQ/另Mongo BatchInsert只支持局部路径，不证明上述Raft/迁移/事件版本实现。静态不运行Raft/DB/Go/IM/站点。\n1. 一、先分清三种同时发生的变更: 虚构IM b1包含c-a/c-g，m-9/c-a/seq9已提交，迁移期间m-9编辑v2与m-10/seq10；区分Raft投票成员C_old→C_new、应用DB桶b1 N1→N3、事件/HTTP协议旧新版本，三套边界不能混。当前S2 accepted_in_memory与拟议S3 stored_in_teaching_db不变。\n2. 二、投票成员变化不能逐机改分母: Raft纸上C_old={R1,R2,R3},C_new={R2,R3,R4},各q2；直接共存时旧{R1,R2}与新{R3,R4}可不相交。Raft原论文joint consensus过渡期间旧新分别取多数，提交新配置后才单用新集合；etcd learner非投票先追日志再promote是产品例子，不能和Raft论文joint过程一概等同。\n3. 三、日志快照安装与应用数据快照分开: Raft教学快照lastIncludedIndex12,lastIncludedTerm4只含已提交且已apply前缀，新R4若落后可InstallSnapshot后再追13+；不把快照索引12当c-a业务seq12。应用DB b1从N1到N3的S0/L0快照+增量是另一层，包含消息当前版本/权限/outbox；不能只复制Raft快照就说IM数据已搬。\n4. 四、协议旧新兼容不是能parse就能正确: 教学E9事件v1含message_id,seq，v2新增message_version/visibility；Protobuf binary新增字段可wire-safe但旧消费者忽略version会把迟到v1覆盖v2，JSON转码可能丢unknown。字段编号不能重用/删后reserved。expand-migrate-contract：新消费者双读且旧事件缺version查权威，升级完成后新生产者发v2，保留旧事件回放/补偿直到窗口过，才收缩旧支持。HTTP S2/S3/R9与事件v1/v2是不同版本轴。\n5. 五、滚动切换时间线和在途E9/E10: M0 epoch7 N1 b1唯一owner，S0快照含m9v1 seq9；M1获取无缝L0增量，期间编辑m9v2与m10seq10；M2 N3影子追齐ID/seq/version/权限/outbox，旧新二进制混部只用兼容格式；M3围栏N1写、阻止旧relay双发，发布epoch8 N3；M4旧客户端重定向/状态未知按稳定ID查；M5观察与清理。E9 P0:42 E10 P0:43不因DB桶搬迁自动改分区，旧v1回放不覆盖v2。\n6. 六、失败、回退与数据对账: 新R4未追平不可promote，配置错误致失多数要停操作；快照安装中断重试要验证校验/lastIncluded；L0断档不切换，重快照；新节点已接受写后不能简单把路由指回旧N1/旧epoch，要新epoch并反向追增量。对账ID集、version、seq缺口、删除/权限、outbox/派生，count同不够。\n7. 七、OpenIM证据边界与验收指标: 固定OpenIM send.go MsgToMQ后返回和Mongo消费BatchInsertChat2DB两处，不能推断其Raft成员/快照/升级协议；其proto类型存在不能断言当前事件v2。本章协议E9v1/v2皆教学假设。观测raft member/quorum/snapshot progress、b1 replication lag/route epoch/stale rejects、old/new schema decode/unknown, search/notify/设备独立证据。\n8. 八、22题与滚动迁移交付: 22题基础8/算配置与快照8/业务评审6，答案覆盖旧新q2不相交、joint双多数、learner catchup、lastIncluded index term、S0/L0、wire-safe vs semantic-safe、unknown fields JSON、旧v1不可覆盖v2、epoch回退、S2/S3/OpenIM。交付三轴矩阵、M0-M5时序与可回退门，静态不运行Raft/DB/Go/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

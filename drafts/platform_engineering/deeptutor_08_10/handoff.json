@@ -1,0 +1,32 @@
+{
+  "chapter": "08.10",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced IM membership and rolling-evolution lesson distinguishing Raft voters, application bucket migration and event schema compatibility",
+  "prerequisites": [
+    "08.03 replication and read lag",
+    "08.05 b1 storage route epoch and cutover",
+    "08.06 Raft majority and joint membership idea",
+    "07.11 S0/L0 snapshot-plus-change rebuild",
+    "07.10 outbox producer/consumer version boundary"
+  ],
+  "first_pass": [
+    "separate Raft voter configuration, application route epoch and event format version",
+    "hand-calculate old/new two-of-three majorities and their disjoint direct-switch example",
+    "separate Raft lastIncludedIndex/Term from c-a seq and b1 S0/L0"
+  ],
+  "second_pass": [
+    "compare paper joint consensus with etcd learner catch-up/promotion without conflating them",
+    "stage event consumer compatibility before producer v2 and retain replay support",
+    "track m-9 v2 edit and m-10 seq10 across S0/L0 migration",
+    "fence N1 and old relay before epoch8 owner handoff",
+    "require reverse catch-up and a higher epoch after N3 accepts new writes",
+    "reconcile ID, seq, version, visibility, deletion and outbox"
+  ],
+  "not_yet_prerequisites": [
+    "08.11 distributed validation",
+    "learner's real mixed-version deployment and snapshot-install evidence"
+  ],
+  "next_chapter": "08.11 distributed validation",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These two files do not establish Raft membership, snapshot installation, bucket migration or the teaching event_v1/v2 schema.",
+  "shared_integration_pending": []
+}

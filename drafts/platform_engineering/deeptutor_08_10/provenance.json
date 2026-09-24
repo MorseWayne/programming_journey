@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_e83fcaeaba",
+  "page_id": "pg_e91918c6ce",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://raft.github.io/raft.pdf",
+      "https://etcd.io/docs/v3.6/learning/design-learner/",
+      "https://etcd.io/docs/v3.6/op-guide/runtime-configuration/",
+      "https://protobuf.dev/programming-guides/proto3/",
+      "https://www.postgresql.org/docs/current/logical-replication.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "5184053e792d5ec92533114b1840bb0bbca6bcbdf7564ff5dcc1018adfb64df0",
+  "original_characters": 32177,
+  "generation_request_sha256": "bfb06aca091b07932aade53ff9fec837612096726a83b148ecd5f46f113f1a19",
+  "reviewed_sha256": "907913e388c3b512ced1e6f2314659f540061b740243d34820db6304ae7d0648",
+  "reviewed_characters": 10495,
+  "reviewed_chinese_characters": 3808,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/10_membership_evolution.md",
+  "course_sha256": "adb4648a432b667f7b829d6f5c4b1c146f5de031368f24ae708b518b48b400f1"
+}
