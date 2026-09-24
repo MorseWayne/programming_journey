@@ -1,0 +1,33 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_7b2121c84e",
+  "page_id": "pg_1fc2d13c45",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "4ed4e9ec244c841698002b024562befe8f102a28f0a665a1e8a5b8d8e4e06977",
+  "original_characters": 35471,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/spec#Go_statements",
+      "https://pkg.go.dev/sync#WaitGroup",
+      "https://go.dev/blog/pipelines",
+      "https://go.dev/doc/effective_go#goroutines"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "a8e41b6069fc78f2aff284b8075d7552d29a90f2822df48f33aa849451dd4fef",
+  "reviewed_sha256": "c8636ff42758aa998030b7fedc0789881ba16badd35da6c67c2fb40a30561b52",
+  "reviewed_characters": 10060,
+  "reviewed_chinese_characters": 4798,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/01_concurrent_tasks_lifecycle.md",
+  "course_sha256": "afe93ae89f8f9cc2ce74a8db4374f11cf14abf588bdf443cf06793b37074cecf"
+}

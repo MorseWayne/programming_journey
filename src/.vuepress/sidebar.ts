@@ -196,6 +196,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/05_runtime/",
+            "curriculum/05_runtime/01_concurrent_tasks_lifecycle",
             "curriculum/05_runtime/core"
           ]
         },

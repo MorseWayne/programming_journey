@@ -1,0 +1,12 @@
+{
+  "chapter": "05.01",
+  "stage": "S2",
+  "business_scope": "fictional future IM HTTP/WebSocket task ownership and bounded local teaching batch; no live server or concurrency execution evidence",
+  "prerequisites": ["03.02 process and thread distinction", "03.04 runnable/running/waiting", "04.03 future HTTP and WebSocket interaction", "01.03 functions and 01.04 strings/slices"],
+  "first_pass": ["concurrency versus parallelism", "go statement, argument evaluation and no automatic join", "main exit versus child goroutine", "fixed-batch WaitGroup Add/Done/Wait"],
+  "second_pass": ["per-index result and error ownership", "connection close and task supervisor contracts", "shared state and unbounded task risk", "IM success evidence versus task completion"],
+  "not_yet_prerequisites": ["05.02 Mutex/RWMutex and full WaitGroup rules", "05.03 channel/context cancellation", "05.04 memory model", "05.08 bounded workers and backpressure", "S5 durable delivery"],
+  "next_chapter": "05.02 synchronization primitives protecting a shared IM conversation state",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

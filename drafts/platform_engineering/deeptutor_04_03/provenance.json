@@ -26,9 +26,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "181b795f03389e4370f46257ad33489c4cd7b68792e9e1ca3d7c0fbae24ea487",
-  "reviewed_sha256": "e4af3ec5c3fd5acdc0913e448f3f8a8bd0bd038acc6bc330cd788dfc75d2bdc7",
-  "reviewed_characters": 10582,
-  "reviewed_chinese_characters": 4881,
+  "reviewed_sha256": "f6c42bd0ca6bb99e30ba74dd8dfce58798d1245329c5c086d793789c975717c1",
+  "reviewed_characters": 10679,
+  "reviewed_chinese_characters": 4883,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/03_http_websocket_basics.md",
-  "course_sha256": "d57b0bce7b5379a73340fbeba4f02810ad1f39deb3de81f8913b5a760e71ec68"
+  "course_sha256": "7d424b12466a4c241c08f2a5721117ec0f1075502ea3919bcfe72c602f15ed78"
 }

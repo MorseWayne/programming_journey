@@ -1,0 +1,73 @@
+{
+  "code": "05.01",
+  "title": "并发任务与生命周期：让 Go 的 IM 处理工作有明确归属",
+  "chapter_id": "ch_concurrent_tasks_lifecycle",
+  "summary": "承接03.02进程线程、03.04运行/等待、04.03HTTP/WebSocket需求和01.03函数，面向Go初学者讲并发/并行、go语句、goroutine生命周期、WaitGroup最小等待、错误/结果归属、资源所有权与有界任务。虚构IM场景，静态代码无运行。",
+  "objectives": [
+    "区分并发组织与同一时刻并行执行",
+    "解释go语句启动goroutine和main退出的边界",
+    "画出父任务与子任务的启动、等待、完成、失败时间线",
+    "用WaitGroup理解如何等待固定数量的任务",
+    "说明WaitGroup不传递错误或取消",
+    "定义谁拥有连接、关闭资源和收集结果",
+    "识别共享可变状态与无限创建任务的风险",
+    "为05.02同步原语和05.03取消机制建立前置"
+  ],
+  "sources": [
+    "https://go.dev/ref/spec#Go_statements",
+    "https://pkg.go.dev/sync#WaitGroup",
+    "https://go.dev/blog/pipelines",
+    "https://go.dev/doc/effective_go#goroutines"
+  ],
+  "sections": [
+    {
+      "title": "一、从IM服务的多个待办任务开始",
+      "words": 2200,
+      "focus": "04.03未来教学HTTP/WS服务尚未实现，u-a/u-b/c-a/m-a虚构。一个服务可能同时处理历史查询、输入、输出/心跳；并发是时间上交错推进， 并行是同刻多个CPU执行。03.04可运行/等待前置；连接数、goroutine数和CPU核数不一一对应。不能把业务发送成功从go语句推断。"
+    },
+    {
+      "title": "二、Go语句与goroutine启动",
+      "words": 2300,
+      "focus": "语法go f(args)启动新goroutine，调用参数何时求值按Go spec；父goroutine不会等待子任务自动完成，返回值被丢弃。示例go func(id string){...}(\"m-a\")，输出顺序不确定，time.Sleep不是等待机制。main返回/进程退出，其他goroutine不会保证完成。源码静态不运行。"
+    },
+    {
+      "title": "三、任务生命周期与等待合同",
+      "words": 2500,
+      "focus": "created/runnable/running/waiting/done from03.04，父任务开启→持有完成责任→等待→取结果→清理；任务句柄概念。最小sync.WaitGroup Add(1) before go, defer Done, Wait after all Add, 固定两任务示例。WaitGroup只是计数，不携带错误、不自动停止任务；多个任务共用同一wg不能在Wait同时追加首任务，文档细节。"
+    },
+    {
+      "title": "四、完整Go静态示例与边界推演",
+      "words": 2700,
+      "focus": "给一个单包完整函数countBodies([]string) []int，wg, make results, each goroutine receives i/body as params, writes distinct results[i]=len(body),defer Done,wg.Wait before return;说明处理的是有限教学输入，len非常便宜并发无性能优势，Go代码/输出静态未运行；展示反例没Wait结果可能未写完、错误共享同一变量风险。UTF8字节长度已教。"
+    },
+    {
+      "title": "五、错误、结果与资源所有权",
+      "words": 2500,
+      "focus": "goroutine内函数return error不能被启动者自动拿到，WaitGroup不传error；可为固定任务准备per-index error槽，Wait后汇总，但check必须并发安全，错误顺序与任务完成顺序不同。连接所有权：接纳者移交conn给处理任务，处理任务defer Close，主管停止时要通知并等待；实际关闭/取消05.03。谁关闭？谁观察错误？谁回收?不许无主fire-and-forget丢消息。"
+    },
+    {
+      "title": "六、共享状态、阻塞与有界性",
+      "words": 2400,
+      "focus": "两个goroutine同时写同一个map/计数可能数据竞争或业务竞争，05.02 mutex同步，05.04内存模型；不同切片索引写后Wait是本例限定，不推广到任意共享对象。创建1 goroutine/消息在无限输入下资源无界，连接数≠task数，限制并发/队列/过载在05.08和11卷。任务等网络/锁不占CPU但保留资源；退出时可能泄漏。"
+    },
+    {
+      "title": "七、IM场景的失败反例与设计取舍",
+      "words": 2400,
+      "focus": "两个客户端活动、历史查询、WS推送作为未来模型；请求结束但后台goroutine仍写response，用户断开但发送任务无取消，主进程退出未等写入，收到重复投递时错误被丢弃。对每个给启动者、完成信号、错误回报、资源归属、上限五项契约。无OpenIM具体实现事实。"
+    },
+    {
+      "title": "八、分层练习与个人验证路线",
+      "words": 2800,
+      "focus": "从纸上任务树→静态代码推演→固定两消息示例→异常分支→未来个人隔离环境go test/真实记录，至少22题逐题反馈；当前不执行Go、构建、服务。官方Go spec/sync/博客来源，下一05.02 Mutex/RWMutex/WaitGroup,再05.03 channel/context。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《05.01 并发任务与生命周期》。把读者当作Go初学者，承接03.02进程/线程、03.04调度与04.03未来网络服务需求；从并发与并行开始，逐层讲go语句、goroutine、主程序退出、固定任务等待、错误与资源所有权、有界性。IM示例虚构且网络服务尚未实现；只写静态课程，不运行Go、测试、站点或服务。\n1. 一、从IM服务的多个待办任务开始：04.03未来教学HTTP/WS服务尚未实现，u-a/u-b/c-a/m-a虚构。一个服务可能同时处理历史查询、输入、输出/心跳；并发是时间上交错推进， 并行是同刻多个CPU执行。03.04可运行/等待前置；连接数、goroutine数和CPU核数不一一对应。不能把业务发送成功从go语句推断。\n2. 二、Go语句与goroutine启动：语法go f(args)启动新goroutine，调用参数何时求值按Go spec；父goroutine不会等待子任务自动完成，返回值被丢弃。示例go func(id string){...}(\"m-a\")，输出顺序不确定，time.Sleep不是等待机制。main返回/进程退出，其他goroutine不会保证完成。源码静态不运行。\n3. 三、任务生命周期与等待合同：created/runnable/running/waiting/done from03.04，父任务开启→持有完成责任→等待→取结果→清理；任务句柄概念。最小sync.WaitGroup Add(1) before go, defer Done, Wait after all Add, 固定两任务示例。WaitGroup只是计数，不携带错误、不自动停止任务；多个任务共用同一wg不能在Wait同时追加首任务，文档细节。\n4. 四、完整Go静态示例与边界推演：给一个单包完整函数countBodies([]string) []int，wg, make results, each goroutine receives i/body as params, writes distinct results[i]=len(body),defer Done,wg.Wait before return;说明处理的是有限教学输入，len非常便宜并发无性能优势，Go代码/输出静态未运行；展示反例没Wait结果可能未写完、错误共享同一变量风险。UTF8字节长度已教。\n5. 五、错误、结果与资源所有权：goroutine内函数return error不能被启动者自动拿到，WaitGroup不传error；可为固定任务准备per-index error槽，Wait后汇总，但check必须并发安全，错误顺序与任务完成顺序不同。连接所有权：接纳者移交conn给处理任务，处理任务defer Close，主管停止时要通知并等待；实际关闭/取消05.03。谁关闭？谁观察错误？谁回收?不许无主fire-and-forget丢消息。\n6. 六、共享状态、阻塞与有界性：两个goroutine同时写同一个map/计数可能数据竞争或业务竞争，05.02 mutex同步，05.04内存模型；不同切片索引写后Wait是本例限定，不推广到任意共享对象。创建1 goroutine/消息在无限输入下资源无界，连接数≠task数，限制并发/队列/过载在05.08和11卷。任务等网络/锁不占CPU但保留资源；退出时可能泄漏。\n7. 七、IM场景的失败反例与设计取舍：两个客户端活动、历史查询、WS推送作为未来模型；请求结束但后台goroutine仍写response，用户断开但发送任务无取消，主进程退出未等写入，收到重复投递时错误被丢弃。对每个给启动者、完成信号、错误回报、资源归属、上限五项契约。无OpenIM具体实现事实。\n8. 八、分层练习与个人验证路线：从纸上任务树→静态代码推演→固定两消息示例→异常分支→未来个人隔离环境go test/真实记录，至少22题逐题反馈；当前不执行Go、构建、服务。官方Go spec/sync/博客来源，下一05.02 Mutex/RWMutex/WaitGroup,再05.03 channel/context。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

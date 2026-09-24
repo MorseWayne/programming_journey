@@ -267,4 +267,4 @@ HTTP 是请求—响应，但 HTTP/1.1 连接可以复用，不能教成“每�
 - [RFC 6455：WebSocket](https://www.rfc-editor.org/rfc/rfc6455)：HTTP/1.1 升级握手、101、帧和掩码规则。
 - [Go `net/http`](https://pkg.go.dev/net/http)：后续个人 HTTP 历史查询实现的标准库入口。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一批先进入 05 卷的 Go 并发基础，再回到 04 卷深化传输和网络 I/O。离开本章前，请能准确说出“HTTP 200”“WebSocket 101”“业务接受”“设备接收”“用户已读”各自属于哪条证据链。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章先读[05.01 并发任务与生命周期](../../../src/docs/platform_engineering/curriculum/05_runtime/01_concurrent_tasks_lifecycle.md)，再回到 04 卷深化传输和网络 I/O。离开本章前，请能准确说出“HTTP 200”“WebSocket 101”“业务接受”“设备接收”“用户已读”各自属于哪条证据链。
