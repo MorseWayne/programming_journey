@@ -1,0 +1,72 @@
+{
+  "code": "08.02",
+  "title": "时间与顺序：多设备消息怎样判先后",
+  "chapter_id": "ch_time_order",
+  "summary": "面向Go初学者，从多设备IM时间戳逆序出发，解释墙上/单调时钟、发生在前、Lamport钟、向量钟与会话业务序号。",
+  "objectives": [
+    "区分墙上时间、单调耗时和业务seq",
+    "解释跨设备时间戳逆序不等于因果逆序",
+    "画同进程和消息传递的发生在前关系",
+    "手算固定Lamport时钟序列",
+    "解释L较小不证明因果在前",
+    "用二维向量识别并发",
+    "为IM历史/回执选择正确顺序证据"
+  ],
+  "sources": [
+    "https://pkg.go.dev/time",
+    "https://lamport.azurewebsites.net/pubs/time-clocks.pdf",
+    "https://homes.cs.washington.edu/~arvind/cs425/doc/mattern89virtual.pdf",
+    "https://www.rfc-editor.org/rfc/rfc5905.html"
+  ],
+  "sections": [
+    {
+      "title": "一、多设备时间戳为何会倒着显示",
+      "words": 2500,
+      "focus": "承接08.01 A/G/S/B以及06.12 c-a seq9 m-9。A手机显示10:00:05，B设备接到通知后显示09:59:58；设备钟偏差导致墙上时间逆序，不等于B先收到。解释时区转换、时钟偏移与漂移、事件、消息ID、会话seq不同对象。"
+    },
+    {
+      "title": "二、Go墙上时钟与单进程单调耗时",
+      "words": 2800,
+      "focus": "Go time.Now同时含wall和monotonic读数，time.Since(start)/Sub在两个都带monotonic时用单调时间；JSON/格式化剥离monotonic，跨进程不能比较单调刻度；睡眠/重启 caveat。wall用于显示与粗时间，不能直接推导跨节点因果；deadline为本地等待预算。"
+    },
+    {
+      "title": "三、用发生在前关系画因果事件图",
+      "words": 3000,
+      "focus": "固定事件A:a1草稿、a2发送m-9；G:g1收到、g2转发；S:s1收到、s2提交seq9、s3答复；G:g3收到答复、g4通知B；B:b1接收；另C离线c1独立编辑。定义同进程顺序、发送→接收、传递闭包；a2→s2→b1，c1与s2无路径为并发；墙钟大小不构成因果。"
+    },
+    {
+      "title": "四、Lamport标量逻辑钟手算",
+      "words": 3000,
+      "focus": "每本地/发送事件加1，接收时max(local,incoming)+1。A a1=1 a2send=2；G g1recv=3 g2sendS=4；S s1recv=5 s2commit=6 s3reply=7；G g3recv=8 g4sendB=9；B b1recv=10。独立C c1=1仍与s2并发。若x→y则Lx<Ly，反向不成立；(L,nodeID)可人为扩展全序但不创造因果或业务seq。"
+    },
+    {
+      "title": "五、向量钟看出并发而不是只排号码",
+      "words": 2700,
+      "focus": "教学两节点A/C向量：A本地a1=[1,0]；C独立c1=[0,1]，各有一维大一维小所以并发；C后来收到A事件，逐维max为[1,1]再C维+1得[1,2]。向量偏序可表示因果/并发，维度随参与者增长；不宣称OpenIM使用。Mattern原论文。"
+    },
+    {
+      "title": "六、业务顺序：seq、message_id与时间戳各自负责",
+      "words": 2900,
+      "focus": "message_id=m-9去重身份，S事务分配c-a seq9用于同会话历史游标9,8,7，created_at用于显示/审计但物理钟不保证唯一或跨节点总序；Lamport值只是模型不能替seq。跨会话c-a与c-b无全局序号，设备多端读/回执需定义因果及可见承诺。"
+    },
+    {
+      "title": "七、时钟故障与观测证据",
+      "words": 2700,
+      "focus": "NTP可减小但不消除误差；时区处理不修复偏移；时钟回拨会影响wall-based持续时间，Go mono local更合适。记录每事件节点、ID、发送/接收边、版本/seq、同机单调耗时与wall时间并标可信度，不从壁钟一张表断言跨节点先后。"
+    },
+    {
+      "title": "八、22题与下一学习门",
+      "words": 2600,
+      "focus": "22题术语、画因果图、手算Lamport、向量并发、IM排序/时间取舍附答案。交付纸上事件图、逻辑钟表、业务顺序说明；不运行Go/数据库/站点。下一08.03复制目标、08.04一致性，再07卷。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.02 时间与顺序》，面向Go初学者，八节丰富理论、纸上实践和22道分层练习反馈。虚构u-a设备A在c-a发m-9，S分配seq9；B收到通知后却显示比A更早的物理时间（A10:00:05、B09:59:58），不能凭墙钟判因果。Go time.Now同时含wall/monotonic，time.Since本进程测时，JSON不含monotonic，跨进程不可比较。事件链A a1草稿=1 a2发送=2；G g1接收=3 g2转发=4；S s1接收=5 s2提交=6 s3答复=7；G g3接收=8 g4发B=9；B b1收到=10。独立设备C c1本地=1，与S s2并发，虽然1<6；若x→y则Lx<Ly，反向不成立。(L,nodeID)人为全序不创造因果。二维向量A事件[1,0]与C独立[0,1]不可比较；C随后收A则max后C自增[1,2]。message_id身份、会话seq排序、物理时间显示/审计、逻辑钟因果各有职责，不声称OpenIM使用逻辑钟。NTP不保证零误差。静态不运行Go/DB/站点。下一08.03/08.04后再07卷。\n1. 一、多设备时间戳为何会倒着显示: 承接08.01 A/G/S/B以及06.12 c-a seq9 m-9。A手机显示10:00:05，B设备接到通知后显示09:59:58；设备钟偏差导致墙上时间逆序，不等于B先收到。解释时区转换、时钟偏移与漂移、事件、消息ID、会话seq不同对象。\n2. 二、Go墙上时钟与单进程单调耗时: Go time.Now同时含wall和monotonic读数，time.Since(start)/Sub在两个都带monotonic时用单调时间；JSON/格式化剥离monotonic，跨进程不能比较单调刻度；睡眠/重启 caveat。wall用于显示与粗时间，不能直接推导跨节点因果；deadline为本地等待预算。\n3. 三、用发生在前关系画因果事件图: 固定事件A:a1草稿、a2发送m-9；G:g1收到、g2转发；S:s1收到、s2提交seq9、s3答复；G:g3收到答复、g4通知B；B:b1接收；另C离线c1独立编辑。定义同进程顺序、发送→接收、传递闭包；a2→s2→b1，c1与s2无路径为并发；墙钟大小不构成因果。\n4. 四、Lamport标量逻辑钟手算: 每本地/发送事件加1，接收时max(local,incoming)+1。A a1=1 a2send=2；G g1recv=3 g2sendS=4；S s1recv=5 s2commit=6 s3reply=7；G g3recv=8 g4sendB=9；B b1recv=10。独立C c1=1仍与s2并发。若x→y则Lx<Ly，反向不成立；(L,nodeID)可人为扩展全序但不创造因果或业务seq。\n5. 五、向量钟看出并发而不是只排号码: 教学两节点A/C向量：A本地a1=[1,0]；C独立c1=[0,1]，各有一维大一维小所以并发；C后来收到A事件，逐维max为[1,1]再C维+1得[1,2]。向量偏序可表示因果/并发，维度随参与者增长；不宣称OpenIM使用。Mattern原论文。\n6. 六、业务顺序：seq、message_id与时间戳各自负责: message_id=m-9去重身份，S事务分配c-a seq9用于同会话历史游标9,8,7，created_at用于显示/审计但物理钟不保证唯一或跨节点总序；Lamport值只是模型不能替seq。跨会话c-a与c-b无全局序号，设备多端读/回执需定义因果及可见承诺。\n7. 七、时钟故障与观测证据: NTP可减小但不消除误差；时区处理不修复偏移；时钟回拨会影响wall-based持续时间，Go mono local更合适。记录每事件节点、ID、发送/接收边、版本/seq、同机单调耗时与wall时间并标可信度，不从壁钟一张表断言跨节点先后。\n8. 八、22题与下一学习门: 22题术语、画因果图、手算Lamport、向量并发、IM排序/时间取舍附答案。交付纸上事件图、逻辑钟表、业务顺序说明；不运行Go/数据库/站点。下一08.03复制目标、08.04一致性，再07卷。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

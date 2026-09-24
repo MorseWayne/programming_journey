@@ -258,6 +258,7 @@ export default sidebar({
           "children": [
             "curriculum/08_distributed/",
             "curriculum/08_distributed/01_system_partial_failure",
+            "curriculum/08_distributed/02_time_order",
             "curriculum/08_distributed/core"
           ]
         },

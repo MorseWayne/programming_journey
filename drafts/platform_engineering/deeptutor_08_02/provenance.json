@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_b3b496690f",
+  "page_id": "pg_f72719be9f",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/time",
+      "https://lamport.azurewebsites.net/pubs/time-clocks.pdf",
+      "https://homes.cs.washington.edu/~arvind/cs425/doc/mattern89virtual.pdf",
+      "https://www.rfc-editor.org/rfc/rfc5905.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "e12e81f2ad7f76da67a3deec15b066f7fc09fd08760e21d575181502f82cefee",
+  "original_characters": 29795,
+  "generation_request_sha256": "86701ad948d63c6d87ed63772fcefe5a211ac13233d6d11e0facbbf1ca1a3ce9",
+  "reviewed_sha256": "9c4adb3b1ed1428d00c4ea8b3f7596abbd4cf6cbc89ed0203ab7857c23c4e21f",
+  "reviewed_characters": 8787,
+  "reviewed_chinese_characters": 3528,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/02_time_order.md",
+  "course_sha256": "0b2fc7770dc891d0479e4486571d47fa754642bdd141902b4b5fce2a60158e3e"
+}

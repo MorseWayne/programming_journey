@@ -27,9 +27,9 @@
   "original_sha256": "4d019000d47748aba6eec95bc1cceb4a031e9f54dca9d81bf6b104d02d2914f3",
   "original_characters": 29129,
   "generation_request_sha256": "25b933099d1ac74767a78e780eb172ed0b52a0880c666931496b56af09cd7c52",
-  "reviewed_sha256": "6ea26eef7bbc2caae122257246d3cfacfc32bee7b91a85bc811af95b76ce91ca",
-  "reviewed_characters": 8308,
-  "reviewed_chinese_characters": 4052,
+  "reviewed_sha256": "2edda8f1b68f0b55a52f20d54339f81c8e373b5e6caa17c1e6d57d7b42bb26ab",
+  "reviewed_characters": 8397,
+  "reviewed_chinese_characters": 4057,
   "course_file": "src/docs/platform_engineering/curriculum/08_distributed/01_system_partial_failure.md",
-  "course_sha256": "fe79a90c50ef82c42aa934b287a9ddfcb381d04b11670d5cc7653eb7db5d3aa9"
+  "course_sha256": "568f4edfd4a25eb0acd184717e84577aed6b5bee6d13ee63a9051829eb5a77f4"
 }

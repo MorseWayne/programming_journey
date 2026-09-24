@@ -1,0 +1,30 @@
+{
+  "chapter": "08.02",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced time and causality lesson using fictional multi-device m-9 events",
+  "prerequisites": [
+    "08.01 partial failure and A/G/S/B node model",
+    "01.08 Go time standard-library entry",
+    "06.12 c-a seq and m-9 business identity"
+  ],
+  "first_pass": [
+    "wall clock and timezone versus local monotonic elapsed time",
+    "same-process and send-receive happened-before event graph",
+    "c-a history seq9 versus m-9 identity and display timestamp"
+  ],
+  "second_pass": [
+    "Lamport values 1–10 and reverse implication failure",
+    "independent C event concurrent with S commit despite smaller Lamport value",
+    "two-process vectors [1,0] and [0,1] incomparable, receive becomes [1,2]",
+    "Go monotonic reading not serialized or comparable across processes"
+  ],
+  "not_yet_prerequisites": [
+    "08.03 replica confirmation and lag",
+    "08.04 consistency models",
+    "08.07 lease/fencing time assumptions",
+    "real multi-device traces by the learner"
+  ],
+  "next_chapter": "08.03 replication goals and costs",
+  "upstream_inspection": "No OpenIM implementation claim; Go time documentation, Lamport and Mattern papers, and NTP RFC support only the stated mechanisms.",
+  "shared_integration_pending": []
+}
