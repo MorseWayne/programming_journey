@@ -1,0 +1,76 @@
+{
+  "code": "06.03",
+  "title": "模式设计与演进：让会话历史经得起改名和退群",
+  "chapter_id": "ch_schema_evolution",
+  "summary": "面向Go初学者沿虚构IM用户改名、成员重入与消息历史的需求，讲函数依赖、更新异常、规范化直觉与文档冗余，再设计发送时展示名快照的兼容迁移；静态教学，不运行数据库或声称OpenIM实现。",
+  "objectives": [
+    "从业务写入/读取需求识别重复数据和权威来源",
+    "解释函数依赖与插入/更新/删除异常",
+    "用键与依赖直觉说明1NF/2NF/3NF和拆分边界",
+    "区分当前显示名与发送时展示快照",
+    "设计成员历史而不覆盖旧资格",
+    "比较SQL拆分与文档嵌入/引用/冗余",
+    "为新字段设计扩展、回填、校验、收紧、清理顺序",
+    "说明旧版本兼容、回退与不可编造的历史数据"
+  ],
+  "sources": [
+    "https://15445.courses.cs.cmu.edu/fall2017/notes/05-notes-normalforms.pdf",
+    "https://www.postgresql.org/docs/current/ddl-constraints.html",
+    "https://www.postgresql.org/docs/current/ddl-alter.html",
+    "https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/identify-workload/",
+    "https://www.mongodb.com/docs/manual/data-modeling/embedding/",
+    "https://www.mongodb.com/docs/manual/data-modeling/referencing/",
+    "https://www.mongodb.com/docs/manual/data-modeling/data-consistency/"
+  ],
+  "sections": [
+    {
+      "title": "一、从一次昵称修改暴露模式问题",
+      "words": 2300,
+      "focus": "承接06.01四表/06.02SQL，虚构u-a/c-a/m-a。若messages每行重复sender_display_name，u-a改名后历史行不一致。区分业务需求：历史展示用当前名还是发送时快照，不能将所有冗余当错。先写工作负载：读会话历史、查当前成员、退出重入、改名、保存消息；当前无DB运行。"
+    },
+    {
+      "title": "二、字段依赖与更新异常的入门",
+      "words": 2700,
+      "focus": "解释X→Y函数依赖：同一user_id确定当前display_name但不一定确定历史展示名；message_id确定messages列，(conversation_id,user_id)决定当前member行，(conversation_id,seq)候选键。混表(messages with display_name)造成更新/插入/删除异常，3行m-a/m-b/m-c手算重复和遗漏，依据字段语义而非列名判断。"
+    },
+    {
+      "title": "三、从重复表拆回用户/成员/消息",
+      "words": 2700,
+      "focus": "关系规范化直觉，1NF/2NF/3NF只讲必要定义与例子，复合键下部分依赖、非键到非键传递依赖；不要背口号或过强说所有冗余错误。拆分要保留无损连接和关键约束，纸上把u-a昵称从messages移回users，历史需发送时快照则另命名字段与不变量。加入当前成员 vs成员事件表区别。"
+    },
+    {
+      "title": "四、约束、外键与业务不变量的分工",
+      "words": 2700,
+      "focus": "PK/FK/UNIQUE/CHECK/NOT NULL承接06.01，(conversation_id,seq)唯一，sender_id外键仅存在，成员权限、时间区间、跨行状态不能简单CHECK。历史成员资格membership_id、join/leave时间，同会话同用户可多段，当前活跃唯一需要具体DB约束策略，先写需求再选实现。不得把SQL模型当OpenIM实现或持久确认。"
+    },
+    {
+      "title": "五、文档嵌入、引用与冗余的业务取舍",
+      "words": 2500,
+      "focus": "MongoDB会话文档可能嵌入小而有界设置；独立messages文档引用会话和发送者，不能把无界历史塞单文档。当前显示名与发送时快照不同语义；冗余缓存如last_message_preview易读但要定义权威、同步、失效和重建，文档模型灵活不等于无需schema。用户改名/撤回消息如何更新和对账。"
+    },
+    {
+      "title": "六、最小模式演进：添加发送时展示快照",
+      "words": 2700,
+      "focus": "纸上变更需求：历史要显示发送时名称。先新增可空snapshot列，旧代码仍兼容；新写入双写字段并读时fallback，按稳定游标小批回填已知历史或标unknown（不能用当前名冒充过去名），核对NULL/覆盖率，再必要约束，最后旧读路径退出。静态PostgreSQL ALTER TABLE示意，说明DDL可能锁/重写且版本不同，必须具体评估；不运行DB。"
+    },
+    {
+      "title": "七、上线顺序与回退窗口的失败变式",
+      "words": 2700,
+      "focus": "旧客户端/旧服务并存，读/写兼容；直接加NOT NULL会因旧行NULL失败，直接删列破坏旧代码，回填中断和未知历史无法编造，双写不一致需对账。扩展→迁移→收紧→清理概念；先行验证、阶段指标、回退点，回退不等于可逆删除，数据迁移/发布细节10.10。"
+    },
+    {
+      "title": "八、方案评审与22道分层练习",
+      "words": 2900,
+      "focus": "交付依赖表、异常反例、SQL/文档两套取舍、成员历史和发送时快照迁移步骤、验收与风险。22题由FD/异常/键→1NF2NF3NF直觉→嵌入引用→逐步迁移/兼容/回退和IM权威确认。下一06.10 data access? Roadmap S3 after06.03 06.10 entrance then06.07. 静态不运行Go/DB/站点，不宣称上游。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《06.03 模式设计与演进》，面向Go初学者，承接06.01四表与06.02 SQL，沿虚构IM用户改名、成员退群重入和消息历史的业务需求解释冗余、函数依赖、规范化、文档嵌入引用和兼容迁移。八节充分展开、22道附反馈练习，先简单后复杂，实践与理论融合。所有表/迁移为纸上设计，不运行数据库/Go/站点，不宣称OpenIM实现事实。\n1. 一、从一次昵称修改暴露模式问题：承接06.01四表/06.02SQL，虚构u-a/c-a/m-a。若messages每行重复sender_display_name，u-a改名后历史行不一致。区分业务需求：历史展示用当前名还是发送时快照，不能将所有冗余当错。先写工作负载：读会话历史、查当前成员、退出重入、改名、保存消息；当前无DB运行。\n2. 二、字段依赖与更新异常的入门：解释X→Y函数依赖：同一user_id确定当前display_name但不一定确定历史展示名；message_id确定messages列，(conversation_id,user_id)决定当前member行，(conversation_id,seq)候选键。混表(messages with display_name)造成更新/插入/删除异常，3行m-a/m-b/m-c手算重复和遗漏，依据字段语义而非列名判断。\n3. 三、从重复表拆回用户/成员/消息：关系规范化直觉，1NF/2NF/3NF只讲必要定义与例子，复合键下部分依赖、非键到非键传递依赖；不要背口号或过强说所有冗余错误。拆分要保留无损连接和关键约束，纸上把u-a昵称从messages移回users，历史需发送时快照则另命名字段与不变量。加入当前成员 vs成员事件表区别。\n4. 四、约束、外键与业务不变量的分工：PK/FK/UNIQUE/CHECK/NOT NULL承接06.01，(conversation_id,seq)唯一，sender_id外键仅存在，成员权限、时间区间、跨行状态不能简单CHECK。历史成员资格membership_id、join/leave时间，同会话同用户可多段，当前活跃唯一需要具体DB约束策略，先写需求再选实现。不得把SQL模型当OpenIM实现或持久确认。\n5. 五、文档嵌入、引用与冗余的业务取舍：MongoDB会话文档可能嵌入小而有界设置；独立messages文档引用会话和发送者，不能把无界历史塞单文档。当前显示名与发送时快照不同语义；冗余缓存如last_message_preview易读但要定义权威、同步、失效和重建，文档模型灵活不等于无需schema。用户改名/撤回消息如何更新和对账。\n6. 六、最小模式演进：添加发送时展示快照：纸上变更需求：历史要显示发送时名称。先新增可空snapshot列，旧代码仍兼容；新写入双写字段并读时fallback，按稳定游标小批回填已知历史或标unknown（不能用当前名冒充过去名），核对NULL/覆盖率，再必要约束，最后旧读路径退出。静态PostgreSQL ALTER TABLE示意，说明DDL可能锁/重写且版本不同，必须具体评估；不运行DB。\n7. 七、上线顺序与回退窗口的失败变式：旧客户端/旧服务并存，读/写兼容；直接加NOT NULL会因旧行NULL失败，直接删列破坏旧代码，回填中断和未知历史无法编造，双写不一致需对账。扩展→迁移→收紧→清理概念；先行验证、阶段指标、回退点，回退不等于可逆删除，数据迁移/发布细节10.10。\n8. 八、方案评审与22道分层练习：交付依赖表、异常反例、SQL/文档两套取舍、成员历史和发送时快照迁移步骤、验收与风险。22题由FD/异常/键→1NF2NF3NF直觉→嵌入引用→逐步迁移/兼容/回退和IM权威确认。下一06.10 data access? Roadmap S3 after06.03 06.10 entrance then06.07. 静态不运行Go/DB/站点，不宣称上游。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

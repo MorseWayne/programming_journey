@@ -260,4 +260,4 @@ UNION 去重只保留一次，UNION ALL 保留来自两个会话的两次出现�
 - [PostgreSQL：插入行](https://www.postgresql.org/docs/current/tutorial-populate.html)、[查询](https://www.postgresql.org/docs/current/tutorial-select.html)、[更新](https://www.postgresql.org/docs/current/tutorial-update.html)与[删除](https://www.postgresql.org/docs/current/tutorial-delete.html)：基础 SQL 的语句和作用范围。
 - [PostgreSQL：连接](https://www.postgresql.org/docs/current/tutorial-join.html)、[聚合](https://www.postgresql.org/docs/current/tutorial-agg.html)与[分页](https://www.postgresql.org/docs/current/queries-limit.html)：联表、分组和稳定排序的语义。
 
-下一章 06.03 将从“当前表能存哪些状态”进入模式设计与演进；06.10 再接 Go 的 `database/sql`、参数绑定与资源关闭。离开本章前，应能从虚构 IM 需求写出一条有**身份、会话范围、排序、分页和证据边界**的纸上查询。
+下一章[06.03 模式设计与演进](../../../src/docs/platform_engineering/curriculum/06_databases/03_schema_evolution.md)将从“当前表能存哪些状态”进入冗余与兼容迁移；06.10 再接 Go 的 `database/sql`、参数绑定与资源关闭。离开本章前，应能从虚构 IM 需求写出一条有**身份、会话范围、排序、分页和证据边界**的纸上查询。

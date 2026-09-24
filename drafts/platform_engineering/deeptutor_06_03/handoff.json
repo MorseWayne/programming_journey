@@ -1,0 +1,12 @@
+{
+  "chapter": "06.03",
+  "stage": "S3",
+  "business_scope": "fictional IM user renaming, conversation membership rejoining and message display-name snapshots; paper schema and compatibility migration only, no running database or OpenIM storage claim",
+  "prerequisites": ["06.01 four-table keys, constraints and NULL", "06.02 SQL joins and scoped updates", "09.01 identity and authorization boundaries"],
+  "first_pass": ["current name versus send-time snapshot", "functional dependency and update anomalies", "1NF/2NF/3NF intuition tied to concrete IM fields", "current membership versus period history"],
+  "second_pass": ["controlled denormalization and authoritative data", "bounded document embedding and references", "expand, new writes, compatible reads, trustworthy backfill, verify, conditional tighten and cleanup", "old-version compatibility and irreversible historical gaps"],
+  "not_yet_prerequisites": ["06.10 Go data access entry", "06.07 transaction and concurrent migration semantics", "06.09 crash recovery", "10.10 release and rollback design", "06.05–06.06 index and plan costs"],
+  "next_chapter": "06.10 Go database access entry for the fictional IM history query",
+  "upstream_inspection": "No OpenIM storage implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

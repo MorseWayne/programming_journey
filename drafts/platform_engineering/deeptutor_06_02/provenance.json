@@ -29,9 +29,9 @@
   "original_sha256": "3f17d6b6862fa5f199d3e849abd55aeae7f8235941f6d64c53345156f1a802c4",
   "original_characters": 35905,
   "generation_request_sha256": "a3a8568c9a9be503f9ac7cc2b1cbdf921e1b0d8f6477eb782866da0361f04c61",
-  "reviewed_sha256": "035cadcc9ff13bd983e4e974b15a1766e4bfd65e2dbb14ad50e2d2559157fb74",
-  "reviewed_characters": 10108,
-  "reviewed_chinese_characters": 3546,
+  "reviewed_sha256": "3e02f3829b8e93e343b31711ad0e0c96860f6b8f241b2561188addc1e90ffcd7",
+  "reviewed_characters": 10203,
+  "reviewed_chinese_characters": 3553,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/02_sql_queries.md",
-  "course_sha256": "fd0c42a60b9f6c2bf2612f5f088e724c0a70e623b173224031a92aa0eb61d1a5"
+  "course_sha256": "031134d93c29224d863c8a39a89396fc55ee857af1f1660abecf2cda8689bba9"
 }

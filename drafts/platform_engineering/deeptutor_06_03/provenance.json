@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f606685275",
+  "page_id": "pg_8247c2abac",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://15445.courses.cs.cmu.edu/fall2017/notes/05-notes-normalforms.pdf",
+      "https://www.postgresql.org/docs/current/ddl-constraints.html",
+      "https://www.postgresql.org/docs/current/ddl-alter.html",
+      "https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/identify-workload/",
+      "https://www.mongodb.com/docs/manual/data-modeling/embedding/",
+      "https://www.mongodb.com/docs/manual/data-modeling/referencing/",
+      "https://www.mongodb.com/docs/manual/data-modeling/data-consistency/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "127dd9ac932b6560e11193e5c57cd3a0a65e014386bf28e7726ff61ac63913a1",
+  "original_characters": 34076,
+  "generation_request_sha256": "80184d26a54b6110973211ab0da844242be6a4212be7f11b4738503a7f4df0ae",
+  "reviewed_sha256": "766748b6932909e6473f02698e9d7466bf7f1627f090655dcc06450aed7fc563",
+  "reviewed_characters": 8842,
+  "reviewed_chinese_characters": 4326,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/03_schema_evolution.md",
+  "course_sha256": "0b913ebc6e3dd56f3d775a04e0eea49ebacf2c58adfc79a50507867c811247bf"
+}
