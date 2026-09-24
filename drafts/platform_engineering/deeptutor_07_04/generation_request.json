@@ -1,0 +1,73 @@
+{
+  "code": "07.04",
+  "title": "缓存过载与热点：群聊预览失效时谁承压",
+  "chapter_id": "ch_cache_overload_hotspots",
+  "summary": "面向Go初学者，以大群预览和不存在消息点查推导缓存击穿、雪崩、穿透、热键、大键及有界回源/降级。",
+  "objectives": [
+    "区分击穿、穿透、雪崩、热键与大键",
+    "手算1000请求/200每秒回源的积压",
+    "解释进程内singleflight不能合并跨进程加载",
+    "计算100键错开TTL的理想量级与限制",
+    "区分随机不存在ID与重复单ID负缓存效果",
+    "保护权限与权威DB不被旧缓存/回源过载破坏",
+    "设计观测与限流降级证据"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/develop/use-cases/cache-aside/",
+    "https://redis.io/docs/latest/develop/reference/eviction/",
+    "https://redis.io/docs/latest/operate/rs/monitoring/observability/",
+    "https://redis.io/docs/latest/commands/hotkeys/",
+    "https://redis.io/docs/latest/develop/data-types/sets/"
+  ],
+  "sections": [
+    {
+      "title": "一、从c-g热预览建立过载模型",
+      "words": 2600,
+      "focus": "承接07.01–07.03：虚构c-g大群会话预览可重建派生缓存。玩具每秒1000个同键读取，DB对这类查询可安全处理200/s；这是纸上容量非实测。定义arrival、service、backlog、hit/miss、hot key vs big key，权限另查。"
+    },
+    {
+      "title": "二、击穿：一个热键过期的1000请求",
+      "words": 3100,
+      "focus": "t0 preview:c-g TTL到期，1000个请求在第一填充完成前都看到miss→naive1000 DB查询；若DB1秒最多处理200、无其他负载/无成功合并，则至少800等待或被限流，若仅一批理想约5s排空，若持续1000/s则backlog+800/s。不能把hit rate平均值掩盖峰值。"
+    },
+    {
+      "title": "三、同键合并加载的能力与边界",
+      "words": 3000,
+      "focus": "4个独立网关每个250请求，进程内singleflight每进程合并为1个load，理想至多4 DB查询而非全局1；leader失败、取消、超时、进程重启要释放等待并按预算重试，所有等待者不可无限排队。分布式锁/Redis锁不是自动正确，读旧值要合同。"
+    },
+    {
+      "title": "四、雪崩：很多键同刻过期",
+      "words": 2900,
+      "focus": "100个预览键都在t60过期，每键10个请求同秒→1000miss；如果人为均匀错开到10s，理想约100miss/s，但实际不保证均匀，也不解决单热键击穿。TTL jitter、预热、容量/限流/过载降级要结合；故障性全量清空也是雪崩但触发不同。"
+    },
+    {
+      "title": "五、穿透与负缓存/权限边界",
+      "words": 3000,
+      "focus": "1000次请求随机不存在m-x1..m-x1000，各ID只1次，逐ID负缓存首查仍1000回源。重复同一m-x可负缓存但07.03迟到创建风险，u-c私有隐藏404不能全局负缓存。认证/输入限额/限流/Bloom候选须设计更新和误判边界，不把数据库错误写不存在。"
+    },
+    {
+      "title": "六、热键、大键与命中仍过载",
+      "words": 3000,
+      "focus": "preview:c-g每秒1000hit可能压Redis单键/网络，不同于击穿；candidate_members:c-g含1万用户，SMEMBERS整取每次1万ID是big key访问，SISMEMBER候选不授权。热点/大key可并存，局部cache/分片/截断候选有失效与权限代价，先测访问分布。"
+    },
+    {
+      "title": "七、缓存失效时保护权威源",
+      "words": 3100,
+      "focus": "Redis不可用，全部1000/s回源超过DB安全200/s；应用需有界并发/排队、限流和明确过载返回，允许陈旧的预览可按合同降级，不可用旧members许可放行。记录cache hit/miss, stale, per-key热点采样、eviction/TTL、DB QPS/等待/P95/错误，避免高基数user_id指标。"
+    },
+    {
+      "title": "八、决策矩阵与22题",
+      "words": 2800,
+      "focus": "交付击穿1000→800积压算式、singleflight4网关、雪崩100键10s、穿透1000随机ID、大key/热键对照；22题从词汇→算式→安全降级评审附反馈。静态不运行Redis/DB/Go/负载/站点，下一07.05缓存持久与故障。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.04 缓存过载与热点》，面向Go初学者，八节丰富基础理论、固定纸上算式和22道分层练习反馈。虚构c-g大群预览为派生缓存，1000个请求同时在preview:c-g过期后、首个回填前都miss，则naive1000次DB回源；假设DB此类查询安全能力200/s且无其他负载，第一秒最多完成200、至少800排队/拒绝，若仅一批理想5秒清完；若持续1000/s则每秒净增长800。4个独立网关各250请求，进程内singleflight理想最多4次回源，不是全局1，leader失败须释放等待。100个键同在t60过期且每键10请求=1000miss，理想均匀错开到10秒是100miss/s，但jitter不解决单个热键。穿透1000个随机不存在ID每个只查一次，逐ID负缓存首查仍1000回源；重复同一个m-x可帮助但创建竞态/私有隐藏404不能全局负缓存。preview:c-g每秒1000 hit仍可能压Redis热键；candidate_members:c-g含10000成员时SMEMBERS整取是大键访问，不能授权。Redis故障下1000/s回源超过DB200/s，需有界并发/明确降级，预览旧值仅合同允许时可用，旧成员许可绝不可放行。所有数字纸上非实测。静态不运行Redis/DB/Go/负载/站点。下一07.05故障持久。\n1. 一、从c-g热预览建立过载模型: 承接07.01–07.03：虚构c-g大群会话预览可重建派生缓存。玩具每秒1000个同键读取，DB对这类查询可安全处理200/s；这是纸上容量非实测。定义arrival、service、backlog、hit/miss、hot key vs big key，权限另查。\n2. 二、击穿：一个热键过期的1000请求: t0 preview:c-g TTL到期，1000个请求在第一填充完成前都看到miss→naive1000 DB查询；若DB1秒最多处理200、无其他负载/无成功合并，则至少800等待或被限流，若仅一批理想约5s排空，若持续1000/s则backlog+800/s。不能把hit rate平均值掩盖峰值。\n3. 三、同键合并加载的能力与边界: 4个独立网关每个250请求，进程内singleflight每进程合并为1个load，理想至多4 DB查询而非全局1；leader失败、取消、超时、进程重启要释放等待并按预算重试，所有等待者不可无限排队。分布式锁/Redis锁不是自动正确，读旧值要合同。\n4. 四、雪崩：很多键同刻过期: 100个预览键都在t60过期，每键10个请求同秒→1000miss；如果人为均匀错开到10s，理想约100miss/s，但实际不保证均匀，也不解决单热键击穿。TTL jitter、预热、容量/限流/过载降级要结合；故障性全量清空也是雪崩但触发不同。\n5. 五、穿透与负缓存/权限边界: 1000次请求随机不存在m-x1..m-x1000，各ID只1次，逐ID负缓存首查仍1000回源。重复同一m-x可负缓存但07.03迟到创建风险，u-c私有隐藏404不能全局负缓存。认证/输入限额/限流/Bloom候选须设计更新和误判边界，不把数据库错误写不存在。\n6. 六、热键、大键与命中仍过载: preview:c-g每秒1000hit可能压Redis单键/网络，不同于击穿；candidate_members:c-g含1万用户，SMEMBERS整取每次1万ID是big key访问，SISMEMBER候选不授权。热点/大key可并存，局部cache/分片/截断候选有失效与权限代价，先测访问分布。\n7. 七、缓存失效时保护权威源: Redis不可用，全部1000/s回源超过DB安全200/s；应用需有界并发/排队、限流和明确过载返回，允许陈旧的预览可按合同降级，不可用旧members许可放行。记录cache hit/miss, stale, per-key热点采样、eviction/TTL、DB QPS/等待/P95/错误，避免高基数user_id指标。\n8. 八、决策矩阵与22题: 交付击穿1000→800积压算式、singleflight4网关、雪崩100键10s、穿透1000随机ID、大key/热键对照；22题从词汇→算式→安全降级评审附反馈。静态不运行Redis/DB/Go/负载/站点，下一07.05缓存持久与故障。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

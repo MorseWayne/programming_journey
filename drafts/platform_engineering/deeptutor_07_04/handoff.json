@@ -1,0 +1,30 @@
+{
+  "chapter": "07.04",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced cache overload lesson using fictional c-g preview and invalid message IDs",
+  "prerequisites": [
+    "07.01 state roles and loss policies",
+    "07.02 Redis candidate data structures",
+    "07.03 cache-aside read/update races",
+    "11.02 distributions and tail latency interpretation"
+  ],
+  "first_pass": [
+    "hot key versus big key, breakthrough, penetration and avalanche",
+    "one burst of 1000 misses against 200/s database budget",
+    "four gateways each singleflight to four ideal loads"
+  ],
+  "second_pass": [
+    "hundred keys expiring together versus ideal ten-second staggering",
+    "thousand distinct absent IDs and negative-cache first-miss limits",
+    "Redis down fallback with bounded database load and permission-safe degradation",
+    "cache, database and user outcome metrics in one window"
+  ],
+  "not_yet_prerequisites": [
+    "07.05 cache durability and failure",
+    "07.06 message abstractions",
+    "real controlled load and failure experiments by the learner"
+  ],
+  "next_chapter": "07.05 cache durability and failure",
+  "upstream_inspection": "No OpenIM implementation claim; Redis primary documentation supports only the cited cache, eviction and monitoring mechanisms.",
+  "shared_integration_pending": []
+}
