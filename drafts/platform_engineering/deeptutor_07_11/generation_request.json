@@ -1,0 +1,73 @@
+{
+  "code": "07.11",
+  "title": "派生视图与事件时间：迟到消息怎样修正结果",
+  "chapter_id": "ch_derived_views_event_time",
+  "summary": "面向Go初学者，用虚构IM消息m-9/E9、m-10/E10建立派生视图、事件时间、水位线、迟到修正、CDC和权威重建的完整模型。",
+  "objectives": [
+    "区分权威事实与预览/搜索/窗口统计派生视图",
+    "区分业务seq、broker offset和事件/处理时间",
+    "推演E9/E10消费乱序与版本修正",
+    "手算一分钟窗口与迟到30秒政策",
+    "设计快照加增量的影子索引重建与对账",
+    "写明OpenIM固定源码的证据范围"
+  ],
+  "sources": [
+    "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
+    "https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/operators/windows/",
+    "https://www.postgresql.org/docs/current/rules-materializedviews.html",
+    "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、三份派生结果回答不同问题",
+      "words": 2800,
+      "focus": "承接未来教学S3：权威messages m-9/c-a/seq9与m-10/c-a/seq10、E9/E10和m-9编辑v2。会话预览latest_seq=10、每消息搜索文档、每分钟消息量是三种不同派生视图；先定义事实、投影、物化视图、缓存与重建源；S2仍accepted_in_memory。"
+    },
+    {
+      "title": "二、四种时间与两种顺序",
+      "words": 3000,
+      "focus": "server控制的事件事实时间/commit_at、broker接收时间、消费者处理时间、客户端展示时间要区分；seq是会话权威顺序，Kafka offset是分区位置，时钟时间不是因果/序号。E9 commit12:00:10 arrive12:00:40，E10 commit12:00:55 arrive12:01:20；两个时间列示。客户端时间不作权威。"
+    },
+    {
+      "title": "三、迟到事件为什么让预览和索引倒退",
+      "words": 3100,
+      "focus": "E9 offset42/E10 offset43，但消费者并发E10先完成；预览按会话seq条件更新保持10，不可因E9退回9；搜索按message_id/version存m-9和m-10，两者都必须有；m-9:v2合法编辑后迟到v1不可覆盖。权限变化、撤回删除必须显式更新/重建，不能只max(seq)。"
+    },
+    {
+      "title": "四、窗口与水位线的纸上手算",
+      "words": 3200,
+      "focus": "半开窗口[12:00:00,12:01:00)，E9事件时间12:00:10/E10 12:00:55都属该窗口，最终条数2。处理到12:01:10只见E9，watermark=12:01:00可初发count1；E10 12:01:20到达且时间早于watermark，为late，采用允许迟到30s的教学政策，若W尚未越过12:01:30，可更正count2；否则侧路隔离/权威回算，不默默丢掉当最终事实。水位线是时间进度启发式，不保证永不迟到。"
+    },
+    {
+      "title": "五、变更捕获、物化视图和保留",
+      "words": 2800,
+      "focus": "源为权威DB消息及版本，变化可由教学outbox/CDC到派生投影；PostgreSQL materialized view存查询结果，REFRESH重算，不把它等同自动实时增量搜索索引。Debezium snapshot+stream有位点，读取/提交位置与业务seq不同，过broker保留窗不可只靠broker重建。事件模式版本、tombstone、访问控制同样必要。"
+    },
+    {
+      "title": "六、从权威事实重建新视图",
+      "words": 3200,
+      "focus": "教学shadow索引：定义快照范围H=seq10与一致的变更游标，从权威messages全量构造、同时保留H后或快照期间变更并按稳定版本重放；按ID+版本+权限/删除核对，原子切换读别名或指针，保留回滚窗口。H是单会话高水标，跨会话不能当全局数据库位点；需要与CDC offset/快照一致性明确配对。不要漏快照期间改动。"
+    },
+    {
+      "title": "七、业务读契约和真实源码证据边界",
+      "words": 2900,
+      "focus": "聊天历史权威查询、搜索结果最终追赶、会话预览允许短暂陈旧但不能版本倒退、每分钟分析允许修正，各写一致性/纠错合同。B离线25h越过玩具broker24h保留应从权威历史按成员权限补拉。固定OpenIM send.go MsgToMQ后返回、另一Mongo消费BatchInsertChat2DB，只能证明异步阶段，不能断言使用本教学投影/水位线。"
+    },
+    {
+      "title": "八、22题与重建验收",
+      "words": 3000,
+      "focus": "22题基础8/时间窗口8/重建业务6：区分事实与派生、seq/offset/time、E9/E10迟到、W/late允许30s、count1到2更正、m-9v1/v2、snapshot+tail gap/overlap、权限/删除、对账/切换、固定源码边界。交付事件时间表、三视图更新矩阵、shadow rebuild计划。静态不运行Flink/Go/DB/broker/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.11 派生视图与事件时间》，面向Go初学者，八节丰富基础理论、IM业务例子、两遍递进与22题反馈。当前S2 accepted_in_memory，未来S3 stored_in_teaching_db只是提议。权威m-9/c-a/seq9、m-10/c-a/seq10，E9 P0:42/E10 P0:43；会话预览latest_seq、每消息搜索、每分钟统计是不同派生视图。E9事件事实时间12:00:10处理到12:00:40，E10事实时间12:00:55到达12:01:20。半开窗口[12:00:00,12:01:00)最终应计2；水位线在12:01:10为12:01:00时先见E9计1，E10是迟到，教学允许迟到30秒在水位线未超过12:01:30时修正为2，否则侧路/权威重建；不能以处理墙钟直接计算窗口，也不能宣称水位线绝对无迟到。m-9编辑v2迟到v1不能覆盖，预览seq10不能退回9，但不能跳过m-9搜索必要效果。区分PostgreSQL物化视图REFRESH与应用增量投影；CDC和snapshot+tail位点、影子索引重建、权限与删除及对账。固定OpenIM只有send.go MsgToMQ后返回、另一Mongo消费BatchInsertChat2DB的有限证据，不能说其使用教学投影/水位线。静态不运行Flink/Go/DB/broker/站点。\n1. 一、三份派生结果回答不同问题: 承接未来教学S3：权威messages m-9/c-a/seq9与m-10/c-a/seq10、E9/E10和m-9编辑v2。会话预览latest_seq=10、每消息搜索文档、每分钟消息量是三种不同派生视图；先定义事实、投影、物化视图、缓存与重建源；S2仍accepted_in_memory。\n2. 二、四种时间与两种顺序: server控制的事件事实时间/commit_at、broker接收时间、消费者处理时间、客户端展示时间要区分；seq是会话权威顺序，Kafka offset是分区位置，时钟时间不是因果/序号。E9 commit12:00:10 arrive12:00:40，E10 commit12:00:55 arrive12:01:20；两个时间列示。客户端时间不作权威。\n3. 三、迟到事件为什么让预览和索引倒退: E9 offset42/E10 offset43，但消费者并发E10先完成；预览按会话seq条件更新保持10，不可因E9退回9；搜索按message_id/version存m-9和m-10，两者都必须有；m-9:v2合法编辑后迟到v1不可覆盖。权限变化、撤回删除必须显式更新/重建，不能只max(seq)。\n4. 四、窗口与水位线的纸上手算: 半开窗口[12:00:00,12:01:00)，E9事件时间12:00:10/E10 12:00:55都属该窗口，最终条数2。处理到12:01:10只见E9，watermark=12:01:00可初发count1；E10 12:01:20到达且时间早于watermark，为late，采用允许迟到30s的教学政策，若W尚未越过12:01:30，可更正count2；否则侧路隔离/权威回算，不默默丢掉当最终事实。水位线是时间进度启发式，不保证永不迟到。\n5. 五、变更捕获、物化视图和保留: 源为权威DB消息及版本，变化可由教学outbox/CDC到派生投影；PostgreSQL materialized view存查询结果，REFRESH重算，不把它等同自动实时增量搜索索引。Debezium snapshot+stream有位点，读取/提交位置与业务seq不同，过broker保留窗不可只靠broker重建。事件模式版本、tombstone、访问控制同样必要。\n6. 六、从权威事实重建新视图: 教学shadow索引：定义快照范围H=seq10与一致的变更游标，从权威messages全量构造、同时保留H后或快照期间变更并按稳定版本重放；按ID+版本+权限/删除核对，原子切换读别名或指针，保留回滚窗口。H是单会话高水标，跨会话不能当全局数据库位点；需要与CDC offset/快照一致性明确配对。不要漏快照期间改动。\n7. 七、业务读契约和真实源码证据边界: 聊天历史权威查询、搜索结果最终追赶、会话预览允许短暂陈旧但不能版本倒退、每分钟分析允许修正，各写一致性/纠错合同。B离线25h越过玩具broker24h保留应从权威历史按成员权限补拉。固定OpenIM send.go MsgToMQ后返回、另一Mongo消费BatchInsertChat2DB，只能证明异步阶段，不能断言使用本教学投影/水位线。\n8. 八、22题与重建验收: 22题基础8/时间窗口8/重建业务6：区分事实与派生、seq/offset/time、E9/E10迟到、W/late允许30s、count1到2更正、m-9v1/v2、snapshot+tail gap/overlap、权限/删除、对账/切换、固定源码边界。交付事件时间表、三视图更新矩阵、shadow rebuild计划。静态不运行Flink/Go/DB/broker/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "chapter": "07.11",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced derived-view and event-time lesson using fictional E9/E10 IM timeline",
+  "prerequisites": [
+    "07.01 authoritative versus derived state",
+    "07.08 same-conversation order and consumer completion",
+    "07.10 local outbox and external effects",
+    "08.02 clocks and causality",
+    "06.11 snapshot and incremental reconciliation"
+  ],
+  "first_pass": [
+    "separate authoritative messages from preview, per-message search and minute count",
+    "separate conversation seq, broker offset, event time and processing time",
+    "hand-calculate E9/E10 in the [12:00,12:01) window"
+  ],
+  "second_pass": [
+    "correct provisional count 1 to 2 using observed watermark and 30-second allowed lateness",
+    "prevent preview seq10 rollback and edited m-9 v2 rollback while retaining necessary E9 search effect",
+    "compare PostgreSQL materialized-view refresh with application projection and CDC",
+    "pair authoritative snapshot S0 with change cursor L0 for shadow-index rebuild",
+    "reconcile ID, version, deletion and permission before switching reads"
+  ],
+  "not_yet_prerequisites": [
+    "07.12 cross-system consistency case",
+    "learner's real event-time and rebuild evidence"
+  ],
+  "next_chapter": "07.12 cross-system data consistency case",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, send.go selected paths call MsgToMQ before response and a separate online_msg_to_mongo_handler.go path calls BatchInsertChat2DB. These two files do not establish derived-view, watermark or shadow-rebuild semantics.",
+  "shared_integration_pending": []
+}

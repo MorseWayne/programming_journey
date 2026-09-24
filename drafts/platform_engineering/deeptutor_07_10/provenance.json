@@ -28,9 +28,9 @@
   "original_sha256": "ceebdf5dce1bc0ab37e0fa7dcb8665a57f70284856a554b61c93125511ea65b3",
   "original_characters": 32478,
   "generation_request_sha256": "dc9d92e56b661be8f70e0dd6a3aff6a219ac3bcb1fa961161ab4937338d555d6",
-  "reviewed_sha256": "b4f899a1f3b68faf77cd75deef7bde4eb8132c8f17da0c1f043cf085abe44dd5",
-  "reviewed_characters": 10800,
+  "reviewed_sha256": "c8942acba20aa673576befc00dfaf2608545969074ff2ef6c34bc1362868bf33",
+  "reviewed_characters": 10903,
   "reviewed_chinese_characters": 4020,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/10_transaction_outbox.md",
-  "course_sha256": "f2f6c46b3244ac2a8417f6aab38f67715acdcd9478ce68b78eb61bde8876dc8e"
+  "course_sha256": "b9e6150acf4b42e5095d0f83da06521bea1cbbcf1b48ee753dad5f4b5ad9d2fb"
 }

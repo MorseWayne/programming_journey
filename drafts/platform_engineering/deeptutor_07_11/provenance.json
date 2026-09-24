@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_88540a0d00",
+  "page_id": "pg_3af6da3bc7",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/",
+      "https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/operators/windows/",
+      "https://www.postgresql.org/docs/current/rules-materializedviews.html",
+      "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "e36b17e52824106b47684fd544161ef5c76d1678ea3f89d26fe8736c37b36f60",
+  "original_characters": 31852,
+  "generation_request_sha256": "6466728204a8ad2728df69211546e2071993dfc89d2e5efa653cf1fbd4761032",
+  "reviewed_sha256": "ba6024baffd6dbd05995a0189ee837fd68dec97674be040f1a6d7cd521f73490",
+  "reviewed_characters": 10014,
+  "reviewed_chinese_characters": 3938,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/11_derived_views_event_time.md",
+  "course_sha256": "8a260218822fd247164dab0726f772ad96f1c069cc3457f4d050bcbe70d0b2ec"
+}
