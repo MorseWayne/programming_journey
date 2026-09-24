@@ -1,0 +1,31 @@
+{
+  "chapter": "07.05",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced Redis persistence and failure lesson for fictional IM cache state",
+  "prerequisites": [
+    "07.01 authority, derived and ephemeral roles",
+    "07.03 cache old-value races",
+    "07.04 overload and cold-cache fallback budget",
+    "06.09 database crash recovery boundary"
+  ],
+  "first_pass": [
+    "Redis no persistence versus RDB point-in-time snapshot",
+    "t0 RDB seq8, t1 database seq9, t2 Redis restores old seq8",
+    "presence after process restart requires fresh connection or heartbeat"
+  ],
+  "second_pass": [
+    "AOF fsync modes and source-version validation",
+    "asynchronous replica/Sentinel failover and WAIT limitation",
+    "cluster slot distribution versus one hot or large key",
+    "cold cache 1000/s against 200/s authority budget",
+    "state-specific RPO/RTO and permission-safe recovery"
+  ],
+  "not_yet_prerequisites": [
+    "07.06 queue, Pub/Sub and log abstractions",
+    "07.07 acknowledgment and retry",
+    "real persistence and failover experiments by the learner"
+  ],
+  "next_chapter": "07.06 message abstractions",
+  "upstream_inspection": "No OpenIM implementation claim; Redis primary documentation supports only its persistence, replication, Sentinel and Cluster semantics.",
+  "shared_integration_pending": []
+}

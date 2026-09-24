@@ -27,9 +27,9 @@
   "original_sha256": "fa1ce06bb20648c6b6f0da211ab7ef55bf235153d87b6940f76f2104bd7a1b17",
   "original_characters": 29129,
   "generation_request_sha256": "fb2ab3185d571334dadfc852a1c0fba4b2bfa563be74ddb93e8b60f71519f618",
-  "reviewed_sha256": "56f91293bf4396cc4d7238cc7909cc0ab99667c73a641512cdc6898f58306a0b",
-  "reviewed_characters": 8430,
-  "reviewed_chinese_characters": 3848,
+  "reviewed_sha256": "b6734e277cd72aa4a159fc827a3759d20ced0dd4a305b6b4fd42c9153ae0ef92",
+  "reviewed_characters": 8543,
+  "reviewed_chinese_characters": 3858,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/04_cache_overload_hotspots.md",
-  "course_sha256": "31d36c9003f942966c8313883ff52a5ea610c40e25462abb53236aa83e5b4299"
+  "course_sha256": "90a45cc672f3ee03d5047fa9393b53fe1cd7c4a374fb1bb35d24bb96d9fc4b0b"
 }

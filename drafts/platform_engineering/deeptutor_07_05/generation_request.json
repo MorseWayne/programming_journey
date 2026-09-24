@@ -1,0 +1,73 @@
+{
+  "code": "07.05",
+  "title": "缓存服务的持久与故障：恢复后还能信哪份状态",
+  "chapter_id": "ch_cache_persistence_failure",
+  "summary": "面向Go初学者，按IM状态角色比较Redis无持久、RDB、AOF、复制/切换、分片与冷启动，明确可丢、重建与权限边界。",
+  "objectives": [
+    "按权威/派生/临时判断Redis故障后可否丢失",
+    "解释RDB点时快照和AOF fsync取舍",
+    "识别恢复出旧预览仍需源版本校验",
+    "解释异步复制与Sentinel切换可能回退",
+    "解释WAIT不是强一致切换保证",
+    "设计冷缓存回源保护与状态级恢复表",
+    "区分S2内存受理和S3提议DB恢复"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+    "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+    "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+    "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+    "https://redis.io/docs/latest/develop/reference/eviction/"
+  ],
+  "sections": [
+    {
+      "title": "一、缓存故障先回到业务状态角色",
+      "words": 2600,
+      "focus": "承接07.01–07.04，未来S3 DB权威c-a消息seq9，Redis派生preview:c-a与presence:u-a:dev-1、临时rate计数；06.12 next_seq权威仍DB。当前S2 200 accepted_in_memory不能套S3 DB恢复。定义Redis进程重启/设备掉电/副本切换与可接受丢失。"
+    },
+    {
+      "title": "二、无持久与RDB快照恢复",
+      "words": 3000,
+      "focus": "无持久重启空缓存，预览可从DB重建但presence unknown、rate按风险政策；RDB点时快照t0存preview seq8，t1 DB提交seq9且cache更新/失效，t2 Redis故障恢复RDB seq8，旧缓存不能未经校验答刚发必见；RDB丢快照后更新，快照不等于源业务权威。"
+    },
+    {
+      "title": "三、AOF日志与fsync选项",
+      "words": 3000,
+      "focus": "Redis AOF追加写命令，appendfsync always/everysec/no风险范围按官方，不说所有确认都永不丢；AOF恢复得到哪些派生值还要和权威DB核对，持久旧值不等于正确新鲜；RDB+AOF组合、AOF重写仅机制。"
+    },
+    {
+      "title": "四、复制与Sentinel切换窗口",
+      "words": 3200,
+      "focus": "Redis复制默认异步：master preview seq9，replica仍seq8，master失败提升落后replica可能回退预览；缓存可从DB恢复，权威不可简单承受。Redis WAIT确认副本收到不把集群变强一致/不保证故障切换不丢；Sentinel负责发现/切换但确认语义仍有限。"
+    },
+    {
+      "title": "五、分片与热键/大键的放大",
+      "words": 2800,
+      "focus": "Redis Cluster key slots分布，迁移slot与客户端路由需处理；preview:c-g单热键仍落单slot/节点，扩分片不自动切热键；candidate_members:c-g大Set整体迁移/重建成本，先测大小与访问。无实际拓扑声明。"
+    },
+    {
+      "title": "六、冷启动：恢复后1000/s回源保护",
+      "words": 2900,
+      "focus": "Redis空缓存时原本1000/s预览请求可能回DB，安全能力200/s玩具，持续积压+800/s如果无控制；有界并发/预热/按热点顺序重建、明确降级；不能返回旧权限许可或编造在线；S3 preview可重算。"
+    },
+    {
+      "title": "七、角色级恢复目标与对账",
+      "words": 3100,
+      "focus": "表格消息历史DB权威不靠Redis；preview可重算但可能旧；presence需新心跳，RDB旧online不可直接用；rate计数可能重置需fail-open/closed；next_seq不许只存可逐出Redis；若业务选择Redis为权威需持久、复制、备份、禁逐出/故障方案且不能只靠WAIT。RPO/RTO和权限。"
+    },
+    {
+      "title": "八、故障时间线与22题",
+      "words": 2800,
+      "focus": "交付无持久/RDB/AOF/异步副本切换对照、t0seq8→t1seq9→t2恢复旧值、冷缓存回源预算及重建验证门；22题词汇/时间线/业务取舍附答案。静态不运行Redis/Go/DB/站点，下一07.06队列/发布订阅/日志。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.05 缓存服务的持久与故障》，面向Go初学者，八节丰富理论、故障时间线和22道分层练习反馈。承接07.01–07.04：当前S2 200 accepted_in_memory不能假装有DB恢复；未来S3提议DB权威c-a消息seq9，Redis只存派生preview与临时presence、rate，06.12 next_seq仍是DB事务权威。Redis无持久重启空：预览可受控回源，presence unknown/新心跳，rate按风险政策；RDB点时t0快照预览seq8、t1数据库提交seq9、t2缓存故障后恢复RDB seq8，持久旧值不自动新鲜。AOF appendfsync always/everysec/no按官方范围讲，不说绝对零丢；AOF恢复值仍须校验源。Redis复制默认异步，master seq9 replica seq8时切到落后replica会回退缓存；WAIT只确认副本复制阶段，不把集群变强一致。Sentinel负责切换，但不能据此保证所有已确认写保留。Redis Cluster分片slot，单preview:c-g热键仍落一片，扩分片不自动修热键。Redis重启空缓存时纸上1000/s回源超过DB安全200/s，若持续且无拒绝净增800/s，应有界回源/预热/明确降级，权限旧许可不能放行。无公司/OpenIM真实配置声明，不运行Redis/DB/Go/站点。下一07.06消息抽象。\n1. 一、缓存故障先回到业务状态角色: 承接07.01–07.04，未来S3 DB权威c-a消息seq9，Redis派生preview:c-a与presence:u-a:dev-1、临时rate计数；06.12 next_seq权威仍DB。当前S2 200 accepted_in_memory不能套S3 DB恢复。定义Redis进程重启/设备掉电/副本切换与可接受丢失。\n2. 二、无持久与RDB快照恢复: 无持久重启空缓存，预览可从DB重建但presence unknown、rate按风险政策；RDB点时快照t0存preview seq8，t1 DB提交seq9且cache更新/失效，t2 Redis故障恢复RDB seq8，旧缓存不能未经校验答刚发必见；RDB丢快照后更新，快照不等于源业务权威。\n3. 三、AOF日志与fsync选项: Redis AOF追加写命令，appendfsync always/everysec/no风险范围按官方，不说所有确认都永不丢；AOF恢复得到哪些派生值还要和权威DB核对，持久旧值不等于正确新鲜；RDB+AOF组合、AOF重写仅机制。\n4. 四、复制与Sentinel切换窗口: Redis复制默认异步：master preview seq9，replica仍seq8，master失败提升落后replica可能回退预览；缓存可从DB恢复，权威不可简单承受。Redis WAIT确认副本收到不把集群变强一致/不保证故障切换不丢；Sentinel负责发现/切换但确认语义仍有限。\n5. 五、分片与热键/大键的放大: Redis Cluster key slots分布，迁移slot与客户端路由需处理；preview:c-g单热键仍落单slot/节点，扩分片不自动切热键；candidate_members:c-g大Set整体迁移/重建成本，先测大小与访问。无实际拓扑声明。\n6. 六、冷启动：恢复后1000/s回源保护: Redis空缓存时原本1000/s预览请求可能回DB，安全能力200/s玩具，持续积压+800/s如果无控制；有界并发/预热/按热点顺序重建、明确降级；不能返回旧权限许可或编造在线；S3 preview可重算。\n7. 七、角色级恢复目标与对账: 表格消息历史DB权威不靠Redis；preview可重算但可能旧；presence需新心跳，RDB旧online不可直接用；rate计数可能重置需fail-open/closed；next_seq不许只存可逐出Redis；若业务选择Redis为权威需持久、复制、备份、禁逐出/故障方案且不能只靠WAIT。RPO/RTO和权限。\n8. 八、故障时间线与22题: 交付无持久/RDB/AOF/异步副本切换对照、t0seq8→t1seq9→t2恢复旧值、冷缓存回源预算及重建验证门；22题词汇/时间线/业务取舍附答案。静态不运行Redis/Go/DB/站点，下一07.06队列/发布订阅/日志。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

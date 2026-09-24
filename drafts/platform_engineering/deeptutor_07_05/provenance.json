@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_9f3afe58d8",
+  "page_id": "pg_f41f310b64",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/",
+      "https://redis.io/docs/latest/operate/oss_and_stack/management/replication/",
+      "https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/",
+      "https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/",
+      "https://redis.io/docs/latest/develop/reference/eviction/",
+      "https://redis.io/docs/latest/develop/use-cases/cache-aside/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "f60e4334e025edf29c3f11db504f24d74fedda860577c5185eee9814a1480798",
+  "original_characters": 30256,
+  "generation_request_sha256": "a581ecc61643bc183db006ced4282c506b0c4d39f32041f7a889c59e23d59f39",
+  "reviewed_sha256": "c9246ae1cbe942e05fba1dddb89c55c4e5c2d8a3a993e057b0806cf4237b6941",
+  "reviewed_characters": 8619,
+  "reviewed_chinese_characters": 3714,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/05_cache_persistence_failure.md",
+  "course_sha256": "7468cf11f781bc03121611825a9f1b436f1f38e80918fe18b880d016067564a1"
+}
