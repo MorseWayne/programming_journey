@@ -1,0 +1,75 @@
+{
+  "code": "06.05",
+  "title": "索引结构：让历史游标和消息点查各得其所",
+  "chapter_id": "ch_index_structures",
+  "summary": "从 IM 历史和 message_id 点查推导 B+ 树、复合键、哈希、覆盖索引与 LSM，面向 Go 初学者。",
+  "objectives": [
+    "区分两类查询的索引需求",
+    "手算 B+ 树叶页范围遍历",
+    "解释复合键字典序和前缀",
+    "区分哈希等值与 B+ 树有序范围",
+    "解释覆盖索引和 MVCC 堆访问",
+    "解释 LSM 写缓冲和压实代价"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/btree.html",
+    "https://www.postgresql.org/docs/current/indexes-multicolumn.html",
+    "https://www.postgresql.org/docs/current/indexes-index-only-scans.html",
+    "https://www.postgresql.org/docs/current/hash-index.html",
+    "https://www.mongodb.com/docs/manual/core/indexes/index-types/",
+    "https://github.com/facebook/rocksdb/wiki/Rocksdb-Architecture-Guide",
+    "https://github.com/facebook/rocksdb/wiki/Compaction",
+    "https://db.cs.berkeley.edu/cs286/papers/lsm-acta1996.pdf"
+  ],
+  "sections": [
+    {
+      "title": "一、从 IM 两类查询建立索引问题",
+      "words": 2400,
+      "focus": "承接 06.01 行身份、06.02 SQL 游标、06.04 数据页、02.04 哈希与 02.06 树。虚构 c-a seq1..8 和 c-b seq1..3。历史查询 conversation_id=c-a AND seq<7 ORDER BY seq DESC LIMIT3 必须返回6,5,4；message_id=m-a 精确查找。解释全表扫描、索引项、键与行、逻辑顺序与物理数据页；成员权限前置。"
+    },
+    {
+      "title": "二、从二分和多路树推导 B+ 树",
+      "words": 2800,
+      "focus": "从排序数组二分与数据库页推导高扇出 B+ 树；内部页分隔键和子页指针，叶页键与定位信息。玩具根分隔3,5,7，四个叶页L0:c-a的1,2 L1:3,4 L2:5,6 L3:7,8，每叶2键。内部根和叶页与06.04数据页P0..P15不同；不是PG/Mongo真实布局。"
+    },
+    {
+      "title": "三、游标查询手算叶页遍历",
+      "words": 2600,
+      "focus": "查询c-a seq<7 DESC LIMIT3；先定位L2，逆序取6,5，再到左叶L1取4，结果6,5,4，访问2个玩具叶页；另有根导航，实际可能回表、MVCC检查、缓存/权限，不能称真实I/O。真实B+实现不一定有左向兄弟链，可通过索引游标和路径倒走。"
+    },
+    {
+      "title": "四、复合索引键序与游标稳定性",
+      "words": 2700,
+      "focus": "字典序(conversation_id,seq)，c-a连续、c-b另一段；复合键前缀定位范围；seq单列跨会话不是同一个连续段，但规划器可全索引扫描或skip scan，不能绝对说无法使用。排序反向扫描视引擎支持；排序键不唯一时用稳定tie-breaker。"
+    },
+    {
+      "title": "五、消息 ID 点查：B+ 树和哈希",
+      "words": 2500,
+      "focus": "message_id=m-a 用独立唯一索引或主键视模式而定；哈希函数、桶与冲突，适合等值却不提供自然有序范围；B+树也支持等值。PostgreSQL hash仅等值，不泛化所有引擎。额外索引增加空间、写入、维护；查询仍要权限。"
+    },
+    {
+      "title": "六、覆盖索引、回表与写入成本",
+      "words": 2700,
+      "focus": "PostgreSQL CREATE INDEX ON messages(conversation_id,seq) INCLUDE(message_id)；SELECT message_id可能index-only scan，但MVCC可见性映射不全仍需heap fetch；SELECT body不覆盖，巨大正文放索引使空间/写入昂贵；不能把索引叶页数当数据页数。页分裂和计划选择需证据。"
+    },
+    {
+      "title": "七、LSM 作为另一种存储组织",
+      "words": 2900,
+      "focus": "解释memtable、可选WAL/持久日志、有序SST、多层查找、compaction；写入与读/写/空间放大权衡，Bloom可帮助负查而非免费，范围需合并runs。用RocksDB官方资料；不把MongoDB WiredTiger或所有NoSQL说成LSM，不声称OpenIM具体物理实现。"
+    },
+    {
+      "title": "八、历史和点查的索引评审与22题",
+      "words": 2600,
+      "focus": "交付6,5,4与L2/L1两叶、m-a独立点查方案、索引草案、06.06待核对的EXPLAIN证据；比较读/写/空间、覆盖与可见性、权限。22道由术语、纸上推演、反例、设计评审组成附答案。静态不运行Go/SQL/DB/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《06.05 索引结构》，面向 Go 初学者。八节丰富理论正文和22道练习反馈。固定玩具数据：c-a seq1..8，复合键(c-a,seq)玩具B+叶页每页2键，L0:1,2 L1:3,4 L2:5,6 L3:7,8，根分隔3,5,7。查询c-a seq<7 DESC LIMIT3返回6,5,4，走L2、L1两个叶页；另有根导航，但不可当真实I/O。c-b对照键序，m-a作消息ID点查。覆盖索引可能需MVCC堆访问；LSM按RocksDB说明，勿把Mongo或所有NoSQL称LSM。所有情景为静态教学，不运行Go/SQL/数据库/站点。\n1. 一、从 IM 两类查询建立索引问题: 承接 06.01 行身份、06.02 SQL 游标、06.04 数据页、02.04 哈希与 02.06 树。虚构 c-a seq1..8 和 c-b seq1..3。历史查询 conversation_id=c-a AND seq<7 ORDER BY seq DESC LIMIT3 必须返回6,5,4；message_id=m-a 精确查找。解释全表扫描、索引项、键与行、逻辑顺序与物理数据页；成员权限前置。\n2. 二、从二分和多路树推导 B+ 树: 从排序数组二分与数据库页推导高扇出 B+ 树；内部页分隔键和子页指针，叶页键与定位信息。玩具根分隔3,5,7，四个叶页L0:c-a的1,2 L1:3,4 L2:5,6 L3:7,8，每叶2键。内部根和叶页与06.04数据页P0..P15不同；不是PG/Mongo真实布局。\n3. 三、游标查询手算叶页遍历: 查询c-a seq<7 DESC LIMIT3；先定位L2，逆序取6,5，再到左叶L1取4，结果6,5,4，访问2个玩具叶页；另有根导航，实际可能回表、MVCC检查、缓存/权限，不能称真实I/O。真实B+实现不一定有左向兄弟链，可通过索引游标和路径倒走。\n4. 四、复合索引键序与游标稳定性: 字典序(conversation_id,seq)，c-a连续、c-b另一段；复合键前缀定位范围；seq单列跨会话不是同一个连续段，但规划器可全索引扫描或skip scan，不能绝对说无法使用。排序反向扫描视引擎支持；排序键不唯一时用稳定tie-breaker。\n5. 五、消息 ID 点查：B+ 树和哈希: message_id=m-a 用独立唯一索引或主键视模式而定；哈希函数、桶与冲突，适合等值却不提供自然有序范围；B+树也支持等值。PostgreSQL hash仅等值，不泛化所有引擎。额外索引增加空间、写入、维护；查询仍要权限。\n6. 六、覆盖索引、回表与写入成本: PostgreSQL CREATE INDEX ON messages(conversation_id,seq) INCLUDE(message_id)；SELECT message_id可能index-only scan，但MVCC可见性映射不全仍需heap fetch；SELECT body不覆盖，巨大正文放索引使空间/写入昂贵；不能把索引叶页数当数据页数。页分裂和计划选择需证据。\n7. 七、LSM 作为另一种存储组织: 解释memtable、可选WAL/持久日志、有序SST、多层查找、compaction；写入与读/写/空间放大权衡，Bloom可帮助负查而非免费，范围需合并runs。用RocksDB官方资料；不把MongoDB WiredTiger或所有NoSQL说成LSM，不声称OpenIM具体物理实现。\n8. 八、历史和点查的索引评审与22题: 交付6,5,4与L2/L1两叶、m-a独立点查方案、索引草案、06.06待核对的EXPLAIN证据；比较读/写/空间、覆盖与可见性、权限。22道由术语、纸上推演、反例、设计评审组成附答案。静态不运行Go/SQL/DB/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

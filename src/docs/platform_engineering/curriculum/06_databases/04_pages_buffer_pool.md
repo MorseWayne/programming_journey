@@ -198,4 +198,4 @@ P1；第三次 P0 命中让 P0 成为较新页。</details>
 - [SQLite 架构](https://www.sqlite.org/arch.html)与[文件页格式](https://www.sqlite.org/fileformat.html)：pager/page cache 与页大小在具体引擎中的角色。
 - [CMU 15-445 缓冲池项目](https://15445.courses.cs.cmu.edu/fall2024/project1/)与[MongoDB WiredTiger 文档](https://www.mongodb.com/docs/manual/core/wiredtiger/)：pin/dirty 教学机制与另一种缓存层次；本章玩具 LRU 不是这些系统的实现声明。
 
-按[学习路线](../learning_path.md)，下一章 06.05 说明 B+ 树、哈希与 LSM 怎样定位页，并进一步比较复合键、范围查询和写入代价。离开本章前，应能说清**目标消息在哪个教学数据页、缓冲里是否有它、谁正在使用它、它是否被改过，以及还有哪些实际 I/O/提交证据未取得**。
+按[学习路线](../learning_path.md)，下一章[06.05 索引结构](./05_index_structures.md)说明 B+ 树、哈希与 LSM 怎样定位页，并进一步比较复合键、范围查询和写入代价。离开本章前，应能说清**目标消息在哪个教学数据页、缓冲里是否有它、谁正在使用它、它是否被改过，以及还有哪些实际 I/O/提交证据未取得**。

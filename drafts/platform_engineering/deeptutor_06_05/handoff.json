@@ -1,0 +1,29 @@
+{
+  "chapter": "06.05",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced index lesson using fictional c-a history cursor and m-a message lookup",
+  "prerequisites": [
+    "06.01–06.02 relational identity and SQL cursor",
+    "02.04 hash and 02.06 ordered trees",
+    "06.04 database data pages and buffer pool"
+  ],
+  "first_pass": [
+    "index key versus business seq and data page",
+    "toy B+ root separators and two-key leaf pages",
+    "c-a seq<7 DESC LIMIT3 returns 6,5,4 from L2 and L1"
+  ],
+  "second_pass": [
+    "compound key lexicographic order, prefix and skip-scan boundary",
+    "m-a B+ tree or hash equality lookup and uniqueness",
+    "covering index, MVCC heap visibility and write maintenance",
+    "RocksDB LSM memtable, SST, compaction and amplification"
+  ],
+  "not_yet_prerequisites": [
+    "06.06 actual optimizer and plan evidence",
+    "06.08 MVCC implementation and lock behavior",
+    "06.09 WAL and crash recovery"
+  ],
+  "next_chapter": "06.06 query execution and optimization",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL, MongoDB and RocksDB primary documentation supports only their stated engine features.",
+  "shared_integration_pending": []
+}

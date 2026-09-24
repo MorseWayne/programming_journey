@@ -1,0 +1,39 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_14515becbc",
+  "page_id": "pg_5a73fd2d78",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/btree.html",
+      "https://www.postgresql.org/docs/current/indexes-multicolumn.html",
+      "https://www.postgresql.org/docs/current/indexes-index-only-scans.html",
+      "https://www.postgresql.org/docs/current/hash-index.html",
+      "https://www.mongodb.com/docs/manual/core/indexes/index-types/",
+      "https://www.mongodb.com/docs/manual/core/indexes/index-types/index-compound/create-compound-index/",
+      "https://github.com/facebook/rocksdb/wiki/Rocksdb-Architecture-Guide",
+      "https://github.com/facebook/rocksdb/wiki/Compaction",
+      "https://db.cs.berkeley.edu/cs286/papers/lsm-acta1996.pdf"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "ccd4ac2c9c8d977883e9d86cd87d3984076183143b71c9d4682b077395be3ef5",
+  "original_characters": 31553,
+  "generation_request_sha256": "dae570cd9f1e0a62e04c7630ba9bf76bd0a739cb44d94a8dfd5667a48e1ea2be",
+  "reviewed_sha256": "8734831d9f8bef5606708e84ef0efeff3e9aa6e3a7182f4ee4697fe4021fc447",
+  "reviewed_characters": 9759,
+  "reviewed_chinese_characters": 4334,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/05_index_structures.md",
+  "course_sha256": "74f5f5d4c0dd8afe350d51fc068cc60a4d542dc1b3461559f467af9714a494f1"
+}
