@@ -1,0 +1,33 @@
+{
+  "chapter": "11.04",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced IM performance diagnosis lesson for fictional A-side in-memory acceptance latency",
+  "prerequisites": [
+    "11.01 business confirmation points and denominators",
+    "11.02 distributions, percentiles and missing samples",
+    "11.03 logs, metrics and trace boundaries",
+    "03.04 CPU scheduling and resource scope",
+    "09.04 S2 request processing and response loss"
+  ],
+  "first_pass": [
+    "define who sees which stage as slow and preserve the current S2 contract",
+    "characterize request attempts, unique messages, connections and bursts",
+    "calculate queue growth from same-boundary arrivals and departures",
+    "distinguish service golden signals from per-resource USE checks"
+  ],
+  "second_pass": [
+    "write falsifiable CPU, queue, lock, network and retry hypotheses",
+    "trace one request with nested stage times and clock boundaries",
+    "choose Go diagnostics only after an evidence need is stated",
+    "verify a single fix with same-denominator outcomes, errors and rollback gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.05 CPU and memory performance deep dive",
+    "11.06 I/O and network performance",
+    "learner's controlled measurements and operational evidence"
+  ],
+  "next_chapter": "11.05 CPU and memory performance",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish producer ACK level, measured latency, bottlenecks or device receipt.",
+  "shared_integration_pending": []
+}

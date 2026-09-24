@@ -216,4 +216,4 @@ Trace 有自己的 `trace_id`，每个 Span 有 `span_id`；父子关系用于�
 - [Prometheus：指标类型](https://prometheus.io/docs/concepts/metric_types/)与[采集实践](https://prometheus.io/docs/practices/instrumentation/)：Counter/Gauge/Histogram 和标签成本。
 - [Go `log/slog`](https://pkg.go.dev/log/slog)：后续 Go 结构化日志入口。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，S2 下一步可进入[10.09 最小 CI 与制品](../../../src/docs/platform_engineering/curriculum/10_engineering/09_ci_artifacts.md)；更深入的诊断留在 11.04 及后续系统/存储前置完成后。离开本章前，请能分别写出“日志查什么、指标算什么、Trace 追什么、没有数据时不能说什么”。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，S2 下一步可进入[10.09 最小 CI 与制品](../../../src/docs/platform_engineering/curriculum/10_engineering/09_ci_artifacts.md)；具备后续系统/存储前置后，再进入[11.04 诊断方法](../../../src/docs/platform_engineering/curriculum/11_reliability/04_diagnostic_method.md)。离开本章前，请能分别写出“日志查什么、指标算什么、Trace 追什么、没有数据时不能说什么”。
