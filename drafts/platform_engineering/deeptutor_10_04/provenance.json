@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_cda1b5a861",
+  "page_id": "pg_3d6ed75268",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "706b3aca77ca8bb79d0d53bafdfc121667b4e63bf12149af506bcca1c7dd96b4",
+  "original_sha256": "2ae2524e07226ceb859f6d6396625e3bb05c4c60ca34a9bc07ff236691e39194",
+  "reviewed_sha256": "ec9cc4d0aad96bcde7d72707f868bdef9576a2338c5f3c17d584aacbac4864b9",
+  "original_characters": 38983,
+  "reviewed_characters": 12637,
+  "reviewed_chinese_characters": 4952,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/04_test_doubles_design.md",
+  "course_sha256": "2733f6146174ab9e5f47760e10a2609acb782862c36da483bd0742162e1961ea",
+  "source_reference": {
+    "primary_sources": [
+      "https://martinfowler.com/articles/mocksArentStubs.html",
+      "https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/dependency-injection",
+      "https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/mocking",
+      "https://pkg.go.dev/testing",
+      "https://pkg.go.dev/time"
+    ],
+    "upstream_implementation_claims": false
+  }
+}

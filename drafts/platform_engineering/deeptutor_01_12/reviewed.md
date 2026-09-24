@@ -314,4 +314,4 @@ func writeExport(path string, data []byte, replace bool) error {
 - [Go `flag.FlagSet`](https://pkg.go.dev/flag#FlagSet)、[os.Exit](https://pkg.go.dev/os#Exit)与[encoding/json Decoder](https://pkg.go.dev/encoding/json#Decoder.DisallowUnknownFields)用于核对解析、退出与严格 JSON 合同。
 - [Go `testing.T.TempDir`](https://pkg.go.dev/testing#T.TempDir)用于核对临时文件测试范围；[log/slog](https://pkg.go.dev/log/slog)是后续结构化诊断的标准库入口。
 
-完成本章的本地工具后，S1 的消息、会话、文件与测试基础形成一个可复核的学习成果。下一阶段再补进程、网络、并发和身份前置，不能把这个 CLI 直接称为线上 IM 服务。
+完成本章的本地工具后，进入[10.04 测试替身与设计](../../../src/docs/platform_engineering/curriculum/10_engineering/04_test_doubles_design.md)，学习怎样固定时间、注入存储错误并核对真实文件边界。此后 S1 继续学习重构与评审；进程、网络、并发和身份属于后续阶段，不能把这个 CLI 直接称为线上 IM 服务。

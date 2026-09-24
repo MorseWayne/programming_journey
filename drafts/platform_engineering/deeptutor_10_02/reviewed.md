@@ -384,4 +384,4 @@ UTF-8 编码下为 6 字节；本章上限为 6 时应通过。</details>
 - [Go 覆盖率文档](https://go.dev/doc/build-cover)：覆盖率能提供的执行范围证据。
 - [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/hello-world)：以小测试驱动学习 Go 的教学顺序参考。
 
-下一章 10.04 会讲替身与依赖注入；01.12 再把本地历史工具组织成完整 CLI，记录真实执行范围。学习者先用本章规则在自己的目录完成 6/9/10 字节变式，并把“预期”“实际”“未覆盖范围”分开记录。
+完成本章规则练习后，进入[01.12 本地 CLI](../../../src/docs/platform_engineering/curriculum/01_go/12_cli_capstone.md)组织完整工具，再读[10.04 测试替身与设计](../../../src/docs/platform_engineering/curriculum/10_engineering/04_test_doubles_design.md)学习可控依赖。学习者在自己的目录完成 6/9/10 字节变式，并把“预期”“实际”“未覆盖范围”分开记录。

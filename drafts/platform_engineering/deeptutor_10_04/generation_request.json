@@ -1,0 +1,73 @@
+{
+  "code": "10.04",
+  "title": "测试替身与设计：控制依赖，验证消息规则",
+  "chapter_id": "ch_test_doubles_design",
+  "summary": "承接10.01需求、10.02测试和01.12本地CLI。以虚构IM本地消息历史为统一例子，从外部依赖、接口边界、依赖注入讲到fake/stub/spy/mock、时间控制、失败注入和业务证据。全章仅静态教材，无Go测试或服务执行。",
+  "objectives": [
+    "用输入、状态和外部依赖区分被测行为与替身职责",
+    "通过小型消费方接口和构造参数显式注入依赖",
+    "区分真实内存实现、fake、stub、spy、mock的用途与证据局限",
+    "固定时间和外部错误使消息规则测试可重复",
+    "验证失败不修改状态并用errors.Is核对错误身份",
+    "将局部替身测试与本地文件集成证据分层",
+    "从业务风险选择替身而不是复制实现逻辑"
+  ],
+  "sources": [
+    "https://martinfowler.com/articles/mocksArentStubs.html",
+    "https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/dependency-injection",
+    "https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/mocking",
+    "https://pkg.go.dev/testing",
+    "https://pkg.go.dev/time"
+  ],
+  "sections": [
+    {
+      "title": "一、从IM本地历史的依赖问题出发",
+      "words": 2000,
+      "focus": "面向Go初学者，先用10.01的消息字节和重复ID需求以及10.02的got/want/状态断言。01.12 CLI有文件、stdout/stderr、时间。指出纯函数可直接测，依赖文件或当前时间使测试慢、不稳定或难注入故障。定义被测对象SUT、协作者、边界、可观察结果。所有c-a/u-a/m-a均虚构，静态示例未运行。"
+    },
+    {
+      "title": "二、接口、依赖注入与最小切口",
+      "words": 2200,
+      "focus": "从构造函数直接os.Open和time.Now的问题推导为参数注入。Go接口是方法集合和隐式实现，消费方定义小接口，不把所有仓储方法堆在一个接口；展示Message、Store.Save或Find、Service或AppendHistory的最小一致Go示例，错误和状态合同清晰。io.Reader/Writer + strings.Reader/bytes.Buffer作为标准库自然边界。区分手工传参和框架容器，说明接口不是每个函数都需要。"
+    },
+    {
+      "title": "三、替身的词汇与选择",
+      "words": 2300,
+      "focus": "依据Fowler/Meszaros原文解释test double总称，dummy/fake/stub/spy/mock：fake有工作实现如内存store，stub固定返回，spy记录调用，mock预设交互期待；术语社区有宽泛使用需以行为说明。比较输出/状态验证与交互验证；优先用真实简单对象或内存实现，遇慢/不可控外部边界用替身。用一张IM需求/选型/能证明不能证明表；不要把fake证明成文件持久性。"
+    },
+    {
+      "title": "四、先写真实内存实现与成功测试",
+      "words": 2400,
+      "focus": "针对虚构本地历史：契约要求ID非空、重复ID拒绝且不改变已有消息；单会话历史。提供自洽Go示意代码，map实现返回/复制值，显式说明测试用真实内存实现时是内存集成或领域规则证据；当被测对象本身就是内存store则不能再用同一代码当oracle。表驱动边界和before/after状态断言来自需求而不是复制生产if。无goroutine/并发。"
+    },
+    {
+      "title": "五、固定失败：stub和spy怎样验证拒绝路径",
+      "words": 2300,
+      "focus": "给Store最小接口、ErrStorage、可配置SaveErr的stub用于注入错误；被测服务对错误包装%w且不返回成功；errors.Is检查身份；若服务有副作用要明确顺序，验证失败不改变哪一层状态。spy记录Save参数和次数仅在业务契约要求写一次时断言，不对内部helper调用做脆弱断言。明确单纯Save错误并不证明底层无部分写入，需真实文件层单测/集成。代码片段完整且无签名冲突。"
+    },
+    {
+      "title": "六、控制时间与输出边界",
+      "words": 2200,
+      "focus": "消息写入时间有真实时钟；从直接time.Now导致边界问题，先用显式now time.Time参数；多个调用点才考虑Now() Clock接口和fixedClock。区分时间格式/时区、时间窗口边界、不能用sleep等时间流逝。01.12 run(args,stdout,stderr)以bytes.Buffer捕获，不重定义CLI实际合同；t.TempDir为真实文件局部集成。敏感正文默认不输出，输出断言遵守CLI契约。"
+    },
+    {
+      "title": "七、反例、证据层次与设计取舍",
+      "words": 2200,
+      "focus": "过度mock：凡方法都预期一次导致重构即破，fake复制生产验证逻辑导致同错同过，stub永远成功漏错误路径，共享可变fake使测试顺序敏感，sleep控制时间不稳定。列纯规则/服务替身/真实临时文件/端到端证据区别；本章不声称网络发送或OpenIM真实行为。测试替身本身少量合同检查，业务高风险链必须跨边界验证。需求变更6→9字节时哪些测试改、哪些不改。"
+    },
+    {
+      "title": "八、综合练习与业务迁移",
+      "words": 2500,
+      "focus": "给从直接依赖到可注入的改造步骤、选择矩阵、正/负/边界练习，至少20题分基础/原理/工程/业务四层，逐题简短反馈或检查点；用重复消息、磁盘失败、时间边界、CLI输出、文件真实行为串成完整业务验收路线。总结可证明范围、未运行声明、官方Go及Fowler/作者资料；不修改本项目软件、不运行示例。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《10.04 测试替身与设计》。面向Go初学者，承接10.01需求、10.02测试、01.06接口及01.12本地CLI，按由浅入深推导。虚构IM本地历史，身份c-a/u-a/m-a。仅静态教材，绝不称代码运行或服务验证。\n1. 一、从IM本地历史的依赖问题出发：面向Go初学者，先用10.01的消息字节和重复ID需求以及10.02的got/want/状态断言。01.12 CLI有文件、stdout/stderr、时间。指出纯函数可直接测，依赖文件或当前时间使测试慢、不稳定或难注入故障。定义被测对象SUT、协作者、边界、可观察结果。所有c-a/u-a/m-a均虚构，静态示例未运行。\n2. 二、接口、依赖注入与最小切口：从构造函数直接os.Open和time.Now的问题推导为参数注入。Go接口是方法集合和隐式实现，消费方定义小接口，不把所有仓储方法堆在一个接口；展示Message、Store.Save或Find、Service或AppendHistory的最小一致Go示例，错误和状态合同清晰。io.Reader/Writer + strings.Reader/bytes.Buffer作为标准库自然边界。区分手工传参和框架容器，说明接口不是每个函数都需要。\n3. 三、替身的词汇与选择：依据Fowler/Meszaros原文解释test double总称，dummy/fake/stub/spy/mock：fake有工作实现如内存store，stub固定返回，spy记录调用，mock预设交互期待；术语社区有宽泛使用需以行为说明。比较输出/状态验证与交互验证；优先用真实简单对象或内存实现，遇慢/不可控外部边界用替身。用一张IM需求/选型/能证明不能证明表；不要把fake证明成文件持久性。\n4. 四、先写真实内存实现与成功测试：针对虚构本地历史：契约要求ID非空、重复ID拒绝且不改变已有消息；单会话历史。提供自洽Go示意代码，map实现返回/复制值，显式说明测试用真实内存实现时是内存集成或领域规则证据；当被测对象本身就是内存store则不能再用同一代码当oracle。表驱动边界和before/after状态断言来自需求而不是复制生产if。无goroutine/并发。\n5. 五、固定失败：stub和spy怎样验证拒绝路径：给Store最小接口、ErrStorage、可配置SaveErr的stub用于注入错误；被测服务对错误包装%w且不返回成功；errors.Is检查身份；若服务有副作用要明确顺序，验证失败不改变哪一层状态。spy记录Save参数和次数仅在业务契约要求写一次时断言，不对内部helper调用做脆弱断言。明确单纯Save错误并不证明底层无部分写入，需真实文件层单测/集成。代码片段完整且无签名冲突。\n6. 六、控制时间与输出边界：消息写入时间有真实时钟；从直接time.Now导致边界问题，先用显式now time.Time参数；多个调用点才考虑Now() Clock接口和fixedClock。区分时间格式/时区、时间窗口边界、不能用sleep等时间流逝。01.12 run(args,stdout,stderr)以bytes.Buffer捕获，不重定义CLI实际合同；t.TempDir为真实文件局部集成。敏感正文默认不输出，输出断言遵守CLI契约。\n7. 七、反例、证据层次与设计取舍：过度mock：凡方法都预期一次导致重构即破，fake复制生产验证逻辑导致同错同过，stub永远成功漏错误路径，共享可变fake使测试顺序敏感，sleep控制时间不稳定。列纯规则/服务替身/真实临时文件/端到端证据区别；本章不声称网络发送或OpenIM真实行为。测试替身本身少量合同检查，业务高风险链必须跨边界验证。需求变更6→9字节时哪些测试改、哪些不改。\n8. 八、综合练习与业务迁移：给从直接依赖到可注入的改造步骤、选择矩阵、正/负/边界练习，至少20题分基础/原理/工程/业务四层，逐题简短反馈或检查点；用重复消息、磁盘失败、时间边界、CLI输出、文件真实行为串成完整业务验收路线。总结可证明范围、未运行声明、官方Go及Fowler/作者资料；不修改本项目软件、不运行示例。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

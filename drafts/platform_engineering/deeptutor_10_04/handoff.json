@@ -1,0 +1,12 @@
+{
+  "chapter": "10.04",
+  "stage": "S1",
+  "business_scope": "fictional local IM history, sequential in-memory saver and local CLI evidence only; no network, authentication, crash-atomic file write, delivery or read acknowledgement",
+  "prerequisites": ["10.01 verifiable requirements and 6-byte boundary", "10.02 Go testing, error identity and state assertions", "01.06 interfaces", "01.07 wrapped errors", "01.12 local check/list/export CLI"],
+  "first_pass": ["SUT, collaborator and observable outcome", "consumer-owned MessageSaver interface and explicit dependency injection", "fake/stub/spy/mock taxonomy and selection", "real in-memory successful path and duplicate contract"],
+  "second_pass": ["failure injection and errors.Is", "fixed now parameter and optional Clock interface", "spy interaction assertions tied to business contract", "real t.TempDir file evidence versus substitute limits"],
+  "not_yet_prerequisites": ["10.05 refactoring and module boundaries", "10.07 race, fuzz and concurrent schedule control", "real network and distributed delivery", "durable transaction and crash recovery"],
+  "next_chapter": "10.05 refactoring and module boundaries, preserving the local history observable contract",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}
