@@ -1,0 +1,12 @@
+{
+  "chapter": "03.04",
+  "stage": "S2",
+  "business_scope": "fictional IM idle connections and group fanout as future requirements; single-CPU FCFS/RR paper model and no real gateway, Linux or Go performance trace",
+  "prerequisites": ["03.02 processes, threads and syscalls", "03.03 ps state snapshot and Linux process observation", "03.01 byte and resource units"],
+  "first_pass": ["running, runnable and waiting states", "one-core scheduler and preemption intuition", "FCFS versus 2 ms RR timeline", "response, finish, turnaround and CPU-ready waiting"],
+  "second_pass": ["I/O block versus CPU waiting", "context switch versus kernel mode transition", "multi-core and Go runtime scheduling layers", "IM idle connection versus fanout resource budgets"],
+  "not_yet_prerequisites": ["04.01–04.03 network and protocol basics", "05 Go goroutines and synchronization internals", "03.09 I/O readiness", "03.11 CPU quotas", "11 real performance and capacity evidence"],
+  "next_chapter": "04.01 communication foundations: endpoints, messages and latency before TCP and WebSocket",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

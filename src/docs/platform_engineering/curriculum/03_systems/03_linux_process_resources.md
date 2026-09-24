@@ -261,4 +261,4 @@ ls -l /proc/24100/fd
 - [Linux `getcwd(2)`](https://man7.org/linux/man-pages/man2/getcwd.2.html)、[`environ(5)`](https://man7.org/linux/man-pages/man5/environ.5.html)：工作目录与环境的基础。
 - [Go `os.Getenv`](https://pkg.go.dev/os#Getenv)与[Go `os.LookupEnv`](https://pkg.go.dev/os#LookupEnv)：Go 读取环境值的接口。
 
-下一章 03.04 将解释线程、可运行与阻塞、调度和 CPU 使用。进入前先能给出本地 `check` 两次运行的 PID、cwd、参数与错误类别，并明确这些观察**不能**证明线上 IM 消息已经送达。
+下一章[03.04 CPU 调度](./04_cpu_scheduling.md)将解释线程、可运行与阻塞、调度和 CPU 使用。进入前先能给出本地 `check` 两次运行的 PID、cwd、参数与错误类别，并明确这些观察**不能**证明线上 IM 消息已经送达。

@@ -176,6 +176,7 @@ export default sidebar({
             "curriculum/03_systems/01_data_instructions_storage",
             "curriculum/03_systems/02_process_syscalls",
             "curriculum/03_systems/03_linux_process_resources",
+            "curriculum/03_systems/04_cpu_scheduling",
             "curriculum/03_systems/core"
           ]
         },
