@@ -28,9 +28,9 @@
   "original_sha256": "54ad4a13a686ae203adf1d13b80934acd06294bb6e0050b3c42d4a9ed5d94510",
   "original_characters": 35239,
   "generation_request_sha256": "4e7ddd5018e322f47f0094b58c08c05b5e699e93c7222b83655de0054c0d6f78",
-  "reviewed_sha256": "c211bfd7bf07b91232c756e911e5790cdbc5cab3159961b34246f3b15d788959",
-  "reviewed_characters": 9689,
-  "reviewed_chinese_characters": 4384,
+  "reviewed_sha256": "f47a8ab12cfcc968d33abe4072d684cd0d55e6f92a9d39ebc743a38902f19ff5",
+  "reviewed_characters": 9770,
+  "reviewed_chinese_characters": 4379,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/03_logs_metrics_traces.md",
-  "course_sha256": "308c6e5a615e406b49e068cd20a1ac8b08aba79a4d043b6a2fab505d6c1f2471"
+  "course_sha256": "54670bb9733153f2c56dfe9e66f73ed4fdb7da51f8a4fbcc4125e0cb0eecc585"
 }

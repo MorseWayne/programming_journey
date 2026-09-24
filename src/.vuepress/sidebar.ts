@@ -249,6 +249,7 @@ export default sidebar({
             "curriculum/10_engineering/04_test_doubles_design",
             "curriculum/10_engineering/05_refactoring_boundaries",
             "curriculum/10_engineering/06_code_review_merge",
+            "curriculum/10_engineering/09_ci_artifacts",
             "curriculum/10_engineering/core"
           ]
         },

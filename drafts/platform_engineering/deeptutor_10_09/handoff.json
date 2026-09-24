@@ -1,0 +1,12 @@
+{
+  "chapter": "10.09",
+  "stage": "S2",
+  "business_scope": "fictional IM message 9-byte limit and future P2 in-memory acceptance contract; static CI workflow design only, no running IM, CI, build or OpenIM runtime claim",
+  "prerequisites": ["10.01 independent requirements and byte-limit contract", "10.02 layered test evidence", "10.03 commits and remote state", "10.06 review and merge", "09.01–09.04 S2 in-memory request contract"],
+  "first_pass": ["CI event, workflow, job, step and runner", "source commit identity and layered checks", "unit versus interface versus build evidence", "Go module and test/build command entry points"],
+  "second_pass": ["environment and dependency inputs", "cache versus artifact and cross-job transfer", "reproducibility and artifact identity", "untrusted PR code and minimum permissions", "failure classification and unknown business outcomes"],
+  "not_yet_prerequisites": ["S3 real database and authorization integration", "10.07 concurrency and property verification at S4", "10.08 quality and dependency tools at S4", "10.10 production delivery at S6", "S5 durable and device delivery confirmation"],
+  "next_chapter": "06.01 relational data model and identity as the S3 database entry",
+  "upstream_inspection": "No OpenIM implementation or runtime measurement asserted in this chapter.",
+  "shared_integration_pending": []
+}

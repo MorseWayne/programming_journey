@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_9d8b94373c",
+  "page_id": "pg_06b6e5fb01",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://docs.github.com/en/actions/get-started/understand-github-actions/",
+      "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax",
+      "https://docs.github.com/en/actions/tutorials/store-and-share-data",
+      "https://docs.github.com/en/actions/concepts/workflows-and-actions/dependency-caching",
+      "https://docs.github.com/en/actions/reference/security/secure-use",
+      "https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target",
+      "https://go.dev/ref/mod",
+      "https://pkg.go.dev/cmd/go"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "a61963a1513be3a4022126a1f1d10db6fd16ef61c72eff624817026d069029d8",
+  "original_characters": 31912,
+  "generation_request_sha256": "7a2177ca398e5237940d472970967afcb50a7992d69b4cce9e0c7e8b5b125578",
+  "reviewed_sha256": "86cde4bf29feaa9371c425e23fb0605374d729024900513b9efe325f0d13699e",
+  "reviewed_characters": 9104,
+  "reviewed_chinese_characters": 4854,
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/09_ci_artifacts.md",
+  "course_sha256": "de7aad3d733baf06de51b1c0c721c1b9378751bf53b8f2cfaaf9c7345b8400d7"
+}
