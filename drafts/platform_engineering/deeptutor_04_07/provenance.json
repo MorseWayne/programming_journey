@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_9719b064fe",
+  "page_id": "pg_b0075b1cf1",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.rfc-editor.org/rfc/rfc8446.html",
+      "https://www.rfc-editor.org/rfc/rfc9525.html",
+      "https://pkg.go.dev/crypto/tls",
+      "https://pkg.go.dev/crypto/x509",
+      "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "8de55f04df21c19d67f2771a381afb53814a761fc32f2f088079463220f487e9",
+  "original_characters": 32567,
+  "generation_request_sha256": "a15b917c0d7fbf693d5def603ef357868196c0151ad21f60204b2f43529db0bb",
+  "reviewed_sha256": "dfbd9ab0dc2ae19eb6716b97636cbeab7c6547301c3287e1fb9fd91847e06e49",
+  "reviewed_characters": 7772,
+  "reviewed_chinese_characters": 3743,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/07_tls_identity.md",
+  "course_sha256": "6c662b64ac045325857931ff65e7145fff3e94afda7a4fce88221e03b2eae749"
+}

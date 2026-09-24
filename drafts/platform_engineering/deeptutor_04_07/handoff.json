@@ -1,0 +1,12 @@
+{
+  "chapter": "04.07",
+  "stage": "S3",
+  "business_scope": "fictional u-a browser HTTPS/WSS connection to im.example.test and message m-a; paper TLS 1.3, certificate and proxy-hop model only, no running TLS or OpenIM deployment claim",
+  "prerequisites": ["04.02 DNS name versus IP endpoint", "04.03 HTTP and WebSocket upgrade", "04.04–04.06 TCP reliability, lifecycle and path constraints", "09.06 browser and 09.07 application authentication boundaries"],
+  "first_pass": ["symmetric encryption, hash, public/private keys and signatures", "TLS 1.3 simplified handshake", "certificate trust chain, validity and SAN name", "SNI versus client name verification"],
+  "second_pass": ["Go tls.Config ServerName, RootCAs and InsecureSkipVerify", "reverse-proxy TLS termination and next-hop trust", "certificate failure versus IM application error", "mTLS client-certificate mapping", "optional 0-RTT replay versus message idempotency"],
+  "not_yet_prerequisites": ["09.12 combined teaching IM service project", "04.09 proxy and load-balancer depth", "S5 asynchronous message guarantees", "real TLS certificate and runtime verification"],
+  "next_chapter": "09.12 complete teaching IM service project course after S3 network prerequisites",
+  "upstream_inspection": "No OpenIM TLS certificate, proxy deployment or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

@@ -27,9 +27,9 @@
   "original_sha256": "5096844183521235d1aeb47d17515e51063271a292168923f135140bfba22992",
   "original_characters": 29850,
   "generation_request_sha256": "fccbfb1362e3d4cd429f2f4cf069cbb53252cd103598339c8ac98e98f6859c75",
-  "reviewed_sha256": "2e3865ce9485477aaddff5ea210f69ee5192ffde75f68e1ead40cc7cb2432a37",
-  "reviewed_characters": 7657,
-  "reviewed_chinese_characters": 3670,
+  "reviewed_sha256": "ec7775d1f95d001c64e7af0e3d1fc0fd61292c91481a90013583c2427b616860",
+  "reviewed_characters": 7742,
+  "reviewed_chinese_characters": 3673,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/06_flow_congestion_control.md",
-  "course_sha256": "6da433f34e817029bef4a0cf9fdb70ad5f28f0682bad3c775bcfa464d8613cfa"
+  "course_sha256": "4f31ed0199ba3e30c6d01dec11349fd82e513b750234d676a98deeda5b5f779b"
 }

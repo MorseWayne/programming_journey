@@ -206,4 +206,4 @@ BDP = 1 MB/s × 0.1 s = 0.1 MB = 100 kB
 - [RFC 7567：主动队列管理](https://www.rfc-editor.org/rfc/rfc7567.html)：排队延迟与缓冲取舍。
 - [Go `net` 包](https://pkg.go.dev/net)：以后个人网络 I/O 实践的缓冲入口，本章没有运行连接或基准。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 04.07 从 TLS 握手、证书与名称校验补上安全传输身份；随后才进入 09.12 的完整服务项目课程。离开本章前，应能解释**谁在减速、哪层缓冲增长、单位怎样换算、TCP 限制为何不能代替 IM 业务背压**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[04.07 TLS 与身份](../../../src/docs/platform_engineering/curriculum/04_networks/07_tls_identity.md)从握手、证书与名称校验补上安全传输身份；随后才进入 09.12 的完整服务项目课程。离开本章前，应能解释**谁在减速、哪层缓冲增长、单位怎样换算、TCP 限制为何不能代替 IM 业务背压**。

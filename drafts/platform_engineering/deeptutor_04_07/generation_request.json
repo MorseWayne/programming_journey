@@ -1,0 +1,74 @@
+{
+  "code": "04.07",
+  "title": "TLS与身份：加密一条连接不等于授权一条消息",
+  "chapter_id": "ch_tls_identity",
+  "summary": "面向Go初学者承接04.02–04.06，以虚构IM HTTPS/WSS路径讲对称加密、签名/证书、TLS1.3握手、证书链和名称校验、代理终止及Go tls配置入口，区分传输服务器身份与IM登录/资源授权、0-RTT重放与业务确认；静态教材不运行服务。",
+  "objectives": [
+    "解释TLS机密性、完整性和服务器身份各依赖什么",
+    "区分对称密钥、哈希、公私钥与数字签名",
+    "画出TLS1.3简化握手与HTTPS/WSS层次",
+    "核对证书链、SAN名称与有效期",
+    "区分SNI选择证书和客户端名称校验",
+    "识别反向代理TLS终止后的第二跳风险",
+    "说明Go ServerName/RootCAs/InsecureSkipVerify边界",
+    "区分mTLS客户端证书、IM会话授权和0-RTT重放"
+  ],
+  "sources": [
+    "https://www.rfc-editor.org/rfc/rfc8446.html",
+    "https://www.rfc-editor.org/rfc/rfc9525.html",
+    "https://pkg.go.dev/crypto/tls",
+    "https://pkg.go.dev/crypto/x509",
+    "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security"
+  ],
+  "sections": [
+    {
+      "title": "一、u-a发m-a为什么还要TLS",
+      "words": 2300,
+      "focus": "承接04.02域名/端口、04.03HTTP/WS、04.04TCP、04.05连接、04.06路径等待。虚构u-a浏览器访问https://im.example.test、wss://im.example.test，陌生网络可能偷看或篡改，TLS提供传输机密性/完整性/服务器身份（正确校验前提），不证明u-a会话授权、数据库持久、B已读。静态不运行。"
+    },
+    {
+      "title": "二、加密、哈希、签名与证书的入门词汇",
+      "words": 2700,
+      "focus": "Go初学者从对称密钥用于大量应用数据加密，公私钥与签名证书用于身份、hash摘要非加密、AEAD同时保护机密/完整性，区分签名和保密。TLS1.3协商临时密钥并导出对称会话密钥，不用服务器证书公钥直接加密所有聊天正文；避免自行设计密码方案。"
+    },
+    {
+      "title": "三、TLS1.3握手沿连接走一次",
+      "words": 2800,
+      "focus": "RFC8446简化 ClientHello支持版本/keyshare/SNI/ALPN→ServerHello/keyshare→证书/CertificateVerify/Finished→验证后应用数据AEAD，握手记录有加密细节，教学图不精确描绘每个字节。TCP建立先于TLS, HTTPS/WSS上再跑HTTP/WS握手；TLS握手成功不等于应用登录。"
+    },
+    {
+      "title": "四、证书链与名称校验为什么必须同时做",
+      "words": 2900,
+      "focus": "u-a输入im.example.test, 服务器证书SAN DNSNames应匹配名称、有效期/用途/签名链到受信根；DNS解析到IP不等于可信服务器，证书common name不作为现代名称依据。SNI用于虚拟主机选证书但不等于验证，Go tls.Config.ServerName用于名称校验，InsecureSkipVerify关闭默认证书链/主机校验有MITM风险，不可当修证书故障捷径。IP访问需IP SAN。"
+    },
+    {
+      "title": "五、TLS保护哪一跳与反向代理终止",
+      "words": 2700,
+      "focus": "浏览器→反向代理TLS，代理解密后→Go服务若HTTP是另一跳，须分别评估内部网络与凭据；代理到服务可另TLS，不能页面小锁图标推整个后端链路端到端加密。HTTPS/WSS分别使用TLS保护传输，仍要Cookie Session/Origin/资源授权；代理转发proto等头只信受控代理，不信任客户端伪造。"
+    },
+    {
+      "title": "六、握手错误、证书轮换与Go接口入口",
+      "words": 2600,
+      "focus": "纸上过期/域名不匹配/根不受信/时钟不对/证书链缺失分类，不能按业务404或消息未保存处理。Go crypto/tls与x509的Config/ServerName/RootCAs/VerifyHostname概念，测试证书隔离、生产证书和密钥不进仓库/日志；证书续期/轮换、旧连接与新连接区别，已建立TLS连接不自动因后来证书到期立刻断。"
+    },
+    {
+      "title": "七、TLS以外的应用身份与0-RTT重放",
+      "words": 2600,
+      "focus": "服务器证书默认只验证服务端，mTLS需另配置客户端证书但它不天然代表IM用户u-a/c-a成员。TLS1.3 0-RTT可重放，若应用支持早期数据不能未经防重放就发送非幂等POST m-a；普通TLS不自动给业务消息 exactly-once。响应丢失仍需稳定消息ID和查询。S5深化。"
+    },
+    {
+      "title": "八、TLS边界图与22道练习",
+      "words": 3000,
+      "focus": "交付HTTPS/WSS握手阶段图、证书名称/链判断、代理两跳信任表和失败已知未知；22题从加密/hash/签名、SAN/SNI/ServerName、InsecureSkipVerify、代理终止、mTLS、0-RTT与业务确认附反馈。来源RFC8446/9525/Go tls x509/MDN，下一09.12完整服务课程。静态不运行Go/TLS/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《04.07 TLS与身份》，面向Go初学者。以虚构IM u-a访问https/wss的im.example.test、发送m-a为主线，先讲对称密钥、哈希、签名、证书，再走TLS1.3握手、证书链/SAN名称校验、代理终止的每一跳、Go crypto/tls配置入口、mTLS和0-RTT重放。必须区分TLS服务器身份、应用Session/资源授权、数据库与设备消息确认。八节丰富正文、22题附反馈练习。静态教材不运行Go/TLS/IM/站点，不宣称OpenIM部署配置。\n1. 一、u-a发m-a为什么还要TLS：承接04.02域名/端口、04.03HTTP/WS、04.04TCP、04.05连接、04.06路径等待。虚构u-a浏览器访问https://im.example.test、wss://im.example.test，陌生网络可能偷看或篡改，TLS提供传输机密性/完整性/服务器身份（正确校验前提），不证明u-a会话授权、数据库持久、B已读。静态不运行。\n2. 二、加密、哈希、签名与证书的入门词汇：Go初学者从对称密钥用于大量应用数据加密，公私钥与签名证书用于身份、hash摘要非加密、AEAD同时保护机密/完整性，区分签名和保密。TLS1.3协商临时密钥并导出对称会话密钥，不用服务器证书公钥直接加密所有聊天正文；避免自行设计密码方案。\n3. 三、TLS1.3握手沿连接走一次：RFC8446简化 ClientHello支持版本/keyshare/SNI/ALPN→ServerHello/keyshare→证书/CertificateVerify/Finished→验证后应用数据AEAD，握手记录有加密细节，教学图不精确描绘每个字节。TCP建立先于TLS, HTTPS/WSS上再跑HTTP/WS握手；TLS握手成功不等于应用登录。\n4. 四、证书链与名称校验为什么必须同时做：u-a输入im.example.test, 服务器证书SAN DNSNames应匹配名称、有效期/用途/签名链到受信根；DNS解析到IP不等于可信服务器，证书common name不作为现代名称依据。SNI用于虚拟主机选证书但不等于验证，Go tls.Config.ServerName用于名称校验，InsecureSkipVerify关闭默认证书链/主机校验有MITM风险，不可当修证书故障捷径。IP访问需IP SAN。\n5. 五、TLS保护哪一跳与反向代理终止：浏览器→反向代理TLS，代理解密后→Go服务若HTTP是另一跳，须分别评估内部网络与凭据；代理到服务可另TLS，不能页面小锁图标推整个后端链路端到端加密。HTTPS/WSS分别使用TLS保护传输，仍要Cookie Session/Origin/资源授权；代理转发proto等头只信受控代理，不信任客户端伪造。\n6. 六、握手错误、证书轮换与Go接口入口：纸上过期/域名不匹配/根不受信/时钟不对/证书链缺失分类，不能按业务404或消息未保存处理。Go crypto/tls与x509的Config/ServerName/RootCAs/VerifyHostname概念，测试证书隔离、生产证书和密钥不进仓库/日志；证书续期/轮换、旧连接与新连接区别，已建立TLS连接不自动因后来证书到期立刻断。\n7. 七、TLS以外的应用身份与0-RTT重放：服务器证书默认只验证服务端，mTLS需另配置客户端证书但它不天然代表IM用户u-a/c-a成员。TLS1.3 0-RTT可重放，若应用支持早期数据不能未经防重放就发送非幂等POST m-a；普通TLS不自动给业务消息 exactly-once。响应丢失仍需稳定消息ID和查询。S5深化。\n8. 八、TLS边界图与22道练习：交付HTTPS/WSS握手阶段图、证书名称/链判断、代理两跳信任表和失败已知未知；22题从加密/hash/签名、SAN/SNI/ServerName、InsecureSkipVerify、代理终止、mTLS、0-RTT与业务确认附反馈。来源RFC8446/9525/Go tls x509/MDN，下一09.12完整服务课程。静态不运行Go/TLS/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
