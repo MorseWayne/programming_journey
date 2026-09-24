@@ -179,4 +179,4 @@ Go 的漏洞数据库汇集已知报告，`govulncheck` 结合项目依赖和可
 
 ## 本章完成标准与下一步
 
-能不看答案手算 protocol v1.6.0 的 MVS 选择，分开 `go.mod`、`go.sum`、`go mod verify`、`govulncheck`、`gofmt/go vet` 和 `.proto/.pb.go` 的责任，并为 `visible/message_version` 变更写出旧新消费者的权限/版本负例，才算完成第一轮。真实 Go 命令、生成器和漏洞报告须在学习者隔离环境另行执行保存。下一章 10.10 将把依赖与协议变化放进持续交付、迁移和回滚的发布窗口。
+能不看答案手算 protocol v1.6.0 的 MVS 选择，分开 `go.mod`、`go.sum`、`go mod verify`、`govulncheck`、`gofmt/go vet` 和 `.proto/.pb.go` 的责任，并为 `visible/message_version` 变更写出旧新消费者的权限/版本负例，才算完成第一轮。真实 Go 命令、生成器和漏洞报告须在学习者隔离环境另行执行保存。下一章 [10.10 持续交付与版本管理](../../../src/docs/platform_engineering/curriculum/10_engineering/10_continuous_delivery_versions.md) 将把依赖与协议变化放进持续交付、迁移和回滚的发布窗口。

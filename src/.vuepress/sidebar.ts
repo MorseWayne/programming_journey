@@ -318,6 +318,7 @@ export default sidebar({
             "curriculum/10_engineering/07_concurrency_property_validation",
             "curriculum/10_engineering/08_dependency_quality_tools",
             "curriculum/10_engineering/09_ci_artifacts",
+            "curriculum/10_engineering/10_continuous_delivery_versions",
             "curriculum/10_engineering/core"
           ]
         },

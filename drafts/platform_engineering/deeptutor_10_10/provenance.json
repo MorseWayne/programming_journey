@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_1a12825561",
-  "page_id": "pg_2a1b9fac40",
+  "book_id": "bk_17606273c9",
+  "page_id": "pg_3ef88838fc",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,24 +16,22 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://go.dev/ref/mod",
-      "https://pkg.go.dev/cmd/gofmt",
-      "https://pkg.go.dev/cmd/vet",
-      "https://go.dev/doc/security/vuln/",
-      "https://protobuf.dev/reference/go/go-generated/",
+      "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+      "https://www.postgresql.org/docs/current/sql-altertable.html",
       "https://protobuf.dev/programming-guides/proto3/",
+      "https://sre.google/workbook/canarying-releases/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "259874bf22308b1c993e848418463195da2ed1bad1baa0469553f2eacc638a2a",
-  "original_characters": 34828,
-  "generation_request_sha256": "f098052916cc4e2afe6e0e37163dc8915918323955b347a5e556526a012000ef",
-  "reviewed_sha256": "410bef099b607481dbb0b756b7e14df1f36ff08269e4aa713be877de8b278afa",
-  "reviewed_characters": 10033,
-  "reviewed_chinese_characters": 3365,
-  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/08_dependency_quality_tools.md",
-  "course_sha256": "27ef88a6839775bd9eda7e948c905e2fca579b25edf1fdcf6805c8c06e97487c"
+  "original_sha256": "70c1d7e90377ec6b912c46071fca1ebea423f6e62e6d8a854e7a23dd7f2f5d63",
+  "original_characters": 31542,
+  "generation_request_sha256": "6bb5e2e2ad7b512e2ae1d531dc09122be6bbaaf0390e4de59da780b63b1a3427",
+  "reviewed_sha256": "325b80f35c400b685c6ee83bfe976da0b2e0d33a7295b3af9e7e2e17ff43ab86",
+  "reviewed_characters": 10480,
+  "reviewed_chinese_characters": 3736,
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/10_continuous_delivery_versions.md",
+  "course_sha256": "0bc48a14fa8fbb32fd162f06907368826f7a4120eb5c1ac6bd5cdb45d77dd01c"
 }

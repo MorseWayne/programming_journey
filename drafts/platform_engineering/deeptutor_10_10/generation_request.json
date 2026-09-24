@@ -1,0 +1,73 @@
+{
+  "code": "10.10",
+  "title": "持续交付与版本管理：发布成功为何还要看消息",
+  "chapter_id": "ch_continuous_delivery_versions",
+  "summary": "面向Go初学者，用虚构IM旧客户端与协议/数据库迁移的发布窗口解释制品身份、扩展迁移收缩、灰度观察、在途连接和多层回退。",
+  "objectives": [
+    "保持当前S2/拟议S3/R9/事件格式四轴独立",
+    "列出候选制品与部署配置身份",
+    "安排数据库和事件读写端兼容顺序",
+    "设计有代表性的灰度及停止门",
+    "区分Pod更新与IM连接/任务在途",
+    "审查代码、配置和数据各自的回退能力"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "https://www.postgresql.org/docs/current/sql-altertable.html",
+    "https://protobuf.dev/programming-guides/proto3/",
+    "https://sre.google/workbook/canarying-releases/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、把IM发布需求拆成独立变更",
+      "words": 2900,
+      "focus": "当前S2/v1 POST最多6UTF8字节、200 accepted_in_memory、同ID重复409、非成员404；未来S3/v2 200 stored_in_teaching_db仍教学提议且继续6B；R9从6→9B待审；教学event_v2加message_version/visible字段另轴。发布窗口不得把三项捆成一次开关，先写用户可见合同和旧客户端兼容。"
+    },
+    {
+      "title": "二、候选制品与变更记录",
+      "words": 3000,
+      "focus": "10.09 CI产物身份source SHA/Go version/build list/proto generator/image digest、DB migration ID、feature flag/config快照；artifact可重现/签名不等于业务正确，部署记录谁/何时/哪组客户端/指标与回退负责人。静态不真正部署。"
+    },
+    {
+      "title": "三、数据库和事件的扩展-迁移-收缩",
+      "words": 3300,
+      "focus": "教学S3 messages/outbox新列message_version/visibility先expand nullable/安全默认，检查Postgres ALTER TABLE实际锁/数据回填预算；新消费者双读旧event_v1与新event_v2并安全回源，旧客户端仍v1；持续backfill S0/L0与ID/version/permissions对账，然后门控新生产者/目标接口，旧日志/DLQ留存期后才contract。新增字段wire-safe不等于旧消费者语义安全。"
+    },
+    {
+      "title": "四、灰度发布的样本与停止门",
+      "words": 3100,
+      "focus": "玩具流量1%→10%→100%只是纸上阶段，需覆盖旧客户端、中文6B/9B、非成员u-c、热群c-g、B离线；比较同时间窗对照组，按版本看200/409/404/错误、outbox oldest、SearchIndex缺口、设备/补拉，预设门槛与观测时长。小样本可能漏罕见客户端/重负载，不把k8s Pod Ready或镜像回滚当用户效果。"
+    },
+    {
+      "title": "五、在途连接和滚动停止",
+      "words": 2900,
+      "focus": "Kubernetes RollingUpdate maxUnavailable/maxSurge仅Pod供给/可用性控制，不会管理IM WebSocket旧连接、HTTP请求/worker在途、broker消费者位点。新版服务先ready再接流，旧版停止接新请求、drain旧连接/任务、按lease/offset交接并有界超时；旧G1外部已发不可撤销。"
+    },
+    {
+      "title": "六、代码/配置/数据三类回退",
+      "words": 3300,
+      "focus": "纯代码旧镜像回滚不撤销已发event_v2、已填DB列、S3已提交消息或B已收提示；若新消费者/旧binary不能安全解析历史，先关新写flag、留兼容读、稳定outbox/消费、反向回填/新迁移与ID/version对账。R9若未批准不应有9B事实；若批准上线后旧端返回6B限制需客户端能力矩阵。回退必须用更高路由epoch若b1迁移，不能复用旧epoch。"
+    },
+    {
+      "title": "七、发布后支持窗口与固定OpenIM证据",
+      "words": 3000,
+      "focus": "记录旧客户端比例/最低支持、弃用通知、协议schema保留至broker和DLQ重放窗口结束，私有历史权限一直校验。固定OpenIM send.go MsgToMQ后返回与另一Mongo BatchInsertChat2DB不证明当前OpenIM使用Kubernetes/本教学发布流程或S3/R9/event_v2。学员实际公开项目需看go.mod/config/manifest/deploy/运行证据。"
+    },
+    {
+      "title": "八、22题与发布评审",
+      "words": 3100,
+      "focus": "22题基础8/灰度迁移8/回退评审6，答案覆盖S2/S3/R9边界、artifact vs deployment、expand/contract、Postgres ALTER锁、wire vs semantic、1/10/100样本、WebSocket drain、outbox lag、code vs data rollback、OpenIM evidence。交付发布计划/门槛/回退矩阵与实测待验证，静态无部署/Go/DB/IM/站点执行。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《10.10 持续交付与版本管理》，面向Go初学者，八节丰富理论、IM业务由浅入深，22题带反馈。当前S2/v1消息POST正文非空最多6UTF8字节、总请求4096B、200 accepted_in_memory、同ID即使同正文重复409、非成员u-c隐藏404；未来S3/v2 200 stored_in_teaching_db只教学提议且继续6B；R9 6→9B待审；教学event_v2添加message_version/visible是另一版本轴。发布不能混为一次开关。记录候选制品source SHA/Go version/build list/proto generator/image digest/DB migration ID/feature flag；CI绿色不等于部署或业务正确。先DB expand安全列/旧读支持，PostgreSQL ALTER TABLE锁等级按具体子命令审；新消费者双读旧event_v1/新event_v2且查权威version/visibility，安全回填与S0/L0对账，再门控新生产者或新接口，旧日志/DLQ/客户端窗口闭合才contract。纸上1%→10%→100%灰度要覆盖旧客户端/中文6B与待审9B/热群/非成员/离线，用同窗对照、停止门和最老积压/索引缺口，比例非生产建议。Kubernetes RollingUpdate maxUnavailable/maxSurge只管Pods，WebSocket在途、worker lease、broker offset要另drain。旧镜像rollback不能撤销已持久event_v2/DB新写/已发推送；必要时关新写flag，保兼容读，反向回填/对账，更高epoch回退。固定OpenIM send.go MsgToMQ与另Mongo BatchInsertChat2DB不证明使用此发布方案。静态不部署、不运行Go/DB/IM/站点。\n1. 一、把IM发布需求拆成独立变更: 当前S2/v1 POST最多6UTF8字节、200 accepted_in_memory、同ID重复409、非成员404；未来S3/v2 200 stored_in_teaching_db仍教学提议且继续6B；R9从6→9B待审；教学event_v2加message_version/visible字段另轴。发布窗口不得把三项捆成一次开关，先写用户可见合同和旧客户端兼容。\n2. 二、候选制品与变更记录: 10.09 CI产物身份source SHA/Go version/build list/proto generator/image digest、DB migration ID、feature flag/config快照；artifact可重现/签名不等于业务正确，部署记录谁/何时/哪组客户端/指标与回退负责人。静态不真正部署。\n3. 三、数据库和事件的扩展-迁移-收缩: 教学S3 messages/outbox新列message_version/visibility先expand nullable/安全默认，检查Postgres ALTER TABLE实际锁/数据回填预算；新消费者双读旧event_v1与新event_v2并安全回源，旧客户端仍v1；持续backfill S0/L0与ID/version/permissions对账，然后门控新生产者/目标接口，旧日志/DLQ留存期后才contract。新增字段wire-safe不等于旧消费者语义安全。\n4. 四、灰度发布的样本与停止门: 玩具流量1%→10%→100%只是纸上阶段，需覆盖旧客户端、中文6B/9B、非成员u-c、热群c-g、B离线；比较同时间窗对照组，按版本看200/409/404/错误、outbox oldest、SearchIndex缺口、设备/补拉，预设门槛与观测时长。小样本可能漏罕见客户端/重负载，不把k8s Pod Ready或镜像回滚当用户效果。\n5. 五、在途连接和滚动停止: Kubernetes RollingUpdate maxUnavailable/maxSurge仅Pod供给/可用性控制，不会管理IM WebSocket旧连接、HTTP请求/worker在途、broker消费者位点。新版服务先ready再接流，旧版停止接新请求、drain旧连接/任务、按lease/offset交接并有界超时；旧G1外部已发不可撤销。\n6. 六、代码/配置/数据三类回退: 纯代码旧镜像回滚不撤销已发event_v2、已填DB列、S3已提交消息或B已收提示；若新消费者/旧binary不能安全解析历史，先关新写flag、留兼容读、稳定outbox/消费、反向回填/新迁移与ID/version对账。R9若未批准不应有9B事实；若批准上线后旧端返回6B限制需客户端能力矩阵。回退必须用更高路由epoch若b1迁移，不能复用旧epoch。\n7. 七、发布后支持窗口与固定OpenIM证据: 记录旧客户端比例/最低支持、弃用通知、协议schema保留至broker和DLQ重放窗口结束，私有历史权限一直校验。固定OpenIM send.go MsgToMQ后返回与另一Mongo BatchInsertChat2DB不证明当前OpenIM使用Kubernetes/本教学发布流程或S3/R9/event_v2。学员实际公开项目需看go.mod/config/manifest/deploy/运行证据。\n8. 八、22题与发布评审: 22题基础8/灰度迁移8/回退评审6，答案覆盖S2/S3/R9边界、artifact vs deployment、expand/contract、Postgres ALTER锁、wire vs semantic、1/10/100样本、WebSocket drain、outbox lag、code vs data rollback、OpenIM evidence。交付发布计划/门槛/回退矩阵与实测待验证，静态无部署/Go/DB/IM/站点执行。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

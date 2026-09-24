@@ -1,0 +1,31 @@
+{
+  "chapter": "10.10",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced IM continuous delivery and versioned rollout lesson with old clients, database/event evolution, canary and rollback",
+  "prerequisites": [
+    "10.09 CI and candidate artifact identity",
+    "10.08 dependencies and code generation chain",
+    "09.10 HTTP, RPC and event compatibility",
+    "08.10 member, snapshot and event evolution",
+    "06.11 snapshot, incremental migration and reconciliation"
+  ],
+  "first_pass": [
+    "keep current S2, proposed S3, pending R9 and teaching event_v2 independent",
+    "record source, image, migration, configuration and client-cohort identities",
+    "explain expand, migrate and contract before enabling new writers"
+  ],
+  "second_pass": [
+    "design representative canary cohorts, business metrics and stop gates",
+    "separate Kubernetes pod rollout from long connection, task and consumer draining",
+    "compare code, configuration, data and routing rollback after new facts persist",
+    "set old-client and event-replay support windows",
+    "limit fixed OpenIM source claims to inspected calls"
+  ],
+  "not_yet_prerequisites": [
+    "10.11 technical writing and collaboration",
+    "learner's real deployment, migration and cohort observation evidence"
+  ],
+  "next_chapter": "10.11 technical writing and collaboration",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. They do not establish Kubernetes rollout, teaching SQL, R9/event_v2 support or any actual canary result.",
+  "shared_integration_pending": []
+}
