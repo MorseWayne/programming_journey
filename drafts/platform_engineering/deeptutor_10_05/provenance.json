@@ -25,9 +25,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "4bb5c4b4787dfa667b174514b04a24ddf1eae82aed55c1d77bd4d08395f5174c",
-  "reviewed_sha256": "5deb57199b180b045a992833dea9dea84a288365e96a5d9b88799fe1d6d9f21a",
-  "reviewed_characters": 9677,
-  "reviewed_chinese_characters": 4704,
+  "reviewed_sha256": "1726ea328a474f83f0ebd3820cd1bfdee73ea40dd42de44f45a55b91bcadeabb",
+  "reviewed_characters": 9775,
+  "reviewed_chinese_characters": 4711,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/05_refactoring_boundaries.md",
-  "course_sha256": "eb957417441fd3feebf9095a5a34434109849567667c801dd6eab91e659bdc56"
+  "course_sha256": "3357533611fa9d7123e0771d1df91bbda28731cf3f65f5242b5d753b5990ac8b"
 }

@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_03b12c5a62",
+  "page_id": "pg_a60aac2e5e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "12d202bcba3e1fe77ded32d29a575943d1378d5c1ac98a508a79901ab5a91cbe",
+  "original_characters": 30981,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging",
+      "https://git-scm.com/book/en/v2/Git-Branching-Rebasing",
+      "https://git-scm.com/docs/git-merge",
+      "https://git-scm.com/docs/git-rebase",
+      "https://docs.github.com/en/pull-requests/reference/pull-request-reviews"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "007737ea9c6667c64d223edf27788d9f12cf623ade4c8ef090f4d5337df5d008",
+  "reviewed_sha256": "83dad3d7843988ddda05b2ec8233c2b3b8556b222d1f8588ad5a1f0720476f8e",
+  "reviewed_characters": 9263,
+  "reviewed_chinese_characters": 4651,
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/06_code_review_merge.md",
+  "course_sha256": "ba595e0e130c03cd35236166db3fc261f51f6cec4c55d3045333c6d8f56bc579"
+}

@@ -256,4 +256,4 @@ cmd/imhistory ──→ internal/historyfile ──→ history
 - [A Philosophy of Software Design 作者说明](https://web.stanford.edu/~ouster/cgi-bin/aposd.php)：复杂度与模块设计的后续阅读入口。
 - [Effective Go](https://go.dev/doc/effective_go) 与 [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments)：Go 命名、包和注释风格的官方参考。
 
-下一章 10.06 将把这里的一次小步改造放进评审和合并流程。进入前应能展示一张前后行为矩阵，并解释哪一项真实文件证据仍需个人执行。
+下一章[10.06 代码审查与合并](./06_code_review_merge.md)将把这里的一次小步改造放进评审和合并流程。进入前应能展示一张前后行为矩阵，并解释哪一项真实文件证据仍需个人执行。

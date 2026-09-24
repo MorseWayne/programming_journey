@@ -1,0 +1,12 @@
+{
+  "chapter": "10.06",
+  "stage": "S1",
+  "business_scope": "fictional local IM history CLI and separate single-message R9 rule; static Git review and merge examples in an imagined personal practice repository only",
+  "prerequisites": ["10.03 W/I/H, commits and branches", "10.05 behavior-preserving refactoring", "10.01 independent requirements", "10.02 test boundaries", "01.12 local CLI contract"],
+  "first_pass": ["change request and review scope", "working/index/commit versus branch diff", "R9 boundary review comment", "PR description and review evidence"],
+  "second_pass": ["three-way merge and common ancestor", "text conflict versus semantic conflict", "merge versus rebase history identity", "post-merge regression on new HEAD"],
+  "not_yet_prerequisites": ["S2 process and network foundations", "real remote IM service", "release and branch protection policy", "production CI or deployment"],
+  "next_chapter": "03.02 processes and system calls as the first new S2 systems chapter",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}
