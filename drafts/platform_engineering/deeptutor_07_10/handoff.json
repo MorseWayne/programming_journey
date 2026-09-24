@@ -1,0 +1,33 @@
+{
+  "chapter": "07.10",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced local SQL outbox lesson using fictional m-9/E9 and fixed OpenIM source comparison",
+  "prerequisites": [
+    "06.07 local transaction and concurrency anomaly boundaries",
+    "06.12 educational conversation sequence allocation",
+    "07.06 message abstraction and authoritative history",
+    "07.07 producer/consumer acknowledgement and deduplication",
+    "07.08 same-key order and consumer completion",
+    "07.09 backlog, poison event and repair"
+  ],
+  "first_pass": [
+    "explain the two naive database/broker write orders and their crash gaps",
+    "draw same-database messages plus outbox atomic commit boundary",
+    "distinguish S2 accepted_in_memory from proposed S3 stored_in_teaching_db"
+  ],
+  "second_pass": [
+    "work through C0-C7 including lost producer ACK and early PUBLISHED bug",
+    "design relay claim lease and E9/E10 same-conversation order",
+    "use message/version/side-effect scoped consumer idempotency",
+    "separate broker acceptance, consumer effects, gateway attempt, device receipt/read",
+    "reconcile outbox and derived state from authoritative messages"
+  ],
+  "not_yet_prerequisites": [
+    "07.11 late event and materialized-view rebuild",
+    "07.12 cross-system consistency case",
+    "learner's real producer acknowledgement and fault-injection evidence"
+  ],
+  "next_chapter": "07.11 derived views and event time",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, send.go group and isSend single-chat paths call MsgToMQ before response; separate online_msg_to_mongo_handler.go path calls BatchInsertChat2DB. These files do not establish whether the project uses SQL outbox or the broker producer acknowledgement level.",
+  "shared_integration_pending": []
+}

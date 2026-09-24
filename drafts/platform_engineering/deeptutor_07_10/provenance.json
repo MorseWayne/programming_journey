@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_4d946d8bb5",
+  "page_id": "pg_c75a746a91",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "https://www.postgresql.org/docs/current/sql-select.html",
+      "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "ceebdf5dce1bc0ab37e0fa7dcb8665a57f70284856a554b61c93125511ea65b3",
+  "original_characters": 32478,
+  "generation_request_sha256": "dc9d92e56b661be8f70e0dd6a3aff6a219ac3bcb1fa961161ab4937338d555d6",
+  "reviewed_sha256": "b4f899a1f3b68faf77cd75deef7bde4eb8132c8f17da0c1f043cf085abe44dd5",
+  "reviewed_characters": 10800,
+  "reviewed_chinese_characters": 4020,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/10_transaction_outbox.md",
+  "course_sha256": "f2f6c46b3244ac2a8417f6aab38f67715acdcd9478ce68b78eb61bde8876dc8e"
+}

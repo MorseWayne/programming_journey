@@ -26,9 +26,9 @@
   "original_sha256": "1a769e616c6356efcfe08e2c0597b9038480c449d05c2281c8a450b396959cdb",
   "original_characters": 30488,
   "generation_request_sha256": "808ffe94843d4ad574674373ac4520680f3b4817aa6f0d866d87a5c20405c9a5",
-  "reviewed_sha256": "7aa751115aadbcf2147d5a69d1c2b830be39a2ed88df173faaf75f25a8b9961e",
-  "reviewed_characters": 7904,
-  "reviewed_chinese_characters": 3416,
+  "reviewed_sha256": "ec1342571f619b498a9a0eb56def624a252c27e0b4f5d93febeb861822053ebc",
+  "reviewed_characters": 8014,
+  "reviewed_chinese_characters": 3421,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/09_backlog_poison_messages.md",
-  "course_sha256": "497ff9600fdf92fb7a4e9fa2c53c76dab01b7f04a820df9d3dff9189e8764d46"
+  "course_sha256": "d841f87978df8d1916d5bcbc27336b4dc8ecf4573fa50ad42343edc465e199c6"
 }

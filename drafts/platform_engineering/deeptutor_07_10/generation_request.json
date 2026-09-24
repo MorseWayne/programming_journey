@@ -1,0 +1,72 @@
+{
+  "code": "07.10",
+  "title": "事务边界与 outbox：消息提交了，事件还没发",
+  "chapter_id": "ch_transaction_outbox",
+  "summary": "面向Go初学者，用虚构IM消息m-9与E9解释跨数据库与消息队列的双写裂缝、本地outbox原子范围、转发重试、消费幂等和外部效果。",
+  "objectives": [
+    "比较两种朴素双写顺序的崩溃反例",
+    "说明消息与待发布意图同库事务",
+    "逐点推演C0–C7崩溃与ACK未知",
+    "设计多转发器认领与同键顺序",
+    "区分发送、消费与设备确认",
+    "对照固定OpenIM源码的已知与未知"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+    "https://www.postgresql.org/docs/current/sql-select.html",
+    "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、一个业务问题为什么跨两次写入",
+      "words": 2800,
+      "focus": "承接未来教学S3：m-9/c-a/seq9在SQL权威库，E9(event_id=evt:m-9:v1)要发broker给SearchIndex与Notify；先讲本地事务/Commit/事件/派生副作用四个初学者定义。S2当前仅accepted_in_memory，S3 stored_in_teaching_db仍是提议。先DB提交再发崩溃会丢事件；先发再DB提交回滚会出现孤儿事件。"
+    },
+    {
+      "title": "二、同一数据库事务写消息与待发布意图",
+      "words": 3000,
+      "focus": "教学SQL transaction：经认证授权、检查成员资格，分配c-a seq9；*sql.Tx内写messages与outbox唯一event_id evt:m-9:v1，提交同成同败；强调事务只含同一个DB里的记录，不含broker/设备。冲突重试与幂等键，要防并发双发。消息正文敏感，outbox建议payload_ref与版本。S3响应仅本地提交。"
+    },
+    {
+      "title": "三、转发器的状态机和崩溃时间线",
+      "words": 3400,
+      "focus": "C0前置，C1两行未提交，C2 Commit，C3 relay领取PENDING，C4 broker确认保存E9，C5生产ACK丢失/relay崩溃导致重试同event_id，C6确认已知后置PUBLISHED，C7消费者完成索引。逐点写已知/未知/修复；在broker确认前标PUBLISHED可能永久漏发；C4后C6前重复可接受但需幂等。PUBLISHED不代表消费者或B完成。"
+    },
+    {
+      "title": "四、多个发送器如何领取与保持顺序",
+      "words": 3000,
+      "focus": "两个relay并发领同一row要有租约/锁与恢复；PostgreSQL SELECT FOR UPDATE SKIP LOCKED可用于队列式争抢，但只帮助领取，锁不跨broker调用持有；短事务claim+lease expires_at、fencing/状态条件更新；死relay可再次领取。E9 seq9/E10 seq10并发relay可能倒序发布，即使同conversation_id分区；设每会话顺序闸门、按seq发布与有序生产策略，或目标版本条件更新并明确业务缺口；参照07.08。"
+    },
+    {
+      "title": "五、消费者幂等与外部副作用边界",
+      "words": 3100,
+      "focus": "SearchIndex和Notify独立消费组；稳定键(message_id,version,side_effect)，数据库/索引目标条件写和去重记录的原子范围要明确，重复E9不重复外部效果；v1与v2是合法两版本，旧v1不能覆盖v2；发送到设备或第三方推送无法包含在消息SQL Tx里，gateway attempt、B receive/read另证；失败未知查目标后重试、07.07与07.09积压/DLQ。"
+    },
+    {
+      "title": "六、运行、修复和CDC替代",
+      "words": 2900,
+      "focus": "观测pending最老年龄、relay重试、发布已知/未知、PUBLISHED比例、broker/consumer lag、最终索引缺口、设备状态独立；定期从权威messages与outbox对账、重建派生索引，已发布记录保留与审计须定义，不可立即删除全部证据。CDC Debezium outbox event router读提交行作为替代relay提取方式，仍需幂等、位点、重放和外部效果核对；不许宣称exactly once整体。"
+    },
+    {
+      "title": "七、对照固定OpenIM源码而不偷换实现",
+      "words": 2800,
+      "focus": "固定f6411a8a...源码：send.go群聊路径MsgToMQ后返回，单聊isSend分支相似；online_msg_to_mongo_handler.go另一个消费路径调用BatchInsertChat2DB。两段说明RPC响应点不是该Mongo批量写完成点；不据此宣称OpenIM采用或不采用教学SQL outbox，不推断producer确认等级或设备送达。用证据表列已核对/未知/下一文件配置。"
+    },
+    {
+      "title": "八、评审表与22道分层练习",
+      "words": 3100,
+      "focus": "按基础8题、故障推演8题、系统评审6题，逐题有答案：两个写入顺序、事务范围、C0-C7、ACK unknown/重复、PUBLISHED早标、双relay、E9/E10、v1/v2、S2/S3、OpenIM证据边界、CDC和对账。最后交付原子范围图、崩溃矩阵、操作指标与补偿决策。静态纸上课程，无Go/DB/broker/站点运行。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.10 事务边界与 outbox》，面向Go技术栈初学者，八节丰富基础理论、IM业务场景、两遍递进与22题分层反馈。必须准确保持S2当前accepted_in_memory与S3未来stored_in_teaching_db的区别，不能误说已部署。教学SQL模型：m-9/c-a/u-a seq9与outbox E9(event_id=evt:m-9:v1)在同一个SQL事务Commit，broker/SearchIndex/Notify/设备不在事务内。解释DB→broker两个朴素双写反例、C0–C7各崩溃点、ACK丢失重试重复、PUBLISHED仅broker确认。E9/E10同键发布顺序、双relay认领与租约、consumer版本幂等、对账/修复与CDC都要交代。固定OpenIM源码只可说send.go MsgToMQ后返回，另一消费路径BatchInsertChat2DB；不得声称其SQL outbox实现有无或推断确认等级。所有ID为虚构脱敏，静态不运行Go/DB/broker/站点。\n1. 一、一个业务问题为什么跨两次写入: 承接未来教学S3：m-9/c-a/seq9在SQL权威库，E9(event_id=evt:m-9:v1)要发broker给SearchIndex与Notify；先讲本地事务/Commit/事件/派生副作用四个初学者定义。S2当前仅accepted_in_memory，S3 stored_in_teaching_db仍是提议。先DB提交再发崩溃会丢事件；先发再DB提交回滚会出现孤儿事件。\n2. 二、同一数据库事务写消息与待发布意图: 教学SQL transaction：经认证授权、检查成员资格，分配c-a seq9；*sql.Tx内写messages与outbox唯一event_id evt:m-9:v1，提交同成同败；强调事务只含同一个DB里的记录，不含broker/设备。冲突重试与幂等键，要防并发双发。消息正文敏感，outbox建议payload_ref与版本。S3响应仅本地提交。\n3. 三、转发器的状态机和崩溃时间线: C0前置，C1两行未提交，C2 Commit，C3 relay领取PENDING，C4 broker确认保存E9，C5生产ACK丢失/relay崩溃导致重试同event_id，C6确认已知后置PUBLISHED，C7消费者完成索引。逐点写已知/未知/修复；在broker确认前标PUBLISHED可能永久漏发；C4后C6前重复可接受但需幂等。PUBLISHED不代表消费者或B完成。\n4. 四、多个发送器如何领取与保持顺序: 两个relay并发领同一row要有租约/锁与恢复；PostgreSQL SELECT FOR UPDATE SKIP LOCKED可用于队列式争抢，但只帮助领取，锁不跨broker调用持有；短事务claim+lease expires_at、fencing/状态条件更新；死relay可再次领取。E9 seq9/E10 seq10并发relay可能倒序发布，即使同conversation_id分区；设每会话顺序闸门、按seq发布与有序生产策略，或目标版本条件更新并明确业务缺口；参照07.08。\n5. 五、消费者幂等与外部副作用边界: SearchIndex和Notify独立消费组；稳定键(message_id,version,side_effect)，数据库/索引目标条件写和去重记录的原子范围要明确，重复E9不重复外部效果；v1与v2是合法两版本，旧v1不能覆盖v2；发送到设备或第三方推送无法包含在消息SQL Tx里，gateway attempt、B receive/read另证；失败未知查目标后重试、07.07与07.09积压/DLQ。\n6. 六、运行、修复和CDC替代: 观测pending最老年龄、relay重试、发布已知/未知、PUBLISHED比例、broker/consumer lag、最终索引缺口、设备状态独立；定期从权威messages与outbox对账、重建派生索引，已发布记录保留与审计须定义，不可立即删除全部证据。CDC Debezium outbox event router读提交行作为替代relay提取方式，仍需幂等、位点、重放和外部效果核对；不许宣称exactly once整体。\n7. 七、对照固定OpenIM源码而不偷换实现: 固定f6411a8a...源码：send.go群聊路径MsgToMQ后返回，单聊isSend分支相似；online_msg_to_mongo_handler.go另一个消费路径调用BatchInsertChat2DB。两段说明RPC响应点不是该Mongo批量写完成点；不据此宣称OpenIM采用或不采用教学SQL outbox，不推断producer确认等级或设备送达。用证据表列已核对/未知/下一文件配置。\n8. 八、评审表与22道分层练习: 按基础8题、故障推演8题、系统评审6题，逐题有答案：两个写入顺序、事务范围、C0-C7、ACK unknown/重复、PUBLISHED早标、双relay、E9/E10、v1/v2、S2/S3、OpenIM证据边界、CDC和对账。最后交付原子范围图、崩溃矩阵、操作指标与补偿决策。静态纸上课程，无Go/DB/broker/站点运行。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

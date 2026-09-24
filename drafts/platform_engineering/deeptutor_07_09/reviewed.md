@@ -160,4 +160,4 @@ DLQ/隔离队列不是“失败垃圾桶”。一条合格的隔离条目至少�
 
 不看答案时能手算 18000 与 200 秒，说明持续到达为何不会追平；能把 E-bad 的暂时、永久、未知错误分开处置，解释 offset44 未决时 E11/45 的顺序门及显式隔离条件，并写出 DLQ 修复/重放/对账闭环，才算完成第一轮。第二轮由学习者在隔离环境保存真实 broker 配置、速率、年龄、错误和副作用结果，本文没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 07.10 将从数据库已提交但 E9 尚未发布的裂缝进入本地 outbox，再把消费幂等与外部副作用接起来。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 [07.10 事务边界与 outbox](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/10_transaction_outbox.md) 将从数据库已提交但 E9 尚未发布的裂缝进入本地 outbox，再把消费幂等与外部副作用接起来。
