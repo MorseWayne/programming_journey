@@ -29,9 +29,9 @@
   "original_sha256": "e877608ede5a4a2bc92ff931efa95242e142ae5e1d42d30c6e26e65583eac2a6",
   "original_characters": 33671,
   "generation_request_sha256": "efd7c62c5773d896bdbeb335386e4b81f1360bf8a98d4f41057796b3945570fc",
-  "reviewed_sha256": "683d99b9dceb312e9979ddde7d33bcd0c1260feb09ec3575fcc5cb70a42deef1",
-  "reviewed_characters": 10763,
+  "reviewed_sha256": "82109b1ec08de995b8b308fbdeea9823af8dd991b6934e755e3c9ab3107e2e47",
+  "reviewed_characters": 10858,
   "reviewed_chinese_characters": 4075,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/12_cross_system_consistency_case.md",
-  "course_sha256": "b8e7db8628dab4bec81cfddb9bd63606c22b0a90518b48396f6125c782dd1889"
+  "course_sha256": "c2a967f86dfc6135ca0e04f8d524d11210480213ecbf594ab4b730c74e3da402"
 }

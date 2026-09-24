@@ -1,0 +1,34 @@
+{
+  "chapter": "08.05",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced IM conversation sharding and rebalance lesson using fictional c-a/c-b/c-g and b1 N1-to-N3 migration",
+  "prerequisites": [
+    "08.01 partial failure",
+    "08.03 replication durability and failover",
+    "08.04 consistency models",
+    "07.08 same-conversation producer/consumer ordering",
+    "07.10 outbox and relay coordination",
+    "07.11 snapshot plus change cursor",
+    "07.12 cross-system IM consistency case"
+  ],
+  "first_pass": [
+    "distinguish key, logical bucket, physical node and replica",
+    "compare user, conversation and message sharding keys",
+    "calculate toy hash(c-a)=5, hash(c-b)=6, hash(c-g)=9 modulo four buckets",
+    "explain why moving b1 does not split the single hot c-g key"
+  ],
+  "second_pass": [
+    "walk M0-M6 snapshot, delta, fencing, epoch cutover, old-route handling and reconciliation",
+    "protect E9/E10 outbox relay ownership and producer order during storage migration",
+    "separate Kafka consumer-group rebalance from database bucket migration",
+    "use stable IDs and target versions for duplicate/late effects",
+    "limit fixed OpenIM key-passing evidence to inspected calls"
+  ],
+  "not_yet_prerequisites": [
+    "08.06 majority and consensus",
+    "learner's real routing and fault-injection evidence"
+  ],
+  "next_chapter": "08.06 majority and consensus",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, send.go group path passes GenConversationUniqueKeyForGroup(...) to MsgToMQ; pkg/common/storage/controller/msg.go MsgToMQ passes key to producer.SendMessage. These files alone do not establish final Kafka partition algorithm, topic partition count, database shard layout or migration protocol.",
+  "shared_integration_pending": []
+}

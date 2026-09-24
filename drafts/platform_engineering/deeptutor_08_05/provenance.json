@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a2c4c41d8a",
+  "page_id": "pg_808307a028",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
+      "https://kafka.apache.org/42/operations/basic-kafka-operations/",
+      "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/pkg/common/storage/controller/msg.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "6b06cbeca368a25616adb3ad610386c821cf2ec14b8de75772b39c765558bda0",
+  "original_characters": 31488,
+  "generation_request_sha256": "e6d0f26f3fb93e28f4d1cc50a0e1e0076cc032312bc79f2f5c2de036dc455583",
+  "reviewed_sha256": "7a97041dda30d849a89bada13782d913d8f5d8884fe89a5d49cff79561234399",
+  "reviewed_characters": 10224,
+  "reviewed_chinese_characters": 3851,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/05_partition_rebalancing.md",
+  "course_sha256": "e5a43ae18b4ddbadbabfb9f9aa4da01ba7c2bd8a068bf1f0aabccd9ca4fd8ac5"
+}

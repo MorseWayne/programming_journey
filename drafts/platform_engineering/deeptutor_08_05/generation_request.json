@@ -1,0 +1,72 @@
+{
+  "code": "08.05",
+  "title": "分区与再平衡：会话迁移时E9去哪里",
+  "chapter_id": "ch_partition_rebalance",
+  "summary": "面向Go初学者，以IM会话c-a/c-b/c-g讲解分片键、范围/哈希/虚拟桶、热点、复制、路由epoch、快照增量迁移和消费者再平衡。",
+  "objectives": [
+    "区分分片、逻辑桶、节点与副本",
+    "手算hash%4的会话路由",
+    "解释单热会话无法靠加节点自动拆分",
+    "画出b1从N1到N3的安全迁移和epoch围栏",
+    "区分存储搬迁与Kafka消费者再平衡",
+    "限制固定OpenIM key传递源码的推论"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/",
+    "https://kafka.apache.org/42/operations/basic-kafka-operations/",
+    "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/pkg/common/storage/controller/msg.go"
+  ],
+  "sections": [
+    {
+      "title": "一、为什么一个节点放不下所有会话",
+      "words": 2800,
+      "focus": "虚构IM c-a/c-b/c-g，c-g是单热会话。先定义分片键、逻辑桶、物理节点、副本、路由表；按用户分片利于个人收件但同会话消息可能分散，按conversation_id利于同会话seq/历史但热c-g形成单键瓶颈。S2/S3合同仍分开，不把教学分片写成现有实现。"
+    },
+    {
+      "title": "二、范围、取模和虚拟桶的手算",
+      "words": 3000,
+      "focus": "玩具hash(c-a)=5 hash(c-b)=6 hash(c-g)=9, 4个虚拟桶b0-b3，用hash%4得c-a=b1,c-b=b2,c-g=b1；epoch7 b0/b1→N1,b2→N2,b3→N3。范围分片对时间/顺序扫描方便但热点区间；直接hash%nodeCount扩容映射变化；虚拟桶/槽先定key→bucket再bucket→node，迁移b1到N3时c-a/c-g一起移动，不能自动把c-g单热键拆分。Redis Cluster 16384 hash slots CRC16不是一致性哈希。"
+    },
+    {
+      "title": "三、热点、复制与分片不是一个开关",
+      "words": 2900,
+      "focus": "c-g单热写速率大于单键安全处理率，增加worker/节点不自动解同键顺序瓶颈；读复制可分担读但写确认/延迟另审；副本复制是同一分片冗余，分片是键空间分布。业务可以拆读、细化责任/多层会话热点设计，但要重定义seq/顺序/权限/游标合同，不可无代价。"
+    },
+    {
+      "title": "四、迁移b1前先定义epoch和双写风险",
+      "words": 3200,
+      "focus": "epoch7 b1 owner N1，epoch8 owner N3；迁移阶段要保证单写者。旧/新路由表可能共存，客户端缓存旧路由，需版本/epoch、重定向或拒绝过期写与fencing token；简单同时向N1/N3双写会有一边失败与读不一致，不能称原子。搬迁快照H=seq9且capture后续E10, id/version对账。"
+    },
+    {
+      "title": "五、在途E9/E10与安全切换时间线",
+      "words": 3400,
+      "focus": "M0旧N1持权写m-9 seq9，outbox E9；M1取一致快照H与可续读变更位置L0；M2复制b1到N3并追增量；M3暂停/排空或围栏旧写，证明N3追上H+delta；M4路由epoch8切换N3；M5旧请求拒绝/转发且幂等；M6清理旧副本并保留回退。E10 seq10不能在N3先发布导致E9乱序；DB shard map与Kafka P0分区是不同映射。状态未知时查稳定ID。"
+    },
+    {
+      "title": "六、消费者再平衡与存储迁移分开",
+      "words": 2800,
+      "focus": "Kafka SearchIndex组P0从W1→W2再平衡，已读未完成E9可能重做；next offset43/44只能在必要效果完成后按连续前缀提交，旧worker迟到写用generation/lease fencing与目标版本条件更新，参照07.08。与DB b1迁移独立，不因两者都叫rebalance就合并语义。"
+    },
+    {
+      "title": "七、固定OpenIM源码与产品边界",
+      "words": 3000,
+      "focus": "固定OpenIM send.go群聊路径用GenConversationUniqueKeyForGroup产生key给MsgToMQ，pkg/common/storage/controller/msg.go MsgToMQ调用producer.SendMessage(ctx,key,msg2mq)。这支持存在会话相关key传给生产者；具体partitioner、分区数、路由稳定性、迁移策略、broker ack等级和DB shard拓扑未在这两处核对，不可断言。引用Kafka增加分区可能改变hash(key)%n的新记录映射，Redis Cluster槽与副本保证有限。"
+    },
+    {
+      "title": "八、22题与迁移评审",
+      "words": 3000,
+      "focus": "22题基础8/算桶与故障8/评审6，答案覆盖hash%4、扩容重映射、b1 c-a/c-g、虚拟桶不能拆单热、复制vs分片、epoch/围栏、快照+增量、旧路由、E9/E10顺序、consumer rebalance、OpenIM证据边界。交付路由表、迁移时序、对账/回退/观测矩阵。静态无Go/DB/Kafka/Redis/站点运行。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.05 分区与再平衡》，面向Go初学者，八节充分讲前置理论，虚构IM c-a/c-b/c-g由浅入深，22题分层反馈。教学玩具hash(c-a)=5, hash(c-b)=6, hash(c-g)=9，4个虚拟桶b0-b3，hash%4→c-a=b1,c-b=b2,c-g=b1；epoch7 b0/b1由N1负责,b2 N2,b3 N3，迁移b1至N3为epoch8。范围、直接取模、虚拟桶/槽区别；Redis Cluster为CRC16 16384 slots，不是consistent hashing。c-g单热键不能靠增加worker或搬一个桶自动拆写，复制不是分片。搬迁含快照+无缝增量、围栏旧写、单写者、路由epoch、旧客户端处理、ID/version/seq对账和回退；不能假称双写原子。E9/m-9 seq9和E10/m-10 seq10在途，DB桶映射与broker分区映射独立；Kafka消费者组再平衡是W1/W2分区归属变化，不是数据库迁移，旧worker迟到写和offset前缀提交要审。固定OpenIM提交f6411a8...中send.go群聊key传MsgToMQ，pkg/common/storage/controller/msg.go将key传producer.SendMessage；这只证实key传递，不证明分区算法、数量、拓扑或迁移策略。当前S2 accepted_in_memory与拟议S3 stored_in_teaching_db仍分开。静态不运行Go/DB/Kafka/Redis/站点。\n1. 一、为什么一个节点放不下所有会话: 虚构IM c-a/c-b/c-g，c-g是单热会话。先定义分片键、逻辑桶、物理节点、副本、路由表；按用户分片利于个人收件但同会话消息可能分散，按conversation_id利于同会话seq/历史但热c-g形成单键瓶颈。S2/S3合同仍分开，不把教学分片写成现有实现。\n2. 二、范围、取模和虚拟桶的手算: 玩具hash(c-a)=5 hash(c-b)=6 hash(c-g)=9, 4个虚拟桶b0-b3，用hash%4得c-a=b1,c-b=b2,c-g=b1；epoch7 b0/b1→N1,b2→N2,b3→N3。范围分片对时间/顺序扫描方便但热点区间；直接hash%nodeCount扩容映射变化；虚拟桶/槽先定key→bucket再bucket→node，迁移b1到N3时c-a/c-g一起移动，不能自动把c-g单热键拆分。Redis Cluster 16384 hash slots CRC16不是一致性哈希。\n3. 三、热点、复制与分片不是一个开关: c-g单热写速率大于单键安全处理率，增加worker/节点不自动解同键顺序瓶颈；读复制可分担读但写确认/延迟另审；副本复制是同一分片冗余，分片是键空间分布。业务可以拆读、细化责任/多层会话热点设计，但要重定义seq/顺序/权限/游标合同，不可无代价。\n4. 四、迁移b1前先定义epoch和双写风险: epoch7 b1 owner N1，epoch8 owner N3；迁移阶段要保证单写者。旧/新路由表可能共存，客户端缓存旧路由，需版本/epoch、重定向或拒绝过期写与fencing token；简单同时向N1/N3双写会有一边失败与读不一致，不能称原子。搬迁快照H=seq9且capture后续E10, id/version对账。\n5. 五、在途E9/E10与安全切换时间线: M0旧N1持权写m-9 seq9，outbox E9；M1取一致快照H与可续读变更位置L0；M2复制b1到N3并追增量；M3暂停/排空或围栏旧写，证明N3追上H+delta；M4路由epoch8切换N3；M5旧请求拒绝/转发且幂等；M6清理旧副本并保留回退。E10 seq10不能在N3先发布导致E9乱序；DB shard map与Kafka P0分区是不同映射。状态未知时查稳定ID。\n6. 六、消费者再平衡与存储迁移分开: Kafka SearchIndex组P0从W1→W2再平衡，已读未完成E9可能重做；next offset43/44只能在必要效果完成后按连续前缀提交，旧worker迟到写用generation/lease fencing与目标版本条件更新，参照07.08。与DB b1迁移独立，不因两者都叫rebalance就合并语义。\n7. 七、固定OpenIM源码与产品边界: 固定OpenIM send.go群聊路径用GenConversationUniqueKeyForGroup产生key给MsgToMQ，pkg/common/storage/controller/msg.go MsgToMQ调用producer.SendMessage(ctx,key,msg2mq)。这支持存在会话相关key传给生产者；具体partitioner、分区数、路由稳定性、迁移策略、broker ack等级和DB shard拓扑未在这两处核对，不可断言。引用Kafka增加分区可能改变hash(key)%n的新记录映射，Redis Cluster槽与副本保证有限。\n8. 八、22题与迁移评审: 22题基础8/算桶与故障8/评审6，答案覆盖hash%4、扩容重映射、b1 c-a/c-g、虚拟桶不能拆单热、复制vs分片、epoch/围栏、快照+增量、旧路由、E9/E10顺序、consumer rebalance、OpenIM证据边界。交付路由表、迁移时序、对账/回退/观测矩阵。静态无Go/DB/Kafka/Redis/站点运行。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
