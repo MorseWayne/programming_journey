@@ -1,0 +1,31 @@
+{
+  "chapter": "09.10",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced IM protocol compatibility and RPC lesson separating HTTP contract, Protobuf/event format and message business version",
+  "prerequisites": [
+    "09.02 current S2 HTTP contract",
+    "09.04 request pipeline and response commitment",
+    "09.09 proposed paper async export API",
+    "08.10 member and event schema evolution",
+    "09.11 current six-byte and pending R9 evidence"
+  ],
+  "first_pass": [
+    "separate current S2/v1, proposed S3/v2, paper export/v3, event_v1/v2 and m-9 business versions",
+    "understand Protobuf field numbers, optional presence and unknown fields",
+    "explain gRPC deadline and retry without equating transport commit with SQL commit"
+  ],
+  "second_pass": [
+    "map internal gRPC errors to external HTTP without leaking hidden conversation existence",
+    "review six old/new client-producer-consumer and JSON conversion combinations",
+    "stage reader support before writer v2 rollout and preserve old-event replay",
+    "keep R9 nine-byte proposal gated until explicit approval and versioned contract",
+    "require semantic and data rollback evidence after new events persist"
+  ],
+  "not_yet_prerequisites": [
+    "10.07 concurrent and property-based validation",
+    "learner's real generated-code, RPC and mixed-version observations"
+  ],
+  "next_chapter": "10.07 concurrent and property-based validation",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These two files do not establish the teaching MessageEvent field numbers, event_v2 rollout, client negotiation or gRPC retry configuration.",
+  "shared_integration_pending": []
+}

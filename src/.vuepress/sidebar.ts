@@ -298,6 +298,7 @@ export default sidebar({
             "curriculum/09_backend_security/07_authentication_authorization",
             "curriculum/09_backend_security/08_input_output_defense",
             "curriculum/09_backend_security/09_async_long_tasks",
+            "curriculum/09_backend_security/10_protocol_compatibility_rpc",
             "curriculum/09_backend_security/11_application_tests_delivery",
             "curriculum/09_backend_security/12_im_service_capstone",
             "curriculum/09_backend_security/core"

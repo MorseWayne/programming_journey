@@ -1,0 +1,74 @@
+{
+  "code": "09.10",
+  "title": "协议兼容与RPC：能解析消息不代表业务安全",
+  "chapter_id": "ch_protocol_compatibility_rpc",
+  "summary": "面向Go初学者，用虚构IM消息和事件升级比较HTTP、Protobuf/RPC、事件线格式与业务消息版本，推演旧新端混部、超时重试和回退。",
+  "objectives": [
+    "区分HTTP阶段、RPC/事件格式与消息业务版本",
+    "理解Protobuf编号、optional存在性和未知字段",
+    "解释gRPC deadline/重试的未知结果边界",
+    "设计授权/错误码安全映射",
+    "完成旧新客户端/生产者/消费者兼容矩阵",
+    "写出扩展迁移收缩和回退证据"
+  ],
+  "sources": [
+    "https://protobuf.dev/programming-guides/proto3/",
+    "https://protobuf.dev/programming-guides/json/",
+    "https://grpc.io/docs/guides/deadlines/",
+    "https://grpc.io/docs/guides/status-codes/",
+    "https://grpc.io/docs/guides/retry/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、四条版本轴不要同叫v2",
+      "words": 2900,
+      "focus": "当前HTTP S2/v1正文6UTF8字节、200 accepted_in_memory、同ID重复409、非成员404；未来S3/v2 stored_in_teaching_db仅提议；R9 6→9字节待审；09.09/v3异步导出另接口。教学Protobuf RPC字段版本与event_v1/v2线格式、m-9:v1/v2业务编辑是另外轴，先画矩阵。"
+    },
+    {
+      "title": "二、Protobuf字段编号、存在性和未知字段",
+      "words": 3300,
+      "focus": "教学MessageEventV1字段message_id=1,conversation_id=2,seq=3；V2新增optional message_version=4, visibility=5，编号不可重用/删后reserved。proto3 implicit scalar默认0与未提供不能区分，optional有presence。旧binary可忽略新增字段是wire-safe，不证明旧SearchIndex知道v2/权限；ProtoJSON和逐字段复制可丢unknown，JSON解析新字段行为需核对。"
+    },
+    {
+      "title": "三、RPC超时/重试与业务状态",
+      "words": 3200,
+      "focus": "教学Send RPC经过HTTP gateway到服务端，gRPC DEADLINE_EXCEEDED可能操作已成功，取消是协作不是remote rollback；gRPC retry政策可能重放，header已收后RPC committed是gRPC传输语义不是SQL Commit。用稳定client_msg_id/query按合同恢复，当前S2重复同ID即使同正文409不能变幂等200，未来S3新语义另审。"
+    },
+    {
+      "title": "四、错误码和授权映射",
+      "words": 2800,
+      "focus": "teaching gateway map INVALID_ARGUMENT→HTTP400、UNAUTHENTICATED→401、ALREADY_EXISTS→409、非成员internal PERMISSION_DENIED可按当前隐藏政策对外404，避免存在泄露；RESOURCE_EXHAUSTED/UNAVAILABLE/DEADLINE_EXCEEDED按依赖和阶段处理，不能将超时当未提交。gRPC status不自动继承HTTP映射，编写应用合同和安全负例。"
+    },
+    {
+      "title": "五、新旧端共存的六格兼容矩阵",
+      "words": 3300,
+      "focus": "旧client→新server、新client→旧server、旧producer→新consumer、新producer→旧consumer、旧stored event回放→新consumer、ProtoJSON转码；检查能parse、默认值、业务version/visibility、安全授权、回复状态、降级/拒绝。旧consumer忽略visibility可能泄露，先升级读端/安全fallback查权威再开新生产者，若无安全fallback隔离版本。"
+    },
+    {
+      "title": "六、扩展-迁移-收缩与回退门",
+      "words": 3200,
+      "focus": "新增字段/双读，记录能力/版本/unknown and replay; producer门控，迁移旧事件/索引与保留期/隔离工单；收缩旧路径前看用户分布/消费者/日志保留；R9请求9字节必须待批准且旧S2仍拒绝，不能混合默认。新事件已持久后回滚旧binary需验证未知字段/语义不会丢，不能只回滚部署。"
+    },
+    {
+      "title": "七、固定OpenIM源码与可验证交付",
+      "words": 3000,
+      "focus": "固定OpenIM send.go群聊/单聊所述MsgToMQ后响应, 另一Mongo consumer BatchInsertChat2DB；可看见协议MsgData传递但这两段不能证明教学RPC/事件V2/版本协商/生产者确认等级。真实项目需追protocol依赖具体commit、schema、配置、client版本和consumer部署，静态课程不跑。给read-only源码证据表与运行待验证。"
+    },
+    {
+      "title": "八、22题与升级评审",
+      "words": 3100,
+      "focus": "22题基础8/兼容与错误8/上线评审6，答案覆盖四轴、field numbers/presence/unknown、wire vs semantic、gRPC deadline/retry, 401/404/409安全、R9 pending、old/new matrix, replay/rollback、fixed OpenIM boundary。交付兼容矩阵、阶段门、回退条件与证据，静态不运行Go/protoc/gRPC/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《09.10 协议兼容与RPC》，面向Go初学者，八节理论丰富、IM业务由浅入深，22题带反馈。四条独立版本轴：当前HTTP S2/v1正文非空最多6 UTF8字节、总请求4096B、200 accepted_in_memory、同message_id即使同正文重复409、非成员目标隐藏404；未来S3/v2 200 stored_in_teaching_db只是提议；R9内容6→9字节待审；09.09未部署/v3异步导出另功能；RPC/事件教学event_v1/v2线格式与m-9:v1/v2业务编辑独立。Protobuf教学MessageEvent fields message_id=1,conversation_id=2,seq=3，v2新增optional message_version=4/visibility=5，字段号不能重用，删除后reserved；旧binary能忽略新增字段属wire-safe但旧SearchIndex忽略版本/可见性属业务不安全；ProtoJSON/逐字段复制可能丢unknown；implicit scalar默认0与缺失难分。gRPC DEADLINE_EXCEEDED可能服务端已成功，cancel非远端rollback，gRPC retry/header committed仅传输语义不是SQL commit；业务稳定ID与状态查询按合同恢复，不暗改S2重复409。错误码网关需应用/安全映射，internal PERMISSION_DENIED可按S2隐藏政策对外404，NOT_FOUND等不泄露。六格新旧端兼容矩阵：客户端/服务端、生产者/消费者、旧事件回放、JSON转码，检查能parse与业务安全。先新读端双读/安全fallback，再门控新生产者，待保留/隔离/回放窗口闭合后收缩；新事件持久后回滚旧binary不能丢语义。固定OpenIM send.go MsgToMQ与另Mongo BatchInsert两处不证明教学v2/schema升级/RPC保证。静态不运行Go/protoc/gRPC/IM/站点。\n1. 一、四条版本轴不要同叫v2: 当前HTTP S2/v1正文6UTF8字节、200 accepted_in_memory、同ID重复409、非成员404；未来S3/v2 stored_in_teaching_db仅提议；R9 6→9字节待审；09.09/v3异步导出另接口。教学Protobuf RPC字段版本与event_v1/v2线格式、m-9:v1/v2业务编辑是另外轴，先画矩阵。\n2. 二、Protobuf字段编号、存在性和未知字段: 教学MessageEventV1字段message_id=1,conversation_id=2,seq=3；V2新增optional message_version=4, visibility=5，编号不可重用/删后reserved。proto3 implicit scalar默认0与未提供不能区分，optional有presence。旧binary可忽略新增字段是wire-safe，不证明旧SearchIndex知道v2/权限；ProtoJSON和逐字段复制可丢unknown，JSON解析新字段行为需核对。\n3. 三、RPC超时/重试与业务状态: 教学Send RPC经过HTTP gateway到服务端，gRPC DEADLINE_EXCEEDED可能操作已成功，取消是协作不是remote rollback；gRPC retry政策可能重放，header已收后RPC committed是gRPC传输语义不是SQL Commit。用稳定client_msg_id/query按合同恢复，当前S2重复同ID即使同正文409不能变幂等200，未来S3新语义另审。\n4. 四、错误码和授权映射: teaching gateway map INVALID_ARGUMENT→HTTP400、UNAUTHENTICATED→401、ALREADY_EXISTS→409、非成员internal PERMISSION_DENIED可按当前隐藏政策对外404，避免存在泄露；RESOURCE_EXHAUSTED/UNAVAILABLE/DEADLINE_EXCEEDED按依赖和阶段处理，不能将超时当未提交。gRPC status不自动继承HTTP映射，编写应用合同和安全负例。\n5. 五、新旧端共存的六格兼容矩阵: 旧client→新server、新client→旧server、旧producer→新consumer、新producer→旧consumer、旧stored event回放→新consumer、ProtoJSON转码；检查能parse、默认值、业务version/visibility、安全授权、回复状态、降级/拒绝。旧consumer忽略visibility可能泄露，先升级读端/安全fallback查权威再开新生产者，若无安全fallback隔离版本。\n6. 六、扩展-迁移-收缩与回退门: 新增字段/双读，记录能力/版本/unknown and replay; producer门控，迁移旧事件/索引与保留期/隔离工单；收缩旧路径前看用户分布/消费者/日志保留；R9请求9字节必须待批准且旧S2仍拒绝，不能混合默认。新事件已持久后回滚旧binary需验证未知字段/语义不会丢，不能只回滚部署。\n7. 七、固定OpenIM源码与可验证交付: 固定OpenIM send.go群聊/单聊所述MsgToMQ后响应, 另一Mongo consumer BatchInsertChat2DB；可看见协议MsgData传递但这两段不能证明教学RPC/事件V2/版本协商/生产者确认等级。真实项目需追protocol依赖具体commit、schema、配置、client版本和consumer部署，静态课程不跑。给read-only源码证据表与运行待验证。\n8. 八、22题与升级评审: 22题基础8/兼容与错误8/上线评审6，答案覆盖四轴、field numbers/presence/unknown、wire vs semantic、gRPC deadline/retry, 401/404/409安全、R9 pending、old/new matrix, replay/rollback、fixed OpenIM boundary。交付兼容矩阵、阶段门、回退条件与证据，静态不运行Go/protoc/gRPC/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

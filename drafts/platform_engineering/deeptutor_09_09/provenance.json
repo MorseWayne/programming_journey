@@ -29,9 +29,9 @@
   "original_sha256": "1365ffaf027e2db581811ca3fdcadcc72fafddabeed019b0ce1f5d5cf6a30616",
   "original_characters": 33914,
   "generation_request_sha256": "4d2276ffb86ef36a6b8f8a71ef45ac0c98c49d33d459c27fa0ab61ba4628ca44",
-  "reviewed_sha256": "6ca39c782202351bd71011bc657d88f7ad5ab7389aaa52375c117c92f469757f",
-  "reviewed_characters": 11102,
-  "reviewed_chinese_characters": 3904,
+  "reviewed_sha256": "d77d8d3ffe3fa59c90145c71e8bf75f95b8cfa17fcc8e273963b8bba75f9a872",
+  "reviewed_characters": 11218,
+  "reviewed_chinese_characters": 3909,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/09_async_long_tasks.md",
-  "course_sha256": "53631b6d3cbc8e78424d612e28f620693bbcad8dbb3ae2d73f1adab59b4a42e3"
+  "course_sha256": "efdab3c639ca8ffe4d514fc73b859fcb48bb3ba81b330d00d94d279fdda95448"
 }
