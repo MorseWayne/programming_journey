@@ -1,0 +1,12 @@
+{
+  "chapter": "04.02",
+  "stage": "S2",
+  "business_scope": "fictional future IM history endpoint with RFC documentation addresses and .test/.invalid names; no real DNS, socket, HTTP or delivery evidence",
+  "prerequisites": ["04.01 client/server roles, protocol layers and evidence boundaries", "03.01 bits and byte notation", "03.02 processes and OS resource boundary"],
+  "first_pass": ["user/conversation/name/IP/port/socket roles", "IPv4/IPv6 and /24 prefix membership", "paper routing table and default route", "listener and client endpoint"],
+  "second_pass": ["A/AAAA DNS candidates, cache and TTL", "name-to-HTTP-request stage chain", "DNS failure versus refused/timeout versus 404/403", "Go net API as future exercise entry"],
+  "not_yet_prerequisites": ["04.03 HTTP and WebSocket request/handshake", "04.04 TCP reliability", "04.11 NAT and full routing/link internals", "S3 IM authentication and authorization", "S5 delivery semantics"],
+  "next_chapter": "04.03 HTTP and WebSocket basics, beginning with a read-only history HTTP query",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

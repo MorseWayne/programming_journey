@@ -26,9 +26,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "6b897606dc1f262fd5c3c449614f57f09e60058be7cde8dfe2cc251d3a7228fa",
-  "reviewed_sha256": "8b39a09d1d4ef990de94e0ed96f69cbd9c1553151a40fc97ea0d4b895091c498",
-  "reviewed_characters": 9814,
-  "reviewed_chinese_characters": 5142,
+  "reviewed_sha256": "dbaafca7eedf4048f3beaf5ef6c21110b917d1cd9091d7a271cef617f3832d49",
+  "reviewed_characters": 9917,
+  "reviewed_chinese_characters": 5151,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/01_application_communication_layers.md",
-  "course_sha256": "e4206b840e95a74ab99d807cbe9120685fce04f9d253a0500678c6dda0c9c890"
+  "course_sha256": "bce2276fd8680cd031d7626bd81b3f42aee280e225dbc38205d22bc91d8e082b"
 }
