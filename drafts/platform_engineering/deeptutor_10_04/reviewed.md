@@ -353,4 +353,4 @@ fake 没有经过编码、解码、路径、写入和关闭边界，不能证明
 - [Learn Go with Tests：Dependency Injection](https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/dependency-injection) 与 [Mocking](https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/mocking)：以 `io.Writer` 和可控时间说明 Go 的测试边界。
 - [Go `testing`](https://pkg.go.dev/testing) 与 [Go `time`](https://pkg.go.dev/time)：`T.TempDir`、时间值和标准库接口的具体行为。
 
-下一章 10.05《重构与模块边界》将沿本地历史工具讨论保持外部行为不变时如何改变内部结构；章节设计见[第十卷目录](../../../src/docs/platform_engineering/curriculum/10_engineering/README.md)。进入之前，请能明确说出每项替身测试覆盖哪个边界、还需哪项真实文件证据。
+下一章[10.05《重构与模块边界》](../../../src/docs/platform_engineering/curriculum/10_engineering/05_refactoring_boundaries.md)沿本地历史工具讨论保持外部行为不变时如何改变内部结构。进入之前，请能明确说出每项替身测试覆盖哪个边界、还需哪项真实文件证据。

@@ -1,0 +1,73 @@
+{
+  "code": "10.05",
+  "title": "重构与模块边界：保持 IM 本地工具的外部行为",
+  "chapter_id": "ch_refactoring_boundaries",
+  "summary": "承接01.09包设计、01.12本地check/list/export、10.01需求、10.02测试和10.04替身。从行为保持的定义到小步改造、职责与信息隐藏、Go包依赖、命名注释和评审证据。静态教材，不运行Go、测试、构建或IM服务。",
+  "objectives": [
+    "定义可观察行为与重构、修复、功能变更的区别",
+    "从本地历史工具的变更原因识别职责混杂",
+    "在现有需求表和测试边界上建立重构前后证据",
+    "按提取函数、移动函数、命名和包边界分小步改造",
+    "保持错误身份、退出码、输出格式与文件格式合同",
+    "用消费方小接口和信息隐藏控制变更传播",
+    "评估注释和命名对理解及维护的贡献",
+    "制定可审阅、可回退的本地工具重构计划"
+  ],
+  "sources": [
+    "https://refactoring.com/",
+    "https://go.dev/doc/effective_go",
+    "https://go.dev/wiki/CodeReviewComments",
+    "https://web.stanford.edu/~ouster/cgi-bin/aposd.php"
+  ],
+  "sections": [
+    {
+      "title": "一、从真实需求变化定义重构边界",
+      "words": 2000,
+      "focus": "面向Go初学者；虚构c-a/u-a/m-a本地JSON v1 CLI check/list/export。新需求可能是改善内部结构以便后来支持格式v2；本轮重构必须保持现有合法/非法输入、错误身份、exit 0/2/3/4/5、stdout/stderr、默认不覆盖、list顺序与脱敏输出。解释Fowler的可观察行为不变，区分重构/修bug/加功能，不能以测试绿灯替代需求契约。静态示例未运行。"
+    },
+    {
+      "title": "二、看懂职责混杂与变化原因",
+      "words": 2100,
+      "focus": "从一个过长的run中flag解析、文件打开、JSON校验、领域校验、显示、写目标的例子，逐项识别业务规则、格式、I/O和命令边界；不要按行数机械拆函数。用将来v2/9字节上限/输出格式变化表定位修改。介绍耦合、内聚、信息隐藏、包依赖，先补函数/接口/包前置链接。"
+    },
+    {
+      "title": "三、先固定行为：需求表、特征测试和边界",
+      "words": 2300,
+      "focus": "10.01独立want、10.02表驱动、10.04替身与t.TempDir。未知老行为需characterization test记录观察但不能把明显缺陷当需求；优先明确规范。本地v1合法/未知字段/null messages/重复ID/max+1/target exists/input same file等，观察exit/stdout/stderr/file before-after，固定时间；课程静态示例不能写成已通过。范围不含崩溃原子或远端送达。"
+    },
+    {
+      "title": "四、小步重构：提取、移动、改名",
+      "words": 2300,
+      "focus": "给一个具体的Before/After Go片段，从run内消息长度判断抽到history.ValidateMessage，命令仍映射相同错误和退出码；随后把JSON解码移动到internal/historyfile，把路径解析留cmd；每步一类变化、对照差异/测试、可回退提交。先建立want再改，避免同时改6字节规则或输出格式。说明提取函数不自动改善设计，若只是跨层传递参数更复杂要退回。"
+    },
+    {
+      "title": "五、Go包边界与信息隐藏",
+      "words": 2400,
+      "focus": "沿01.09目录history ->? 文件适配器依赖history，cmd依赖二者；不能让history导入os/flag/json，不能出现循环导入。由消费者定义最小接口MessageSaver，参数依赖方向，内部字段与导出API边界；internal限制导入范围但非安全沙箱。值复制、切片/map别名及不变量，避免暴露可写内部状态。说明v1数据格式和CLI参数是外部合同，不因内部移动而随意变化。"
+    },
+    {
+      "title": "六、命名、注释与错误语义",
+      "words": 2000,
+      "focus": "Go命名与doc注释官方指导；名词表达业务单位，避免data/process/Util包与重复包名前缀；说明何时注释why/不变量、输入范围与风险，删过时注释。错误errors.Is包装身份与上下文，不能改错误类别/退出码；敏感正文默认不打印；日志和诊断不泄漏。不要把改名公开API当纯内部重构。"
+    },
+    {
+      "title": "七、反例、取舍与评审证据",
+      "words": 2300,
+      "focus": "反例：大爆炸重写、把全部代码变成接口、将JSON标签搬到领域、为了去重建立全局单例、测试覆盖率高但6字节边界错、一次提交夹带功能变化、表面重命名改变CLI输出。给diff review checklist与可观察行为矩阵；比较避免过度拆分与为未来v2预留适度边界。评估变更传播成本，不声称抽象能自动保证性能或持久性。"
+    },
+    {
+      "title": "八、完整迁移任务与分层练习",
+      "words": 2600,
+      "focus": "给P1本地CLI重构阶段0前/后合同、阶段1提取纯验证、阶段2隔离文件适配、阶段3检查CLI与数据、阶段4再单独提出v2功能变更，明确每阶段个人真实运行记录与静态教材分开。至少20道分层练习带反馈，覆盖概念、前置、证据、包、接口、错误、数据别名、命名注释、反例、业务变化。来源Fowler Refactoring、Ousterhout Philosophy、Go Effective Go/CodeReviewComments。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《10.05 重构与模块边界》。面向Go初学者，承接01.09、01.12、10.01–10.04，由浅入深，以虚构IM本地历史工具为贯穿案例。仅静态教材，不运行或声称通过测试、构建及服务验证。\n1. 一、从真实需求变化定义重构边界：面向Go初学者；虚构c-a/u-a/m-a本地JSON v1 CLI check/list/export。新需求可能是改善内部结构以便后来支持格式v2；本轮重构必须保持现有合法/非法输入、错误身份、exit 0/2/3/4/5、stdout/stderr、默认不覆盖、list顺序与脱敏输出。解释Fowler的可观察行为不变，区分重构/修bug/加功能，不能以测试绿灯替代需求契约。静态示例未运行。\n2. 二、看懂职责混杂与变化原因：从一个过长的run中flag解析、文件打开、JSON校验、领域校验、显示、写目标的例子，逐项识别业务规则、格式、I/O和命令边界；不要按行数机械拆函数。用将来v2/9字节上限/输出格式变化表定位修改。介绍耦合、内聚、信息隐藏、包依赖，先补函数/接口/包前置链接。\n3. 三、先固定行为：需求表、特征测试和边界：10.01独立want、10.02表驱动、10.04替身与t.TempDir。未知老行为需characterization test记录观察但不能把明显缺陷当需求；优先明确规范。本地v1合法/未知字段/null messages/重复ID/max+1/target exists/input same file等，观察exit/stdout/stderr/file before-after，固定时间；课程静态示例不能写成已通过。范围不含崩溃原子或远端送达。\n4. 四、小步重构：提取、移动、改名：给一个具体的Before/After Go片段，从run内消息长度判断抽到history.ValidateMessage，命令仍映射相同错误和退出码；随后把JSON解码移动到internal/historyfile，把路径解析留cmd；每步一类变化、对照差异/测试、可回退提交。先建立want再改，避免同时改6字节规则或输出格式。说明提取函数不自动改善设计，若只是跨层传递参数更复杂要退回。\n5. 五、Go包边界与信息隐藏：沿01.09目录history ->? 文件适配器依赖history，cmd依赖二者；不能让history导入os/flag/json，不能出现循环导入。由消费者定义最小接口MessageSaver，参数依赖方向，内部字段与导出API边界；internal限制导入范围但非安全沙箱。值复制、切片/map别名及不变量，避免暴露可写内部状态。说明v1数据格式和CLI参数是外部合同，不因内部移动而随意变化。\n6. 六、命名、注释与错误语义：Go命名与doc注释官方指导；名词表达业务单位，避免data/process/Util包与重复包名前缀；说明何时注释why/不变量、输入范围与风险，删过时注释。错误errors.Is包装身份与上下文，不能改错误类别/退出码；敏感正文默认不打印；日志和诊断不泄漏。不要把改名公开API当纯内部重构。\n7. 七、反例、取舍与评审证据：反例：大爆炸重写、把全部代码变成接口、将JSON标签搬到领域、为了去重建立全局单例、测试覆盖率高但6字节边界错、一次提交夹带功能变化、表面重命名改变CLI输出。给diff review checklist与可观察行为矩阵；比较避免过度拆分与为未来v2预留适度边界。评估变更传播成本，不声称抽象能自动保证性能或持久性。\n8. 八、完整迁移任务与分层练习：给P1本地CLI重构阶段0前/后合同、阶段1提取纯验证、阶段2隔离文件适配、阶段3检查CLI与数据、阶段4再单独提出v2功能变更，明确每阶段个人真实运行记录与静态教材分开。至少20道分层练习带反馈，覆盖概念、前置、证据、包、接口、错误、数据别名、命名注释、反例、业务变化。来源Fowler Refactoring、Ousterhout Philosophy、Go Effective Go/CodeReviewComments。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

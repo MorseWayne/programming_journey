@@ -1,0 +1,12 @@
+{
+  "chapter": "10.05",
+  "stage": "S1",
+  "business_scope": "hypothetical monolithic local IM history exercise to 01.12-style package boundaries; static course only, v1 file and check/list/export contract",
+  "prerequisites": ["01.09 Go packages and dependency direction", "01.12 local CLI and v1 JSON contract", "10.01 requirements", "10.02 tests", "10.04 doubles and evidence limits"],
+  "first_pass": ["observable behavior and refactor/fix/feature distinction", "change reasons and responsibility map", "requirements-based behavior matrix", "small extraction and move steps"],
+  "second_pass": ["package dependencies and information hiding", "slice ownership and public API compatibility", "names, comments and error identity", "review and rollback evidence"],
+  "not_yet_prerequisites": ["10.06 review, merge and conflicts", "new JSON v2 feature", "real network delivery", "crash-atomic storage"],
+  "next_chapter": "10.06 code review and merge, using a local history refactoring diff",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}
