@@ -28,9 +28,9 @@
   "original_sha256": "963d125d9aac98e4de217c1c957c3e7c19ecba63c74842b707ae711bfc63cd64",
   "original_characters": 30453,
   "generation_request_sha256": "9c1d8e991c1105938b7dced592db1d7cc5b47d32d65989e60a06f545ffe3aa6e",
-  "reviewed_sha256": "c71aea6a5705ec621795aec528e6e03874ce7c549d19b29554e5b8789598955e",
-  "reviewed_characters": 8104,
-  "reviewed_chinese_characters": 3356,
+  "reviewed_sha256": "e4f95022601ea826cac84a1128c1f52916071bdd0a3eed210b71bbdd1c80fc2d",
+  "reviewed_characters": 8217,
+  "reviewed_chinese_characters": 3363,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/07_ack_retry_dedup.md",
-  "course_sha256": "0ecaed350ab7101da6cd705d8e5e160eeaacea10ce9b0d9418ae8e96e1fe976c"
+  "course_sha256": "69869f1d4c7aac2cbd8710e24776dcee960cf2273b3bdfb7250e609450e3e852"
 }

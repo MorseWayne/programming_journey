@@ -1,0 +1,33 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_2cb86abc2e",
+  "page_id": "pg_63f51867e4",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kafka.apache.org/intro/",
+      "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+      "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/consumers.md"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "8554974bbb7218c8d79982bb3fb8b96b943feb441ac09e93e997e9a8911e863b",
+  "original_characters": 30579,
+  "generation_request_sha256": "f426e19016ba5e45472b4f6615cf0c35d9ab075b67d4fd53914f78f7ca3bc352",
+  "reviewed_sha256": "8768820e6418d00ebc8832a50c82d979c86b713a1bd8d4179b029a4455f0bc70",
+  "reviewed_characters": 7760,
+  "reviewed_chinese_characters": 2995,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/08_order_concurrent_consumption.md",
+  "course_sha256": "9a18088dbb2e266a6f81d1de34b53991c2c896379e1da9fc8958ff3a02e1399a"
+}

@@ -176,4 +176,4 @@ Broker 根本没有 E9，须从可靠的本地待发布记录或权威对账入�
 
 不看答案时，能画出生产 ACK 丢失、消费者 ACK 前后崩溃的三类未知，解释五/十分钟短窗为何不能覆盖六/十一分钟重试，给合法编辑 v2 留出独立幂等身份，并保留当前 409 合同，才算完成第一轮。第二轮由学习者在隔离环境核对真实 broker 版本、确认、重投与外部副作用记录；本章没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 07.08 将以 `c-a` 按键分区解释并发消费、重试乱序与再平衡，07.09 再进入积压和坏消息的隔离。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[07.08 顺序与并发消费](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/08_order_concurrent_consumption.md)将以 `c-a` 按键分区解释并发消费、重试乱序与再平衡，07.09 再进入积压和坏消息的隔离。

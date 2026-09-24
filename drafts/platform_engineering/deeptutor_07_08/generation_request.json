@@ -1,0 +1,71 @@
+{
+  "code": "07.08",
+  "title": "顺序与并发消费：日志有序为何结果倒退",
+  "chapter_id": "ch_order_concurrent_consumption",
+  "summary": "面向Go初学者，沿IM同会话E9/E10分区日志，推导应用并发完成乱序、重试、位点、批量、再平衡与热点分区。",
+  "objectives": [
+    "区分业务seq、broker offset与完成顺序",
+    "按会话键推导分区内与跨分区顺序",
+    "手算100ms/10ms并发导致E10先完成",
+    "解释重试与副作用后到的顺序风险",
+    "解释Kafka提交next offset44会跳过pending E9",
+    "分析批量部分成功与重投重复",
+    "设计再平衡旧worker的版本防回退"
+  ],
+  "sources": [
+    "https://kafka.apache.org/intro/",
+    "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+    "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/consumers.md"
+  ],
+  "sections": [
+    {
+      "title": "一、broker顺序不等于业务完成顺序",
+      "words": 2600,
+      "focus": "承接07.06/07.07。固定c-a消息m-9 seq9事件E9在P0 offset42，m-10 seq10事件E10在P0 offset43；c-b消息m-b1 seq1事件F1在P1 offset7。身份、seq、offset与投递次数区别，Kafka分区内日志顺序不自动使下游并发完成顺序相同。"
+    },
+    {
+      "title": "二、稳定按会话键分区与跨会话并发",
+      "words": 2800,
+      "focus": "假设稳定按conversation_id分区让c-a E9/E10同P0，c-b F1在P1；同P0读取顺序E9→E10，P0/P1之间无全局序；分区数变化/producer重试/跨库发布顺序须另审，不能凭业务seq推broker已有序。"
+    },
+    {
+      "title": "三、组内worker和应用goroutine完成乱序",
+      "words": 3000,
+      "focus": "SearchIndex W1持P0，W2持P1；W1读取E9/E10后派两goroutine，T9需100ms，T10需10ms，E10先完成；若无条件写latest_seq，后完成E9把10退回9。按会话串行、按版本条件max更新或带顺序屏障，业务要求不同。"
+    },
+    {
+      "title": "四、失败重试改变外部观察",
+      "words": 3000,
+      "focus": "E9处理失败或AckWait后重投，E10先完成，后到E9；broker分区原始顺序仍E9/E10，重投/下游完成已乱。若通知必须按会话展示，应阻止同键E10在E9未决时越过；其他键F1可以继续。重试预算/坏消息后07.09。"
+    },
+    {
+      "title": "五、位点与在途：不能越过未完成E9",
+      "words": 3100,
+      "focus": "toyKafka P0 offset42 E9、43 E10，commit next offset44意味着此前已处理；若E9仍pending却commit44，重启从44继续，E9可能永久跳过；应只推进到连续已完成前缀，E10即使先完也不能提交越过42。NATS per-messageACK不同但外部业务顺序仍要守。"
+    },
+    {
+      "title": "六、批量与部分成功",
+      "words": 2800,
+      "focus": "批次[E9,E10]，索引E9已成功、E10失败；先ACK全批会漏E10，末尾才ACK则重投重复E9；用稳定message_id/version使E9重做无害，并保持有限批大小/超时/在途。吞吐改善待实测，不凭批量承诺顺序/设备交付。"
+    },
+    {
+      "title": "七、再平衡/旧worker迟到与热点分区",
+      "words": 3000,
+      "focus": "W1原持P0但暂停，W2接管后处理E9/E10到最新10；旧W1恢复晚到E9不能把结果回退到9，目标端版本条件或未来08.07 fencing/epoch。c-g高频单会话同键分区造成热P0，加worker不增加该键并发上限；拆分需重新定义会话顺序。"
+    },
+    {
+      "title": "八、顺序合同与22题",
+      "words": 2900,
+      "focus": "交付P0/P1图、T9/T10完成表、offset44跳过反例、batch/rebalance失败矩阵、每会话顺序/跨会话并发合同；22题分层附反馈，静态不运行broker/Go/DB/站点。下一07.09积压坏消息。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.08 顺序与并发消费》，面向Go初学者，八节丰富理论与固定手算交错、22道分层练习反馈。承接07.06/07.07未来S3消息事实：c-a m-9 seq9→事件E9在Kafka玩具P0 offset42，m-10 seq10→E10在P0 offset43；c-b m-b1 seq1→F1在P1 offset7。假设稳定以conversation_id分区，P0日志E9再E10，P1与P0无全局总序。SearchIndex组W1持P0、W2持P1；W1读E9/E10后在本地两goroutine并发处理，E9耗时100ms、E10耗时10ms，E10先完成；若无条件写latest_seq，迟到E9把10覆盖回9。需按key串行或目标版本条件等策略，其他会话F1可并行。E9失败/重投在E10后到也会乱副作用顺序。Kafka toy commit next offset44表示42/43已处理，若E9 pending时commit44重启会跳过E9，应仅推进连续完成前缀。批次[E9,E10] E9已成功E10失败，早ACK漏后项、末尾ACK重投E9，需幂等。再平衡W1旧owner暂停，W2处理至10，W1恢复晚到E9不能回退；目标版本或未来08.07 fencing。c-g热会话同键单分区加worker不增加本键顺序并行度。所有数字纸上，不运行Kafka/NATS/Go/DB/站点。不声称OpenIM具体实现。下一07.09积压。\n1. 一、broker顺序不等于业务完成顺序: 承接07.06/07.07。固定c-a消息m-9 seq9事件E9在P0 offset42，m-10 seq10事件E10在P0 offset43；c-b消息m-b1 seq1事件F1在P1 offset7。身份、seq、offset与投递次数区别，Kafka分区内日志顺序不自动使下游并发完成顺序相同。\n2. 二、稳定按会话键分区与跨会话并发: 假设稳定按conversation_id分区让c-a E9/E10同P0，c-b F1在P1；同P0读取顺序E9→E10，P0/P1之间无全局序；分区数变化/producer重试/跨库发布顺序须另审，不能凭业务seq推broker已有序。\n3. 三、组内worker和应用goroutine完成乱序: SearchIndex W1持P0，W2持P1；W1读取E9/E10后派两goroutine，T9需100ms，T10需10ms，E10先完成；若无条件写latest_seq，后完成E9把10退回9。按会话串行、按版本条件max更新或带顺序屏障，业务要求不同。\n4. 四、失败重试改变外部观察: E9处理失败或AckWait后重投，E10先完成，后到E9；broker分区原始顺序仍E9/E10，重投/下游完成已乱。若通知必须按会话展示，应阻止同键E10在E9未决时越过；其他键F1可以继续。重试预算/坏消息后07.09。\n5. 五、位点与在途：不能越过未完成E9: toyKafka P0 offset42 E9、43 E10，commit next offset44意味着此前已处理；若E9仍pending却commit44，重启从44继续，E9可能永久跳过；应只推进到连续已完成前缀，E10即使先完也不能提交越过42。NATS per-messageACK不同但外部业务顺序仍要守。\n6. 六、批量与部分成功: 批次[E9,E10]，索引E9已成功、E10失败；先ACK全批会漏E10，末尾才ACK则重投重复E9；用稳定message_id/version使E9重做无害，并保持有限批大小/超时/在途。吞吐改善待实测，不凭批量承诺顺序/设备交付。\n7. 七、再平衡/旧worker迟到与热点分区: W1原持P0但暂停，W2接管后处理E9/E10到最新10；旧W1恢复晚到E9不能把结果回退到9，目标端版本条件或未来08.07 fencing/epoch。c-g高频单会话同键分区造成热P0，加worker不增加该键并发上限；拆分需重新定义会话顺序。\n8. 八、顺序合同与22题: 交付P0/P1图、T9/T10完成表、offset44跳过反例、batch/rebalance失败矩阵、每会话顺序/跨会话并发合同；22题分层附反馈，静态不运行broker/Go/DB/站点。下一07.09积压坏消息。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

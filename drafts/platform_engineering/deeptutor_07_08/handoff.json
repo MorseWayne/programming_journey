@@ -1,0 +1,32 @@
+{
+  "chapter": "07.08",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced ordering and concurrent consumption lesson using fictional E9/E10/F1",
+  "prerequisites": [
+    "07.06 queue/log/partition and consumer-group abstractions",
+    "07.07 ACK, redelivery and versioned idempotency",
+    "05.08 bounded Go concurrency composition",
+    "08.02 causal versus business order"
+  ],
+  "first_pass": [
+    "P0 offsets42/43 for c-a and P1 offset7 for c-b",
+    "W1 reads E9/E10 in order but T10 10ms completes before T9 100ms",
+    "unconditional latest_seq update regresses 10 to 9"
+  ],
+  "second_pass": [
+    "retry can complete E9 after E10 without changing original log order",
+    "commit next offset44 skips pending E9 if E9 at42",
+    "batch E9 success/E10 failure and replay duplicate",
+    "old W1 late write after W2 rebalance and target-version defense",
+    "hot c-g keyed partition limits same-key parallelism"
+  ],
+  "not_yet_prerequisites": [
+    "07.09 backlog and poison-message policy",
+    "07.10 outbox boundary",
+    "08.07 owner epoch/fencing detail",
+    "real controlled ordering experiments by the learner"
+  ],
+  "next_chapter": "07.09 backlog and poison messages",
+  "upstream_inspection": "No OpenIM implementation claim; Kafka and NATS primary documentation supports only their stated partition/consumer semantics.",
+  "shared_integration_pending": []
+}
