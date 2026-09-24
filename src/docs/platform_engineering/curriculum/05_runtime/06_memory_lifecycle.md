@@ -205,4 +205,4 @@ len=8，cap=65536，起点仍在原数组开头。</details>
 - [Go GC 指南](https://go.dev/doc/gc-guide)与[`runtime.MemStats`](https://pkg.go.dev/runtime#MemStats)：逃逸、可达性、分配与统计口径。
 - [Go 官方切片删除说明](https://go.dev/blog/generic-slice-functions)与[SliceTricks](https://go.dev/wiki/SliceTricks)：含指针底层数组尾部引用的版本敏感问题。
 
-按[学习路线](../learning_path.md)，下一章 05.07 将解释标记清扫、并发 GC、分配速率和存活集的成本。离开本章前，应能说出**切片视图、底层数组、引用根、Go 堆统计和进程 RSS**各是哪一层，并用独立数组数量核对自己的内存账。
+按[学习路线](../learning_path.md)，下一章[05.07 垃圾回收](./07_garbage_collection.md)将解释标记清扫、并发 GC、分配速率和存活集的成本。离开本章前，应能说出**切片视图、底层数组、引用根、Go 堆统计和进程 RSS**各是哪一层，并用独立数组数量核对自己的内存账。

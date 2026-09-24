@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_ca6c880b8e",
+  "page_id": "pg_3463330e85",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/gc-guide",
+      "https://pkg.go.dev/runtime#MemStats",
+      "https://pkg.go.dev/runtime/metrics",
+      "https://pkg.go.dev/runtime/debug#SetMemoryLimit"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "5c6e64612b30aed55d8e722a48effa457bc9c70e92b24ea065c199aea7ffe7cb",
+  "original_characters": 30193,
+  "generation_request_sha256": "14a247472a4e6fe9cecc2bc7897182a0867bc8f74ba82ed328818f7e79c5a0e6",
+  "reviewed_sha256": "1061f604a9e929e90fadfa837e88d8cfadf0f8923fd36b9fe1c8eda9a2debfa5",
+  "reviewed_characters": 7777,
+  "reviewed_chinese_characters": 3485,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/07_garbage_collection.md",
+  "course_sha256": "56a9749b2fb9c796e2d903c33043292a64341bd1b3a6468d825674461c258b63"
+}

@@ -1,0 +1,72 @@
+{
+  "code": "05.07",
+  "title": "Go 垃圾回收：从群聊扇出到存活集与时延",
+  "chapter_id": "ch_go_gc",
+  "summary": "面向Go初学者承接对象可达与系统RSS，以虚构IM群扇出讲Go标准工具链标记清扫、并发工作、分配率与存活集、GOGC目标、软内存限制和观测证据。",
+  "objectives": [
+    "区分分配速率和存活集",
+    "解释根追踪与标记清扫",
+    "区分并发GC工作与STW暂停",
+    "手算GOGC目标而非RSS",
+    "比较短命扇出与长期积压",
+    "说明GOMEMLIMIT软范围",
+    "选择MemStats/heap profile/业务P95的不同证据"
+  ],
+  "sources": [
+    "https://go.dev/doc/gc-guide",
+    "https://pkg.go.dev/runtime#MemStats",
+    "https://pkg.go.dev/runtime/metrics",
+    "https://pkg.go.dev/runtime/debug#SetMemoryLimit"
+  ],
+  "sections": [
+    {
+      "title": "一、群扇出为什么可能让GC忙",
+      "words": 2300,
+      "focus": "承接05.06可达/数组、05.05调度、03.06 RSS与11.02尾延迟；虚构IM群成员10→10000，若每目标临时复制1KiB则一次最多约9.77MiB新数据，短命/积压两种截然不同；先定义分配速率与存活集，不把例子当OpenIM实测。"
+    },
+    {
+      "title": "二、从根出发标记与清扫",
+      "words": 2500,
+      "focus": "Go标准gc工具链追踪式标记清扫：栈/全局根→引用图标记可达，未标记对象在清扫可复用；循环无根可收，队列仍引用不能收。并发标记与应用共行，写屏障协调；不能说所有GC工作全程STW，也不能说GC自动解决业务队列无界。"
+    },
+    {
+      "title": "三、分配率、存活量和一次成本",
+      "words": 2500,
+      "focus": "同样8MiB存活+2MiB根扫描，在GOGC100纸上允许新分配10MiB目标总18MiB。若分配率2MiB/s约5s达新增额度，10MiB/s约1s；稳定条件下更多周期/CPU，但非精确触发。群扇出短命副本增分配率、慢设备保留副本增存活量，两问题分开。"
+    },
+    {
+      "title": "四、GOGC目标和CPU/内存权衡",
+      "words": 2600,
+      "focus": "Go官方模型 target=live+(live+roots)*GOGC/100；L8 roots2，GOGC50新增5总13，100新增10总18，200新增20总28MiB，都是目标非RSS承诺；低GOGC频繁GC更多CPU但较低堆峰，高值相反。先测再调，不能用参数让仍可达对象消失。"
+    },
+    {
+      "title": "五、并发GC与暂停时延",
+      "words": 2400,
+      "focus": "Go GC大部分标记并发，仍有短暂停顿/辅助工作/CPU竞争；STW PauseNs/NumGC/GCCPUFraction各不同口径，暂停时长不等于整条请求P95增量。GC高占用可能影响调度，需时间窗与trace/profiles；不能看到P99慢就宣布GC。"
+    },
+    {
+      "title": "六、软内存限制和系统RSS",
+      "words": 2400,
+      "focus": "GOMEMLIMIT/SetMemoryLimit约束Go运行时管理内存软目标，官方约Sys-HeapReleased，排除二进制映射/C内存/内核资源，不等于cgroup硬上限或RSS；过低限制可增加GC CPU甚至使应用变慢，仍不可回收live set。容器边界03.11后学。"
+    },
+    {
+      "title": "七、选择证据而非盲调参数",
+      "words": 2600,
+      "focus": "MemStats HeapAlloc/TotalAlloc/NumGC/PauseNs/GCCPUFraction和runtime/metrics与heap profile alloc_space/inuse_space，前者累计/快照/环形，profile采样；为短命复制看分配热点，为长期队列看存活引用，系统RSS另看。记录同窗流量、群规模、队列长度、GC/业务P95。"
+    },
+    {
+      "title": "八、纸上GC评审与22题",
+      "words": 2500,
+      "focus": "交付群10→10000纸上分配/存活两情景、L8 roots2 GOGC50/100/200目标表、分配率2vs10MiB/s周期直觉、暂停vs完整时延边界和可观察证据；22题附反馈。下一05.08并发组合；静态不运行Go/GC调参/基准/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.07 Go 垃圾回收》，面向Go初学者。八节丰富正文和22题带反馈，用虚构IM群聊扇出为主线，区分每目标短命1KiB复制产生的分配速率与慢设备积压使副本仍可达的存活集。纸上L=8MiB、根=2MiB、GOGC50/100/200对应目标13/18/28MiB，均非精确触发或RSS。说明Go大部分GC并发但有暂停与辅助CPU成本，GOMEMLIMIT是软运行时范围不等于容器硬上限；不从P95慢或RSS高直接判GC，静态不运行Go/GC/基准/站点。\n1. 一、群扇出为什么可能让GC忙：承接05.06可达/数组、05.05调度、03.06 RSS与11.02尾延迟；虚构IM群成员10→10000，若每目标临时复制1KiB则一次最多约9.77MiB新数据，短命/积压两种截然不同；先定义分配速率与存活集，不把例子当OpenIM实测。\n2. 二、从根出发标记与清扫：Go标准gc工具链追踪式标记清扫：栈/全局根→引用图标记可达，未标记对象在清扫可复用；循环无根可收，队列仍引用不能收。并发标记与应用共行，写屏障协调；不能说所有GC工作全程STW，也不能说GC自动解决业务队列无界。\n3. 三、分配率、存活量和一次成本：同样8MiB存活+2MiB根扫描，在GOGC100纸上允许新分配10MiB目标总18MiB。若分配率2MiB/s约5s达新增额度，10MiB/s约1s；稳定条件下更多周期/CPU，但非精确触发。群扇出短命副本增分配率、慢设备保留副本增存活量，两问题分开。\n4. 四、GOGC目标和CPU/内存权衡：Go官方模型 target=live+(live+roots)*GOGC/100；L8 roots2，GOGC50新增5总13，100新增10总18，200新增20总28MiB，都是目标非RSS承诺；低GOGC频繁GC更多CPU但较低堆峰，高值相反。先测再调，不能用参数让仍可达对象消失。\n5. 五、并发GC与暂停时延：Go GC大部分标记并发，仍有短暂停顿/辅助工作/CPU竞争；STW PauseNs/NumGC/GCCPUFraction各不同口径，暂停时长不等于整条请求P95增量。GC高占用可能影响调度，需时间窗与trace/profiles；不能看到P99慢就宣布GC。\n6. 六、软内存限制和系统RSS：GOMEMLIMIT/SetMemoryLimit约束Go运行时管理内存软目标，官方约Sys-HeapReleased，排除二进制映射/C内存/内核资源，不等于cgroup硬上限或RSS；过低限制可增加GC CPU甚至使应用变慢，仍不可回收live set。容器边界03.11后学。\n7. 七、选择证据而非盲调参数：MemStats HeapAlloc/TotalAlloc/NumGC/PauseNs/GCCPUFraction和runtime/metrics与heap profile alloc_space/inuse_space，前者累计/快照/环形，profile采样；为短命复制看分配热点，为长期队列看存活引用，系统RSS另看。记录同窗流量、群规模、队列长度、GC/业务P95。\n8. 八、纸上GC评审与22题：交付群10→10000纸上分配/存活两情景、L8 roots2 GOGC50/100/200目标表、分配率2vs10MiB/s周期直觉、暂停vs完整时延边界和可观察证据；22题附反馈。下一05.08并发组合；静态不运行Go/GC调参/基准/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

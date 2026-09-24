@@ -28,9 +28,9 @@
   "original_sha256": "afb96dcc922d5d9bb755e65d9dff6d754ba0999cad6c5fc50ce123346a91e62f",
   "original_characters": 31922,
   "generation_request_sha256": "3de7209c4b9ecfdb9b763e695fe595022c374d5b41dab549ae8561e2be181f28",
-  "reviewed_sha256": "6d7db9f3e2664fbec81c7f0c07beb046462e8b960d966b24a461f68a1ca57461",
-  "reviewed_characters": 7627,
-  "reviewed_chinese_characters": 3434,
+  "reviewed_sha256": "1c7fef62bcb31b44212f3b8c48ac99da4f28d71c353f0c2c2f9dbd4effad3e98",
+  "reviewed_characters": 7719,
+  "reviewed_chinese_characters": 3438,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/06_memory_lifecycle.md",
-  "course_sha256": "91a1374db00b49aba838c97f8822c3c8edc1d612206d9a522cbf1836e549d65a"
+  "course_sha256": "8b66b8b97e479ddff2dd1cc529123b95e9d341d941c8723ed59bab831cf22173"
 }

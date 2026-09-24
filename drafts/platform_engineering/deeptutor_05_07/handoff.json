@@ -1,0 +1,31 @@
+{
+  "chapter": "05.07",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go GC lesson using fictional group fanout and slow-device queue retention",
+  "prerequisites": [
+    "05.05 runnable and CPU scheduling context",
+    "05.06 reachable object and backing-array lifetime",
+    "03.06 Go allocator versus process RSS",
+    "11.02 business latency distributions"
+  ],
+  "first_pass": [
+    "allocation rate versus live set",
+    "root tracing, mark and sweep",
+    "short-lived versus queue-retained group fanout copies"
+  ],
+  "second_pass": [
+    "GOGC target with L=8 MiB and R=2 MiB",
+    "concurrent GC CPU versus brief global pause and business latency",
+    "GOMEMLIMIT runtime soft-scope boundary",
+    "MemStats and sampled heap-profile evidence"
+  ],
+  "not_yet_prerequisites": [
+    "05.08 bounded concurrency composition",
+    "05.10 real profile and trace interpretation",
+    "03.11 container/cgroup hard memory limits",
+    "11.04–11.07 capacity and workload evidence"
+  ],
+  "next_chapter": "05.08 bounded concurrency composition",
+  "upstream_inspection": "No OpenIM implementation claim; Go official GC guide and runtime packages support the model and metric definitions.",
+  "shared_integration_pending": []
+}
