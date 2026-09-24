@@ -1,0 +1,75 @@
+{
+  "code": "11.03",
+  "title": "日志、指标与 Trace：沿 IM 请求链留下有限证据",
+  "chapter_id": "ch_logs_metrics_traces",
+  "summary": "承接11.01业务确认点/分母与11.02分布，面向Go初学者用虚构m-a POST内存受理路径讲事件日志、Counter/Gauge/Histogram、trace/span上下文传播、采样、高基数标签与隐私、三类证据互补和当前S2不可观测的未来持久/设备/已读阶段。静态教材不运行监控。",
+  "objectives": [
+    "区分单次事件日志、聚合指标和一次请求追踪",
+    "为本章POST定义脱敏结构化日志字段",
+    "选择Counter/Gauge/Histogram并标单位与统计窗口",
+    "限制route/result等低基数标签避免user/message ID爆炸",
+    "画出handler/app/memorystore父子span与trace上下文",
+    "说明trace采样不能替代完整失败计数",
+    "关联请求ID、消息ID和traceID但不混为同一身份",
+    "根据症状提出黑盒与白盒证据计划并标未覆盖阶段"
+  ],
+  "sources": [
+    "https://sre.google/sre-book/monitoring-distributed-systems/",
+    "https://opentelemetry.io/docs/concepts/observability-primer/",
+    "https://opentelemetry.io/docs/concepts/signals/traces/",
+    "https://prometheus.io/docs/concepts/metric_types/",
+    "https://prometheus.io/docs/practices/instrumentation/",
+    "https://pkg.go.dev/log/slog"
+  ],
+  "sections": [
+    {
+      "title": "一、从m-a结果未知选择三类证据",
+      "words": 2200,
+      "focus": "u-a/u-b/c-a/m-a虚构，当前无在线服务，09.04 POST内存提交后A没收到回应；日志回答此事件发生了什么，指标回答总体比例/队列，trace回答这次调用各阶段花多久。黑盒客户端观察vs白盒进程内部；三者不证明设备送达。"
+    },
+    {
+      "title": "二、结构化日志：有限字段与阶段",
+      "words": 2400,
+      "focus": "Go slog概念，log event time level opID route template stage result/error_code duration_ms, response_committed, no raw body/token/real user id; error after commit vs before, requestID from trusted/generator and untrusted header, log count cardinality/cost, retention. Static example no runtime."
+    },
+    {
+      "title": "三、Counter、Gauge、Histogram与单位",
+      "words": 2600,
+      "focus": "counter monotonically increases until process restart/reset, attempts_total by bounded route/result, derive rate over window not take raw counter as throughput; gauge current in-flight/queue length goes up/down; histogram latency_seconds bucket/count/sum cumulative semantics and11.02 p99 approximation. No actual Prometheus; paper example100 attempts/92accepted, labels route=send result accepted/duplicate/invalid; do not conflate accepted with delivery. Explain process reset/multi instance aggregation caution。"
+    },
+    {
+      "title": "四、标签基数与隐私成本",
+      "words": 2400,
+      "focus": "metric label bounded route/result/stage, example3 routes×4 results=12 series (before other dims), label user_id100k/message_id1m explodes and leaks; URL raw path c-a high cardinality vs route template, no body/token; logs/traces can carry controlled correlation with redaction/retention/access. Unit seconds for metric hist vs UI ms. High-cardinality risk performance and cost, not business issue solved by hashing ID alone。"
+    },
+    {
+      "title": "五、Trace、Span和上下文传播",
+      "words": 2600,
+      "focus": "OpenTelemetry primary, one trace for request, root HTTP POST span children auth/app.Send/memorystore.Append/encode response; span start/end, parent, traceID/spanID attributes, events; r.Context propagation and cross process only if injected/extracted correctly; traceID not messageID, retries can have new trace same business message. Static 0/12/25/40ms from11.01 as paper; cross machine clock caveat. Sampling may omit rare errors, never use sampled traces as denominator。"
+    },
+    {
+      "title": "六、把三种证据对齐一条请求",
+      "words": 2500,
+      "focus": "paper timeline u-a POST m-a -> memory commit -> response loss, log stage accepted, counter accepted increment, client sees timeout, trace maybe sampled shows memory append; neither proves A got200. Compare another invalid/bodytoo long, queue slow. Correlation key op_id/tracing and business message_id privacy, only authorized linkage; bounded metrics no ids. White/black box difference. Independent checkpoints."
+    },
+    {
+      "title": "七、观测缺口、采样与取舍",
+      "words": 2300,
+      "focus": "S2 only can plan request/inmemory; no real metrics, future durable/device/read missing, not zero. Sampling decisions error trace may be missed, logs may drop, counters may reset; single trace not represent population and p99 cannot identify root cause. Choose minimal fields, retention/access; future 11.04 diagnosis,11.08 SLO, 10.09 CI. No OpenIM runtime claims."
+    },
+    {
+      "title": "八、最小观测设计与22道练习",
+      "words": 2900,
+      "focus": "give one metric spec, one log event, one span tree, stage/error table, 22 questions from definitions/units/label count/correlation/sampling/IM evidence. Current no Go/metrics/tracing/benchmark/service, learner later separate actual observations. Sources GoogleSRE/OTel/Prometheus/slog, next10.09 CI or 11.04 S4; S2 next10.09 per roadmap。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《11.03 日志、指标与 Trace》。面向Go初学者，承接11.01分母与11.02分布，用虚构IM的POST m-a内存提交但客户端响应丢失这一业务问题，层层讲结构化日志、Counter/Gauge/Histogram、低基数标签、Trace/Span和上下文传播、采样与隐私，再说明三种证据互补和当前未覆盖持久/送达/已读。当前没有运行监控或在线服务，只写静态课程，不运行Go/监控/站点。\n1. 一、从m-a结果未知选择三类证据：u-a/u-b/c-a/m-a虚构，当前无在线服务，09.04 POST内存提交后A没收到回应；日志回答此事件发生了什么，指标回答总体比例/队列，trace回答这次调用各阶段花多久。黑盒客户端观察vs白盒进程内部；三者不证明设备送达。\n2. 二、结构化日志：有限字段与阶段：Go slog概念，log event time level opID route template stage result/error_code duration_ms, response_committed, no raw body/token/real user id; error after commit vs before, requestID from trusted/generator and untrusted header, log count cardinality/cost, retention. Static example no runtime.\n3. 三、Counter、Gauge、Histogram与单位：counter monotonically increases until process restart/reset, attempts_total by bounded route/result, derive rate over window not take raw counter as throughput; gauge current in-flight/queue length goes up/down; histogram latency_seconds bucket/count/sum cumulative semantics and11.02 p99 approximation. No actual Prometheus; paper example100 attempts/92accepted, labels route=send result accepted/duplicate/invalid; do not conflate accepted with delivery. Explain process reset/multi instance aggregation caution。\n4. 四、标签基数与隐私成本：metric label bounded route/result/stage, example3 routes×4 results=12 series (before other dims), label user_id100k/message_id1m explodes and leaks; URL raw path c-a high cardinality vs route template, no body/token; logs/traces can carry controlled correlation with redaction/retention/access. Unit seconds for metric hist vs UI ms. High-cardinality risk performance and cost, not business issue solved by hashing ID alone。\n5. 五、Trace、Span和上下文传播：OpenTelemetry primary, one trace for request, root HTTP POST span children auth/app.Send/memorystore.Append/encode response; span start/end, parent, traceID/spanID attributes, events; r.Context propagation and cross process only if injected/extracted correctly; traceID not messageID, retries can have new trace same business message. Static 0/12/25/40ms from11.01 as paper; cross machine clock caveat. Sampling may omit rare errors, never use sampled traces as denominator。\n6. 六、把三种证据对齐一条请求：paper timeline u-a POST m-a -> memory commit -> response loss, log stage accepted, counter accepted increment, client sees timeout, trace maybe sampled shows memory append; neither proves A got200. Compare another invalid/bodytoo long, queue slow. Correlation key op_id/tracing and business message_id privacy, only authorized linkage; bounded metrics no ids. White/black box difference. Independent checkpoints.\n7. 七、观测缺口、采样与取舍：S2 only can plan request/inmemory; no real metrics, future durable/device/read missing, not zero. Sampling decisions error trace may be missed, logs may drop, counters may reset; single trace not represent population and p99 cannot identify root cause. Choose minimal fields, retention/access; future 11.04 diagnosis,11.08 SLO, 10.09 CI. No OpenIM runtime claims.\n8. 八、最小观测设计与22道练习：give one metric spec, one log event, one span tree, stage/error table, 22 questions from definitions/units/label count/correlation/sampling/IM evidence. Current no Go/metrics/tracing/benchmark/service, learner later separate actual observations. Sources GoogleSRE/OTel/Prometheus/slog, next10.09 CI or 11.04 S4; S2 next10.09 per roadmap。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

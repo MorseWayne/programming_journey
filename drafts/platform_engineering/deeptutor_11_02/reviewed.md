@@ -222,4 +222,4 @@ Prometheus 一类监控系统的传统直方图桶常用**累计**计数，例�
 - [Prometheus：Histograms and summaries](https://prometheus.io/docs/practices/histograms/)：累计桶、分位数估计与跨实例聚合的后续参考。
 - [11.01 业务测量](../../../src/docs/platform_engineering/curriculum/11_reliability/01_business_measurement.md)：本章所有时延样本的分母与确认点前置。
 
-下一章 11.03 再把这些样本落到日志、指标与 Trace 的采集设计；进入前请能说明“一次 P99=200 ms”使用的算法、样本量、窗口、失败样本处理和业务确认点。
+下一章[11.03 日志、指标与 Trace](../../../src/docs/platform_engineering/curriculum/11_reliability/03_logs_metrics_traces.md)再把这些样本落到采集设计；进入前请能说明“一次 P99=200 ms”使用的算法、样本量、窗口、失败样本处理和业务确认点。

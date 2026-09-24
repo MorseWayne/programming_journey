@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_7c5b81e4fb",
+  "page_id": "pg_4eba59efea",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "https://opentelemetry.io/docs/concepts/observability-primer/",
+      "https://opentelemetry.io/docs/concepts/signals/traces/",
+      "https://prometheus.io/docs/concepts/metric_types/",
+      "https://prometheus.io/docs/practices/instrumentation/",
+      "https://pkg.go.dev/log/slog"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "54ad4a13a686ae203adf1d13b80934acd06294bb6e0050b3c42d4a9ed5d94510",
+  "original_characters": 35239,
+  "generation_request_sha256": "4e7ddd5018e322f47f0094b58c08c05b5e699e93c7222b83655de0054c0d6f78",
+  "reviewed_sha256": "c211bfd7bf07b91232c756e911e5790cdbc5cab3159961b34246f3b15d788959",
+  "reviewed_characters": 9689,
+  "reviewed_chinese_characters": 4384,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/03_logs_metrics_traces.md",
+  "course_sha256": "308c6e5a615e406b49e068cd20a1ac8b08aba79a4d043b6a2fab505d6c1f2471"
+}

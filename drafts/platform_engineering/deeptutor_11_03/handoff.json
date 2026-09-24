@@ -1,0 +1,12 @@
+{
+  "chapter": "11.03",
+  "stage": "S2",
+  "business_scope": "fictional IM POST of m-a accepted in memory while u-a may not receive the HTTP response; paper observability design only, no running service, metrics backend or OpenIM runtime claim",
+  "prerequisites": ["09.04 request processing and unknown HTTP outcome", "11.01 distinct business confirmation points and denominators", "11.02 latency distributions and cumulative histogram buckets"],
+  "first_pass": ["log event versus metric aggregate versus one trace", "Go slog and redacted event fields", "Counter, Gauge and Histogram with units and update points", "span and parent-child timeline"],
+  "second_pass": ["bounded labels and 3 by 4 cardinality calculation", "client response latency versus server acceptance latency", "request, trace and message identifiers", "sampling, resets, lost evidence and privacy retention", "white-box and black-box evidence for response loss"],
+  "not_yet_prerequisites": ["10.09 minimal continuous integration", "11.04 hypothesis-driven diagnosis after deeper runtime and storage background", "11.08 service objectives", "S5 durable delivery, device confirmation and read telemetry"],
+  "next_chapter": "10.09 minimal continuous integration and artifact identity for the S2 IM learning project",
+  "upstream_inspection": "No OpenIM implementation or runtime measurement asserted in this chapter.",
+  "shared_integration_pending": []
+}
