@@ -257,6 +257,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/08_distributed/",
+            "curriculum/08_distributed/01_system_partial_failure",
             "curriculum/08_distributed/core"
           ]
         },

@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_8ab698cf12",
+  "page_id": "pg_9ccfa6560c",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pdos.csail.mit.edu/6.824/labs/guidance.html",
+      "https://pdos.csail.mit.edu/archive/6.824-2013/labs/lab-2.html",
+      "https://go.dev/blog/context",
+      "https://go.dev/doc/database/cancel-operations",
+      "https://groups.csail.mit.edu/tds/papers/Lynch/jacm85.pdf"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "4d019000d47748aba6eec95bc1cceb4a031e9f54dca9d81bf6b104d02d2914f3",
+  "original_characters": 29129,
+  "generation_request_sha256": "25b933099d1ac74767a78e780eb172ed0b52a0880c666931496b56af09cd7c52",
+  "reviewed_sha256": "6ea26eef7bbc2caae122257246d3cfacfc32bee7b91a85bc811af95b76ce91ca",
+  "reviewed_characters": 8308,
+  "reviewed_chinese_characters": 4052,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/01_system_partial_failure.md",
+  "course_sha256": "fe79a90c50ef82c42aa934b287a9ddfcb381d04b11670d5cc7653eb7db5d3aa9"
+}

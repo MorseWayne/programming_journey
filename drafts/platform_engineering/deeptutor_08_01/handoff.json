@@ -1,0 +1,31 @@
+{
+  "chapter": "08.01",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced partial-failure lesson using fictional A/G/S/B IM send m-9",
+  "prerequisites": [
+    "04.04 reliable transport and business acknowledgment boundary",
+    "05.03 cancellation and timeout lifecycle",
+    "06.07–06.09 transaction, unknown outcome and recovery",
+    "06.12 S2 versus proposed S3 business contract"
+  ],
+  "first_pass": [
+    "four nodes and independent request/reply/delivery links",
+    "R1–R4 all observed as a 100 ms timeout with different authority states",
+    "crash, pause, delay and partition as distinct assumptions"
+  ],
+  "second_pass": [
+    "safety as no duplicate same-ID authority row and controlled authorization",
+    "liveness under eventual recovery and reachability",
+    "context cancellation and existing 409 duplicate boundary",
+    "failure suspicion, old-node recovery and evidence matrix"
+  ],
+  "not_yet_prerequisites": [
+    "08.02 physical/logical time and causality",
+    "08.03 replication and 08.04 consistency models",
+    "08.06–08.07 consensus, leases and fencing",
+    "real fault injection by the learner"
+  ],
+  "next_chapter": "08.02 time and order",
+  "upstream_inspection": "No OpenIM implementation claim; MIT course materials, Go documentation and original FLP paper support only their stated models.",
+  "shared_integration_pending": []
+}
