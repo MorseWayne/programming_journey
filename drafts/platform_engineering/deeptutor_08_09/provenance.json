@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_17453f47e7",
+  "page_id": "pg_d1ae02f400",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/sql-select.html",
+      "https://pkg.go.dev/context",
+      "https://etcd.io/docs/v3.6/learning/api/",
+      "https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "12c97c7687b3e52b2594464210b13754320d1130822186e2a0f86e600f4995af",
+  "original_characters": 32072,
+  "generation_request_sha256": "9d305f61ddfe586124fc882c8cbaabe7d0e06af9738a8a2a926f623acad26198",
+  "reviewed_sha256": "542b60f8919a2fa55e6be0bd5fc3d0a7478561a9588c886eebcf7782303c6ab7",
+  "reviewed_characters": 9947,
+  "reviewed_chinese_characters": 3692,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/09_reliable_jobs_scheduling.md",
+  "course_sha256": "fb1386746977290e017e3bf4759111bae90fee5db5a15945437cf96cb90a9faa"
+}

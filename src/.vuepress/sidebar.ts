@@ -277,6 +277,7 @@ export default sidebar({
             "curriculum/08_distributed/06_majority_consensus",
             "curriculum/08_distributed/07_coordination_ownership",
             "curriculum/08_distributed/08_cross_service_transactions",
+            "curriculum/08_distributed/09_reliable_jobs_scheduling",
             "curriculum/08_distributed/core"
           ]
         },

@@ -1,0 +1,31 @@
+{
+  "chapter": "08.09",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced reliable notification task case for fictional IM message m-9 and B device d-b1",
+  "prerequisites": [
+    "07.07 acknowledgements, retry and deduplication",
+    "07.09 backlog and poison-event repair",
+    "07.10 same-database outbox",
+    "08.07 ownership, lease and stale worker fencing",
+    "08.08 cross-service results and compensation"
+  ],
+  "first_pass": [
+    "separate message m-9, event E9, stable task N9 and attempts A1/A2",
+    "draw durable task states without treating provider acceptance as device receipt",
+    "use short transaction claim and durable lease token"
+  ],
+  "second_pass": [
+    "work W1 token41 to W2 token42 takeover and stale completion rejection",
+    "compare early and late completion marking under unknown provider outcome",
+    "budget three total attempts with temporary, permanent and unknown failures",
+    "recheck version, deletion and permission before execution",
+    "measure oldest task age, fairness, repair and authorized offline history"
+  ],
+  "not_yet_prerequisites": [
+    "08.10 membership change and evolution",
+    "learner's real task store and provider fault evidence"
+  ],
+  "next_chapter": "08.10 membership change and evolution",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. They do not establish this teaching N9 task table, lease or push-provider idempotency behavior.",
+  "shared_integration_pending": []
+}

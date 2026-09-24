@@ -30,9 +30,9 @@
   "original_sha256": "b69adb55b11c45ba2456c1a591a5d37ac742aeeff2fb33ca2db52dd6e4187e5b",
   "original_characters": 32226,
   "generation_request_sha256": "e5a4e36a90c394662a27cf875c98769be04ee2c8b6096d9fac536f3dfd64a7de",
-  "reviewed_sha256": "e549e1b58bc6b9d723b15105d1b81b475ff08d54a9ddef2397b46828c57bc8e4",
-  "reviewed_characters": 11409,
-  "reviewed_chinese_characters": 3976,
+  "reviewed_sha256": "9f5da62127eef24f170008fb4422b3014e670837f7f5a55fe7d2d0f3a12ecf02",
+  "reviewed_characters": 11516,
+  "reviewed_chinese_characters": 3983,
   "course_file": "src/docs/platform_engineering/curriculum/08_distributed/08_cross_service_transactions.md",
-  "course_sha256": "eb20e75bc418be65b356693728d00c882920667ce8734889bccdd855029c07e3"
+  "course_sha256": "2cbbc4c1a7b2f457ae237650c08b47ecd6b13325d10098f2bd6a751ebdee165d"
 }
