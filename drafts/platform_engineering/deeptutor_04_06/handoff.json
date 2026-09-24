@@ -1,0 +1,12 @@
+{
+  "chapter": "04.06",
+  "stage": "S3",
+  "business_scope": "fictional IM downlink to slow u-b device versus an overloaded network path, paper TCP windows, BDP and bounded application queue only, no runtime or OpenIM performance claim",
+  "prerequisites": ["04.04 TCP byte ACK and finite window", "04.05 long-connection and heartbeat lifecycle", "05.03 bounded channel queue and cancellation", "11.01 confirmation points and 11.02 distributions"],
+  "first_pass": ["application, send-buffer, path and receive-buffer queues", "receiver-advertised rwnd and slow reader", "sender cwnd and path congestion", "conceptual in-flight min(rwnd,cwnd) budget"],
+  "second_pass": ["decimal-unit BDP 8 Mb/s times 100 ms equals 100 kB", "10 kB window implies 0.8 Mb/s ideal upper bound", "200 kB queue at 1 MB/s adds about 200 ms", "capacity-two application backpressure policy", "layered evidence for receiver versus path bottleneck"],
+  "not_yet_prerequisites": ["04.07 TLS and certificate identity", "04.08 Go framing and partial I/O", "S5 durable offline recovery and multi-device delivery", "real network window/RTT/queue measurement"],
+  "next_chapter": "04.07 TLS and transport identity before the complete service project",
+  "upstream_inspection": "No OpenIM network algorithm, buffer configuration or runtime performance asserted in this chapter.",
+  "shared_integration_pending": []
+}

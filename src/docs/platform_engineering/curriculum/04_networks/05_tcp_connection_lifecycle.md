@@ -213,4 +213,4 @@ RST 中止/重置连接，FIN 表示一个方向有序结束。</details>
 - [RFC 1122：TCP Keepalive](https://www.rfc-editor.org/rfc/rfc1122.html)与[RFC 6455：WebSocket](https://www.rfc-editor.org/rfc/rfc6455.html)：可选传输探测及 Ping/Pong/Close 控制帧。
 - [Go `net` 包](https://pkg.go.dev/net)：连接、半关闭与期限的 API 入口。
 
-按[学习路线](../learning_path.md)，下一章 04.06 将区分慢接收方造成的流量控制与路径拥塞，并用带宽时延积解释有限缓冲和尾延迟；04.07 再补 TLS。离开本章前，要能分别说清**这条 TCP 连接在哪个阶段、登录身份是否有效、哪台设备近期可达、m-a 到了哪个业务确认点**。
+按[学习路线](../learning_path.md)，下一章[04.06 流量与拥塞控制](./06_flow_congestion_control.md)将区分慢接收方与路径拥塞，并用带宽时延积解释有限缓冲和尾延迟；04.07 再补 TLS。离开本章前，要能分别说清**这条 TCP 连接在哪个阶段、登录身份是否有效、哪台设备近期可达、m-a 到了哪个业务确认点**。

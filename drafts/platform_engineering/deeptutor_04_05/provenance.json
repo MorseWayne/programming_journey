@@ -26,9 +26,9 @@
   "original_sha256": "ffeaaaa4d33cbb4cc6c798aaea7066d89bb8b6478eb40c5f79e2434f360b65ab",
   "original_characters": 32340,
   "generation_request_sha256": "5b7768ef702d13dcc2482a9d005b57194f76cf0d0e1b772e59a4f0ec9b805d70",
-  "reviewed_sha256": "45cffb3b468e2a34c7234979a9924172934c9052b359f325758a9732d9d5473a",
-  "reviewed_characters": 7922,
+  "reviewed_sha256": "78865b8b01b8413846e1673803b30a045dd7f02543210c8f62d55dcf2619c510",
+  "reviewed_characters": 8016,
   "reviewed_chinese_characters": 3802,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/05_tcp_connection_lifecycle.md",
-  "course_sha256": "bd9e078b59b4eda40fd3070b79c120beb0c7325dfa7751289bafe59b50457175"
+  "course_sha256": "f4b8686e90d05f68e09a2eb86a646c9a7666c1e395569590c16416ce3d2e3de9"
 }
