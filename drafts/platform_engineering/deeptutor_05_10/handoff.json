@@ -1,0 +1,31 @@
+{
+  "chapter": "05.10",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go performance-evidence lesson for fictional c-g group fanout latency",
+  "prerequisites": [
+    "05.07 allocation rate, live set and GC cost",
+    "05.08 bounded fanout and queue semantics",
+    "05.09 controlled concurrency evidence",
+    "03.10 host resource diagnostics",
+    "11.01–11.03 business latency and trace foundations"
+  ],
+  "first_pass": [
+    "discovery comparison versus fixed-load optimization comparison",
+    "CPU on-CPU versus wall-clock wait",
+    "heap alloc_space versus inuse_space"
+  ],
+  "second_pass": [
+    "mutex contention holder versus block waiting location",
+    "runtime execution trace versus distributed request trace",
+    "sampling overhead and protected collection scope",
+    "same-10000-target correctness, error, latency and memory comparison"
+  ],
+  "not_yet_prerequisites": [
+    "05.11 optimization correctness and maintenance boundaries",
+    "11.04–11.07 load, capacity and experimental depth",
+    "learner-run profiles and benchmarks in their own environment"
+  ],
+  "next_chapter": "05.11 optimization boundaries",
+  "upstream_inspection": "No OpenIM implementation claim; Go official diagnostics, runtime/pprof, runtime/trace and testing docs support evidence types.",
+  "shared_integration_pending": []
+}

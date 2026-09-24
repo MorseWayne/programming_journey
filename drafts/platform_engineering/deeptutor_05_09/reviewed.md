@@ -182,4 +182,4 @@ Go 官方 race detector 可在未来学习者的代码中通过 `go test -race` 
 - [Go 语言规范：`select`](https://go.dev/ref/spec)、[`context`](https://pkg.go.dev/context)与[`testing`](https://pkg.go.dev/testing)：双就绪分支、取消不等待与测试生命周期。
 - [Go Pipeline 与取消教程](https://go.dev/blog/pipelines)：下游提前退出导致上游阻塞的反例与停止协议。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 05.10 学习 CPU/heap/mutex/block profile 与执行 trace 如何解释真实的等待和分配证据。离开本章前，应能用**明确门闩、有限等待和最终状态**复核一次发送/取消/关闭交错，并指出 race、业务结果与资源退出各需要哪份独立证据。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[05.10 性能工具与解释](../../../src/docs/platform_engineering/curriculum/05_runtime/10_performance_tools.md)学习 CPU/heap/mutex/block profile 与执行 trace 如何解释真实的等待和分配证据。离开本章前，应能用**明确门闩、有限等待和最终状态**复核一次发送/取消/关闭交错，并指出 race、业务结果与资源退出各需要哪份独立证据。

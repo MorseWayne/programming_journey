@@ -1,0 +1,74 @@
+{
+  "code": "05.10",
+  "title": "性能工具与解释：从群聊时延到 Go 运行证据",
+  "chapter_id": "ch_go_perf_tools",
+  "summary": "面向Go初学者，以虚构IM大群扇出时延为线索，区分CPU/heap/mutex/block profile、runtime execution trace、端到端请求Trace与同负载基准的证据范围。",
+  "objectives": [
+    "为明确症状选择对应Go工具",
+    "区分CPU on-CPU热点与壁钟等待",
+    "比较heap alloc_space与inuse_space",
+    "区分mutex争用持有者与block等待点",
+    "解释execution trace和请求Trace不同",
+    "设计相同群规模/输入的优化对照",
+    "记录采样扰动和隐私范围"
+  ],
+  "sources": [
+    "https://go.dev/doc/diagnostics",
+    "https://pkg.go.dev/runtime/pprof",
+    "https://pkg.go.dev/runtime/trace",
+    "https://go.dev/doc/gc-guide",
+    "https://pkg.go.dev/testing",
+    "https://pkg.go.dev/net/http/pprof"
+  ],
+  "sections": [
+    {
+      "title": "一、群聊变慢先固定症状与对照",
+      "words": 2200,
+      "focus": "承接05.07分配/GC、05.08有界扇出、05.09验证、11.01-03业务指标；虚构c-g目标10→10000时群处理p95由80→300ms，这只是规模变化线索；评估优化必须在同样10000目标、同输入速率/设备比例/Go版本上比较。无实测。"
+    },
+    {
+      "title": "二、按问题选择Go工具",
+      "words": 2400,
+      "focus": "CPU profile看CPU运行热点非等待；heap alloc_space看累计分配/inuse_space看保留，mutex看争用持锁者，block看同步等待处，execution trace看G调度/netpoll/syscall/GC时间；系统RSS和请求分布另看。用症状-工具-盲区表。"
+    },
+    {
+      "title": "三、CPU profile与调用路径",
+      "words": 2300,
+      "focus": "采样on-CPU，flat self time与cum包含子调用路径，CPU占比高不等于某请求壁钟耗时；如果群编码热，可定位CPU，但锁/网络等待不在CPU样本。profile采样时间窗/实例/负载一致，避免对单条消息做绝对推断。"
+    },
+    {
+      "title": "四、heap profile两种视角",
+      "words": 2400,
+      "focus": "inuse_space样本仍在用对象找05.06大数组/队列保留，alloc_space累计分配找05.07每目标临时副本；两者采样且不含Go外内存，RSS另计。TotalAlloc/HeapAlloc/GC参数与profile视角对照，不能把8KiB预览当真实RSS。"
+    },
+    {
+      "title": "五、mutex和block profile区别",
+      "words": 2600,
+      "focus": "mutex profile归因于造成争用的临界区结束位置，累计等待其他G的时间；block profile记录被阻塞的同步点含channel/WaitGroup/锁，非所有OS网络/数据库等待；按适用采样率开启会扰动，源头与等待方区别。"
+    },
+    {
+      "title": "六、execution trace和端到端请求Trace",
+      "words": 2600,
+      "focus": "runtime/trace捕获G创建/阻塞/唤醒/syscall/GC/堆等事件，能解释等待/调度时间线，CPU/heap热点仍用profile；业务跨进程请求Trace看网关→DB→设备阶段，不能直接用运行时trace证明设备交付。注意采集窗口和脱敏。"
+    },
+    {
+      "title": "七、同负载评估优化",
+      "words": 2500,
+      "focus": "先建立10000目标基线：p95、错误、CPU、alloc_space、inuse_space、队列长度、GC/trace；若复制优化/有界池每次只改一项，同样输入和版本复测，写出正确性/容量/尾延迟/额外内存与采样扰动；不能用小群80ms直接对比大群优化300ms。"
+    },
+    {
+      "title": "八、诊断证据选型与22题",
+      "words": 2400,
+      "focus": "交付五工具选型矩阵、两竞争假设(编码CPU vs慢设备排队)、同负载实验表和隐私边界，22题带反馈。下一05.11优化边界；静态不运行Go/pprof/trace/benchmark/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.10 性能工具与解释》，面向Go初学者。八节丰富正文和22题反馈，以虚构c-g群目标10→10000使P95 80→300ms为问题背景，但优化前后必须在相同10000目标负载对照。严格区分CPU profile的on-CPU、heap alloc_space/inuse_space、mutex持锁者累计争用、block同步等待位置、execution trace时间线、跨进程请求Trace与RSS；样本/采集扰动有界，不能把一张火焰图断言根因。静态不运行Go/pprof/trace/benchmark/站点。\n1. 一、群聊变慢先固定症状与对照：承接05.07分配/GC、05.08有界扇出、05.09验证、11.01-03业务指标；虚构c-g目标10→10000时群处理p95由80→300ms，这只是规模变化线索；评估优化必须在同样10000目标、同输入速率/设备比例/Go版本上比较。无实测。\n2. 二、按问题选择Go工具：CPU profile看CPU运行热点非等待；heap alloc_space看累计分配/inuse_space看保留，mutex看争用持锁者，block看同步等待处，execution trace看G调度/netpoll/syscall/GC时间；系统RSS和请求分布另看。用症状-工具-盲区表。\n3. 三、CPU profile与调用路径：采样on-CPU，flat self time与cum包含子调用路径，CPU占比高不等于某请求壁钟耗时；如果群编码热，可定位CPU，但锁/网络等待不在CPU样本。profile采样时间窗/实例/负载一致，避免对单条消息做绝对推断。\n4. 四、heap profile两种视角：inuse_space样本仍在用对象找05.06大数组/队列保留，alloc_space累计分配找05.07每目标临时副本；两者采样且不含Go外内存，RSS另计。TotalAlloc/HeapAlloc/GC参数与profile视角对照，不能把8KiB预览当真实RSS。\n5. 五、mutex和block profile区别：mutex profile归因于造成争用的临界区结束位置，累计等待其他G的时间；block profile记录被阻塞的同步点含channel/WaitGroup/锁，非所有OS网络/数据库等待；按适用采样率开启会扰动，源头与等待方区别。\n6. 六、execution trace和端到端请求Trace：runtime/trace捕获G创建/阻塞/唤醒/syscall/GC/堆等事件，能解释等待/调度时间线，CPU/heap热点仍用profile；业务跨进程请求Trace看网关→DB→设备阶段，不能直接用运行时trace证明设备交付。注意采集窗口和脱敏。\n7. 七、同负载评估优化：先建立10000目标基线：p95、错误、CPU、alloc_space、inuse_space、队列长度、GC/trace；若复制优化/有界池每次只改一项，同样输入和版本复测，写出正确性/容量/尾延迟/额外内存与采样扰动；不能用小群80ms直接对比大群优化300ms。\n8. 八、诊断证据选型与22题：交付五工具选型矩阵、两竞争假设(编码CPU vs慢设备排队)、同负载实验表和隐私边界，22题带反馈。下一05.11优化边界；静态不运行Go/pprof/trace/benchmark/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_b041a28361",
+  "page_id": "pg_7be8a0174e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/diagnostics",
+      "https://pkg.go.dev/runtime/pprof",
+      "https://pkg.go.dev/runtime/trace",
+      "https://go.dev/doc/gc-guide",
+      "https://pkg.go.dev/testing",
+      "https://pkg.go.dev/net/http/pprof"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "444a610da43b1a61ed6b2bca4a58f62beaaafa6791cf28c91ed9e2f4efbe79c3",
+  "original_characters": 33358,
+  "generation_request_sha256": "6409bb8210fae4e4709da1f54b8c0c1173654254b7d8b8b5ca2b3229810e9844",
+  "reviewed_sha256": "5af15bff962d1a68021c370e8dd3e0fe05228757563cb921cc8532dde167b508",
+  "reviewed_characters": 7565,
+  "reviewed_chinese_characters": 3387,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/10_performance_tools.md",
+  "course_sha256": "a97cc327ddd511be0d9d43e41b2c22a6095cc2efa4d2ae5132623161d42ed8f8"
+}
