@@ -28,9 +28,9 @@
   "original_sha256": "52ca9c6578c2c40c822dabe9ca131640b506e804bfcf2e033371ed418b52d593",
   "original_characters": 31003,
   "generation_request_sha256": "4df0d9d0d4dc5680bc88b1de6e808db0694832d75cb247f896ae3e1b60ba34fe",
-  "reviewed_sha256": "2150c14054c6ee54c8ff1b2bc9b545943ce80cf91168fa3f5847a0992aedaa47",
-  "reviewed_characters": 8739,
-  "reviewed_chinese_characters": 3922,
+  "reviewed_sha256": "adf9a82a608b3bfffc6856ef4cf0a6dbb65673b2e8a81575b919964e53544f30",
+  "reviewed_characters": 8963,
+  "reviewed_chinese_characters": 3929,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/09_logging_recovery.md",
-  "course_sha256": "46bb23687a550042387011913f5719ecbcd3b001a64cc949b6b2139978bd564a"
+  "course_sha256": "fc0203e3dbbab5adf955e5896fcfbb70c139ee0c6bfbd4147abed12ca80ff820"
 }

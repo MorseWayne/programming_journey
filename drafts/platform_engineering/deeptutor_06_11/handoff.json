@@ -1,0 +1,30 @@
+{
+  "chapter": "06.11",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced replication and migration lesson using fictional c-a history and A/B storage",
+  "prerequisites": [
+    "06.02 history cursor and sequence semantics",
+    "06.07–06.09 transaction, visibility and local recovery",
+    "06.10 Go database access resource boundaries"
+  ],
+  "first_pass": [
+    "primary commit versus replica receive, durable flush and replay",
+    "c-a seq8 committed at primary but replica visible only through seq7",
+    "read-your-writes and authorization requirements"
+  ],
+  "second_pass": [
+    "single-authority failover and old-primary fencing",
+    "A snapshot W0 with seq1..5 plus changes seq6..8 into B",
+    "same-watermark key, content and version reconciliation",
+    "cutover rollback requiring reverse changes or a controlled write window",
+    "PostgreSQL physical/logical versus MongoDB replica/change-stream terminology"
+  ],
+  "not_yet_prerequisites": [
+    "06.12 full database business case",
+    "08 distributed coordination and consistency chapters",
+    "real replication and recovery experiments by the learner"
+  ],
+  "next_chapter": "06.12 database business case",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL and MongoDB primary documentation supports only their own replication behavior.",
+  "shared_integration_pending": []
+}

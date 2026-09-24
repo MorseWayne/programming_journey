@@ -1,0 +1,76 @@
+{
+  "code": "06.11",
+  "title": "复制、迁移与对账：历史消息怎样安全切换",
+  "chapter_id": "ch_replication_migration_reconciliation",
+  "summary": "面向Go初学者，从IM消息写后读不到和存储切换出发，推导副本进度、故障切换、快照+增量回填与水位对账。",
+  "objectives": [
+    "区分主库提交、副本接收/持久/回放和可见",
+    "解释复制滞后对历史与权限的影响",
+    "设计唯一权威写入与故障切换边界",
+    "设计一致快照加CDC的迁移",
+    "用同水位键集/内容对账识别等计数错误",
+    "解释切换后回滚与双写风险",
+    "区分PostgreSQL和MongoDB的复制口径"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/high-availability.html",
+    "https://www.postgresql.org/docs/current/warm-standby.html",
+    "https://www.postgresql.org/docs/current/logical-replication.html",
+    "https://www.postgresql.org/docs/current/logical-replication-restrictions.html",
+    "https://www.postgresql.org/docs/current/runtime-config-wal.html",
+    "https://www.mongodb.com/docs/manual/replication/",
+    "https://www.mongodb.com/docs/manual/core/read-preference/",
+    "https://www.mongodb.com/docs/manual/changestreams/"
+  ],
+  "sections": [
+    {
+      "title": "一、从已提交消息与过时历史建立复制需求",
+      "words": 2500,
+      "focus": "承接06.09本机WAL与06.02历史查询。虚构c-a seq1..8、m-a稳定消息ID，A写入后立即从副本读历史可能看不到刚提交行；定义主库/副本、复制、异步、延迟、应用确认、RPO/RTO，不能把PG本机COMMIT等同副本可见或设备交付。"
+    },
+    {
+      "title": "二、物理复制、逻辑变更与三个进度点",
+      "words": 3000,
+      "focus": "PostgreSQL WAL物理standby，receive/write/flush/replay及同步commit本地/远端写/远端flush/remote_apply的区别，具体参数按官方；逻辑复制只选择表数据/变更，schema/sequence等限制需核对。主库提交到副本可读有延迟，复制slot保留WAL会占空间。"
+    },
+    {
+      "title": "三、读写路径中的副本滞后",
+      "words": 2800,
+      "focus": "c-a历史写seq8已本机提交、副本只回放到seq7，主库读有8副本读无8；区分接收、持久、回放、对读可见。按业务选择主读/等待副本追上特定水位/容忍陈旧，不承诺所有secondary自动read-your-writes；权限也可能滞后，不能用旧成员状态授权新写。"
+    },
+    {
+      "title": "四、故障切换与单权威写入",
+      "words": 2800,
+      "focus": "旧主失联，新副本提升前确认安全进度、阻断旧主再次写入(fencing)，唯一主写权与连接路由；异步副本可能缺最近已本机提交消息，客户端需按稳定ID对账；不能说切换自动零丢失/零重复，RPO/RTO和回退窗口区别。"
+    },
+    {
+      "title": "五、历史迁移：快照+增量+水位",
+      "words": 3100,
+      "focus": "从旧存储A迁新存储B，A保持权威写；在一致快照/可校验W0处复制c-a seq1..5，CDC从W0或更早消费6,7,8，按message_id与版本幂等应用；源变更位置W0不同于会话seq；若更新/删除亦需事件处理，不能只append。阶段copy→catch-up→shadow-read→fence/cutover。"
+    },
+    {
+      "title": "六、对账与切换门槛",
+      "words": 2900,
+      "focus": "source c-a keys1..8；目标{1,2,3,4,5,6,8,9}也8条但漏7多9，计数相等不充分。按会话+范围比较key sets、字段/hash、版本/水位、缺失/多余/不一致，注意同时写入时需同一快照水位。授权/附件等分域；修复后复查。"
+    },
+    {
+      "title": "七、回滚窗口与双写风险",
+      "words": 2700,
+      "focus": "直接应用双写A/B没有跨源原子性，部分失败与顺序乱；若切到B后继续写，回退A需反向同步或双向安全协议并核对，不能以改路由解决。单权威写与影子读，定义每阶段回滚窗口、只读/短暂停写可能的业务代价。"
+    },
+    {
+      "title": "八、MongoDB对照和22题交接",
+      "words": 2800,
+      "focus": "Mongo replica set primary/secondary、writeConcern/journal/readPreference/change streams及resume token按官方；不把PG WAL LSN当Mongo token，不宣称OpenIM具体配置。22题分层附反馈；交付时间线、迁移状态机、对账样本和失败回滚矩阵，静态不跑数据库/Go/站点。下一06.12。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成面向Go初学者的完整中文静态教材《06.11 复制、迁移与对账》，八节丰富理论正文及22道分层练习反馈。沿虚构IM c-a历史1..8：主库已提交seq8而副本只回放至7，副本查询可暂缺8。先解释主/副本与receive/flush/replay、同步模式和业务确认，再故障切换单权威写/fencing。旧存储A仍权威，目标B在一致快照W0复制1..5，消费W0起变更6,7,8并以稳定message_id/版本幂等，W0是变更流位置而非业务seq。对账反例源{1..8}，目标{1,2,3,4,5,6,8,9}计数同为8却缺7多9，须同一水位比键/内容。直接双写无跨源原子性；切到B后回退A需反向同步或限制窗口。PostgreSQL物理/逻辑复制与MongoDB副本/change stream仅各按官方口径，不声称OpenIM实际配置。全静态不运行Go、SQL、数据库、站点。\n1. 一、从已提交消息与过时历史建立复制需求: 承接06.09本机WAL与06.02历史查询。虚构c-a seq1..8、m-a稳定消息ID，A写入后立即从副本读历史可能看不到刚提交行；定义主库/副本、复制、异步、延迟、应用确认、RPO/RTO，不能把PG本机COMMIT等同副本可见或设备交付。\n2. 二、物理复制、逻辑变更与三个进度点: PostgreSQL WAL物理standby，receive/write/flush/replay及同步commit本地/远端写/远端flush/remote_apply的区别，具体参数按官方；逻辑复制只选择表数据/变更，schema/sequence等限制需核对。主库提交到副本可读有延迟，复制slot保留WAL会占空间。\n3. 三、读写路径中的副本滞后: c-a历史写seq8已本机提交、副本只回放到seq7，主库读有8副本读无8；区分接收、持久、回放、对读可见。按业务选择主读/等待副本追上特定水位/容忍陈旧，不承诺所有secondary自动read-your-writes；权限也可能滞后，不能用旧成员状态授权新写。\n4. 四、故障切换与单权威写入: 旧主失联，新副本提升前确认安全进度、阻断旧主再次写入(fencing)，唯一主写权与连接路由；异步副本可能缺最近已本机提交消息，客户端需按稳定ID对账；不能说切换自动零丢失/零重复，RPO/RTO和回退窗口区别。\n5. 五、历史迁移：快照+增量+水位: 从旧存储A迁新存储B，A保持权威写；在一致快照/可校验W0处复制c-a seq1..5，CDC从W0或更早消费6,7,8，按message_id与版本幂等应用；源变更位置W0不同于会话seq；若更新/删除亦需事件处理，不能只append。阶段copy→catch-up→shadow-read→fence/cutover。\n6. 六、对账与切换门槛: source c-a keys1..8；目标{1,2,3,4,5,6,8,9}也8条但漏7多9，计数相等不充分。按会话+范围比较key sets、字段/hash、版本/水位、缺失/多余/不一致，注意同时写入时需同一快照水位。授权/附件等分域；修复后复查。\n7. 七、回滚窗口与双写风险: 直接应用双写A/B没有跨源原子性，部分失败与顺序乱；若切到B后继续写，回退A需反向同步或双向安全协议并核对，不能以改路由解决。单权威写与影子读，定义每阶段回滚窗口、只读/短暂停写可能的业务代价。\n8. 八、MongoDB对照和22题交接: Mongo replica set primary/secondary、writeConcern/journal/readPreference/change streams及resume token按官方；不把PG WAL LSN当Mongo token，不宣称OpenIM具体配置。22题分层附反馈；交付时间线、迁移状态机、对账样本和失败回滚矩阵，静态不跑数据库/Go/站点。下一06.12。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
