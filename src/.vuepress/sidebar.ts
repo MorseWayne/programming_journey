@@ -163,6 +163,7 @@ export default sidebar({
             "curriculum/02_algorithms/02_linear_structures",
             "curriculum/02_algorithms/03_search_invariants",
             "curriculum/02_algorithms/04_hash_sets",
+            "curriculum/02_algorithms/05_sort_divide",
             "curriculum/02_algorithms/core"
           ]
         },

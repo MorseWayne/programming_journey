@@ -1,0 +1,13 @@
+{
+  "chapter": "02.05",
+  "stage": "S1",
+  "business_scope": "deterministic order of a bounded virtual IM local message slice; no trusted global time, history completeness, delivery or OpenIM implementation guarantee",
+  "prerequisites": ["01.04–01.05 slices and structs", "02.01 operation-cost model", "02.03 sorted-boundary search", "02.04 stable message identity"],
+  "first_pass": ["message identity versus sorting key and display time", "strict comparator and tie rules", "stable sort versus input-independent deterministic order", "insertion sort ordered prefix"],
+  "second_pass": ["merge sort stable combination and O(n) auxiliary space", "quicksort partition and O(n²) worst case", "sort.SliceStable versus sort.Slice contracts", "external sorting entry and resource responsibility"],
+  "ordering_contracts": {"stable": "Seq-only comparator preserves equal-Seq input relative order", "deterministic": "Seq then stable unique MessageID comparator yields same order for the same valid record set", "scope": "display/processing order only, not causal order"},
+  "not_yet_prerequisites": ["02.06 tree and ordered index", "03 file-system reliability", "06 query index and transaction semantics", "08 distributed ordering and cursor protocols"],
+  "next_chapter": "02.06 trees and ordered indexes for repeated IM range queries",
+  "upstream_inspection": "No new OpenIM sorting, sequence or storage behavior fact is asserted.",
+  "shared_integration_pending": []
+}

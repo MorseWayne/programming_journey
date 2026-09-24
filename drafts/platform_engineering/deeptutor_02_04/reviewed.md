@@ -335,4 +335,4 @@ Go `map` 的 `range` 次序没有承诺，不能用它选“最旧消息”或�
 - [Go map 语言规则](https://go.dev/ref/spec#Map_types)与[Go maps in action](https://go.dev/blog/maps)用于核对键可比较性、nil、成员查询和迭代边界。
 - [MIT 6.006 笔记目录](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/)用于核对哈希与分析主题的学习顺序。
 
-下一章 02.05 进入排序与分治：当业务必须按序号、时间与稳定次级键展示或范围读取消息时，如何定义比较规则并付出排序成本。
+下一章[02.05 排序与分治](../../../src/docs/platform_engineering/curriculum/02_algorithms/05_sort_divide.md)讲明当业务需要按序号、时间和次级键展示或范围读取消息时，如何定义比较规则并计算排序成本。
