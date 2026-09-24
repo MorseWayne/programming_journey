@@ -1,0 +1,30 @@
+{
+  "chapter": "06.06",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced query-plan lesson using fictional c-a history pagination and u-a membership",
+  "prerequisites": [
+    "06.02 SQL history cursor and join basics",
+    "06.04 pages and buffer pool",
+    "06.05 compound index and covering-index boundaries",
+    "06.07 transaction and authorization semantics for integration"
+  ],
+  "first_pass": [
+    "11 rows across c-a and c-b, six filtered candidates and result 6,5,4",
+    "index-ordered early-stop path versus scan-filter-sort-limit path",
+    "scan, filter, sort, aggregation and limit node data flow"
+  ],
+  "second_pass": [
+    "active member join and nested-loop/hash/merge alternatives",
+    "selectivity denominators, sampling statistics and estimate errors",
+    "PostgreSQL EXPLAIN costs, actual rows times loops and buffer caveats",
+    "MongoDB explain fields and separate engine measurement contract"
+  ],
+  "not_yet_prerequisites": [
+    "06.08 MVCC and locking details",
+    "06.09 WAL and crash recovery",
+    "real query plans and business measurements by the learner"
+  ],
+  "next_chapter": "06.08 locks and MVCC",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL and MongoDB primary documentation supports only their respective plan/explain terminology.",
+  "shared_integration_pending": []
+}

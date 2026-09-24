@@ -31,9 +31,9 @@
   "original_sha256": "ccd4ac2c9c8d977883e9d86cd87d3984076183143b71c9d4682b077395be3ef5",
   "original_characters": 31553,
   "generation_request_sha256": "dae570cd9f1e0a62e04c7630ba9bf76bd0a739cb44d94a8dfd5667a48e1ea2be",
-  "reviewed_sha256": "8734831d9f8bef5606708e84ef0efeff3e9aa6e3a7182f4ee4697fe4021fc447",
-  "reviewed_characters": 9759,
+  "reviewed_sha256": "8b13e4c30c7f6bcc9f75b2f8204d9dcd1c8695dbfc279a88dd4db1924542c572",
+  "reviewed_characters": 9845,
   "reviewed_chinese_characters": 4334,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/05_index_structures.md",
-  "course_sha256": "74f5f5d4c0dd8afe350d51fc068cc60a4d542dc1b3461559f467af9714a494f1"
+  "course_sha256": "167de28b0e3b1dccf97becc3b36352fe805dcb5f767aa1937c5429943cd84691"
 }

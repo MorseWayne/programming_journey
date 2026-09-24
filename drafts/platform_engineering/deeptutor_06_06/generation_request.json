@@ -1,0 +1,73 @@
+{
+  "code": "06.06",
+  "title": "查询执行与优化：从历史分页读懂计划",
+  "chapter_id": "ch_query_execution",
+  "summary": "面向Go初学者，从同一条IM历史分页查询推导计划树、扫描、排序、聚合、成员连接、选择率与EXPLAIN证据。",
+  "objectives": [
+    "解释逻辑SQL与物理计划树区别",
+    "手算索引与全扫描两条正确路径",
+    "区分Index Cond、Filter、Sort、Limit的工作",
+    "理解成员权限连接和三类连接",
+    "解释选择率和估计误差",
+    "正确解读EXPLAIN与ANALYZE/BUFFERS及测量边界"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/using-explain.html",
+    "https://www.postgresql.org/docs/current/sql-explain.html",
+    "https://www.postgresql.org/docs/current/planner-stats.html",
+    "https://www.postgresql.org/docs/current/queries-order.html",
+    "https://www.postgresql.org/docs/current/indexes-index-only-scans.html",
+    "https://www.mongodb.com/docs/manual/reference/explain-results/"
+  ],
+  "sections": [
+    {
+      "title": "一、历史分页从 SQL 变成执行计划",
+      "words": 2500,
+      "focus": "固定虚构 c-a seq1..8、c-b seq1..3，成员u-a属于c-a；WHERE c-a AND seq<7 ORDER BY seq DESC LIMIT3返回6,5,4。解释SQL逻辑语义与物理执行路径不同；计划树自下而上数据流，节点扫描、过滤、排序、限制；不假定数据库已运行。"
+    },
+    {
+      "title": "二、两条正确计划的纸上行数",
+      "words": 2800,
+      "focus": "方案A利用(conversation_id,seq)有序索引定位<7、逆序取6,5,4、Limit3；方案B SeqScan全11行→过滤c-a且seq<7得6行→排序6,5,4,3,2,1→Limit3。两方案同答案不同候选/工作量；有序索引也可能回表与权限。纸上结果不代表PG实际计划或I/O。"
+    },
+    {
+      "title": "三、扫描算子与谓词位置",
+      "words": 2700,
+      "focus": "讲Seq Scan、Index Scan、Index Only Scan、Bitmap Index/Heap Scan，Index Cond vs Filter vs Recheck，覆盖仍可能heap fetch；LIMIT上层可提前停但不是所有下层都停，排序/bitmap可能需预处理；叶页数与buffers/设备I/O不同。"
+    },
+    {
+      "title": "四、排序、聚合与分页算子",
+      "words": 2700,
+      "focus": "ORDER BY与Top-N排序、索引顺序和增量排序；未明确ORDER BY的结果顺序不保证；COUNT unread seq>read_seq=4对c-a 1..8得4，HashAggregate/GroupAggregate机制，排序/聚合对内存与临时文件可能有代价；OFFSET越深候选越多而游标更稳定，但多版本变更要额外定义语义。"
+    },
+    {
+      "title": "五、成员权限连接与三类连接",
+      "words": 2900,
+      "focus": "memberships中(u-a,c-a,active)一条通过的会员；同c-a消息6候选；纸上Nested Loop外侧会员1×内侧消息候选6，符合权限；HashJoin建成员哈希探测消息、MergeJoin双方按键排序归并，仅机制，不说真实优化器选哪种。不要把Filter vs Join Filter的外连接语义混同；权限不能因索引快跳过。"
+    },
+    {
+      "title": "六、选择率、统计与估计偏差",
+      "words": 3000,
+      "focus": "定义selectivity通过/输入，纸上11行→6行=6/11约54.5%，c-a 8/11；不能把两个相关条件当独立必然准确，c-a与seq相关。PG ANALYZE采样、直方图/most common values与扩展统计，规划器cost任意相对单位非ms，rows为节点输出估计，width字节估计，估计误差会影响join顺序和扫描选择。"
+    },
+    {
+      "title": "七、读 EXPLAIN 的证据与边界",
+      "words": 3000,
+      "focus": "EXPLAIN不实际执行；EXPLAIN ANALYZE执行查询，写语句有副作用需事务安全隔离/ROLLBACK；BUFFERS shared hit/read不是物理disk I/O；actual rows per loop, loops乘积、Rows Removed, Sort Method/temp, Heap Fetches，估计总cost包括子节点且不等同端到端P95；示例伪计划必须注明非实测。MongoDB explain stage/docs as separate engine,不能将PG node字段套给Mongo。"
+    },
+    {
+      "title": "八、面向业务的验证清单与22题",
+      "words": 2800,
+      "focus": "评审真实慢历史:确认权限、SQL/排序/游标、基数、计划版本、数据分布、索引定义、actual rows/loops、BUFFERS、heap fetch、排序溢出、P95同窗口；先假设再以可反驳证据验证，不能仅凭seq scan判坏。22题分层附答案；课程静态不跑SQL/DB/Go/site。下一06.08锁和MVCC，06.09恢复。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成面向Go初学者的完整中文静态教材《06.06 查询执行与优化》，八节丰富理论正文和22道分层练习附答案。从同一虚构IM历史查询出发：c-a seq1..8、c-b seq1..3共11行；c-a seq<7 DESC LIMIT3结果6,5,4。索引路径定位范围可早停，全扫描路径11→过滤6→排序→限制3；两种答案相同，不能当PG实测。u-a与c-a active成员一条，教学嵌套连接外侧1内侧6，权限必须检查。未读read_seq=4则seq5..8共4。先补扫描/过滤/排序/限制/计划树概念，再讲连接、统计、估计/实际、EXPLAIN/ANALYZE/BUFFERS和Mongo explain不同口径。PG cost不是ms，rows是节点输出估计，actual rows注意loops，BUFFER命中/读取非物理disk I/O；EXPLAIN ANALYZE执行查询，写语句有副作用。SQL和数据库/Go/站点均不实际运行。\n1. 一、历史分页从 SQL 变成执行计划: 固定虚构 c-a seq1..8、c-b seq1..3，成员u-a属于c-a；WHERE c-a AND seq<7 ORDER BY seq DESC LIMIT3返回6,5,4。解释SQL逻辑语义与物理执行路径不同；计划树自下而上数据流，节点扫描、过滤、排序、限制；不假定数据库已运行。\n2. 二、两条正确计划的纸上行数: 方案A利用(conversation_id,seq)有序索引定位<7、逆序取6,5,4、Limit3；方案B SeqScan全11行→过滤c-a且seq<7得6行→排序6,5,4,3,2,1→Limit3。两方案同答案不同候选/工作量；有序索引也可能回表与权限。纸上结果不代表PG实际计划或I/O。\n3. 三、扫描算子与谓词位置: 讲Seq Scan、Index Scan、Index Only Scan、Bitmap Index/Heap Scan，Index Cond vs Filter vs Recheck，覆盖仍可能heap fetch；LIMIT上层可提前停但不是所有下层都停，排序/bitmap可能需预处理；叶页数与buffers/设备I/O不同。\n4. 四、排序、聚合与分页算子: ORDER BY与Top-N排序、索引顺序和增量排序；未明确ORDER BY的结果顺序不保证；COUNT unread seq>read_seq=4对c-a 1..8得4，HashAggregate/GroupAggregate机制，排序/聚合对内存与临时文件可能有代价；OFFSET越深候选越多而游标更稳定，但多版本变更要额外定义语义。\n5. 五、成员权限连接与三类连接: memberships中(u-a,c-a,active)一条通过的会员；同c-a消息6候选；纸上Nested Loop外侧会员1×内侧消息候选6，符合权限；HashJoin建成员哈希探测消息、MergeJoin双方按键排序归并，仅机制，不说真实优化器选哪种。不要把Filter vs Join Filter的外连接语义混同；权限不能因索引快跳过。\n6. 六、选择率、统计与估计偏差: 定义selectivity通过/输入，纸上11行→6行=6/11约54.5%，c-a 8/11；不能把两个相关条件当独立必然准确，c-a与seq相关。PG ANALYZE采样、直方图/most common values与扩展统计，规划器cost任意相对单位非ms，rows为节点输出估计，width字节估计，估计误差会影响join顺序和扫描选择。\n7. 七、读 EXPLAIN 的证据与边界: EXPLAIN不实际执行；EXPLAIN ANALYZE执行查询，写语句有副作用需事务安全隔离/ROLLBACK；BUFFERS shared hit/read不是物理disk I/O；actual rows per loop, loops乘积、Rows Removed, Sort Method/temp, Heap Fetches，估计总cost包括子节点且不等同端到端P95；示例伪计划必须注明非实测。MongoDB explain stage/docs as separate engine,不能将PG node字段套给Mongo。\n8. 八、面向业务的验证清单与22题: 评审真实慢历史:确认权限、SQL/排序/游标、基数、计划版本、数据分布、索引定义、actual rows/loops、BUFFERS、heap fetch、排序溢出、P95同窗口；先假设再以可反驳证据验证，不能仅凭seq scan判坏。22题分层附答案；课程静态不跑SQL/DB/Go/site。下一06.08锁和MVCC，06.09恢复。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_08d296d1d7",
+  "page_id": "pg_9f4160bc5f",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/using-explain.html",
+      "https://www.postgresql.org/docs/current/sql-explain.html",
+      "https://www.postgresql.org/docs/current/planner-stats.html",
+      "https://www.postgresql.org/docs/current/queries-order.html",
+      "https://www.postgresql.org/docs/current/indexes-index-only-scans.html",
+      "https://www.mongodb.com/docs/manual/reference/explain-results/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "3f86b104b586009537705ad4d66284d79ce301ff2a5047ccff769fe05a1328b6",
+  "original_characters": 34454,
+  "generation_request_sha256": "0c765894474c21280793a9fd8f88ba1528b9cdd42d2962ba5c940b976d3444ca",
+  "reviewed_sha256": "55164ccf60b223faf9aa158b37de533f50d5233d31280314ab5ae93adf43299d",
+  "reviewed_characters": 10368,
+  "reviewed_chinese_characters": 4292,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/06_query_execution.md",
+  "course_sha256": "b02fd9d185b0010145fead6dc89db6743c6fe9490447ce2db83daeb2d388f2ec"
+}
