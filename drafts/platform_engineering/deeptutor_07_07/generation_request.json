@@ -1,0 +1,74 @@
+{
+  "code": "07.07",
+  "title": "确认、重投与去重：一次处理为何可能做两遍",
+  "chapter_id": "ch_ack_retry_dedup",
+  "summary": "面向Go初学者，沿IM事件E9推导生产确认丢失、消费ACK时序、重投、幂等版本和去重保留窗口。",
+  "objectives": [
+    "区分HTTP/DB/broker/consumer/device确认",
+    "推导生产ACK丢失后重试的不确定性",
+    "手算消费先ACK/后ACK的崩溃结果",
+    "区分at-least-once交付与外部恰好一次效果",
+    "用message_id/version/副作用作用域设计幂等键",
+    "解释broker去重窗与consumer去重窗到期",
+    "保留现有HTTP重复ID409合同"
+  ],
+  "sources": [
+    "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/streams.md",
+    "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/consumers.md",
+    "https://github.com/nats-io/nats.docs/blob/master/using-nats/jetstream/model_deep_dive.md",
+    "https://redis.io/docs/latest/commands/xack/",
+    "https://redis.io/docs/latest/commands/xpending/",
+    "https://kafka.apache.org/intro/"
+  ],
+  "sections": [
+    {
+      "title": "一、同一m-9为什么有不同确认",
+      "words": 2700,
+      "focus": "承接07.06未来S3 DB已提交m-9/c-a seq9、事件E9用于SearchIndex/Notify，当前S2仍accepted_in_memory。区分HTTP响应、DB Commit、broker存储ACK、consumer ACK、B设备回执；message_id与event_id evt:m-9:v1各身份。"
+    },
+    {
+      "title": "二、生产确认丢失与重试的两分支",
+      "words": 3000,
+      "focus": "生产者发布evt:m-9:v1，broker已存E9但publish ACK在返程丢，生产者未知。设玩具broker去重窗口5分钟：独立分支4分钟重试同event_id可能被识别；另一独立分支6分钟后重试已超窗口可能写第二事件。不是NATS默认值；NATS Nats-Msg-Id仅窗口内去重且按ID非body。"
+    },
+    {
+      "title": "三、消费者确认丢失的两种顺序",
+      "words": 3000,
+      "focus": "SearchIndex W1：先ACK再写索引崩溃会漏；先索引upsert再ACK崩溃，broker可能重投给W2。ACK回包丢也可未知，AckWait/PEL按具体系统；at-least-once不等于exactly-once外部效果。"
+    },
+    {
+      "title": "四、幂等键与版本：不能只看m-9",
+      "words": 2800,
+      "focus": "搜索索引用(message_id=m-9,version=v1,side_effect=SearchIndex)作幂等/条件更新；m-9编辑v2须执行，若只用m-9去重会错误丢v2。Notify side effect不同不共用同一去重作用域；重复通知可能设备可见，需业务确认与有限窗口策略。"
+    },
+    {
+      "title": "五、去重记录的保留窗口",
+      "words": 2900,
+      "focus": "玩具消费者dedup记录保留10分钟，E9经明确配置/故障在首次处理后11分钟重投，记录已过期，不能靠表挡重复；要让幂等目标按持久版本收敛，或保证去重保留覆盖最大重试/回放窗并审成本。Producer5min窗与consumer10min窗不同。"
+    },
+    {
+      "title": "六、Redis Stream与NATS/Kafka口径",
+      "words": 2900,
+      "focus": "Redis XACK移除消费组PEL引用不删除Stream条目；NATS JetStream AckWait超时重投，Nats-Msg-Id dedup滑动窗；Kafka消费位点提交不自动与外部SearchIndex原子，具体机制各不相同。保留与确认分层，不声称OpenIM使用。"
+    },
+    {
+      "title": "七、DB到broker空窗和业务恢复",
+      "words": 3000,
+      "focus": "DB Commit m-9之后发E9前崩溃仍可能漏发布；换broker/重复重试不能弥补无权威待发布记录，07.10 outbox另设计。B离线历史补拉权威DB，E9重投不生成第二条m-9；HTTP同ID重复仍409，不能因broker去重改成200。"
+    },
+    {
+      "title": "八、时间线/验收与22题",
+      "words": 2900,
+      "focus": "交付两独立生产重试分支4min/6min、消费者ACK前后崩溃、dedup10min与11min重投、五层确认和身份/版本表；22题分层反馈。静态不运行NATS/Redis/Kafka/DB/Go/站点，下一07.08顺序并发。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.07 确认、重投与去重》，面向Go初学者，八节丰富理论、故障时间线、22道分层练习反馈。承接07.06：未来S3教学DB已提交m-9/c-a seq9；事件E9带stable event_id=evt:m-9:v1，由SearchIndex与Notify分别消费；当前S2 v1仍200 accepted_in_memory，同ID HTTP重试一律409而不是幂等200。生产者publish E9已被broker存储但ACK返程丢，生产者结果未知。玩具broker去重窗口5分钟（不是NATS默认）：独立分支t4min同ID重试可被去重，另一独立分支t6min重试超窗口可能追加第二事件，不要把t4与t6当顺序同一分支。SearchIndex W1先ACK再写索引崩溃会漏；先upsert后ACK崩溃可能重投W2，按(message_id,version,side_effect)条件更新，不能只按message_id吞掉合法编辑v2。玩具consumer去重记录10分钟，明确配置的11分钟重投时已过期，需目标幂等或更长保留，不靠短窗口宣称永不重复。Redis XACK只删PEL引用不删Stream条目；NATS JetStream AckWait重投、Nats-Msg-Id窗口去重；Kafka offset提交不与外部索引原子。DB commit后发E9前崩溃是跨系统空窗，07.10再outbox。B历史补拉权威DB，E9重复不生成第二条m-9。静态不运行Redis/NATS/Kafka/DB/Go/站点。\n1. 一、同一m-9为什么有不同确认: 承接07.06未来S3 DB已提交m-9/c-a seq9、事件E9用于SearchIndex/Notify，当前S2仍accepted_in_memory。区分HTTP响应、DB Commit、broker存储ACK、consumer ACK、B设备回执；message_id与event_id evt:m-9:v1各身份。\n2. 二、生产确认丢失与重试的两分支: 生产者发布evt:m-9:v1，broker已存E9但publish ACK在返程丢，生产者未知。设玩具broker去重窗口5分钟：独立分支4分钟重试同event_id可能被识别；另一独立分支6分钟后重试已超窗口可能写第二事件。不是NATS默认值；NATS Nats-Msg-Id仅窗口内去重且按ID非body。\n3. 三、消费者确认丢失的两种顺序: SearchIndex W1：先ACK再写索引崩溃会漏；先索引upsert再ACK崩溃，broker可能重投给W2。ACK回包丢也可未知，AckWait/PEL按具体系统；at-least-once不等于exactly-once外部效果。\n4. 四、幂等键与版本：不能只看m-9: 搜索索引用(message_id=m-9,version=v1,side_effect=SearchIndex)作幂等/条件更新；m-9编辑v2须执行，若只用m-9去重会错误丢v2。Notify side effect不同不共用同一去重作用域；重复通知可能设备可见，需业务确认与有限窗口策略。\n5. 五、去重记录的保留窗口: 玩具消费者dedup记录保留10分钟，E9经明确配置/故障在首次处理后11分钟重投，记录已过期，不能靠表挡重复；要让幂等目标按持久版本收敛，或保证去重保留覆盖最大重试/回放窗并审成本。Producer5min窗与consumer10min窗不同。\n6. 六、Redis Stream与NATS/Kafka口径: Redis XACK移除消费组PEL引用不删除Stream条目；NATS JetStream AckWait超时重投，Nats-Msg-Id dedup滑动窗；Kafka消费位点提交不自动与外部SearchIndex原子，具体机制各不相同。保留与确认分层，不声称OpenIM使用。\n7. 七、DB到broker空窗和业务恢复: DB Commit m-9之后发E9前崩溃仍可能漏发布；换broker/重复重试不能弥补无权威待发布记录，07.10 outbox另设计。B离线历史补拉权威DB，E9重投不生成第二条m-9；HTTP同ID重复仍409，不能因broker去重改成200。\n8. 八、时间线/验收与22题: 交付两独立生产重试分支4min/6min、消费者ACK前后崩溃、dedup10min与11min重投、五层确认和身份/版本表；22题分层反馈。静态不运行NATS/Redis/Kafka/DB/Go/站点，下一07.08顺序并发。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

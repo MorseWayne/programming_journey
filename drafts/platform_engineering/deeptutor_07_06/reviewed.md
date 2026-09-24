@@ -178,4 +178,4 @@ broker： topic "message-events" / partition P0 / offset 42  ← 仅纸上位置
 
 不看答案时，能把在线提示、后台索引和离线历史分别交给合适的分发/保留模型；能说清 E9 的 offset42 不等于 seq9、两逻辑组与组内 worker 的不同关系，以及 DB→broker 空窗、消费者 ACK 与设备回执的不同，才算完成第一轮。第二轮由学习者在隔离环境记录真实 broker 配置、故障和设备结果，本章没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 07.07 将分别推演生产确认、消费确认、重投和去重窗口；07.08 再深入同会话顺序与并发消费。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[07.07 确认、重投与去重](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/07_ack_retry_dedup.md)将分别推演生产确认、消费确认、重投和去重窗口；07.08 再深入同会话顺序与并发消费。

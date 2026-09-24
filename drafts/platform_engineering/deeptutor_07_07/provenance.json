@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_66b47f6c42",
+  "page_id": "pg_5690191caa",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/streams.md",
+      "https://github.com/nats-io/nats.docs/blob/master/nats-concepts/jetstream/consumers.md",
+      "https://github.com/nats-io/nats.docs/blob/master/using-nats/jetstream/model_deep_dive.md",
+      "https://redis.io/docs/latest/commands/xack/",
+      "https://redis.io/docs/latest/commands/xpending/",
+      "https://kafka.apache.org/intro/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "963d125d9aac98e4de217c1c957c3e7c19ecba63c74842b707ae711bfc63cd64",
+  "original_characters": 30453,
+  "generation_request_sha256": "9c1d8e991c1105938b7dced592db1d7cc5b47d32d65989e60a06f545ffe3aa6e",
+  "reviewed_sha256": "c71aea6a5705ec621795aec528e6e03874ce7c549d19b29554e5b8789598955e",
+  "reviewed_characters": 8104,
+  "reviewed_chinese_characters": 3356,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/07_ack_retry_dedup.md",
+  "course_sha256": "0ecaed350ab7101da6cd705d8e5e160eeaacea10ce9b0d9418ae8e96e1fe976c"
+}

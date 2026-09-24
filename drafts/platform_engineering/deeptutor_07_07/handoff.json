@@ -1,0 +1,30 @@
+{
+  "chapter": "07.07",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced publisher/consumer acknowledgment and deduplication lesson using m-9/E9",
+  "prerequisites": [
+    "07.06 queue, Pub/Sub and replayable-log abstractions",
+    "08.01 partial failure and unknown response",
+    "09.02 existing HTTP duplicate-ID 409 contract"
+  ],
+  "first_pass": [
+    "producer publish ACK lost after broker stored E9",
+    "independent retry branches at four and six minutes around toy five-minute window",
+    "consumer ACK-before/after external SearchIndex effect crash windows"
+  ],
+  "second_pass": [
+    "event/message/version/side-effect idempotency scopes",
+    "ten-minute consumer dedup record versus eleven-minute redelivery",
+    "Redis XACK, NATS message ID and AckWait, Kafka offset boundaries",
+    "DB-to-broker gap and HTTP 409 preserved"
+  ],
+  "not_yet_prerequisites": [
+    "07.08 keyed ordering and concurrent consumption",
+    "07.09 backlog and poison-message policy",
+    "07.10 outbox cross-system boundary",
+    "real broker and external-effect verification by the learner"
+  ],
+  "next_chapter": "07.08 keyed ordering and concurrent consumption",
+  "upstream_inspection": "No OpenIM implementation claim; official NATS, Redis and Kafka documents support only their respective broker semantics.",
+  "shared_integration_pending": []
+}

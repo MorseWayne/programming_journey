@@ -255,6 +255,7 @@ export default sidebar({
             "curriculum/07_cache_messaging/04_cache_overload_hotspots",
             "curriculum/07_cache_messaging/05_cache_persistence_failure",
             "curriculum/07_cache_messaging/06_message_abstractions",
+            "curriculum/07_cache_messaging/07_ack_retry_dedup",
             "curriculum/07_cache_messaging/core"
           ]
         },
