@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f81a09fa73",
+  "page_id": "pg_64688993e1",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.rfc-editor.org/rfc/rfc9293.html",
+      "https://www.rfc-editor.org/rfc/rfc6298.html",
+      "https://gaia.cs.umass.edu/kurose_ross/interactive/rdt30.php",
+      "https://gaia.cs.umass.edu/kurose_ross/interactive/tcp_retrans.php",
+      "https://pkg.go.dev/net"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "e36a42e7af86e5ce9e8fd4c44bbee4ed6ac6162b0df1309824d369afd585314c",
+  "original_characters": 29545,
+  "generation_request_sha256": "844f405a27fcddfe07f106a2b8ff7b07c94b2efef26bac1a0f9ac78d4b39a9cc",
+  "reviewed_sha256": "4288ced1127ae043c016a7cac5b612a3b776ddc7f79e929aaa8c9b0912e4a939",
+  "reviewed_characters": 7358,
+  "reviewed_chinese_characters": 3294,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/04_reliable_transport.md",
+  "course_sha256": "ce130d41eb290fc3de76ecde89516e8832dff4f4310334b175df28f00847f027"
+}

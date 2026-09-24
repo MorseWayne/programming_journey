@@ -5,8 +5,8 @@
   "prerequisites": ["09.01–09.08 IM contract, data access and security boundaries", "10.02 independent test expectations", "10.09 CI and artifact identity", "06.07 transaction uncertainty"],
   "first_pass": ["current contract versus proposed R9 test truth", "pure-rule, handler, integration and end-to-end evidence", "httptest Request/Recorder/Result versus test server", "status, JSON, headers and state after rejection"],
   "second_pass": ["actor/action/resource authorization negatives", "fake versus real database and transaction faults", "stable CI input and report identity", "paper, personally measured and unverified status labels"],
-  "not_yet_prerequisites": ["09.12 combined teaching IM service project", "S5 asynchronous retry and device confirmation", "real Go, database, WebSocket and client test runs by the learner"],
-  "next_chapter": "09.12 complete teaching IM service project course",
+  "not_yet_prerequisites": ["04.04–04.07 reliable transport, long connection, flow/congestion and TLS before 09.12", "09.12 combined teaching IM service project", "S5 asynchronous retry and device confirmation", "real Go, database, WebSocket and client test runs by the learner"],
+  "next_chapter": "04.04 reliable transport as the first missing network prerequisite before the complete service project",
   "upstream_inspection": "No OpenIM test execution or runtime behavior asserted in this chapter.",
   "shared_integration_pending": []
 }

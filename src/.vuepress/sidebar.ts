@@ -188,6 +188,7 @@ export default sidebar({
             "curriculum/04_networks/01_application_communication_layers",
             "curriculum/04_networks/02_addresses_names_routes",
             "curriculum/04_networks/03_http_websocket_basics",
+            "curriculum/04_networks/04_reliable_transport",
             "curriculum/04_networks/core"
           ]
         },

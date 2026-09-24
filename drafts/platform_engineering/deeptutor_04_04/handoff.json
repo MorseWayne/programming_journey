@@ -1,0 +1,12 @@
+{
+  "chapter": "04.04",
+  "stage": "S3",
+  "business_scope": "fictional u-a message m-a traversing a TCP connection toward a teaching IM service; paper byte intervals, cumulative ACK, retransmission and window only, no running network or OpenIM behavior claim",
+  "prerequisites": ["04.01 application communication and delay layers", "04.02 addresses and TCP endpoints", "04.03 HTTP and WebSocket message boundary", "09.02 memory acceptance versus client response"],
+  "first_pass": ["TCP byte stream versus IM message", "four-byte half-open sequence intervals", "cumulative ACK arithmetic", "data or ACK loss and same-sequence retransmission"],
+  "second_pass": ["out-of-order buffering and earliest missing byte", "RTO versus HTTP timeout and Go context", "finite eight-byte pipeline window", "TCP retransmission versus new application POST", "TCP/HTTP/business evidence boundaries"],
+  "not_yet_prerequisites": ["04.05 handshake, half-close, reset and reconnect", "04.06 receive flow versus congestion control", "04.07 TLS", "S5 business idempotency and device delivery"],
+  "next_chapter": "04.05 TCP connection and long-lived IM session lifecycle",
+  "upstream_inspection": "No OpenIM TCP implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}
