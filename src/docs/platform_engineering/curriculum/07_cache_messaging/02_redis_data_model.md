@@ -194,4 +194,4 @@ N2 在该消费组仍待确认；N1 的 ACK 不证明 B 收到。</details>
 
 不看答案时，能从操作形状选出本题 String/Hash/Set/ZSET/List/Bitmap/Stream 候选，手算 ZSET 排序、最近窗口、三个位和 N1/N2 pending；还能逐项说明**哪些结果不等于授权、数据库提交或 B 设备确认**，才算完成第一轮。第二轮由学习者在隔离环境核对所用 Redis 版本、命令、键大小、TTL、丢失与重建证据；本章没有代替运行。
 
-按[学习路线](../learning_path.md)，下一章 07.03 从 cache-aside 读取与数据库更新的交错讲旧值回填、TTL 和版本；07.04 再处理热点与集中失效。
+按[学习路线](../learning_path.md)，下一章[07.03 缓存读取与更新](./03_cache_read_update.md)从 cache-aside 读取与数据库更新的交错讲旧值回填、TTL 和版本；07.04 再处理热点与集中失效。

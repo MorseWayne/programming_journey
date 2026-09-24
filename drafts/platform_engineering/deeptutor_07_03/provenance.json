@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_b1a578cea2",
+  "page_id": "pg_cdb279ecc3",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://redis.io/docs/latest/develop/use-cases/cache-aside/",
+      "https://redis.io/docs/latest/develop/reference/eviction/",
+      "https://redis.io/docs/latest/commands/expire/",
+      "https://redis.io/docs/latest/commands/set/",
+      "https://redis.io/docs/latest/develop/reference/client-side-caching/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "6da4ad7a6c40076aac27725cfe519f8e7f091065f86711cdec575ea70ed03970",
+  "original_characters": 30539,
+  "generation_request_sha256": "1521f684a33455caaa1ddaf7fb10d520ecead0e021a4de9f44a374a8d524c8aa",
+  "reviewed_sha256": "f612613c9e519f9b78af50c117b19f7df68a86400587ce067c9b9d0bfd470d97",
+  "reviewed_characters": 8301,
+  "reviewed_chinese_characters": 3252,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/03_cache_read_update.md",
+  "course_sha256": "5fd52c4932f188450d9c10582e88ce509151d905b8c9d1317211389e1344b161"
+}

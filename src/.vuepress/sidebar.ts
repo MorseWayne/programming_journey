@@ -251,6 +251,7 @@ export default sidebar({
             "curriculum/07_cache_messaging/",
             "curriculum/07_cache_messaging/01_access_state_roles",
             "curriculum/07_cache_messaging/02_redis_data_model",
+            "curriculum/07_cache_messaging/03_cache_read_update",
             "curriculum/07_cache_messaging/core"
           ]
         },

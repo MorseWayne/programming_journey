@@ -1,0 +1,30 @@
+{
+  "chapter": "07.03",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced cache-aside race lesson using fictional c-a preview V8 to V9",
+  "prerequisites": [
+    "07.01 authority and derived-state roles",
+    "07.02 Redis candidate structures",
+    "08.04 read-your-writes and session visibility",
+    "06.07 database transaction boundary"
+  ],
+  "first_pass": [
+    "hit, miss, authoritative not-found and dependency failure",
+    "delete-before-commit V8 refill race",
+    "commit-before-delete late V8 refill race"
+  ],
+  "second_pass": [
+    "SET NX and version-only limits without persistent fencing",
+    "TTL measured from actual fill and repeated old fills",
+    "m-x late negative cache and u-c hidden 404 scope",
+    "permission old value, read-your-writes and invalidation-failure policy"
+  ],
+  "not_yet_prerequisites": [
+    "07.04 cache overload and hot keys",
+    "07.10 cross-store outbox boundary",
+    "real controlled interleaving exercises by the learner"
+  ],
+  "next_chapter": "07.04 cache overload and hot keys",
+  "upstream_inspection": "No OpenIM implementation claim; Redis primary documentation supports only the cited cache-aside, TTL and eviction mechanisms.",
+  "shared_integration_pending": []
+}

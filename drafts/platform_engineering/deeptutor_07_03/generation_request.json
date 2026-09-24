@@ -1,0 +1,73 @@
+{
+  "code": "07.03",
+  "title": "缓存读取与更新：迟到回填怎样复活旧值",
+  "chapter_id": "ch_cache_read_update",
+  "summary": "面向Go初学者，以IM会话预览从seq8到seq9的更新，推导cache-aside、失效顺序、迟到回填、TTL、负缓存和权限边界。",
+  "objectives": [
+    "手算cache-aside读/写路径",
+    "区分缓存miss、业务不存在与依赖失败",
+    "推导先删后写和先写后删的两个旧值交错",
+    "解释SET NX与仅带版本字段不足以自动消除竞态",
+    "解释TTL/负缓存与陈旧窗口",
+    "为授权与读己之写选择权威路径",
+    "提出故障降级和证据矩阵"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/develop/use-cases/cache-aside/",
+    "https://redis.io/docs/latest/develop/reference/eviction/",
+    "https://redis.io/docs/latest/commands/expire/",
+    "https://redis.io/docs/latest/commands/set/",
+    "https://redis.io/docs/latest/develop/reference/client-side-caching/"
+  ],
+  "sections": [
+    {
+      "title": "一、从c-a预览seq8到seq9建立缓存读写问题",
+      "words": 2600,
+      "focus": "承接07.01/02；未来S3教学DB权威m-9 seq9，preview:c-a为派生Hash，当前S2仍accepted_in_memory。定义cache-aside GET→miss→DB read→SET TTL与写DB COMMIT→DEL cache，权限另查；缓存命中不代表新鲜。"
+    },
+    {
+      "title": "二、读路径与四种结果",
+      "words": 2800,
+      "focus": "缓存hit seq8、miss、缓存空值/负缓存、Redis不可用/DB错误分别区别；miss后权威查，不能将依赖失败写成不存在；u-c隐藏404是授权结果，不得按消息ID全局负缓存给u-a。TTL示意30s非推荐值。"
+    },
+    {
+      "title": "三、先删后写为何容易永久留旧值",
+      "words": 3000,
+      "focus": "固定DB8/cache8；W先DEL cache；R miss→DB读8→SET cache8；W后COMMIT9，无后续DEL，缓存旧直到TTL。说明写权威再失效通常更自然，但两系统非原子，不能说完全解决。"
+    },
+    {
+      "title": "四、先提交再删仍有迟到回填",
+      "words": 3200,
+      "focus": "固定DB8/cache空：R miss→DB读8后暂停；W COMMIT9→DEL cache空；R迟到SET cache8，旧值复活。SET NX不能阻止因为key仍空。画逐步状态表；版本V8/V9与读侧重检/写侧fence至少需可靠顺序、原子条件和故障政策，不能宣称只加version字段就严格一致。"
+    },
+    {
+      "title": "五、TTL、逐出与负缓存",
+      "words": 3000,
+      "focus": "30s TTL从旧值回填时开始计，限定此键单次陈旧驻留但不保证任意业务读新；TTL短增加回源，长增陈旧，更新/重复旧回填可能延长。notfound:m-x负缓存：R查无、W插入m-x提交并DEL、R后填absence，错误404直到过期；权限隐藏404不能混真不存在。"
+    },
+    {
+      "title": "六、授权和写后读绕过缓存",
+      "words": 2900,
+      "focus": "members.left_at授权权威，退群旧cache许可不能发；A发m-9已知提交若要求立即见seq9，读权威或携源版本W9等缓存/副本满足，不可返回旧seq8；cache miss不等于无权/不存在。"
+    },
+    {
+      "title": "七、写后失效失败与降级证据",
+      "words": 3000,
+      "focus": "DB COMMIT9后Redis DEL失败，cache8留；应用是否返回S3 stored取决于缓存失效是否合同必需，若派生可重建可标降级并有修复、若强保证须有协议/回主。记录cache version/DB commit/DEL结果/命中/陈旧率、错误和权限，但不记录私有正文。可讨论outbox/CDC作为后续不是本章自动方案。"
+    },
+    {
+      "title": "八、22题和业务评审",
+      "words": 2900,
+      "focus": "交付两条交错表、负缓存反例、TTL和降级策略、业务需求与验证证据；22题概念→手算竞态→安全/一致性评审附反馈。静态不运行Redis/DB/Go/站点，下一07.04击穿/穿透/雪崩热点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.03 缓存读取与更新》，面向Go初学者，八节丰富理论、完整交错演算及22道分层练习反馈。固定未来S3教学DB c-a预览源seq8→新提交m-9 seq9，Redis preview:c-a派生缓存，当前S2仍200 accepted_in_memory。cache-aside读GET miss→DB读→SET TTL，写DB COMMIT→DEL，但两系统不原子。先删后写反例DB8/cache8：W DEL，R miss/读DB8/SET8，W COMMIT9，无后续DEL。先写后删仍有迟到回填：DB8/cache空，R miss并DB读8暂停，W COMMIT9、DEL空键，R SET8，旧值复活；SET NX也挡不住空键。版本V8/V9只有字段还不足以保证，需要受控fence/原子比较、失败策略；严格读己之写可读权威或等最低水位。30秒TTL仅玩具，从旧填入起算，不能说始终新鲜。负缓存反例R查m-x不存在，W插入并失效，R迟到写ABSENT；u-c隐藏404是授权结果，绝不可按message_id全局负缓存使u-a误判。DB/Redis错误不写成404。成员退群旧权限缓存不放行。静态不运行Redis、DB、Go、站点。下一07.04热点过载。\n1. 一、从c-a预览seq8到seq9建立缓存读写问题: 承接07.01/02；未来S3教学DB权威m-9 seq9，preview:c-a为派生Hash，当前S2仍accepted_in_memory。定义cache-aside GET→miss→DB read→SET TTL与写DB COMMIT→DEL cache，权限另查；缓存命中不代表新鲜。\n2. 二、读路径与四种结果: 缓存hit seq8、miss、缓存空值/负缓存、Redis不可用/DB错误分别区别；miss后权威查，不能将依赖失败写成不存在；u-c隐藏404是授权结果，不得按消息ID全局负缓存给u-a。TTL示意30s非推荐值。\n3. 三、先删后写为何容易永久留旧值: 固定DB8/cache8；W先DEL cache；R miss→DB读8→SET cache8；W后COMMIT9，无后续DEL，缓存旧直到TTL。说明写权威再失效通常更自然，但两系统非原子，不能说完全解决。\n4. 四、先提交再删仍有迟到回填: 固定DB8/cache空：R miss→DB读8后暂停；W COMMIT9→DEL cache空；R迟到SET cache8，旧值复活。SET NX不能阻止因为key仍空。画逐步状态表；版本V8/V9与读侧重检/写侧fence至少需可靠顺序、原子条件和故障政策，不能宣称只加version字段就严格一致。\n5. 五、TTL、逐出与负缓存: 30s TTL从旧值回填时开始计，限定此键单次陈旧驻留但不保证任意业务读新；TTL短增加回源，长增陈旧，更新/重复旧回填可能延长。notfound:m-x负缓存：R查无、W插入m-x提交并DEL、R后填absence，错误404直到过期；权限隐藏404不能混真不存在。\n6. 六、授权和写后读绕过缓存: members.left_at授权权威，退群旧cache许可不能发；A发m-9已知提交若要求立即见seq9，读权威或携源版本W9等缓存/副本满足，不可返回旧seq8；cache miss不等于无权/不存在。\n7. 七、写后失效失败与降级证据: DB COMMIT9后Redis DEL失败，cache8留；应用是否返回S3 stored取决于缓存失效是否合同必需，若派生可重建可标降级并有修复、若强保证须有协议/回主。记录cache version/DB commit/DEL结果/命中/陈旧率、错误和权限，但不记录私有正文。可讨论outbox/CDC作为后续不是本章自动方案。\n8. 八、22题和业务评审: 交付两条交错表、负缓存反例、TTL和降级策略、业务需求与验证证据；22题概念→手算竞态→安全/一致性评审附反馈。静态不运行Redis/DB/Go/站点，下一07.04击穿/穿透/雪崩热点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
