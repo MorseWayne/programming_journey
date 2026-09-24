@@ -279,6 +279,7 @@ export default sidebar({
             "curriculum/08_distributed/08_cross_service_transactions",
             "curriculum/08_distributed/09_reliable_jobs_scheduling",
             "curriculum/08_distributed/10_membership_evolution",
+            "curriculum/08_distributed/11_distributed_validation",
             "curriculum/08_distributed/core"
           ]
         },

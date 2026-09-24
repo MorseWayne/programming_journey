@@ -1,0 +1,33 @@
+{
+  "chapter": "08.11",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced distributed validation lesson with fictional IM m-9 Send and authorized HistoryRead histories",
+  "prerequisites": [
+    "08.01 partial failure and unknown result",
+    "08.04 consistency models",
+    "08.10 member and protocol change",
+    "07.10 same-DB outbox atomic boundary",
+    "07.11 derived view reconciliation",
+    "11.01 and 11.03 business measurement and observability"
+  ],
+  "first_pass": [
+    "state what current S2 and proposed S3 actually promise",
+    "declare separate teaching contract L for one authoritative HistoryRead endpoint",
+    "record invocation, return, missing response and endpoint evidence",
+    "hand-classify Hbad and Hoverlap using real-time nonoverlap"
+  ],
+  "second_pass": [
+    "classify Hmono under an explicit monotonic-read contract",
+    "build a finite sequential model and interpret Porcupine's limited result",
+    "prove a fault reached the actual service path rather than trusting injector success",
+    "separate same-snapshot outbox checks from bounded derived-view convergence",
+    "report simulation, Go race detection and real-fault coverage limits"
+  ],
+  "not_yet_prerequisites": [
+    "08.12 full consistency case",
+    "learner's real bounded histories, fault and checker evidence"
+  ],
+  "next_chapter": "08.12 full consistency case",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These files are read-only source evidence, not a runtime fault test or linearizability result.",
+  "shared_integration_pending": []
+}

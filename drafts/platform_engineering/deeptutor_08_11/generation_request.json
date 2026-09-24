@@ -1,0 +1,73 @@
+{
+  "code": "08.11",
+  "title": "分布式验证：一条旧读何时真违反承诺",
+  "chapter_id": "ch_distributed_validation",
+  "summary": "面向Go初学者，围绕虚构IM m-9的发送与有权历史读取，讲清有界历史、线性化反例、故障注入证据、派生追赶和模拟/实测边界。",
+  "objectives": [
+    "先声明权威读合同再构造故障",
+    "记录调用/返回与未知结果",
+    "手判不重叠旧读和重叠旧读",
+    "建立有限状态线性化模型与Porcupine检查边界",
+    "分别验证outbox、权限、派生追赶和设备回执",
+    "报告模拟与真实测试的覆盖范围"
+  ],
+  "sources": [
+    "https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf",
+    "https://github.com/anishathalye/porcupine",
+    "https://jepsen.io/consistency/models",
+    "https://go.dev/doc/articles/race_detector",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、先写待检承诺，不先注入故障",
+      "words": 2900,
+      "focus": "虚构A发送m-9/c-a/seq9，B有权限读取。当前S2成功accepted_in_memory不承诺持久/线性化；未来S3 stored_in_teaching_db只提议本地DB提交，仍不自动承诺所有读线性化。另明确纸上L合同：同一权威HistoryRead端点线性化；派生SearchIndex/Notify可滞后另设修复期限。"
+    },
+    {
+      "title": "二、调用/返回历史的最小字段",
+      "words": 3000,
+      "focus": "为Send(m9)与HistoryRead(c-a)记录actor/call_id/target/request_id/message_id/version/调用与返回事件/结果/所见seq/端点/故障时间，不记私有正文。单一harness或同步关系界定跨客户端真实先后，节点本地墙钟可能偏差。无回应为unknown/pending，不强标失败。"
+    },
+    {
+      "title": "三、三条纸上历史手判线性化",
+      "words": 3300,
+      "focus": "Hbad t1 Send invoke t2 Send returns S3 stored t3 B authoritative Read invoke t4 Read returns seq8，且B有权/无删除变更，违反显式L合同；Hoverlap t1 Send invoke t2 Read invoke t3 Read returns8 t4 Send returns stored，可把Read排在Send前，因此不违L；Hmono B先读9后读8，若声明同会话单调读则违反。区分S3合同本身并不含L。"
+    },
+    {
+      "title": "四、有限状态模型与checker能证明什么",
+      "words": 3000,
+      "focus": "线性化要求完成操作在调用返回区间取一个点且满足顺序规格；给toy state messages set/seq，Send唯一ID, Read返回maxseq，声明失败/超时如何建模。Porcupine接收sequential model+concurrent history，可产反例；checker正确只证明录入的有限历史对模型无反例/有反例，不证明所有执行。"
+    },
+    {
+      "title": "五、控制故障并核对它真的发生",
+      "words": 3200,
+      "focus": "隔离旧leader/主副本、丢DB Commit后的HTTP响应、让W1租约过期W2接管、延迟E9再处理E10、重放v1/editv2；每项标注注入开始结束、受影响链路/观察到的网络与存储事件。命令返回0并不证明分区实际覆盖服务路径；错误可能在注入前发生，需因果对齐。"
+    },
+    {
+      "title": "六、不同承诺用不同检查器与收敛条件",
+      "words": 3000,
+      "focus": "SQL messages+outbox同事务可查同一快照的ID与意图，权限u-c非成员应404不能泄露；SearchIndex和Notify派生不要拿线性化读模型评估，定义观察窗口/截止时刻、稳定版本、最老年龄、对账ID差集。B离线25h超玩具broker24h仍从权威历史按权限补拉；设备收/读独立回执。若无期限只能说某次样本追上，不能证明永远最终。"
+    },
+    {
+      "title": "七、模拟、race detector和真实环境边界",
+      "words": 3000,
+      "focus": "确定性模拟枚举受控交错但不覆盖真实kernel/网络/部署；Go -race只检查执行到的内存竞争，不检验跨节点历史线性化；真实故障测试也只是有限版本/流量/时长样本。保存代码commit、环境、seed、故障脚本/有效证据、原始脱敏history、checker模型版本/结果和反例/未覆盖范围。固定OpenIM源码路径未实际运行不写验证通过。"
+    },
+    {
+      "title": "八、22题与有界验证报告",
+      "words": 3100,
+      "focus": "22题基础8/历史与故障8/证据评审6，答案覆盖nonoverlap/overlap、pending unknown、seq8反例、S2/S3/L区别、Porcupine模型、fault actual evidence、outbox同snapshot、eventual bounded deadline、race detector限度、OpenIM证据。交付三条历史和故障-证据矩阵，静态不运行Go/IM/DB/测试/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.11 分布式验证》，面向Go初学者，八节理论丰富、IM业务由浅入深，22题有反馈。虚构A发送m-9/c-a/seq9，B当前有权读，u-c非成员。当前S2 200 accepted_in_memory只进程内受理，未来S3 200 stored_in_teaching_db只是DB已知提交提议，不自动声明所有GET线性化；为课程额外声明纸上L合同：同一权威HistoryRead端点线性化。Hbad t1 Send invoke,t2 Send returns stored,t3 Read invoke,t4 Read returns seq8(无权限变化/撤回)，违反L；Hoverlap t1 Send invoke,t2 Read invoke,t3 Read returns8,t4 Send returns stored，可在线性化顺序中把读放前，不是反例；Hmono B先读9再读8若声明单调读违反。记录invoke/return、actor/call_id/endpoint/ID/version/所见seq/故障时间，超时未返回是unknown/pending，不能当失败。用顺序状态模型+有限并发history给Porcupine检查，checker只证明该历史相对模型，不证明全系统。故障注入隔离/丢响应/旧worker/迟到事件须观察确实作用到目标；模拟、Go -race与真实故障各有范围，race只找运行到的内存数据竞争。权威messages/outbox同事务检查要同snapshot；SearchIndex/Notify是派生，按明确deadline和ID/version对账而非要求线性化；B离线25h超过玩具broker24h从权威历史补拉。固定OpenIM send.go MsgToMQ与另Mongo消费两处只供源码阅读，没跑不能宣称验证通过。静态无Go/IM/DB/故障/站点运行。\n1. 一、先写待检承诺，不先注入故障: 虚构A发送m-9/c-a/seq9，B有权限读取。当前S2成功accepted_in_memory不承诺持久/线性化；未来S3 stored_in_teaching_db只提议本地DB提交，仍不自动承诺所有读线性化。另明确纸上L合同：同一权威HistoryRead端点线性化；派生SearchIndex/Notify可滞后另设修复期限。\n2. 二、调用/返回历史的最小字段: 为Send(m9)与HistoryRead(c-a)记录actor/call_id/target/request_id/message_id/version/调用与返回事件/结果/所见seq/端点/故障时间，不记私有正文。单一harness或同步关系界定跨客户端真实先后，节点本地墙钟可能偏差。无回应为unknown/pending，不强标失败。\n3. 三、三条纸上历史手判线性化: Hbad t1 Send invoke t2 Send returns S3 stored t3 B authoritative Read invoke t4 Read returns seq8，且B有权/无删除变更，违反显式L合同；Hoverlap t1 Send invoke t2 Read invoke t3 Read returns8 t4 Send returns stored，可把Read排在Send前，因此不违L；Hmono B先读9后读8，若声明同会话单调读则违反。区分S3合同本身并不含L。\n4. 四、有限状态模型与checker能证明什么: 线性化要求完成操作在调用返回区间取一个点且满足顺序规格；给toy state messages set/seq，Send唯一ID, Read返回maxseq，声明失败/超时如何建模。Porcupine接收sequential model+concurrent history，可产反例；checker正确只证明录入的有限历史对模型无反例/有反例，不证明所有执行。\n5. 五、控制故障并核对它真的发生: 隔离旧leader/主副本、丢DB Commit后的HTTP响应、让W1租约过期W2接管、延迟E9再处理E10、重放v1/editv2；每项标注注入开始结束、受影响链路/观察到的网络与存储事件。命令返回0并不证明分区实际覆盖服务路径；错误可能在注入前发生，需因果对齐。\n6. 六、不同承诺用不同检查器与收敛条件: SQL messages+outbox同事务可查同一快照的ID与意图，权限u-c非成员应404不能泄露；SearchIndex和Notify派生不要拿线性化读模型评估，定义观察窗口/截止时刻、稳定版本、最老年龄、对账ID差集。B离线25h超玩具broker24h仍从权威历史按权限补拉；设备收/读独立回执。若无期限只能说某次样本追上，不能证明永远最终。\n7. 七、模拟、race detector和真实环境边界: 确定性模拟枚举受控交错但不覆盖真实kernel/网络/部署；Go -race只检查执行到的内存竞争，不检验跨节点历史线性化；真实故障测试也只是有限版本/流量/时长样本。保存代码commit、环境、seed、故障脚本/有效证据、原始脱敏history、checker模型版本/结果和反例/未覆盖范围。固定OpenIM源码路径未实际运行不写验证通过。\n8. 八、22题与有界验证报告: 22题基础8/历史与故障8/证据评审6，答案覆盖nonoverlap/overlap、pending unknown、seq8反例、S2/S3/L区别、Porcupine模型、fault actual evidence、outbox同snapshot、eventual bounded deadline、race detector限度、OpenIM证据。交付三条历史和故障-证据矩阵，静态不运行Go/IM/DB/测试/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
