@@ -203,4 +203,4 @@ FIFO 按到达先后；本章优先队列按较小的 `(due,task_id)` 键先出�
 - [Go 官方 `container/heap` 文档](https://pkg.go.dev/container/heap)：最小堆接口、包级操作、`Init`、`Fix` 与示例。
 - [MIT 6.006：Heaps and Heap Sort](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-4-heaps-and-heap-sort/)：以优先队列动机进入堆与排序。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 02.08 把“谁与谁相连、哪项依赖哪项”表示成图，再进入 BFS、DFS 与环。离开本章前，应能手工恢复一次堆不变量，解释 `K` 如何影响 Top-K 成本，并指出**优先级排序、到期判断、执行结果和持久恢复**各由什么机制负责。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[02.08 图与依赖遍历](../../../src/docs/platform_engineering/curriculum/02_algorithms/08_graph_dependency_traversal.md)把“谁与谁相连、哪项依赖哪项”表示成图，再进入 BFS、DFS 与环。离开本章前，应能手工恢复一次堆不变量，解释 `K` 如何影响 Top-K 成本，并指出**优先级排序、到期判断、执行结果和持久恢复**各由什么机制负责。

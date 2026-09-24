@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_b9337ae973",
+  "page_id": "pg_92d25a49d6",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://algs4.cs.princeton.edu/41graph/",
+      "https://algs4.cs.princeton.edu/42digraph/",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-13-breadth-first-search-bfs/",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/pages/lecture-notes/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "71bcbd9e37637e65876dd85e4865e0577e0b7cdb4649f2b48b20da011bd8be37",
+  "original_characters": 29290,
+  "generation_request_sha256": "b673b8d7b5760387778af89632c7de5e7dad908408391da3d9518aadb10d093c",
+  "reviewed_sha256": "79bf30d2df7c3a706a11bc8bf7e761976c95e274a52c4720d830ef09abad5110",
+  "reviewed_characters": 7571,
+  "reviewed_chinese_characters": 3256,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/08_graph_dependency_traversal.md",
+  "course_sha256": "d5d38167fe0eb35c5738b9e8851298afb73cb0f7afdc0dba258aaad8727ba4ec"
+}

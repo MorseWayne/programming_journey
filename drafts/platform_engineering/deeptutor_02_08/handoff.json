@@ -1,0 +1,31 @@
+{
+  "chapter": "02.08",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced graph traversal lesson using fictional u-a through u-f relations and A through E task dependencies",
+  "prerequisites": [
+    "02.02 FIFO queue and stack",
+    "02.04 visited set",
+    "02.06 tree vocabulary",
+    "02.07 priority versus traversal distinction"
+  ],
+  "first_pass": [
+    "vertex, edge, direction, path and adjacency list",
+    "BFS queue, enqueue marking and unweighted hop distance",
+    "DFS recursion stack, visited set and some path"
+  ],
+  "second_pass": [
+    "connected components and isolated vertex",
+    "undirected non-parent edge versus directed gray back edge",
+    "DAG topological order and cycle counterexample",
+    "O(V+E) cost and static-snapshot assumptions",
+    "IM permission and execution boundaries"
+  ],
+  "not_yet_prerequisites": [
+    "02.09 weighted shortest path and state space",
+    "S5 reliable asynchronous execution and retry",
+    "S4 large-group running evidence"
+  ],
+  "next_chapter": "03.05 virtual memory on the S4 learning route",
+  "upstream_inspection": "No OpenIM implementation claim; Princeton and MIT primary materials support general graph traversal and DAG concepts.",
+  "shared_integration_pending": []
+}
