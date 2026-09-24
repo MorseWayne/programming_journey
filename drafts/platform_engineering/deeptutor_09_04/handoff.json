@@ -1,0 +1,12 @@
+{
+  "chapter": "09.04",
+  "stage": "S2",
+  "business_scope": "fictional u-a POST m-a to c-a through a future teaching HTTP handler; only isolated single-process memory acceptance, no running server, auth, persistence or delivery",
+  "prerequisites": ["09.01 trusted principal and acceptance boundary", "09.02 fixed HTTP status/body/size contract", "09.03 handler/app/domain/memory package responsibilities", "05.03 context cancellation"],
+  "first_pass": ["middleware outer-to-inner request and inner-to-outer return", "bounded request body and authentication short circuit", "r.Context propagation and derived timeout", "precommit versus postcommit cancellation"],
+  "second_pass": ["same-goroutine panic recovery limits", "ResponseWriter final status and partial body", "single error mapping point", "redacted request ID and staged timing evidence"],
+  "not_yet_prerequisites": ["11.01 business measurement foundations", "09.08 full input/output protection after SQL/HTML prerequisites", "09.07 real authentication and authorization", "S3 durable storage", "S5 delivery and retry"],
+  "next_chapter": "11.01 business outcomes and measurement before deeper observability and CI work",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

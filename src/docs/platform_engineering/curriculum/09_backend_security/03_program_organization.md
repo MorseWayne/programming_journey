@@ -250,4 +250,4 @@ HTTP 原始请求体解析边界；与领域正文 6 B 不同。</details>
 - [Go `log/slog`](https://pkg.go.dev/log/slog)、[Effective Go 的接口说明](https://go.dev/doc/effective_go#interfaces)：日志与小接口的标准库/官方阅读入口。
 - [09.01 用例合同](./01_requirements_boundaries.md)与[09.02 HTTP 合同](./02_http_api_contract.md)是本章所有目录和错误映射的课程依据。
 
-下一章 09.04 将把请求进入、认证/授权、应用调用、取消和响应提交放进同一条处理链；进入前应能从 handler 追到内存适配器，再带着错误身份回到唯一的 HTTP 映射点。
+下一章[09.04 请求处理链](./04_request_pipeline.md)将把请求进入、认证/授权、应用调用、取消和响应提交放进同一条处理链；进入前应能从 handler 追到内存适配器，再带着错误身份回到唯一的 HTTP 映射点。

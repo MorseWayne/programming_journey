@@ -1,0 +1,75 @@
+{
+  "code": "09.04",
+  "title": "请求处理链：中间件、取消与响应提交",
+  "chapter_id": "ch_request_pipeline",
+  "summary": "承接09.01–09.03用例、接口与包边界，面向Go初学者用虚构IM POST/GET静态流程解释net/http中间件嵌套顺序、受限读取、可信主体、r.Context取消/WithTimeout、panic恢复局限、ResponseWriter最终状态提交、脱敏日志/分段计时及响应丢失后的未知结果。无运行服务。",
+  "objectives": [
+    "按进入/返回顺序画出中间件嵌套调用栈",
+    "把限量读取、身份、应用服务和错误映射放在合适阶段",
+    "传递r.Context并理解断连/handler返回后的取消",
+    "区别超时停止请求与已完成的内存提交",
+    "说明panic恢复只覆盖同goroutine和提交前响应",
+    "在Write/WriteHeader前准备状态和小JSON表示",
+    "设计请求关联标识与脱敏分段观测",
+    "完成POST成功/拒绝/取消/响应丢失的完整时间线"
+  ],
+  "sources": [
+    "https://pkg.go.dev/net/http#Handler",
+    "https://pkg.go.dev/net/http#Request.Context",
+    "https://pkg.go.dev/net/http#ResponseWriter",
+    "https://pkg.go.dev/net/http#MaxBytesReader",
+    "https://pkg.go.dev/context",
+    "https://pkg.go.dev/log/slog"
+  ],
+  "sections": [
+    {
+      "title": "一、从一条POST请求画出完整调用链",
+      "words": 2200,
+      "focus": "09.02 POST /v1/conversations/c-a/messages 200 accepted_in_memory, body4096B/6B, 09.03包边界；u-a/u-b/c-a/m-a虚构，当前本地CLI无服务。图client→outer middleware→handler→app→memorystore→response，标可信principal来源和授权。解释调用栈进入/返回，不把HTTP响应视为设备送达。"
+    },
+    {
+      "title": "二、中间件是包裹Handler的函数",
+      "words": 2400,
+      "focus": "net/http Handler + middleware func(next http.Handler) http.Handler，示意requestID(recover(limit(auth(api))))；请求进入外→内，响应内→外，授权拒绝短路，limit先包装Body后内层读取，认证S3未实现、S2只有私有stub。不要在本仓库搭服务。给一段完整简单middleware函数静态代码与顺序表。"
+    },
+    {
+      "title": "三、受限输入、可信主体与错误优先级",
+      "words": 2500,
+      "focus": "MaxBytesReader 4096B, then JSON/content-type, path/query, auth principal trusted, object-level permission in app，6B body domain；不能相信sender_id，固定实验主体不可公开；错误优先级/隐私取舍，401 challenge later, nonmember404, member forbidden403, duplicate409；一旦拒绝不得进入内存commit。HTTP body server closes, handler still reads and checks.业界中间件顺序非唯一但必须自洽。"
+    },
+    {
+      "title": "四、r.Context、期限与内存提交点",
+      "words": 2600,
+      "focus": "r.Context canceled on client disconnect/request canceled/ServeHTTP return per Go docs，pass to app/store, WithTimeout(parent, e.g.300ms), defer cancel; cooperative only, handler may finish after timeout if ignored，ctx cancellation not rollback committed map. Before commit rejection state unchanged, after commit response lost unknown; do not launch background using request context after handler return. time-budget stages static no actual measurements."
+    },
+    {
+      "title": "五、panic恢复不是普通错误处理",
+      "words": 2500,
+      "focus": "defer recover in same goroutine around next.ServeHTTP; routine errors returned/mapped not panic; panic in separately started goroutine not caught by handler defer; if response already partly written cannot replace final200 with full500; only precommit can produce error response, after log partial/close according protocol. Recovery may leave resources/transaction ambiguous; no claim full rollback. Go net/http server own behavior separate."
+    },
+    {
+      "title": "六、ResponseWriter与一次最终响应",
+      "words": 2400,
+      "focus": "WriteHeader final status, first Write implicit200, set Header before write; for small JSON first marshal then decide status/headers and write once, handle encoding failure before commit, network write can partially fail after commit and client result unknown; do not write two JSON objects or status after partial. Error map single edge from app/dom errors to09.02 codes, 200/400/401/403/404/409/413/415/406/500. Streaming separate contract."
+    },
+    {
+      "title": "七、日志、关联与分段时间的证据",
+      "words": 2300,
+      "focus": "request ID generated/trusted not blindly client-supplied, start/end, auth/decode/app/store/encode/write stages, status/error code/duration/count; redact tokens/raw body/real user data，slog boundary; log line/trace cannot prove delivery; response after write status tracking wrappers can lose optional interfaces (Flusher/Hijacker) important for WebSocket，don’t implement naive wrapper. sample sanitized record static no service."
+    },
+    {
+      "title": "八、完整请求轨迹与22题反馈",
+      "words": 2900,
+      "focus": "paper time lines: valid u-a POST m-a, nonmember, rawbody>4096, duplicate, cancel precommit, commit then disconnect, panic before/after response; each package/HTTP/innerstate/known/unknown. 22 exercises gradual middleware order, ctx, recovery, WriteHeader, privacy, business. No Go/test/network/site build. official docs refs, next09.08 input/output protection or 10.09 CI according learning roadmap; S2 needs 09.08,11.01,10.09 next."
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.04 请求处理链》。面向Go初学者，承接09.01–09.03的虚构IM用例、HTTP合同和包边界；用同一条POST m-a请求从中间件进入、限量读入/身份、应用内存提交、r.Context取消、panic边界、HTTP最终响应、日志分段证据层层讲清。当前课程无运行服务，只写静态教材，不运行Go/网络/测试/站点；不要把取消或响应丢失说成自动回滚。\n1. 一、从一条POST请求画出完整调用链：09.02 POST /v1/conversations/c-a/messages 200 accepted_in_memory, body4096B/6B, 09.03包边界；u-a/u-b/c-a/m-a虚构，当前本地CLI无服务。图client→outer middleware→handler→app→memorystore→response，标可信principal来源和授权。解释调用栈进入/返回，不把HTTP响应视为设备送达。\n2. 二、中间件是包裹Handler的函数：net/http Handler + middleware func(next http.Handler) http.Handler，示意requestID(recover(limit(auth(api))))；请求进入外→内，响应内→外，授权拒绝短路，limit先包装Body后内层读取，认证S3未实现、S2只有私有stub。不要在本仓库搭服务。给一段完整简单middleware函数静态代码与顺序表。\n3. 三、受限输入、可信主体与错误优先级：MaxBytesReader 4096B, then JSON/content-type, path/query, auth principal trusted, object-level permission in app，6B body domain；不能相信sender_id，固定实验主体不可公开；错误优先级/隐私取舍，401 challenge later, nonmember404, member forbidden403, duplicate409；一旦拒绝不得进入内存commit。HTTP body server closes, handler still reads and checks.业界中间件顺序非唯一但必须自洽。\n4. 四、r.Context、期限与内存提交点：r.Context canceled on client disconnect/request canceled/ServeHTTP return per Go docs，pass to app/store, WithTimeout(parent, e.g.300ms), defer cancel; cooperative only, handler may finish after timeout if ignored，ctx cancellation not rollback committed map. Before commit rejection state unchanged, after commit response lost unknown; do not launch background using request context after handler return. time-budget stages static no actual measurements.\n5. 五、panic恢复不是普通错误处理：defer recover in same goroutine around next.ServeHTTP; routine errors returned/mapped not panic; panic in separately started goroutine not caught by handler defer; if response already partly written cannot replace final200 with full500; only precommit can produce error response, after log partial/close according protocol. Recovery may leave resources/transaction ambiguous; no claim full rollback. Go net/http server own behavior separate.\n6. 六、ResponseWriter与一次最终响应：WriteHeader final status, first Write implicit200, set Header before write; for small JSON first marshal then decide status/headers and write once, handle encoding failure before commit, network write can partially fail after commit and client result unknown; do not write two JSON objects or status after partial. Error map single edge from app/dom errors to09.02 codes, 200/400/401/403/404/409/413/415/406/500. Streaming separate contract.\n7. 七、日志、关联与分段时间的证据：request ID generated/trusted not blindly client-supplied, start/end, auth/decode/app/store/encode/write stages, status/error code/duration/count; redact tokens/raw body/real user data，slog boundary; log line/trace cannot prove delivery; response after write status tracking wrappers can lose optional interfaces (Flusher/Hijacker) important for WebSocket，don’t implement naive wrapper. sample sanitized record static no service.\n8. 八、完整请求轨迹与22题反馈：paper time lines: valid u-a POST m-a, nonmember, rawbody>4096, duplicate, cancel precommit, commit then disconnect, panic before/after response; each package/HTTP/innerstate/known/unknown. 22 exercises gradual middleware order, ctx, recovery, WriteHeader, privacy, business. No Go/test/network/site build. official docs refs, next09.08 input/output protection or 10.09 CI according learning roadmap; S2 needs 09.08,11.01,10.09 next.",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f808b51dde",
+  "page_id": "pg_c8fefd187a",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "d4ff8dedb6f5b92ac1ce825e478b9367fae0656784098e072846bb8fbda69f5f",
+  "original_characters": 37075,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/net/http#Handler",
+      "https://pkg.go.dev/net/http#Request.Context",
+      "https://pkg.go.dev/net/http#ResponseWriter",
+      "https://pkg.go.dev/net/http#MaxBytesReader",
+      "https://pkg.go.dev/context",
+      "https://pkg.go.dev/log/slog"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "48078f0b21f901d03fbf73ae869406ae88224abdd56a64fbd920096c2cf6294c",
+  "reviewed_sha256": "e9fa55d267e51ad2ceea940334e33ead7a99cb9197d19c35d515fbfbfeae5004",
+  "reviewed_characters": 9861,
+  "reviewed_chinese_characters": 4075,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/04_request_pipeline.md",
+  "course_sha256": "1c049e5d12830d81f9c17c2e8b67fb5078668033a22614270453784be9caa978"
+}
