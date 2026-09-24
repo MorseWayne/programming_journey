@@ -1,0 +1,41 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_4235d3bc0e",
+  "page_id": "pg_f968a3aeb0",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/database/",
+      "https://go.dev/doc/database/open-handle",
+      "https://go.dev/doc/database/querying",
+      "https://go.dev/doc/database/change-data",
+      "https://go.dev/doc/database/sql-injection",
+      "https://go.dev/doc/database/cancel-operations",
+      "https://go.dev/doc/database/manage-connections",
+      "https://pkg.go.dev/database/sql",
+      "https://www.mongodb.com/docs/drivers/go/current/connect/connection-options/connection-pools/",
+      "https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/",
+      "https://www.mongodb.com/docs/drivers/go/current/crud/query/cursor/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "615095dbc1349459fc33ff5b3a8c9ec03c33367b61bdcae43613dcbe7814f75f",
+  "original_characters": 38357,
+  "generation_request_sha256": "46b4ddb09dda2b0e0cc323d6b023c00aa9617e3db2f9b4a35202446394021d64",
+  "reviewed_sha256": "1ba05622e9a00503c5247f63674bbd7e03c34cd796f908dabd51dc7072ccd134",
+  "reviewed_characters": 11298,
+  "reviewed_chinese_characters": 3766,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/10_go_data_access.md",
+  "course_sha256": "7a763469acce6c240249e2b3c3bc7cf6f218b69af97cfcab3594f69bc0dfa8de"
+}

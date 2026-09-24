@@ -1,0 +1,12 @@
+{
+  "chapter": "06.10",
+  "stage": "S3",
+  "business_scope": "fictional u-a request to read older c-a history with PostgreSQL teaching SQL and MongoDB document-driver comparison; static examples only, no running database, durable confirmation, device delivery or OpenIM implementation claim",
+  "prerequisites": ["06.01 four-table keys and NULL", "06.02 SQL filtering, current-member access and seq cursor", "06.03 nullable historical display-name snapshot", "09.01 trusted requester identity"],
+  "first_pass": ["database/sql versus concrete driver", "sql.Open versus PingContext and reusable DB pool", "QueryRowContext Scan and ErrNoRows", "QueryContext Rows Next/Scan/Err/Close", "parameter values versus SQL structure"],
+  "second_pass": ["sql.NullString and old-row unknown", "Context and write-result uncertainty", "ExecContext, RowsAffected and PostgreSQL RETURNING", "Tx and batch responsibility before isolation theory", "MongoDB Client and Cursor lifecycle"],
+  "not_yet_prerequisites": ["06.07 transaction isolation and concurrent anomalies", "06.09 crash recovery and durability", "06.05–06.06 index and physical query plan", "09.08 full input/output defense and injection", "S5 durable and device confirmation"],
+  "next_chapter": "06.07 transactions and concurrent anomalies on membership checks and message writes",
+  "upstream_inspection": "No OpenIM storage implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

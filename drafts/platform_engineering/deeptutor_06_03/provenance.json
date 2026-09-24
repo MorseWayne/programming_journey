@@ -29,9 +29,9 @@
   "original_sha256": "127dd9ac932b6560e11193e5c57cd3a0a65e014386bf28e7726ff61ac63913a1",
   "original_characters": 34076,
   "generation_request_sha256": "80184d26a54b6110973211ab0da844242be6a4212be7f11b4738503a7f4df0ae",
-  "reviewed_sha256": "766748b6932909e6473f02698e9d7466bf7f1627f090655dcc06450aed7fc563",
-  "reviewed_characters": 8842,
-  "reviewed_chinese_characters": 4326,
+  "reviewed_sha256": "db3a8c97e577bd0959af23eaba28588cf817daef74419d0c52e9a6d1115d9796",
+  "reviewed_characters": 8924,
+  "reviewed_chinese_characters": 4323,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/03_schema_evolution.md",
-  "course_sha256": "0b913ebc6e3dd56f3d775a04e0eea49ebacf2c58adfc79a50507867c811247bf"
+  "course_sha256": "b7780384f4942f2813f9ce408bb4f7f7f9f17883366da051f2f3b6d3ea3de632"
 }

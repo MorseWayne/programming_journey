@@ -210,4 +210,4 @@ ADD COLUMN sender_display_name_at_send TEXT;
 - [PostgreSQL：约束](https://www.postgresql.org/docs/current/ddl-constraints.html)与[修改表结构](https://www.postgresql.org/docs/current/ddl-alter.html)：主外键、CHECK、加列和收紧约束的边界。
 - [MongoDB：识别访问模式](https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/identify-workload/)、[嵌入](https://www.mongodb.com/docs/manual/data-modeling/embedding/)、[引用](https://www.mongodb.com/docs/manual/data-modeling/referencing/)与[数据一致性](https://www.mongodb.com/docs/manual/data-modeling/data-consistency/)：字段归属、冗余和更新取舍。
 
-按[学习路线](../learning_path.md)，下一步先补 06.10 的 Go 数据访问入口，再回到 06.07 的事务语义；索引、页与执行计划在 S4 深化。离开本章前，必须能解释**哪份数据是权威、哪些旧事实无法恢复、两版代码并存时怎样兼容**。
+按[学习路线](../learning_path.md)，下一步先读[06.10 Go 数据访问](./10_go_data_access.md)，再回到 06.07 的事务语义；索引、页与执行计划在 S4 深化。离开本章前，必须能解释**哪份数据是权威、哪些旧事实无法恢复、两版代码并存时怎样兼容**。

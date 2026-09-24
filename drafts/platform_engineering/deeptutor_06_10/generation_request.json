@@ -1,0 +1,79 @@
+{
+  "code": "06.10",
+  "title": "Go 数据访问：从历史查询到驱动、游标与资源责任",
+  "chapter_id": "ch_go_data_access",
+  "summary": "面向Go初学者承接06.01–06.03的虚构IM数据模型和SQL，通过一条c-a历史查询讲database/sql句柄与驱动、池、参数、QueryRow/Rows扫描、NULL、context与资源关闭，再对照MongoDB Go驱动的Client/Cursor；静态课程，不运行数据库。",
+  "objectives": [
+    "解释database/sql与具体驱动的职责",
+    "区分*sql.DB池句柄与单个连接",
+    "用参数化查询和受信身份读取c-a历史",
+    "处理QueryRow的ErrNoRows及多行Rows的Close/Err",
+    "解释SQL NULL扫描与显式投影",
+    "给更新/插入选择ExecContext或RETURNING并核对结果",
+    "传播Context且标出取消和未知写入边界",
+    "对照MongoDB Client/Collection/Cursor生命周期和有界查询"
+  ],
+  "sources": [
+    "https://go.dev/doc/database/",
+    "https://go.dev/doc/database/open-handle",
+    "https://go.dev/doc/database/querying",
+    "https://go.dev/doc/database/change-data",
+    "https://go.dev/doc/database/sql-injection",
+    "https://go.dev/doc/database/cancel-operations",
+    "https://go.dev/doc/database/manage-connections",
+    "https://pkg.go.dev/database/sql",
+    "https://www.mongodb.com/docs/drivers/go/current/crud/query/cursor/",
+    "https://www.mongodb.com/docs/drivers/go/current/connect/connection-options/connection-pools/"
+  ],
+  "sections": [
+    {
+      "title": "一、从u-a读c-a历史的问题进入Go数据访问",
+      "words": 2400,
+      "focus": "承接06.01四表/06.02参数SQL/06.03模式，当前只有静态课程无DB服务。区分应用服务、数据访问接口、驱动、DB服务器和持久确认；受信u-a身份来自上层认证，c-a是查询参数，不因扫描到行就已授权。先用纸上请求画调用路径和资源所有者。"
+    },
+    {
+      "title": "二、database/sql、驱动与连接池的入门",
+      "words": 2700,
+      "focus": "Go标准库database/sql提供通用API，具体数据库驱动另装，sql.Open创建DB句柄通常不证明网络连接成功，PingContext可主动验证。*sql.DB代表池/并发安全，应按应用生命周期复用而非每请求创建关闭。连接数上限、等待、空闲参数只给语义，调优需测量。连接串与凭据不硬编码或写日志。"
+    },
+    {
+      "title": "三、QueryRowContext、QueryContext与结果扫描",
+      "words": 2900,
+      "focus": "u-a查询c-a先查当前成员授权，再查询消息；QueryRowContext错误在Scan返回，sql.ErrNoRows独立于权限拒绝/数据库错。多行QueryContext返回Rows，defer Close, Next/Scan/Err顺序、明确列序，避免SELECT*; NULL用sql.NullString/NullTime且Valid。示例静态Go函数或伪代码，不运行。"
+    },
+    {
+      "title": "四、参数、写入与影响行数",
+      "words": 2500,
+      "focus": "Postgres $1 $2绑定值，不能fmt.Sprintf用户值；标识符/ORDER BY不能随意参数化需白名单。ExecContext用于不返回行的UPDATE，RowsAffected若driver支持才核对；QueryRowContext+RETURNING适用于Postgres返回message_id，LastInsertId非跨驱动保证。写入前授权、约束与SQL错误分类，错误不泄露正文/凭据；不以Exec成功推导设备送达。"
+    },
+    {
+      "title": "五、Context、超时、连接等待与关闭责任",
+      "words": 2600,
+      "focus": "r.Context()到数据库操作/取消，WithTimeout defer cancel，超时可发生在池等待、执行、扫描，实际取消取决驱动。QueryContext获得Rows后务必Close和Err，慢消费者占用资源；DB.Close只在应用退出且不逐请求。纸上故障表连接等待、取消、扫描失败、部分结果、写响应失败的已知未知；超时不一定证明DB没有写。"
+    },
+    {
+      "title": "六、事务与批量边界的第一眼",
+      "words": 2400,
+      "focus": "Tx BeginTx/Commit/Rollback的职责和同一Tx方法，不能tx外再db.Exec混用，具体隔离/并发异常06.07。多条消息批量写入需定义部分成功/原子性/大小/顺序；不要默认Exec批量整体原子。纸上成员权限检查后写消息的TOCTOU问题，事务并发规则后置；教学不执行。"
+    },
+    {
+      "title": "七、MongoDB Go驱动的对照路径",
+      "words": 2600,
+      "focus": "官方MongoDB Go current driver，Client跨请求复用含池，Collection Find返回Cursor，Next Decode Err Close与文档投影/limit/sort，ctx传播；Cursor.All可能把大量文档载入内存，历史用有界迭代。过滤conversation_id与seq游标、成员授权由业务层先核，引用不自动FK。InsertOne/BulkWrite错误和写入确认配置不同，不能套用SQL语义；具体代码版本需按官方文档。"
+    },
+    {
+      "title": "八、双路径资源清单与22道练习",
+      "words": 2900,
+      "focus": "为虚构c-a历史写SQL与Mongo对照的纸上访问契约：受信subject, validated conv/cursor/limit, current membership, fetch, scan/decode, close, classify errors, emit only allowed fields; 22题从DB句柄/driver/Pool/QueryRow/Rows/NULL/参数到取消/Tx/Mongo cursor and business confirmation. 交付资源所有者表和故障推演。下一06.07事务，06.05/06.06在S4；静态不运行Go/DB/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《06.10 Go 数据访问》，面向Go初学者，承接06.01–06.03虚构IM会话历史，从业务查询讲清database/sql与驱动、连接池、参数、单行/多行查询、SQL NULL、context、资源关闭，再对照MongoDB Go驱动Cursor。八节完整、22题附反馈，明确受信身份与持久/设备确认边界。静态教材，不运行Go/数据库/站点，不宣称OpenIM实现事实。\n1. 一、从u-a读c-a历史的问题进入Go数据访问：承接06.01四表/06.02参数SQL/06.03模式，当前只有静态课程无DB服务。区分应用服务、数据访问接口、驱动、DB服务器和持久确认；受信u-a身份来自上层认证，c-a是查询参数，不因扫描到行就已授权。先用纸上请求画调用路径和资源所有者。\n2. 二、database/sql、驱动与连接池的入门：Go标准库database/sql提供通用API，具体数据库驱动另装，sql.Open创建DB句柄通常不证明网络连接成功，PingContext可主动验证。*sql.DB代表池/并发安全，应按应用生命周期复用而非每请求创建关闭。连接数上限、等待、空闲参数只给语义，调优需测量。连接串与凭据不硬编码或写日志。\n3. 三、QueryRowContext、QueryContext与结果扫描：u-a查询c-a先查当前成员授权，再查询消息；QueryRowContext错误在Scan返回，sql.ErrNoRows独立于权限拒绝/数据库错。多行QueryContext返回Rows，defer Close, Next/Scan/Err顺序、明确列序，避免SELECT*; NULL用sql.NullString/NullTime且Valid。示例静态Go函数或伪代码，不运行。\n4. 四、参数、写入与影响行数：Postgres $1 $2绑定值，不能fmt.Sprintf用户值；标识符/ORDER BY不能随意参数化需白名单。ExecContext用于不返回行的UPDATE，RowsAffected若driver支持才核对；QueryRowContext+RETURNING适用于Postgres返回message_id，LastInsertId非跨驱动保证。写入前授权、约束与SQL错误分类，错误不泄露正文/凭据；不以Exec成功推导设备送达。\n5. 五、Context、超时、连接等待与关闭责任：r.Context()到数据库操作/取消，WithTimeout defer cancel，超时可发生在池等待、执行、扫描，实际取消取决驱动。QueryContext获得Rows后务必Close和Err，慢消费者占用资源；DB.Close只在应用退出且不逐请求。纸上故障表连接等待、取消、扫描失败、部分结果、写响应失败的已知未知；超时不一定证明DB没有写。\n6. 六、事务与批量边界的第一眼：Tx BeginTx/Commit/Rollback的职责和同一Tx方法，不能tx外再db.Exec混用，具体隔离/并发异常06.07。多条消息批量写入需定义部分成功/原子性/大小/顺序；不要默认Exec批量整体原子。纸上成员权限检查后写消息的TOCTOU问题，事务并发规则后置；教学不执行。\n7. 七、MongoDB Go驱动的对照路径：官方MongoDB Go current driver，Client跨请求复用含池，Collection Find返回Cursor，Next Decode Err Close与文档投影/limit/sort，ctx传播；Cursor.All可能把大量文档载入内存，历史用有界迭代。过滤conversation_id与seq游标、成员授权由业务层先核，引用不自动FK。InsertOne/BulkWrite错误和写入确认配置不同，不能套用SQL语义；具体代码版本需按官方文档。\n8. 八、双路径资源清单与22道练习：为虚构c-a历史写SQL与Mongo对照的纸上访问契约：受信subject, validated conv/cursor/limit, current membership, fetch, scan/decode, close, classify errors, emit only allowed fields; 22题从DB句柄/driver/Pool/QueryRow/Rows/NULL/参数到取消/Tx/Mongo cursor and business confirmation. 交付资源所有者表和故障推演。下一06.07事务，06.05/06.06在S4；静态不运行Go/DB/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
