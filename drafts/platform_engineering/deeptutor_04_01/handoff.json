@@ -1,0 +1,12 @@
+{
+  "chapter": "04.01",
+  "stage": "S2",
+  "business_scope": "fictional u-a/u-b/c-a/m-a communication path for a future teaching IM service; current repository course project remains local CLI, no live network or delivery evidence",
+  "prerequisites": ["03.01 bit/byte units", "03.02 process and I/O boundary", "03.04 waiting and timeline intuition", "01.12 local CLI scope"],
+  "first_pass": ["client/server roles and endpoints", "application protocol syntax, semantics and timing", "application message versus encoded bytes", "application/transport/network/link layers"],
+  "second_pass": ["encapsulation and TCP byte stream message boundary", "A-to-service-to-B confirmation points", "L/R and d/v with 22.6 ms single-hop model", "queue, timeout and business evidence limits"],
+  "not_yet_prerequisites": ["04.02 IP, port, DNS and routing entry", "04.03 HTTP/WebSocket", "04.04 reliable transport", "S3 authentication and authorization", "S5 delivery and read semantics"],
+  "next_chapter": "04.02 addresses, names and routing entry: distinguish DNS, port, socket and application 404",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

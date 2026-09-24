@@ -28,9 +28,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "632e9949411447b21399843023552123e05ff5fd17a188a47707b399938e9f09",
-  "reviewed_sha256": "508cdd5ab4027b4071ad267aff82409e3066a3716578a5d2b51bf9d7633e7057",
-  "reviewed_characters": 11049,
-  "reviewed_chinese_characters": 5588,
+  "reviewed_sha256": "ec240683310f565ae2bc70c2a31d1bde42219f582be45b402e49aee6edc1f03b",
+  "reviewed_characters": 11148,
+  "reviewed_chinese_characters": 5585,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/04_cpu_scheduling.md",
-  "course_sha256": "b5446a76e3d35ad4df40feca383764a35e73f1f32bb55684a9def906a317bfaf"
+  "course_sha256": "221dc4613bc9f28b63f5628f15cbaf8a444618e0034a5d669623ee90523f0734"
 }

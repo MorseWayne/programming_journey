@@ -290,4 +290,4 @@ t=0..2 与 t=4..6，共 4 ms。</details>
 - [Linux 调度设计文档](https://www.kernel.org/doc/html/latest/scheduler/sched-design-CFS.html)：提醒读者实际 Linux 策略与纸上 FCFS/RR 模型不同，具体实现需按使用的内核版本核对。
 - [Go `runtime.GOMAXPROCS`](https://pkg.go.dev/runtime#GOMAXPROCS)：Go 执行并行度与线程数量、连接数量的边界。
 
-下一阶段沿[学习路线](../learning_path.md)进入 04 卷的通信与网络，再在 05 卷深入 Go 调度和同步；03.05–03.06 的虚拟内存与分配留到 S4 回访。完成本章前，请能解释一个“CPU 低但消息慢”的可能路径，并明确还缺哪项观察才能判断原因。
+下一章先读[04.01 应用通信与分层](../04_networks/01_application_communication_layers.md)，再沿[学习路线](../learning_path.md)进入网络与 Go 并发；03.05–03.06 的虚拟内存与分配留到 S4 回访。完成本章前，请能解释一个“CPU 低但消息慢”的可能路径，并明确还缺哪项观察才能判断原因。

@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_070e697ae8",
+  "page_id": "pg_4ad17f9299",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "cf6cc93158f934a45cd35deb76b4ccdcda6710ffa6429184f18d971e92c1407a",
+  "original_characters": 32830,
+  "code_execution": false,
+  "network_experiments": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://gaia.cs.umass.edu/kurose_ross/online_lectures.htm",
+      "https://gaia.cs.umass.edu/kurose_ross/knowledgechecks/problem.php?c=1&s=4",
+      "https://www.rfc-editor.org/rfc/rfc9293",
+      "https://pkg.go.dev/net"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "6b897606dc1f262fd5c3c449614f57f09e60058be7cde8dfe2cc251d3a7228fa",
+  "reviewed_sha256": "8b39a09d1d4ef990de94e0ed96f69cbd9c1553151a40fc97ea0d4b895091c498",
+  "reviewed_characters": 9814,
+  "reviewed_chinese_characters": 5142,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/01_application_communication_layers.md",
+  "course_sha256": "e4206b840e95a74ab99d807cbe9120685fce04f9d253a0500678c6dda0c9c890"
+}

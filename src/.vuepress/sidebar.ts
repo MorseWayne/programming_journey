@@ -185,6 +185,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/04_networks/",
+            "curriculum/04_networks/01_application_communication_layers",
             "curriculum/04_networks/core"
           ]
         },
