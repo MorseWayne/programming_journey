@@ -1,0 +1,30 @@
+{
+  "chapter": "07.01",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced state-role and access-pattern lesson using fictional c-a history, preview and presence",
+  "prerequisites": [
+    "06.12 S2 versus proposed S3 IM database business contract",
+    "08.01–08.04 partial failure, time, replication and consistency",
+    "06.07–06.08 current membership authorization boundary"
+  ],
+  "first_pass": [
+    "authority, derived and ephemeral as business roles",
+    "history, members, preview, presence and two different counter roles",
+    "loss and rebuild source for each state"
+  ],
+  "second_pass": [
+    "access keys, read/write pattern, locality and hot keys",
+    "seven hits and three misses in ten preview reads; stale seq8 despite hit",
+    "TTL expiration, explicit invalidation, memory eviction and outage",
+    "cache restart with permission and presence safe degradation"
+  ],
+  "not_yet_prerequisites": [
+    "07.02 Redis data model",
+    "07.03 cache-aside update races",
+    "07.04 overload and hot keys",
+    "real cache access measurements by the learner"
+  ],
+  "next_chapter": "07.02 Redis data model",
+  "upstream_inspection": "No OpenIM implementation claim; Redis and PostgreSQL primary documentation supports only their stated mechanisms.",
+  "shared_integration_pending": []
+}

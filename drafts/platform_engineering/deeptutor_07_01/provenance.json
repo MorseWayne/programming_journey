@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_bd0a4e5f57",
+  "page_id": "pg_a9bce9ae15",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://redis.io/docs/latest/develop/reference/eviction/",
+      "https://redis.io/docs/latest/commands/expire/",
+      "https://redis.io/docs/latest/develop/data-types/",
+      "https://www.postgresql.org/docs/current/wal-intro.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "8adaf028387e397ae316e804f00f5b397b355ca2f1ae5a029430fafe452f2d26",
+  "original_characters": 28699,
+  "generation_request_sha256": "10a2ab88a72cbdc66d6ff1ee67746ba12c5a9ebf6c87f228de92d46eab336020",
+  "reviewed_sha256": "e239f24d4ebf468c3b06f043f6f93f9ab1a513a7b12dba65d6c7bb65454ba682",
+  "reviewed_characters": 9070,
+  "reviewed_chinese_characters": 4437,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/01_access_state_roles.md",
+  "course_sha256": "0ad847744dd23f123b23ad06547b8c12a3a03f9919f7e9ba5bd0facc6441bf19"
+}

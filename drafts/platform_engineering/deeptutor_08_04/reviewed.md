@@ -184,4 +184,4 @@ A 写的响应先于 C 读的调用；线性化须保留这段真实时间先后
 
 能不看答案判定 A 写 9 后读 8、先见 9 后见 8、B 通知后读旧、独立 C 跨真实时间读旧分别与哪一份**已声明**合同冲突，并说明事务隔离与副本观察的区别，才算完成第一轮。第二轮在学习者隔离环境保存操作调用/响应、路由、水位和原始读取结果，本章没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，08.01–08.04 已建立第七卷所需的部分失败、时间、复制与一致性前置；下一步进入 07.01「访问模式与状态角色」，再逐步学习缓存和消息队列。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，08.01–08.04 已建立第七卷所需的部分失败、时间、复制与一致性前置；下一步进入[07.01 访问模式与状态角色](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/01_access_state_roles.md)，再逐步学习缓存和消息队列。

@@ -1,0 +1,72 @@
+{
+  "code": "07.01",
+  "title": "访问模式与状态角色：哪些数据可以丢",
+  "chapter_id": "ch_access_state_roles",
+  "summary": "面向Go初学者，以IM历史、成员权限、预览、在线状态和计数区分权威/派生/临时状态，推导访问模式、命中率、失效和重建来源。",
+  "objectives": [
+    "按业务合同判定状态权威/派生/临时角色",
+    "区分S2易失内存受理与S3提议的持久权威",
+    "识别conversation_counters为权威而非可丢计数",
+    "为历史/预览/在线/限流列访问模式",
+    "手算10次预览读7hit3miss及旧值风险",
+    "区分TTL过期、失效、逐出和故障",
+    "给出缓存重启与权限陈旧的恢复策略"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/develop/reference/eviction/",
+    "https://redis.io/docs/latest/commands/expire/",
+    "https://redis.io/docs/latest/develop/data-types/",
+    "https://www.postgresql.org/docs/current/wal-intro.html"
+  ],
+  "sections": [
+    {
+      "title": "一、先辨四种IM状态的业务责任",
+      "words": 2600,
+      "focus": "承接06.12与08.01–08.04。S2当前v1消息内存受理并不持久；未来S3 v2教学DB提交时消息历史为权威。虚构c-a seq1..9 m-9，消息历史、当前members权限、会话预览、在线连接/心跳、临时限流计数；逐个问丢失/重建/陈旧。"
+    },
+    {
+      "title": "二、权威、派生与临时是角色而非产品名",
+      "words": 3000,
+      "focus": "权威决定业务事实：S3消息行、members当前资格、06.12 conversation_counters.next_seq是事务序号权威扩展；派生预览/未读提示可从消息+读水位重算但必须有完整输入；临时在线presence/速率计数按明确降级政策可失，在线状态需新连接/心跳恢复，不从历史推断。Redis也可持权威若专门设计，角色由合同非技术标签决定。"
+    },
+    {
+      "title": "三、从访问模式判断候选缓存对象",
+      "words": 3000,
+      "focus": "读取历史按conversation_id+seq范围，message_id点查，首页预览按用户会话列表，在线presence按user/device，限流按key+窗口；写入率、读写比、热点/工作集、生命周期、最大大小与权限。先测再选结构，避免单纯缓存一切。"
+    },
+    {
+      "title": "四、局部性与命中率纸上算",
+      "words": 2800,
+      "focus": "玩具10次会话预览读取7hit3miss=70% hit，简单cache-aside最多3次回源假设无并发/权限额外查；缓存旧预览seq8而权威seq9，hit并非新鲜/正确。命中率分母和每类请求/尾延迟、stale率、回源成本同看。"
+    },
+    {
+      "title": "五、TTL、失效与被逐出不是同一事",
+      "words": 2800,
+      "focus": "TTL时效到/主动invalidate/内存maxmemory eviction/服务宕机四种原因；miss不等于权威不存在，TTL也不证明数据新鲜。Redis EXPIRE和eviction官方文档只支撑机制；07.03再细cache-aside迟到回填。"
+    },
+    {
+      "title": "六、在线与权限为什么要更谨慎",
+      "words": 2900,
+      "focus": "在线状态可按最近心跳和连接生命周期给近似，不是用户确实在屏前；缓存故障时返回未知或降级，不把无key等同真实离线。members权限必须看权威可验证新状态，退群后旧缓存不得放行发送或泄露历史；缓存许可需版本/失效合同，下一07.03。"
+    },
+    {
+      "title": "七、丢失与重建演练表",
+      "words": 3000,
+      "focus": "假设缓存重启：S3消息历史仍权威可读；预览重算，旧读窗口可解释；presence需新心跳/连接恢复，状态unknown；临时限流计数可重置只在风险合同允许，业务配额/next_seq不能重置。若S2当前内存受理，进程失效消息可能丢失，勿套S3结论。"
+    },
+    {
+      "title": "八、状态角色评审与22题",
+      "words": 2800,
+      "focus": "交付五状态决策矩阵、十请求7hit3miss及stale反例、缓存重启失败矩阵、后续07.02数据结构输入；22题概念→纸上命中/陈旧→业务权限取舍附反馈。全静态不运行Redis/Go/DB/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.01 访问模式与状态角色》，面向Go初学者，八节丰富理论正文及22道分层练习反馈。严格区分当前S2 v1 200 accepted_in_memory易失状态与未来S3 v2提议的数据库提交；虚构c-a已有seq1..9、m-9。五类数据：消息历史、members.left_at当前资格、会话预览、在线连接/心跳、临时限流计数。S3消息/成员为权威，预览为可重建派生，但重建需完整输入，在线presence为近似临时状态，缓存失效时应unknown而不直接宣称离线。06.12新增conversation_counters.next_seq是序号权威，绝不能误判为可丢临时计数；真正业务配额若要精确也不能随意重置。10次预览读7hit3miss命中率70%，若缓存命中的是seq8而权威seq9则hit仍旧；miss也不等于数据库无记录。区分TTL过期、主动失效、内存逐出和宕机，引用Redis官方机制，不声称OpenIM具体缓存实现。权限退群后旧缓存不能放行发送/泄露历史。静态不运行Redis、数据库、Go或站点。下一07.02再选Redis数据结构。\n1. 一、先辨四种IM状态的业务责任: 承接06.12与08.01–08.04。S2当前v1消息内存受理并不持久；未来S3 v2教学DB提交时消息历史为权威。虚构c-a seq1..9 m-9，消息历史、当前members权限、会话预览、在线连接/心跳、临时限流计数；逐个问丢失/重建/陈旧。\n2. 二、权威、派生与临时是角色而非产品名: 权威决定业务事实：S3消息行、members当前资格、06.12 conversation_counters.next_seq是事务序号权威扩展；派生预览/未读提示可从消息+读水位重算但必须有完整输入；临时在线presence/速率计数按明确降级政策可失，在线状态需新连接/心跳恢复，不从历史推断。Redis也可持权威若专门设计，角色由合同非技术标签决定。\n3. 三、从访问模式判断候选缓存对象: 读取历史按conversation_id+seq范围，message_id点查，首页预览按用户会话列表，在线presence按user/device，限流按key+窗口；写入率、读写比、热点/工作集、生命周期、最大大小与权限。先测再选结构，避免单纯缓存一切。\n4. 四、局部性与命中率纸上算: 玩具10次会话预览读取7hit3miss=70% hit，简单cache-aside最多3次回源假设无并发/权限额外查；缓存旧预览seq8而权威seq9，hit并非新鲜/正确。命中率分母和每类请求/尾延迟、stale率、回源成本同看。\n5. 五、TTL、失效与被逐出不是同一事: TTL时效到/主动invalidate/内存maxmemory eviction/服务宕机四种原因；miss不等于权威不存在，TTL也不证明数据新鲜。Redis EXPIRE和eviction官方文档只支撑机制；07.03再细cache-aside迟到回填。\n6. 六、在线与权限为什么要更谨慎: 在线状态可按最近心跳和连接生命周期给近似，不是用户确实在屏前；缓存故障时返回未知或降级，不把无key等同真实离线。members权限必须看权威可验证新状态，退群后旧缓存不得放行发送或泄露历史；缓存许可需版本/失效合同，下一07.03。\n7. 七、丢失与重建演练表: 假设缓存重启：S3消息历史仍权威可读；预览重算，旧读窗口可解释；presence需新心跳/连接恢复，状态unknown；临时限流计数可重置只在风险合同允许，业务配额/next_seq不能重置。若S2当前内存受理，进程失效消息可能丢失，勿套S3结论。\n8. 八、状态角色评审与22题: 交付五状态决策矩阵、十请求7hit3miss及stale反例、缓存重启失败矩阵、后续07.02数据结构输入；22题概念→纸上命中/陈旧→业务权限取舍附反馈。全静态不运行Redis/Go/DB/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

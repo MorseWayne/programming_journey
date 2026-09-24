@@ -28,9 +28,9 @@
   "original_sha256": "5f1949785f78fdb20d49a818d664a1d45e182d983a92cb1ae13cc1bab9cf6aa8",
   "original_characters": 28036,
   "generation_request_sha256": "0e64214f5627474ba5eea6484792784facf7d19e1c5bbd8006b7f9ebd423b568",
-  "reviewed_sha256": "b6b5b0822ba65998a1f566db3dc777d0a95042b25f991ede215ddb5e79b0059e",
-  "reviewed_characters": 8552,
+  "reviewed_sha256": "d10ae48bcd783f3ca944a88663fcec43d20087ddc97311c1b57134ff9324157b",
+  "reviewed_characters": 8647,
   "reviewed_chinese_characters": 4068,
   "course_file": "src/docs/platform_engineering/curriculum/08_distributed/04_consistency_models.md",
-  "course_sha256": "3a041a864182ba3591ae56c7bc4821828c8f4a5e5de71792ebf4d0cf5d41a6e3"
+  "course_sha256": "c8660dd20eb71f5279948d7e05d13bd49e60c63081e0ba088cad30d383a11d85"
 }
