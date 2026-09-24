@@ -1,0 +1,73 @@
+{
+  "code": "07.12",
+  "title": "跨系统数据一致性案例：从发送到离线补拉",
+  "chapter_id": "ch_cross_system_im_consistency",
+  "summary": "面向Go初学者，沿虚构IM消息m-9跨权威数据库、outbox、broker、搜索、在线通知和B设备补拉，评审确认、故障、对账、补偿与权限。",
+  "objectives": [
+    "绘制权威消息到派生读与设备的确认矩阵",
+    "区分S2和拟议S3 HTTP成功语义",
+    "对七个失败窗口指定恢复来源与证据",
+    "解释B离线超过broker保留时的权威补拉",
+    "设计ID/版本/删除/权限对账和受控补偿",
+    "限制固定OpenIM源码能证明的范围"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+    "https://kafka.apache.org/intro/",
+    "https://redis.io/docs/latest/develop/pubsub/",
+    "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、从A发信到B补拉的业务验收",
+      "words": 3100,
+      "focus": "未来教学S3中u-a对c-a发送m-9/seq9，SQL messages+outbox E9同Tx提交；E9 evt:m-9:v1到broker，SearchIndex与Notify独立组，预览派生，B离线25h后按权限补拉，玩具broker保留24h。当前S2只accepted_in_memory，S3 stored_in_teaching_db仍提议。先用用户问题区分历史存在、搜索可见、在线提示、设备接收与已读。"
+    },
+    {
+      "title": "二、每条业务合同的权威与确认点",
+      "words": 2900,
+      "focus": "列表格：消息历史权威DB，搜索/预览派生可追赶，在线Notify提示低延迟但非权威，B补拉以当前成员权限+seq游标，阅读回执另存；定义安全性不泄露/不捏造、活性最终修复但需资源/保留、时效性量化；每个确认点不能越级。重复HTTP ID在S2即使同正文409；S3成功语义不暗改。"
+    },
+    {
+      "title": "三、完整m-9链路状态机",
+      "words": 3100,
+      "focus": "时间线T0认证授权，T1本地SQL commit messages+outbox PENDING，T2 relay发布E9，T3 broker accepted P0:42，T4 SearchIndex应用m-9:v1并ACK，T5 Notify尝试推送，T6 B设备可能收或离线，T7 B重连后GET按权限和seq补拉，T8阅读回执；E10 seq10 P0:43可先完成预览，E9仍需搜索效果。每点已知/未知。"
+    },
+    {
+      "title": "四、七个故障变式与局部恢复",
+      "words": 3400,
+      "focus": "Commit后客户端响应丢=结果未知按稳定ID查，S2重复409不改变；outbox PENDING relay宕=恢复扫描；producer ACK lost=可能重复同event_id；SearchIndex在写后ACK丢/坏消息E-bad P0:44=幂等/隔离修复；Notify成功但B离线=不等于收到；B离线25h越过24h日志=DB补拉；m-9:v2/权限撤销使旧v1重放=版本/授权检查。每例症状、源事实、修复、证据。"
+    },
+    {
+      "title": "五、对账与补偿不是神奇回滚",
+      "words": 3200,
+      "focus": "按messages ID/version与outbox event_id、broker确认/consumer位点、SearchIndex目标、Notify状态、B回执对账；查缺少/多余/版本错和权限泄露，count同不等于ID同。重放原事件、从权威状态重建、补偿新事件区别；已发送推送不可通过DB回滚抹去，必须目标侧纠正/告知，不能无限重复外部副作用。保留审计最小脱敏元数据。"
+    },
+    {
+      "title": "六、离线补拉与权限的端到端设计",
+      "words": 2900,
+      "focus": "B在c-a是成员，u-c已登录非成员隐藏目标404；游标按seq分页，避免仅按设备本地时间；断连重连多设备各有可见游标，server权威历史+权限裁决，推送只是唤醒/提示。撤回/退群/删除影响补拉和索引，通知payload最小ID，敏感正文不放DLQ或公开日志。B收到与已读分开。"
+    },
+    {
+      "title": "七、指标、事故手册与固定OpenIM证据",
+      "words": 3100,
+      "focus": "按DB commit known/unknown、outbox oldest pending、broker confirm unknown、各consumer lag/oldest, search reconciliation gap, notify attempts, device receipt/read独立；给排障优先顺序和停止条件。固定OpenIM send.go MsgToMQ后返回，另Mongo消费BatchInsertChat2DB，不能推出SQL outbox、SearchIndex/Notify/设备链路或broker确认等级。引用PostgreSQL/Kafka/Redis/固定源码，标教学与已核对。"
+    },
+    {
+      "title": "八、22题与第七卷综合验收",
+      "words": 3000,
+      "focus": "22题基础8/故障8/综合6，答案覆盖S2/S3合同、m-9/seq9/P0:42区别、四确认、outbox原子、SearchIndex vs Notify组、E-bad隔离、B25h/24h、m9v2、权限u-c、补偿 vs 回滚、对账、源码证据边界。交付一致性矩阵、故障推演、核对计划与真实实践待验证。静态不运行Go/DB/broker/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.12 跨系统数据一致性案例》，面向Go初学者，八节丰富基础理论、IM业务需求、两遍递进与22题反馈。沿未来教学S3虚构m-9/c-a/u-a seq9、同库outbox E9(event_id=evt:m-9:v1)、broker P0:42、SearchIndex和Notify独立组、会话预览、B离线25h且玩具broker保留24h后按授权从DB补拉。当前S2仍200 accepted_in_memory，重复相同ID即使相同正文409，非成员u-c目标隐藏404；S3 stored_in_teaching_db只是未部署纸上提议。状态T0-T8分别区分DB提交、broker接受、搜索效果、通知尝试、设备接收、已读。处理Commit回应未知、relay宕、producer ACK未知、索引失败/E-bad隔离、Notify尝试而B离线、25h越过24h、编辑v2与退群权限变化。对账按权威ID/版本/删除/权限与各派生目标比，补偿不是回滚已发生外部效果。固定OpenIM源码只可说send.go特定路径MsgToMQ后返回与另一Mongo消费路径BatchInsertChat2DB，不宣称教学SQL outbox、索引/通知/设备实现或producer确认级别。纸上无Go/DB/broker/站点运行。\n1. 一、从A发信到B补拉的业务验收: 未来教学S3中u-a对c-a发送m-9/seq9，SQL messages+outbox E9同Tx提交；E9 evt:m-9:v1到broker，SearchIndex与Notify独立组，预览派生，B离线25h后按权限补拉，玩具broker保留24h。当前S2只accepted_in_memory，S3 stored_in_teaching_db仍提议。先用用户问题区分历史存在、搜索可见、在线提示、设备接收与已读。\n2. 二、每条业务合同的权威与确认点: 列表格：消息历史权威DB，搜索/预览派生可追赶，在线Notify提示低延迟但非权威，B补拉以当前成员权限+seq游标，阅读回执另存；定义安全性不泄露/不捏造、活性最终修复但需资源/保留、时效性量化；每个确认点不能越级。重复HTTP ID在S2即使同正文409；S3成功语义不暗改。\n3. 三、完整m-9链路状态机: 时间线T0认证授权，T1本地SQL commit messages+outbox PENDING，T2 relay发布E9，T3 broker accepted P0:42，T4 SearchIndex应用m-9:v1并ACK，T5 Notify尝试推送，T6 B设备可能收或离线，T7 B重连后GET按权限和seq补拉，T8阅读回执；E10 seq10 P0:43可先完成预览，E9仍需搜索效果。每点已知/未知。\n4. 四、七个故障变式与局部恢复: Commit后客户端响应丢=结果未知按稳定ID查，S2重复409不改变；outbox PENDING relay宕=恢复扫描；producer ACK lost=可能重复同event_id；SearchIndex在写后ACK丢/坏消息E-bad P0:44=幂等/隔离修复；Notify成功但B离线=不等于收到；B离线25h越过24h日志=DB补拉；m-9:v2/权限撤销使旧v1重放=版本/授权检查。每例症状、源事实、修复、证据。\n5. 五、对账与补偿不是神奇回滚: 按messages ID/version与outbox event_id、broker确认/consumer位点、SearchIndex目标、Notify状态、B回执对账；查缺少/多余/版本错和权限泄露，count同不等于ID同。重放原事件、从权威状态重建、补偿新事件区别；已发送推送不可通过DB回滚抹去，必须目标侧纠正/告知，不能无限重复外部副作用。保留审计最小脱敏元数据。\n6. 六、离线补拉与权限的端到端设计: B在c-a是成员，u-c已登录非成员隐藏目标404；游标按seq分页，避免仅按设备本地时间；断连重连多设备各有可见游标，server权威历史+权限裁决，推送只是唤醒/提示。撤回/退群/删除影响补拉和索引，通知payload最小ID，敏感正文不放DLQ或公开日志。B收到与已读分开。\n7. 七、指标、事故手册与固定OpenIM证据: 按DB commit known/unknown、outbox oldest pending、broker confirm unknown、各consumer lag/oldest, search reconciliation gap, notify attempts, device receipt/read独立；给排障优先顺序和停止条件。固定OpenIM send.go MsgToMQ后返回，另Mongo消费BatchInsertChat2DB，不能推出SQL outbox、SearchIndex/Notify/设备链路或broker确认等级。引用PostgreSQL/Kafka/Redis/固定源码，标教学与已核对。\n8. 八、22题与第七卷综合验收: 22题基础8/故障8/综合6，答案覆盖S2/S3合同、m-9/seq9/P0:42区别、四确认、outbox原子、SearchIndex vs Notify组、E-bad隔离、B25h/24h、m9v2、权限u-c、补偿 vs 回滚、对账、源码证据边界。交付一致性矩阵、故障推演、核对计划与真实实践待验证。静态不运行Go/DB/broker/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

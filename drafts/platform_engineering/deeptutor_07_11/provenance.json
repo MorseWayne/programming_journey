@@ -29,9 +29,9 @@
   "original_sha256": "e36b17e52824106b47684fd544161ef5c76d1678ea3f89d26fe8736c37b36f60",
   "original_characters": 31852,
   "generation_request_sha256": "6466728204a8ad2728df69211546e2071993dfc89d2e5efa653cf1fbd4761032",
-  "reviewed_sha256": "ba6024baffd6dbd05995a0189ee837fd68dec97674be040f1a6d7cd521f73490",
-  "reviewed_characters": 10014,
-  "reviewed_chinese_characters": 3938,
+  "reviewed_sha256": "492a2a6147b283f1501cdbc7adb68657d68c26f023c5e7c83c40130d8946e06a",
+  "reviewed_characters": 10133,
+  "reviewed_chinese_characters": 3948,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/11_derived_views_event_time.md",
-  "course_sha256": "8a260218822fd247164dab0726f772ad96f1c069cc3457f4d050bcbe70d0b2ec"
+  "course_sha256": "ba2ce5ba226ee1f761b84ea9b6f6088c1ad2cfdbca0f145f842e6eb61b8e981c"
 }

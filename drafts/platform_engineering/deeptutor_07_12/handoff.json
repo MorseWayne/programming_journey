@@ -1,0 +1,33 @@
+{
+  "chapter": "07.12",
+  "stage": "S5",
+  "business_scope": "static capstone case for fictional IM message m-9 across authoritative history, outbox, broker, search, notification and authorized offline recovery",
+  "prerequisites": [
+    "07.06 message abstraction, retention and offline history",
+    "07.07 acknowledgements and deduplication",
+    "07.08 order and concurrent consumer completion",
+    "07.09 poison events and repair",
+    "07.10 local outbox atomic boundary",
+    "07.11 derived views, versions and authoritative rebuild",
+    "09.02 S2 HTTP contract and 09.07 object authorization"
+  ],
+  "first_pass": [
+    "map history, search, preview, online hint, device receipt and read to distinct authority or evidence",
+    "walk through T0-T8 without promoting a local acknowledgement into an end-to-end guarantee",
+    "keep current S2 accepted_in_memory distinct from proposed S3 stored_in_teaching_db"
+  ],
+  "second_pass": [
+    "classify seven failure windows by known, unknown and next verification",
+    "recover B after 25-hour offline interval using authorized history despite 24-hour toy broker retention",
+    "reconcile ID, version, deletion and permissions across derived targets",
+    "choose original event replay, current-state rebuild or new compensation action",
+    "compare teaching model with only verified OpenIM source claims"
+  ],
+  "not_yet_prerequisites": [
+    "08.05 partitioning and rebalancing",
+    "learner's real cross-system trace, fault and reconciliation evidence"
+  ],
+  "next_chapter": "08.05 partitioning and rebalancing",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response, and a separate Mongo consumer path calls BatchInsertChat2DB. These two files do not establish the teaching SQL outbox, SearchIndex/Notify groups or device delivery semantics.",
+  "shared_integration_pending": []
+}

@@ -260,6 +260,7 @@ export default sidebar({
             "curriculum/07_cache_messaging/09_backlog_poison_messages",
             "curriculum/07_cache_messaging/10_transaction_outbox",
             "curriculum/07_cache_messaging/11_derived_views_event_time",
+            "curriculum/07_cache_messaging/12_cross_system_consistency_case",
             "curriculum/07_cache_messaging/core"
           ]
         },

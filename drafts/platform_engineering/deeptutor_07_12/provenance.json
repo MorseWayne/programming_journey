@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_c288f9b7ba",
+  "page_id": "pg_8119b549e1",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "https://kafka.apache.org/intro/",
+      "https://redis.io/docs/latest/develop/pubsub/",
+      "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "e877608ede5a4a2bc92ff931efa95242e142ae5e1d42d30c6e26e65583eac2a6",
+  "original_characters": 33671,
+  "generation_request_sha256": "efd7c62c5773d896bdbeb335386e4b81f1360bf8a98d4f41057796b3945570fc",
+  "reviewed_sha256": "683d99b9dceb312e9979ddde7d33bcd0c1260feb09ec3575fcc5cb70a42deef1",
+  "reviewed_characters": 10763,
+  "reviewed_chinese_characters": 4075,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/12_cross_system_consistency_case.md",
+  "course_sha256": "b8e7db8628dab4bec81cfddb9bd63606c22b0a90518b48396f6125c782dd1889"
+}
