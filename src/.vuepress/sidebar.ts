@@ -226,6 +226,7 @@ export default sidebar({
           "children": [
             "curriculum/10_engineering/",
             "curriculum/10_engineering/01_verifiable_requirements",
+            "curriculum/10_engineering/02_testing_basics",
             "curriculum/10_engineering/03_git_state",
             "curriculum/10_engineering/core"
           ]

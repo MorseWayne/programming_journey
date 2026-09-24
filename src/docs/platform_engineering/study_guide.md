@@ -15,7 +15,7 @@ date: 2026-09-23
 
 接着阅读已完成的 [01.03 控制流与函数](./curriculum/01_go/03_control_functions.md)：第一次读一至五节和第八节，普通函数能解释后再深入递归与闭包。接着学习 [01.04 集合与文本](./curriculum/01_go/04_collections_text.md)、[01.05 对象与指针](./curriculum/01_go/05_maps_structs_pointers.md)、[01.06 方法与接口](./curriculum/01_go/06_methods_interfaces.md)、[01.07 错误与资源生命周期](./curriculum/01_go/07_errors_resources.md)、[01.08 标准库协作](./curriculum/01_go/08_standard_library.md)和[01.09 包设计](./curriculum/01_go/09_packages_evolution.md)。A07–A10 可作为短课复习，不需机械重复。
 
-[10.03 Git 起步](./curriculum/10_engineering/03_git_state.md)在会编辑文件后即可穿插；[10.01 可验证需求](./curriculum/10_engineering/01_verifiable_requirements.md)在普通函数基础之后学习。并行编写不会改变这些先修要求。
+[10.03 Git 起步](./curriculum/10_engineering/03_git_state.md)在会编辑文件后即可穿插；[10.01 可验证需求](./curriculum/10_engineering/01_verifiable_requirements.md)在普通函数基础之后学习；[10.02 测试基本方法](./curriculum/10_engineering/02_testing_basics.md)在函数、集合、指针、方法与错误之后学习。并行编写不会改变这些先修要求。
 
 A 篇讲清语法和代码组织；B 篇讲清后端运行与协作的基础；C 篇讨论可靠性与平台机制。D05–D06 服务于主线的方案与综合实践，D01–D04 属于 AI 扩展。每次只选当前阶段需要的衔接内容，尚缺的长篇讲解按内容状态表记录。
 

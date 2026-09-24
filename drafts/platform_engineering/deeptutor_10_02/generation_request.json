@@ -1,0 +1,74 @@
+{
+  "code": "10.02",
+  "title": "测试基本方法：用可核对的预期保护 IM 消息规则",
+  "chapter_id": "ch_testing_basics",
+  "summary": "承接 10.01 的可验证需求和 01.01–01.09 的 Go 基础，讲清测试预期、testing.T、表驱动、子测试、状态断言与证据层次。所有 IM 身份和规则均为虚构教学设定。",
+  "objectives": [
+    "区分需求预期、实际观察、测试结果与业务保证",
+    "理解 _test.go、TestXxx、testing.T 和 go test 的作用",
+    "解释 t.Error/fatal 何时继续或停止当前测试",
+    "从需求边界构造表驱动与子测试，而非照抄实现分支",
+    "同时检查失败返回和状态不变",
+    "区分单元、集成、端到端证据范围",
+    "说明覆盖率、测试替身和时间依赖的限制",
+    "把一条 IM 消息规则变更转成可审阅的回归案例"
+  ],
+  "sources": [
+    "https://pkg.go.dev/testing",
+    "https://go.dev/doc/tutorial/add-a-test",
+    "https://go.dev/blog/subtests",
+    "https://go.dev/doc/build-cover",
+    "https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/hello-world"
+  ],
+  "sections": [
+    {
+      "title": "一、测试先要有独立于实现的预期",
+      "words": 2000,
+      "focus": "读者已读10.01：虚构IM的R01-R09规则、决策表、失败不改状态、预期/实际/结论区分；已读01.01-01.09：函数、切片结构体、方法、error和包。先从“消息最多6字节，刚好6字节通过；失败草稿与历史不变”的需求导出测试输入，不能先看代码分支再照抄。定义测试对象、输入、初始状态、预期输出、预期状态、实际观察、断言。所有示例静态推导未运行；不把本地通过当网络送达。"
+    },
+    {
+      "title": "二、从普通 Go 文件到第一个 Test 函数",
+      "words": 2100,
+      "focus": "逐符号解释history/history.go、history/history_test.go、package history、import testing、func TestValidateText(t *testing.T)、t.Errorf。给完整生产函数和同包测试文件，规则为maxBytes>0、正文原始非空、len(body)字节<=max，文字空格不自动trim，UTF-8已由前置教学验证。明确go test ./history只是学习者将来运行的命令，本次不执行；目录与包必须一致，_test.go不进入普通构建。预期输出只可称静态预期。"
+    },
+    {
+      "title": "三、失败报告、Error、Fatal 与最小可复现差异",
+      "words": 1900,
+      "focus": "讲t.Error/Errorf标记失败但当前测试继续，t.Fatal/Fatalf标记失败并停止当前测试函数；不能误称整个测试进程/所有包都停止。需要前一步成功才可使用后续对象时用Fatal，否则可收集多个独立断言。错误报告须含输入、got/want和状态。故意错误实现把 >=6当超限：5、6、7哪个能区分，不能修改want迎合实现。命令go test -run、-v只介绍语义，不执行。"
+    },
+    {
+      "title": "四、表驱动和子测试从边界表生长",
+      "words": 2300,
+      "focus": "先列10.01决策表对应测试：max0、kind未知、empty、1字节、等于6的你好、超6的你好呀、空格1字节、两个错误同时发生的优先级；函数若无kind先单测validateText，组合validateMessage再测分类优先。[]struct和for/range/t.Run逐符号解释，顺序子测试没有t.Parallel；每个case有独立输入和名字，避免重复name。解释表驱动不能代替思考，随机值堆砌不等于边界覆盖。给完整测试文件或清楚片段。"
+    },
+    {
+      "title": "五、状态测试：拒绝以后原值必须不变",
+      "words": 2300,
+      "focus": "从History.Add检查重复消息m-a，测试正常增加一条、重复返回ErrDuplicateMessage且原消息正文不变、无效输入不改变切片；分别建立新的History，不能案例互相污染。用errors.Is、Before/After、Messages返回副本解释，避免只检查err或只检查长度。讨论初始化已坏状态时拒绝不等于修复。测试应检查公开观察面，除非有理由测试内部细节。不要测试服务端发送。"
+    },
+    {
+      "title": "六、测试层次与证据边界",
+      "words": 2100,
+      "focus": "定义单元/集成/端到端按被观察边界分类：纯validateText、historyfile.Load与临时文件、未来真实请求链路。使用t.TempDir创建本地目录、os.WriteFile准备教学文件，测试要核对读取和关闭错误范围；不可把本地文件集成测试称MongoDB/网络端到端。OpenIM固定SendMsg可提出阅读问题但只说已核对范围：缺失输入/未知会话分类返回错误，不推导全链路结果。每种测试说明所需环境、速度/稳定性与业务断言；本章不执行Go或部署。"
+    },
+    {
+      "title": "七、第二遍：覆盖率、确定性和测试替身的边界",
+      "words": 1900,
+      "focus": "覆盖率反映执行到的语句/块，不等于断言充分、需求正确或可靠性。go test -cover只是未来学习者命令，不执行。时间time.Now和随机输入不受控会让测试不稳定，先使用固定时间作为函数输入；下一章10.04再讲fake/stub/mock和注入细节。测试间不共享可变全局状态，不使用t.Parallel。区别测试失败、环境失败与不稳定测试。"
+    },
+    {
+      "title": "八、综合：消息规则变更的回归清单与分层练习",
+      "words": 2500,
+      "focus": "需求从最多6字节改9字节，先按10.01规则列哪些预期改、哪些不改：6继续通过、9新增通过、10拒绝，空文本和kind优先级不变，拒绝不改状态。给完整单元测试或分文件结构、假想失败报告、修正过程与证据记录模板；不能宣称已运行。至少18道折叠练习带反馈，包含文件名/包、Error/Fatal、go test范围、表驱动、subtest、UTF-8字节、状态拒绝、错误身份、临时文件集成、端到端缺失、覆盖率局限、变更回归、OpenIM事实边界。给官方testing、教程、subtests、coverage链接和Learn Go with Tests参考。总结10.04替身/01.12 CLI前置。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《10.02 测试基本方法：用可核对的预期保护 IM 消息规则》。面向 Go 初学者，承接已完成 10.01 与 01.01–01.09，按先修由浅入深。所有业务身份、消息与规则为虚构教学设定。本次只写静态课程，不执行示例或测试。\n1. 一、测试先要有独立于实现的预期：读者已读10.01：虚构IM的R01-R09规则、决策表、失败不改状态、预期/实际/结论区分；已读01.01-01.09：函数、切片结构体、方法、error和包。先从“消息最多6字节，刚好6字节通过；失败草稿与历史不变”的需求导出测试输入，不能先看代码分支再照抄。定义测试对象、输入、初始状态、预期输出、预期状态、实际观察、断言。所有示例静态推导未运行；不把本地通过当网络送达。\n2. 二、从普通 Go 文件到第一个 Test 函数：逐符号解释history/history.go、history/history_test.go、package history、import testing、func TestValidateText(t *testing.T)、t.Errorf。给完整生产函数和同包测试文件，规则为maxBytes>0、正文原始非空、len(body)字节<=max，文字空格不自动trim，UTF-8已由前置教学验证。明确go test ./history只是学习者将来运行的命令，本次不执行；目录与包必须一致，_test.go不进入普通构建。预期输出只可称静态预期。\n3. 三、失败报告、Error、Fatal 与最小可复现差异：讲t.Error/Errorf标记失败但当前测试继续，t.Fatal/Fatalf标记失败并停止当前测试函数；不能误称整个测试进程/所有包都停止。需要前一步成功才可使用后续对象时用Fatal，否则可收集多个独立断言。错误报告须含输入、got/want和状态。故意错误实现把 >=6当超限：5、6、7哪个能区分，不能修改want迎合实现。命令go test -run、-v只介绍语义，不执行。\n4. 四、表驱动和子测试从边界表生长：先列10.01决策表对应测试：max0、kind未知、empty、1字节、等于6的你好、超6的你好呀、空格1字节、两个错误同时发生的优先级；函数若无kind先单测validateText，组合validateMessage再测分类优先。[]struct和for/range/t.Run逐符号解释，顺序子测试没有t.Parallel；每个case有独立输入和名字，避免重复name。解释表驱动不能代替思考，随机值堆砌不等于边界覆盖。给完整测试文件或清楚片段。\n5. 五、状态测试：拒绝以后原值必须不变：从History.Add检查重复消息m-a，测试正常增加一条、重复返回ErrDuplicateMessage且原消息正文不变、无效输入不改变切片；分别建立新的History，不能案例互相污染。用errors.Is、Before/After、Messages返回副本解释，避免只检查err或只检查长度。讨论初始化已坏状态时拒绝不等于修复。测试应检查公开观察面，除非有理由测试内部细节。不要测试服务端发送。\n6. 六、测试层次与证据边界：定义单元/集成/端到端按被观察边界分类：纯validateText、historyfile.Load与临时文件、未来真实请求链路。使用t.TempDir创建本地目录、os.WriteFile准备教学文件，测试要核对读取和关闭错误范围；不可把本地文件集成测试称MongoDB/网络端到端。OpenIM固定SendMsg可提出阅读问题但只说已核对范围：缺失输入/未知会话分类返回错误，不推导全链路结果。每种测试说明所需环境、速度/稳定性与业务断言；本章不执行Go或部署。\n7. 七、第二遍：覆盖率、确定性和测试替身的边界：覆盖率反映执行到的语句/块，不等于断言充分、需求正确或可靠性。go test -cover只是未来学习者命令，不执行。时间time.Now和随机输入不受控会让测试不稳定，先使用固定时间作为函数输入；下一章10.04再讲fake/stub/mock和注入细节。测试间不共享可变全局状态，不使用t.Parallel。区别测试失败、环境失败与不稳定测试。\n8. 八、综合：消息规则变更的回归清单与分层练习：需求从最多6字节改9字节，先按10.01规则列哪些预期改、哪些不改：6继续通过、9新增通过、10拒绝，空文本和kind优先级不变，拒绝不改状态。给完整单元测试或分文件结构、假想失败报告、修正过程与证据记录模板；不能宣称已运行。至少18道折叠练习带反馈，包含文件名/包、Error/Fatal、go test范围、表驱动、subtest、UTF-8字节、状态拒绝、错误身份、临时文件集成、端到端缺失、覆盖率局限、变更回归、OpenIM事实边界。给官方testing、教程、subtests、coverage链接和Learn Go with Tests参考。总结10.04替身/01.12 CLI前置。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -22,7 +22,7 @@ date: 2026-09-23
 - 查看经典书籍如何融合：[调研依据与知识覆盖](./curriculum/source_review.md)。
 - 判断当前有哪些正文：[编写状态与能力验收](./curriculum/assessment.md)。
 
-当前已有 **13 章独立长篇正文、35 课入门与衔接正文、14 篇分卷专题讲义**，以及 **14 卷共 168 个章节单元的教学设计**。168 个单元均已列出具体 IM 练习与验收目标；正文完成 01.01–01.09、02.01、03.01、10.01、10.03；最新章节把消息规则、文件适配与命令入口组织为清楚的包边界。前两章和部分旧短课、core 的原案例继续作为基础补充，其余长篇按先修关系展开。
+当前已有 **14 章独立长篇正文、35 课入门与衔接正文、14 篇分卷专题讲义**，以及 **14 卷共 168 个章节单元的教学设计**。168 个单元均已列出具体 IM 练习与验收目标；正文完成 01.01–01.09、02.01、03.01、10.01–10.03；最新章节把可验证需求转成测试、状态断言与证据范围。前两章和部分旧短课、core 的原案例继续作为基础补充，其余长篇按先修关系展开。
 
 ## 每个领域都独立展开
 
@@ -37,7 +37,7 @@ date: 2026-09-23
 | 07 | [缓存、消息队列与数据流](./curriculum/07_cache_messaging/README.md) | [专题讲义](./curriculum/07_cache_messaging/core.md) |
 | 08 | [分布式系统、一致性与故障恢复](./curriculum/08_distributed/README.md) | [专题讲义](./curriculum/08_distributed/core.md) |
 | 09 | [Go 后端应用、API 与应用安全](./curriculum/09_backend_security/README.md) | [专题讲义](./curriculum/09_backend_security/core.md) |
-| 10 | [测试、Git、代码质量与团队交付](./curriculum/10_engineering/README.md) | [10.01 需求](./curriculum/10_engineering/01_verifiable_requirements.md) · [10.03 Git](./curriculum/10_engineering/03_git_state.md) · [专题讲义](./curriculum/10_engineering/core.md) |
+| 10 | [测试、Git、代码质量与团队交付](./curriculum/10_engineering/README.md) | [10.01 需求](./curriculum/10_engineering/01_verifiable_requirements.md) · [10.02 测试](./curriculum/10_engineering/02_testing_basics.md) · [10.03 Git](./curriculum/10_engineering/03_git_state.md) · [专题讲义](./curriculum/10_engineering/core.md) |
 | 11 | [性能工程、可观测性与可靠性](./curriculum/11_reliability/README.md) | [专题讲义](./curriculum/11_reliability/core.md) |
 | 12 | [容器、Kubernetes 与平台运行](./curriculum/12_platform/README.md) | [专题讲义](./curriculum/12_platform/core.md) |
 | 13 | [软件设计、架构决策与高级工程实践](./curriculum/13_architecture/README.md) | [专题讲义](./curriculum/13_architecture/core.md) |

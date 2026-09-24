@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_5f7d515427",
+  "page_id": "pg_9d52c005dd",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "e6286508f2b9417460a6e764d4e29ab13fbf42443a5aa44a0a3030a24fccbaee",
+  "original_sha256": "55b75cc88db4f8a8538d90d4ffcdb977aa567bc2c046baeca794083866d1188e",
+  "reviewed_sha256": "0a6aa9078b52200a4f424b50a7110a3ba9ceebb69ecf81be1b01eae9184cf566",
+  "original_characters": 40881,
+  "reviewed_characters": 12172,
+  "reviewed_chinese_characters": 4005,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/02_testing_basics.md",
+  "course_sha256": "8abce006a9e82a302dc09520efe67177e3fcd7ee9bc003d0298d52f614b2d1fa",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/testing",
+      "https://go.dev/doc/tutorial/add-a-test",
+      "https://go.dev/blog/subtests",
+      "https://go.dev/doc/build-cover",
+      "https://quii.gitbook.io/learn-go-with-tests/go-fundamentals/hello-world"
+    ],
+    "openim_reference": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "input_scope": "Go official testing documentation and author tutorial, plus only the OpenIM control-flow facts already reviewed for 10.01; no runtime or delivery audit."
+  }
+}

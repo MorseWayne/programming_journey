@@ -13,7 +13,7 @@ date: 2026-09-23
 
 经典书籍与大学课程帮助确定知识覆盖，教材按初学者的先修关系重新组织。业务主线改为虚构 IM，以 [OpenIM](./im_reference.md)为公开项目参照；早期旧案例保留为机制补充，后续逐章适配。
 
-当前包含 **14 卷分章设计、168 个章节单元、13 章独立长篇正文、35 课入门与衔接正文，以及 14 篇专题讲义**。长篇正文从 [01.01 程序与工具链](./01_go/01_program_toolchain.md)和 [01.02 类型与数据表示](./01_go/02_types_data.md)开始，继续进入 [01.03 控制流与函数](./01_go/03_control_functions.md)、[01.04 集合与文本](./01_go/04_collections_text.md)、[01.05 对象与指针](./01_go/05_maps_structs_pointers.md)、[01.06 方法与接口](./01_go/06_methods_interfaces.md)、[01.07 错误与资源生命周期](./01_go/07_errors_resources.md)、[01.08 标准库协作](./01_go/08_standard_library.md)和 [01.09 包设计](./01_go/09_packages_evolution.md)；[10.01 需求](./10_engineering/01_verifiable_requirements.md)和 [10.03 Git](./10_engineering/03_git_state.md)按前置穿插。168 个单元已有逐项 IM 练习与验收目标，尚未全部写成独立教材正文，详见[编写与能力验收](./assessment.md)。
+当前包含 **14 卷分章设计、168 个章节单元、14 章独立长篇正文、35 课入门与衔接正文，以及 14 篇专题讲义**。长篇正文从 [01.01 程序与工具链](./01_go/01_program_toolchain.md)和 [01.02 类型与数据表示](./01_go/02_types_data.md)开始，继续进入 [01.03 控制流与函数](./01_go/03_control_functions.md)、[01.04 集合与文本](./01_go/04_collections_text.md)、[01.05 对象与指针](./01_go/05_maps_structs_pointers.md)、[01.06 方法与接口](./01_go/06_methods_interfaces.md)、[01.07 错误与资源生命周期](./01_go/07_errors_resources.md)、[01.08 标准库协作](./01_go/08_standard_library.md)和 [01.09 包设计](./01_go/09_packages_evolution.md)；[10.01 需求](./10_engineering/01_verifiable_requirements.md)、[10.02 测试](./10_engineering/02_testing_basics.md)和 [10.03 Git](./10_engineering/03_git_state.md)按前置穿插。168 个单元已有逐项 IM 练习与验收目标，尚未全部写成独立教材正文，详见[编写与能力验收](./assessment.md)。
 
 第二批新增 [01.05 对象与指针](./01_go/05_maps_structs_pointers.md)、[02.01 数学成本](./02_algorithms/01_discrete_cost.md)和 [03.01 数据与存储层次](./03_systems/01_data_instructions_storage.md)，在已完成集合基础后分别进入。
 
@@ -30,7 +30,7 @@ date: 2026-09-23
 | [07 · 缓存、消息队列与数据流](./07_cache_messaging/README.md) | C07–C08；原先仅少数命令与 outbox 模型 | [专题讲义](./07_cache_messaging/core.md) |
 | [08 · 分布式系统、一致性与故障恢复](./08_distributed/README.md) | C08–C09；原内容尚未覆盖复制与共识主干 | [专题讲义](./08_distributed/core.md) |
 | [09 · Go 后端应用、API 与应用安全](./09_backend_security/README.md) | B03、C01、C06、C12；此前缺少完整应用层主线 | [专题讲义](./09_backend_security/core.md) |
-| [10 · 测试、Git、代码质量与团队交付](./10_engineering/README.md) | A08–A09；原内容缺少长期维护和协作过程 | [10.01 需求](./10_engineering/01_verifiable_requirements.md) · [10.03 Git](./10_engineering/03_git_state.md) · [专题讲义](./10_engineering/core.md) |
+| [10 · 测试、Git、代码质量与团队交付](./10_engineering/README.md) | A08–A09；原内容缺少长期维护和协作过程 | [10.01 需求](./10_engineering/01_verifiable_requirements.md) · [10.02 测试](./10_engineering/02_testing_basics.md) · [10.03 Git](./10_engineering/03_git_state.md) · [专题讲义](./10_engineering/core.md) |
 | [11 · 性能工程、可观测性与可靠性](./11_reliability/README.md) | C04、C10；原内容缺少系统化诊断与事件响应 | [专题讲义](./11_reliability/core.md) |
 | [12 · 容器、Kubernetes 与平台运行](./12_platform/README.md) | B04、C11；原内容仅基础清单与生命周期 | [专题讲义](./12_platform/core.md) |
 | [13 · 软件设计、架构决策与高级工程实践](./13_architecture/README.md) | C12、D05–D06；原内容缺少长期演进与协作案例 | [专题讲义](./13_architecture/core.md) |

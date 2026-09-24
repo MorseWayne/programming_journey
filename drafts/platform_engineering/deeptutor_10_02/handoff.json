@@ -1,0 +1,24 @@
+{
+  "chapter": "10.02",
+  "business_scope": "local validation and in-memory history tests; a bounded local file test is a future learner exercise, not network or OpenIM end-to-end evidence",
+  "first_pass": [
+    "expected result comes from 10.01 requirements",
+    "_test.go, TestXxx and testing.T",
+    "Error versus Fatal and useful failure reports",
+    "table-driven tests and sequential subtests",
+    "error identity plus before/after state assertions"
+  ],
+  "second_pass": [
+    "unit, local integration and end-to-end evidence scope",
+    "coverage limitations and controlled time",
+    "6-to-9-byte requirement change regression matrix"
+  ],
+  "not_yet_prerequisites": [
+    "test doubles and dependency injection in 10.04",
+    "concurrency, race detection and fuzzing in 10.07",
+    "complete CLI and real network end-to-end testing"
+  ],
+  "next_chapter": "02.02 linear data structures, then 02.03 search; 01.12 CLI follows this testing foundation",
+  "upstream_inspection": "Only previously reviewed OpenIM SendMsg input and session-type branches are mentioned; no runtime or delivery fact asserted.",
+  "shared_integration_pending": []
+}
