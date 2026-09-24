@@ -30,9 +30,9 @@
   "original_sha256": "8b8741c5456f0cdcb77523b5a6ec633ae65375e9da7cfa85641cbe46ec0bfed0",
   "original_characters": 31865,
   "generation_request_sha256": "9b5d76c421b0aa7a93c17e1ba8389a6c04796a3adf87875de31b952bee7cec8e",
-  "reviewed_sha256": "2465aa9e1e52e210cf97b0715fb1ce11d493cb63fedc73f779abb1b1f68e648c",
-  "reviewed_characters": 10523,
-  "reviewed_chinese_characters": 3643,
+  "reviewed_sha256": "64c1ca7b1497131b440760db8857cf93a62764489fc756594b705acd8b1f38c5",
+  "reviewed_characters": 10630,
+  "reviewed_chinese_characters": 3650,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/07_concurrency_property_validation.md",
-  "course_sha256": "7be28372fad1108bd4667de7c36e60220eaffcfb020a7dcffcf2c4e76fa90435"
+  "course_sha256": "d81058df082fde16a6beb713394f287590c94d5e9f04f30741ad91924a0ccf57"
 }

@@ -1,0 +1,75 @@
+{
+  "code": "10.08",
+  "title": "依赖与质量工具：版本固定之后还要查什么",
+  "chapter_id": "ch_dependency_quality_tools",
+  "summary": "面向Go初学者，以虚构IM Protobuf事件字段升级讲解模块最小版本选择、go.sum校验、生成代码、gofmt/vet/govulncheck各自证据及兼容评审。",
+  "objectives": [
+    "手算Go模块MVS选中版本",
+    "区分go.mod要求与go.sum哈希",
+    "解释go mod tidy/verify的实际范围",
+    "比较gofmt、vet、测试和漏洞扫描",
+    "核对.proto与生成pb.go及插件版本",
+    "为公开OpenIM源码与真实工具结果分开证据"
+  ],
+  "sources": [
+    "https://go.dev/ref/mod",
+    "https://pkg.go.dev/cmd/gofmt",
+    "https://pkg.go.dev/cmd/vet",
+    "https://go.dev/doc/security/vuln/",
+    "https://protobuf.dev/reference/go/go-generated/",
+    "https://protobuf.dev/programming-guides/proto3/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、从IM字段变更定位依赖与工具",
+      "words": 2900,
+      "focus": "虚构教学MessageEvent新增optional message_version/visible字段，需从proto源、protoc/protoc-gen-go、生成.pb.go、Go module graph、RPC消费者和测试证据分别检查；当前S2 6UTF8 B accepted_in_memory、同ID重复409、非成员404，未来S3 SQL与R9待审不改。工具不能代替业务安全。"
+    },
+    {
+      "title": "二、go.mod最小版本选择手算",
+      "words": 3100,
+      "focus": "玩具主模块example.org/im/app require example.org/im/protocol v1.4.0，example.org/im/transport v1.2.0又require protocol v1.6.0，则MVS构建列表选protocol v1.6.0；go.mod require是最低要求不是锁全部依赖，go list -m all看选中，go mod graph/why解释路径；go work可能改变工作区build list，需记录。"
+    },
+    {
+      "title": "三、go.sum与校验的能力边界",
+      "words": 3000,
+      "focus": "go.sum记录已下载模块.mod/.zip的哈希，可能同时含多版本/过期历史，不是selected版本清单/漏洞批准书。go mod tidy可能改go.mod/sum需审diff；go mod verify检查模块缓存相对下载记录未改，不查应用正确或已知漏洞，且与checksum DB用途区别。清楚记录工具链版本和build list。"
+    },
+    {
+      "title": "四、格式与静态分析分层",
+      "words": 3100,
+      "focus": "gofmt只规范Go格式；go vet启发式报告可疑构造如copylocks/printf/lostcancel，不覆盖业务409、权限404或跨节点顺序，报告可误报漏报；编译只证类型/构建，go test/race/fuzz各有运行路径限制。对m9字段变更写工具→证据→不证明表。"
+    },
+    {
+      "title": "五、Protobuf生成链路与兼容",
+      "words": 3300,
+      "focus": "schema .proto是源事实，protoc与protoc-gen-go/plugin版本和go_package影响输出，生成.pb.go需可复现且不手改；字段号不能重用、optional presence，旧binary可读新增字段但旧SearchIndex可能忽略visible/version，ProtoJSON有未知字段丢失风险。测试old/new producer/consumer/replay，生成差异不能代表业务安全。"
+    },
+    {
+      "title": "六、漏洞扫描与升级决策",
+      "words": 3000,
+      "focus": "govulncheck使用Go vuln DB并按依赖/调用路径定位已知漏洞，报告版本、调用可达性和修复版本；无报告只在当前数据库/分析范围内，不能证明无安全漏洞。升级protocol版本可能改变生成类型或语义，需兼容矩阵、授权负例/历史事件重放/回滚门。"
+    },
+    {
+      "title": "七、固定OpenIM源码与可复核工具清单",
+      "words": 3000,
+      "focus": "固定OpenIM send.go进口github.com/openimsdk/protocol/...并调用MsgToMQ，Mongo consumer BatchInsertChat2DB，不能由两文件推出go.mod具体selected版/protoc生成配置或检查通过。学员应在固定checkout读取go.mod/go.sum/schema/toolchain/CI，记录SHA/命令/实际输出，不在本仓库对上游运行。"
+    },
+    {
+      "title": "八、22题与变更评审",
+      "words": 3100,
+      "focus": "22题基础8/手算MVS与工具8/升级评审6，答案覆盖v1.4/v1.6 selected、go.sum非锁、go mod verify边界、gofmt/go vet/govulncheck、proto源/生成、old consumer权限、S2/R9/OpenIM。交付工具证据矩阵/生成清单/版本与漏洞修复计划，静态不运行Go命令/生成器/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《10.08 依赖与质量工具》，面向Go初学者，八节理论丰富、IM业务由浅入深，22题带反馈。虚构MessageEvent新增optional message_version/visible，需要检查.proto源、protoc/protoc-gen-go版本、生成.pb.go、Go依赖选择、旧新消费者业务语义。教学MVS手算：主模块example.org/im/app require protocol v1.4.0，transport v1.2.0转依赖protocol v1.6.0，选中protocol v1.6.0；go.mod require是最低版本不等于锁全部，go.sum可能含多版本哈希不是build list，go mod verify查模块缓存未改不是漏洞/业务正确，go mod tidy可改文件需审差异。gofmt只格式；go vet启发式可疑构造如copylocks/lostcancel，不能证明业务409/404；govulncheck按Go漏洞数据库和调用路径查已知问题，无报告不等于无漏洞。生成代码不手改，字段号不能重用，旧binary可parse新增字段不等于旧SearchIndex懂visible/version；ProtoJSON可丢unknown。当前S2 body非空最多6 UTF8字节/总请求4096B/重复同ID409/非成员404/200 accepted_in_memory，未来S3 stored_in_teaching_db和R9 9B仍提议。固定OpenIM send.go引用protocol类型并调用MsgToMQ、另Mongo消费BatchInsertChat2DB，但未核对go.mod具体选择或工具执行，不得写成已通过。静态不运行Go命令/protoc/IM/站点。\n1. 一、从IM字段变更定位依赖与工具: 虚构教学MessageEvent新增optional message_version/visible字段，需从proto源、protoc/protoc-gen-go、生成.pb.go、Go module graph、RPC消费者和测试证据分别检查；当前S2 6UTF8 B accepted_in_memory、同ID重复409、非成员404，未来S3 SQL与R9待审不改。工具不能代替业务安全。\n2. 二、go.mod最小版本选择手算: 玩具主模块example.org/im/app require example.org/im/protocol v1.4.0，example.org/im/transport v1.2.0又require protocol v1.6.0，则MVS构建列表选protocol v1.6.0；go.mod require是最低要求不是锁全部依赖，go list -m all看选中，go mod graph/why解释路径；go work可能改变工作区build list，需记录。\n3. 三、go.sum与校验的能力边界: go.sum记录已下载模块.mod/.zip的哈希，可能同时含多版本/过期历史，不是selected版本清单/漏洞批准书。go mod tidy可能改go.mod/sum需审diff；go mod verify检查模块缓存相对下载记录未改，不查应用正确或已知漏洞，且与checksum DB用途区别。清楚记录工具链版本和build list。\n4. 四、格式与静态分析分层: gofmt只规范Go格式；go vet启发式报告可疑构造如copylocks/printf/lostcancel，不覆盖业务409、权限404或跨节点顺序，报告可误报漏报；编译只证类型/构建，go test/race/fuzz各有运行路径限制。对m9字段变更写工具→证据→不证明表。\n5. 五、Protobuf生成链路与兼容: schema .proto是源事实，protoc与protoc-gen-go/plugin版本和go_package影响输出，生成.pb.go需可复现且不手改；字段号不能重用、optional presence，旧binary可读新增字段但旧SearchIndex可能忽略visible/version，ProtoJSON有未知字段丢失风险。测试old/new producer/consumer/replay，生成差异不能代表业务安全。\n6. 六、漏洞扫描与升级决策: govulncheck使用Go vuln DB并按依赖/调用路径定位已知漏洞，报告版本、调用可达性和修复版本；无报告只在当前数据库/分析范围内，不能证明无安全漏洞。升级protocol版本可能改变生成类型或语义，需兼容矩阵、授权负例/历史事件重放/回滚门。\n7. 七、固定OpenIM源码与可复核工具清单: 固定OpenIM send.go进口github.com/openimsdk/protocol/...并调用MsgToMQ，Mongo consumer BatchInsertChat2DB，不能由两文件推出go.mod具体selected版/protoc生成配置或检查通过。学员应在固定checkout读取go.mod/go.sum/schema/toolchain/CI，记录SHA/命令/实际输出，不在本仓库对上游运行。\n8. 八、22题与变更评审: 22题基础8/手算MVS与工具8/升级评审6，答案覆盖v1.4/v1.6 selected、go.sum非锁、go mod verify边界、gofmt/go vet/govulncheck、proto源/生成、old consumer权限、S2/R9/OpenIM。交付工具证据矩阵/生成清单/版本与漏洞修复计划，静态不运行Go命令/生成器/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

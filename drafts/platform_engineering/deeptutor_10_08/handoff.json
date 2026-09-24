@@ -1,0 +1,30 @@
+{
+  "chapter": "10.08",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go dependency and quality-tool lesson for a fictional IM protobuf event-field change",
+  "prerequisites": [
+    "01.09 Go packages and modules",
+    "09.10 protocol compatibility and RPC",
+    "10.07 property, fuzz and race evidence",
+    "10.09 CI stage and artifact identity"
+  ],
+  "first_pass": [
+    "hand-calculate MVS selected protocol v1.6.0 from toy v1.4.0 and transitive v1.6.0 requirements",
+    "distinguish go.mod minimum requirements, build list and go.sum hashes",
+    "explain gofmt and go vet outputs without promoting them to business correctness"
+  ],
+  "second_pass": [
+    "review go mod tidy and go mod verify with their actual official scopes",
+    "tie .proto, protoc/plugin versions and generated .pb.go together",
+    "evaluate old/new event consumers for message_version and visible semantic safety",
+    "limit govulncheck conclusions to known reports and analyzed call paths",
+    "keep fixed OpenIM source and unrun tool results separate"
+  ],
+  "not_yet_prerequisites": [
+    "10.10 continuous delivery and version management",
+    "learner's actual Go build list, generator and scanner evidence"
+  ],
+  "next_chapter": "10.10 continuous delivery and version management",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. Those files do not establish the exact selected protocol module version, protoc toolchain or any gofmt/vet/govulncheck result.",
+  "shared_integration_pending": []
+}

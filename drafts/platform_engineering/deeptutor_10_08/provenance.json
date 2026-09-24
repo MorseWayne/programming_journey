@@ -1,0 +1,39 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_1a12825561",
+  "page_id": "pg_2a1b9fac40",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/mod",
+      "https://pkg.go.dev/cmd/gofmt",
+      "https://pkg.go.dev/cmd/vet",
+      "https://go.dev/doc/security/vuln/",
+      "https://protobuf.dev/reference/go/go-generated/",
+      "https://protobuf.dev/programming-guides/proto3/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "259874bf22308b1c993e848418463195da2ed1bad1baa0469553f2eacc638a2a",
+  "original_characters": 34828,
+  "generation_request_sha256": "f098052916cc4e2afe6e0e37163dc8915918323955b347a5e556526a012000ef",
+  "reviewed_sha256": "0d6dc56fe75e07a9e57b4b9709cc152a6927f2011fdbf296102038bc3a2004d4",
+  "reviewed_characters": 9920,
+  "reviewed_chinese_characters": 3356,
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/08_dependency_quality_tools.md",
+  "course_sha256": "b2070e69df1dae2ab4778bc885b2f7cdbfca9e432e56f11e4ff00d90e4db9cab"
+}
