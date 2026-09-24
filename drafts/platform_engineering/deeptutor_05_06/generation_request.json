@@ -1,0 +1,75 @@
+{
+  "code": "05.06",
+  "title": "Go 内存生命周期：从小消息视图到大缓冲保留",
+  "chapter_id": "ch_go_memory_lifecycle",
+  "summary": "面向Go初学者承接切片、指针、虚拟内存与调度，以虚构IM消息预览解释底层数组共享、len/cap、可达性、逃逸、栈/堆、指针尾部和复制/复用取舍。",
+  "objectives": [
+    "解释slice头与底层数组共享",
+    "区分len/cap限制与内存所有权",
+    "画队列小视图保留大数组的引用图",
+    "估算1024个独立缓冲的纸上数据字节",
+    "区分逃逸与变量词法位置",
+    "解释指针切片尾部残留引用",
+    "分开HeapAlloc/TotalAlloc/StackInuse和RSS",
+    "比较复制与复用的正确性/成本"
+  ],
+  "sources": [
+    "https://go.dev/blog/slices-intro",
+    "https://go.dev/ref/spec",
+    "https://go.dev/doc/gc-guide",
+    "https://go.dev/blog/generic-slice-functions",
+    "https://go.dev/wiki/SliceTricks",
+    "https://pkg.go.dev/runtime#MemStats"
+  ],
+  "sections": [
+    {
+      "title": "一、8字节预览为何保留64KiB",
+      "words": 2300,
+      "focus": "承接01.04切片/01.05指针、03.06分配RSS、05.05 goroutine与05.04竞态；虚构IM读取c-a一条消息的64KiB缓冲，队列只要前8B预览，len8不等于8B所有权。固定1024条各独立缓冲的纸上64MiB vs纯复制数据8KiB，明确不等于RSS。"
+    },
+    {
+      "title": "二、切片头/len/cap与共享数组",
+      "words": 2500,
+      "focus": "full:=make([]byte,64*1024) len/cap65536, preview:=full[:8] len8 cap65536且共享；full[:8:8] cap8仍共享不释放；append([]byte(nil),full[:8]...)得到独立拷贝cap不可精确承诺，修改preview[0]影响full[0]但不影响copy。"
+    },
+    {
+      "title": "三、引用图与GC可达性",
+      "words": 2400,
+      "focus": "queue→preview slice→full backing array，full=nil仅去掉一个引用；有其他引用仍可达，GC根来自栈/全局；循环引用若无根可回收；小slice持有大数组是所有权问题，不等同故障或RSS立降。"
+    },
+    {
+      "title": "四、goroutine栈、堆与逃逸分析",
+      "words": 2500,
+      "focus": "栈/Go heap定义，局部变量不保证栈，取地址不必然堆，编译器看生命周期/逃逸且会随版本变化；队列中长期保留的数组需合适生命周期，goroutine stack由运行时管理，StackInuse与HeapAlloc不同；go build -gcflags=-m=3供未来学习者验证，不在本次运行。"
+    },
+    {
+      "title": "五、删除/缩短切片的指针尾部",
+      "words": 2300,
+      "focus": "[]*Message或含指针结构的底层数组：截短len不一定清掉尾部槽里的引用，队列移除后旧指针可能留在仍可达的数组，需按所有权清空不再用的槽/复用或复制；与[]byte小视图保留整个数组是两种机制；Go slices.Delete较新实现清尾，与版本有关。"
+    },
+    {
+      "title": "六、对象回收与运行时/系统指标时间差",
+      "words": 2500,
+      "focus": "t0队列保留1024个预览，t1换独立小副本并移除所有旧引用，t2 GC清扫后HeapAlloc可能下降，t3 HeapReleased/RSS由复用/返还/映射决定；TotalAlloc累计、HeapObjects与StackInuse不同，不能用len或一次HeapAlloc直接算RSS。"
+    },
+    {
+      "title": "七、复制/复用/容量的业务取舍",
+      "words": 2500,
+      "focus": "直接切片0复制但长期保留大数组，复制8B产生小对象/分配成本但降低长寿命保留；可复用64KiB缓冲需明确不再被消费者引用否则数据竞争/内容串改，队列有限容量1024和释放条件；用业务留存时长与分布选方案，真实性能由05.10/11卷验证。"
+    },
+    {
+      "title": "八、引用与字节账目纸上练习",
+      "words": 2400,
+      "focus": "交付len/cap/共享表、queue引用图、1024×64KiB=64MiB与1024×8B=8KiB数据字节对比、full slice expression反例、t0-t3指标界、22题带反馈。下一05.07GC；静态不运行Go/基准/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.06 Go 内存生命周期》，面向Go初学者。八节丰富正文和22题反馈，以虚构IM 64KiB接收缓冲只保留8B预览为唯一主案例；1024个独立数组纸上数据为64MiB，独立8B副本纯数据8KiB，不能说等于HeapAlloc/RSS。区分preview:=full[:8]与full[:8:8]都共享底层数组，只有独立复制改变所有权；局部变量/取地址不确定栈堆；缩短含指针切片可能残留引用；GC回收不保证RSS即时下降。静态不运行Go/基准/站点。\n1. 一、8字节预览为何保留64KiB：承接01.04切片/01.05指针、03.06分配RSS、05.05 goroutine与05.04竞态；虚构IM读取c-a一条消息的64KiB缓冲，队列只要前8B预览，len8不等于8B所有权。固定1024条各独立缓冲的纸上64MiB vs纯复制数据8KiB，明确不等于RSS。\n2. 二、切片头/len/cap与共享数组：full:=make([]byte,64*1024) len/cap65536, preview:=full[:8] len8 cap65536且共享；full[:8:8] cap8仍共享不释放；append([]byte(nil),full[:8]...)得到独立拷贝cap不可精确承诺，修改preview[0]影响full[0]但不影响copy。\n3. 三、引用图与GC可达性：queue→preview slice→full backing array，full=nil仅去掉一个引用；有其他引用仍可达，GC根来自栈/全局；循环引用若无根可回收；小slice持有大数组是所有权问题，不等同故障或RSS立降。\n4. 四、goroutine栈、堆与逃逸分析：栈/Go heap定义，局部变量不保证栈，取地址不必然堆，编译器看生命周期/逃逸且会随版本变化；队列中长期保留的数组需合适生命周期，goroutine stack由运行时管理，StackInuse与HeapAlloc不同；go build -gcflags=-m=3供未来学习者验证，不在本次运行。\n5. 五、删除/缩短切片的指针尾部：[]*Message或含指针结构的底层数组：截短len不一定清掉尾部槽里的引用，队列移除后旧指针可能留在仍可达的数组，需按所有权清空不再用的槽/复用或复制；与[]byte小视图保留整个数组是两种机制；Go slices.Delete较新实现清尾，与版本有关。\n6. 六、对象回收与运行时/系统指标时间差：t0队列保留1024个预览，t1换独立小副本并移除所有旧引用，t2 GC清扫后HeapAlloc可能下降，t3 HeapReleased/RSS由复用/返还/映射决定；TotalAlloc累计、HeapObjects与StackInuse不同，不能用len或一次HeapAlloc直接算RSS。\n7. 七、复制/复用/容量的业务取舍：直接切片0复制但长期保留大数组，复制8B产生小对象/分配成本但降低长寿命保留；可复用64KiB缓冲需明确不再被消费者引用否则数据竞争/内容串改，队列有限容量1024和释放条件；用业务留存时长与分布选方案，真实性能由05.10/11卷验证。\n8. 八、引用与字节账目纸上练习：交付len/cap/共享表、queue引用图、1024×64KiB=64MiB与1024×8B=8KiB数据字节对比、full slice expression反例、t0-t3指标界、22题带反馈。下一05.07GC；静态不运行Go/基准/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

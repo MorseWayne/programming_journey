@@ -1,0 +1,31 @@
+{
+  "chapter": "05.06",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go object-lifetime lesson for fictional 64 KiB IM receive buffers and 8-byte previews",
+  "prerequisites": [
+    "01.04 slice length, capacity and backing arrays",
+    "01.05 pointers and references",
+    "03.06 allocator versus RSS",
+    "05.04 synchronization and mutable shared data",
+    "05.05 goroutine and stack context"
+  ],
+  "first_pass": [
+    "full, preview, capacity-limited view and independent copy",
+    "queue-rooted reachability of the backing array",
+    "1024 independent-array logical byte accounting"
+  ],
+  "second_pass": [
+    "stack versus heap and version-dependent escape analysis",
+    "pointer-containing slice tail retention",
+    "t0–t3 GC, reuse and RSS timing",
+    "copy versus reuse and bounded queue ownership"
+  ],
+  "not_yet_prerequisites": [
+    "05.07 garbage collection mechanisms",
+    "05.10 Go profile and trace evidence",
+    "11.04–11.07 workload and capacity evidence"
+  ],
+  "next_chapter": "05.07 Go garbage collection",
+  "upstream_inspection": "No OpenIM implementation claim; Go language specification, slices blog and GC/runtime docs support general Go object-lifetime rules.",
+  "shared_integration_pending": []
+}

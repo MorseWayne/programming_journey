@@ -28,9 +28,9 @@
   "original_sha256": "d9ef0d5d68b26685a4c7628e3b61cdc04bbcb6b6f609bd065bbc711c7fa718bd",
   "original_characters": 30988,
   "generation_request_sha256": "e2571e222e00a539d2ba8e1f360a78ffaa3f65661ad83b37cb07da1193df998f",
-  "reviewed_sha256": "8bf32f4d05806f5e5db107f1ddbd6c33045f19a65053e2b0cadfb5ba9fff3957",
-  "reviewed_characters": 7551,
-  "reviewed_chinese_characters": 3454,
+  "reviewed_sha256": "b52c4a426e346b3c07bf4776c586b0a0740fe191342ebc32ac0ae4c1715dca5f",
+  "reviewed_characters": 7643,
+  "reviewed_chinese_characters": 3460,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/05_scheduler_model.md",
-  "course_sha256": "d85ffd030ac1d66b5885ca67cc125caeb62636ce540a459523a2724f21fcad3f"
+  "course_sha256": "cf768a65486edba9d63c03adb0d16cdb1e6234eccb230e122e004a2f7498ffac"
 }

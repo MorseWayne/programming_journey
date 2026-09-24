@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_99c6a47e90",
+  "page_id": "pg_a88712f133",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/blog/slices-intro",
+      "https://go.dev/ref/spec",
+      "https://go.dev/doc/gc-guide",
+      "https://go.dev/blog/generic-slice-functions",
+      "https://go.dev/wiki/SliceTricks",
+      "https://pkg.go.dev/runtime#MemStats"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "afb96dcc922d5d9bb755e65d9dff6d754ba0999cad6c5fc50ce123346a91e62f",
+  "original_characters": 31922,
+  "generation_request_sha256": "3de7209c4b9ecfdb9b763e695fe595022c374d5b41dab549ae8561e2be181f28",
+  "reviewed_sha256": "6d7db9f3e2664fbec81c7f0c07beb046462e8b960d966b24a461f68a1ca57461",
+  "reviewed_characters": 7627,
+  "reviewed_chinese_characters": 3434,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/06_memory_lifecycle.md",
+  "course_sha256": "91a1374db00b49aba838c97f8822c3c8edc1d612206d9a522cbf1836e549d65a"
+}

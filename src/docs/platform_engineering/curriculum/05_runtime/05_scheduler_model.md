@@ -199,4 +199,4 @@ M1 持 P1 运行 G-a；G-c 可运行排队，G-b 等网络。</details>
 - [Go `netpoll.go`](https://go.dev/src/runtime/netpoll.go)与[`runtime` 文档](https://pkg.go.dev/runtime)：网络就绪、goroutine 与 `GOMAXPROCS` 的概念边界。
 - [Go `runtime/metrics`](https://pkg.go.dev/runtime/metrics)与[内存模型](https://go.dev/ref/mem)：运行状态观察入口及“调度先后不等于同步关系”。
 
-按[学习路线](../learning_path.md)，下一章 05.06 继续用消息缓冲解释栈/堆、逃逸、对象可达与内存布局。离开本章前，应能把**连接 FD、等待/可运行 G、OS 线程 M、执行资格 P**分别放到正确一层，并指出该图不能替代哪项 IM 业务顺序与确认保证。
+按[学习路线](../learning_path.md)，下一章[05.06 内存生命周期](./06_memory_lifecycle.md)继续用消息缓冲解释栈/堆、逃逸、对象可达与内存布局。离开本章前，应能把**连接 FD、等待/可运行 G、OS 线程 M、执行资格 P**分别放到正确一层，并指出该图不能替代哪项 IM 业务顺序与确认保证。
