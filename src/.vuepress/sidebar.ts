@@ -232,6 +232,7 @@ export default sidebar({
           "children": [
             "curriculum/09_backend_security/",
             "curriculum/09_backend_security/01_requirements_boundaries",
+            "curriculum/09_backend_security/02_http_api_contract",
             "curriculum/09_backend_security/core"
           ]
         },

@@ -1,0 +1,12 @@
+{
+  "chapter": "09.02",
+  "stage": "S2",
+  "business_scope": "fictional HTTP GET history and POST message for c-a; only isolated in-memory teaching acceptance, no running HTTP service or durable delivery",
+  "prerequisites": ["09.01 read/send use cases and trusted identity boundary", "04.03 HTTP method, status and representation basics", "05.02 single-process memory invariant"],
+  "first_pass": ["GET/POST resource and method contract", "GET limit default 20 range 1–100", "opaque before cursor and sender filter", "POST 200 accepted_in_memory and duplicate 409"],
+  "second_pass": ["status and custom JSON machine code mapping", "request 4096 B versus body 6 B versus local file 1 MiB", "Content-Type/Accept/Cache-Control", "response loss after memory commit and unknown client outcome"],
+  "not_yet_prerequisites": ["09.03 handlers, service and adapter organization", "09.07 real authentication and authorization", "S3 durable message storage", "S5 idempotent retry and multi-device delivery"],
+  "next_chapter": "09.03 program organization: handler/application/domain/adapter boundaries for these two HTTP use cases",
+  "upstream_inspection": "No new OpenIM implementation fact asserted in this chapter; it inherits the 09.01 fixed-source boundary.",
+  "shared_integration_pending": []
+}

@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_02297197e8",
+  "page_id": "pg_1a20138541",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "1744b7f5c2e0cb6de55ca14864e6739802c7142297fb99a0304f32cd221c1bc9",
+  "original_characters": 36723,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "https://www.rfc-editor.org/rfc/rfc9112",
+      "https://datatracker.ietf.org/doc/html/rfc9457",
+      "https://pkg.go.dev/net/http",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "2603133227820112ae5a79e796758248ebb59d816bd52a59d6468321ef5fb0bc",
+  "reviewed_sha256": "cfdf587890c5076925cc1946dafc582504533b5f9aea0c3ca57758d4dc71a0f9",
+  "reviewed_characters": 10560,
+  "reviewed_chinese_characters": 4636,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md",
+  "course_sha256": "8c0247f0556e0977654472f2136054c7a5f8cfb6ae5648246e3d07f727504954"
+}

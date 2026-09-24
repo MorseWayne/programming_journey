@@ -1,0 +1,74 @@
+{
+  "code": "09.02",
+  "title": "HTTP 接口设计：会话历史与消息提交的可核对合同",
+  "chapter_id": "ch_http_api_contract",
+  "summary": "承接09.01用例与S2内存受理、04.03HTTP语义，面向Go初学者为虚构IM只读历史GET和提交消息POST定义路径、JSON表示、方法/状态、查询limit/opaque cursor/filter、错误体、内容类型与独立资源限额。静态教材无真实服务运行。",
+  "objectives": [
+    "把读历史和发送用例映射为一致的资源与方法",
+    "区分200内存受理与201/202可能暗示的其他合同",
+    "定义分页次序、排他cursor、limit及过滤顺序",
+    "区分请求体总字节上限与消息正文上限",
+    "设计稳定错误码与HTTP状态而不泄漏身份信息",
+    "明确Content-Type/Accept/缓存边界",
+    "用响应丢失和重复提交检验HTTP与业务幂等边界",
+    "写出可供后续net/http实现与httptest核对的合同矩阵"
+  ],
+  "sources": [
+    "https://datatracker.ietf.org/doc/html/rfc9110",
+    "https://www.rfc-editor.org/rfc/rfc9112",
+    "https://datatracker.ietf.org/doc/html/rfc9457",
+    "https://pkg.go.dev/net/http",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+  ],
+  "sections": [
+    {
+      "title": "一、从09.01两张用例卡定义资源",
+      "words": 2200,
+      "focus": "u-a/u-b/c-a/m-a虚构，当前项目仅本地CLI。GET /v1/conversations/c-a/messages读取、POST同路径提交，成功点仅S2进程内存受理；主体由未来可信认证边界，客户端sender_id不可信。路径版本/v1非本地JSON v1。先写请求/响应/状态合同再Go handler。"
+    },
+    {
+      "title": "二、GET历史：方法、表示与授权",
+      "words": 2500,
+      "focus": "GET safe/read-only，查询limit默认20范围1..100，before不透明游标，optional sender=u-b过滤；只读已授权c-a，按内存本地accept seq降序，过滤后分页，next_cursor null意味本次无更早项不保证永远/完整；Cache-Control no-store/Content-Type application/json，空messages[]合法。无真实查询服务。"
+    },
+    {
+      "title": "三、分页游标与变动数据的边界",
+      "words": 2600,
+      "focus": "静态数据m1 seq1,m2 seq2,m3 seq3，limit2返回m3,m2 + cursorexclusive before m2，下一页m1；若m4中间新增，旧cursor不重复新项，但跨重启内存序号失效；游标绑定会话、排序和过滤，拒绝错会话/畸形；不把游标当认证令牌/永久历史快照。过滤先于分页，顺序稳定、同序tie规则若必要。"
+    },
+    {
+      "title": "四、POST消息：输入、内存受理与重复",
+      "words": 2500,
+      "focus": "POST /v1/conversations/c-a/messages, Content-Type application/json, body {message_id:m-a,body:你好}, no trusted sender field；原始HTTP请求体上限例4096B、正文6UTF8字节沿10.01、本地文件1MiB不同。成功200 OK body status accepted_in_memory, not durable/queue/delivery; duplicate same c-a/m-a409 conflict, original unchanged, request response lost unknown; no idempotent retry guarantee yet。"
+    },
+    {
+      "title": "五、HTTP状态与稳定错误体",
+      "words": 2600,
+      "focus": "map 200 query/accepted, 400 bad param/syntax, 401 invalid auth per challenge requirement later, 403 forbidden,404 missing/hidden,409 duplicate,413 body too large,415 unsupported media,500 unexpected; missing response is not status. JSON error shape {error:{code,message}}, machine code stable, message non-sensitive; RFC9457 is alternative standard not claim our body conforms, explain if adopted use application/problem+json and type as primary. 201 vs202 vs200 semantics choice。"
+    },
+    {
+      "title": "六、内容类型、版本、缓存与限额",
+      "words": 2400,
+      "focus": "Content-Type request/response, Accept if excludes JSON 406 by explicit teaching contract, charset/UTF8 and byte length, Cache-Control no-store for sensitive history not authentication/TLS。/v1 API version distinct from local v1 file schema, unknown fields/version rejection policy, fixed default/max limit and raw body max not silently vary. Go net/http implementation deferred 09.03。"
+    },
+    {
+      "title": "七、失败时间线与接口评审",
+      "words": 2400,
+      "focus": "DNS/connection vs HTTP status (04.02), trusted identity and object auth before data, request canceled/timeout may be after in-memory commit so caller result unknown, duplicate retrial409; no automatically safe retry. For each response check status, code, body, before/after memory; no online delivery. Security privacy of errors, no raw body/token logs. Table of negative cases, source RFC9110/9457/OWASP。"
+    },
+    {
+      "title": "八、完整契约矩阵与分层练习",
+      "words": 2900,
+      "focus": "give request/response snippets for GET empty and POST accepted plus one error, all static and byte coherent if Content-Length shown; 22 exercises gradual: method/path, 200 vs201/202, pagination, filter, status, error body, caps, unknown outcomes, business evidence. Learner later personal net/http+httptest, current no Go/network/site build. Next09.03 handlers/domain/adapters。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.02 HTTP 接口设计》。面向Go初学者，承接09.01虚构IM读历史/发消息用例和04.03HTTP基础，逐层讲资源与方法、GET分页/游标/过滤、POST入内存、状态码与错误体、内容类型/缓存/限额、响应丢失后的未知结果。当前没有HTTP服务，只写静态教材，不运行Go/网络/测试/站点；确保u-a/u-b/c-a/m-a身份约定与S2仅内存受理。\n1. 一、从09.01两张用例卡定义资源：u-a/u-b/c-a/m-a虚构，当前项目仅本地CLI。GET /v1/conversations/c-a/messages读取、POST同路径提交，成功点仅S2进程内存受理；主体由未来可信认证边界，客户端sender_id不可信。路径版本/v1非本地JSON v1。先写请求/响应/状态合同再Go handler。\n2. 二、GET历史：方法、表示与授权：GET safe/read-only，查询limit默认20范围1..100，before不透明游标，optional sender=u-b过滤；只读已授权c-a，按内存本地accept seq降序，过滤后分页，next_cursor null意味本次无更早项不保证永远/完整；Cache-Control no-store/Content-Type application/json，空messages[]合法。无真实查询服务。\n3. 三、分页游标与变动数据的边界：静态数据m1 seq1,m2 seq2,m3 seq3，limit2返回m3,m2 + cursorexclusive before m2，下一页m1；若m4中间新增，旧cursor不重复新项，但跨重启内存序号失效；游标绑定会话、排序和过滤，拒绝错会话/畸形；不把游标当认证令牌/永久历史快照。过滤先于分页，顺序稳定、同序tie规则若必要。\n4. 四、POST消息：输入、内存受理与重复：POST /v1/conversations/c-a/messages, Content-Type application/json, body {message_id:m-a,body:你好}, no trusted sender field；原始HTTP请求体上限例4096B、正文6UTF8字节沿10.01、本地文件1MiB不同。成功200 OK body status accepted_in_memory, not durable/queue/delivery; duplicate same c-a/m-a409 conflict, original unchanged, request response lost unknown; no idempotent retry guarantee yet。\n5. 五、HTTP状态与稳定错误体：map 200 query/accepted, 400 bad param/syntax, 401 invalid auth per challenge requirement later, 403 forbidden,404 missing/hidden,409 duplicate,413 body too large,415 unsupported media,500 unexpected; missing response is not status. JSON error shape {error:{code,message}}, machine code stable, message non-sensitive; RFC9457 is alternative standard not claim our body conforms, explain if adopted use application/problem+json and type as primary. 201 vs202 vs200 semantics choice。\n6. 六、内容类型、版本、缓存与限额：Content-Type request/response, Accept if excludes JSON 406 by explicit teaching contract, charset/UTF8 and byte length, Cache-Control no-store for sensitive history not authentication/TLS。/v1 API version distinct from local v1 file schema, unknown fields/version rejection policy, fixed default/max limit and raw body max not silently vary. Go net/http implementation deferred 09.03。\n7. 七、失败时间线与接口评审：DNS/connection vs HTTP status (04.02), trusted identity and object auth before data, request canceled/timeout may be after in-memory commit so caller result unknown, duplicate retrial409; no automatically safe retry. For each response check status, code, body, before/after memory; no online delivery. Security privacy of errors, no raw body/token logs. Table of negative cases, source RFC9110/9457/OWASP。\n8. 八、完整契约矩阵与分层练习：give request/response snippets for GET empty and POST accepted plus one error, all static and byte coherent if Content-Length shown; 22 exercises gradual: method/path, 200 vs201/202, pagination, filter, status, error body, caps, unknown outcomes, business evidence. Learner later personal net/http+httptest, current no Go/network/site build. Next09.03 handlers/domain/adapters。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

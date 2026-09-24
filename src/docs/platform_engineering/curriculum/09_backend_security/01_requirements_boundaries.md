@@ -265,4 +265,4 @@ HTTP/WS 边界：限量读入、解析 DTO、得到可信主体、映射外部�
 - [RFC 9110](https://datatracker.ietf.org/doc/html/rfc9110)、[Go `net/http`](https://pkg.go.dev/net/http)：传输语义与以后实现教学接口的官方入口。
 - [OpenIM 固定提交的 `SendMsg`](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go#L34)：本章只采用已读过的输入存在性和 `SessionType` 分支事实。
 
-下一章 09.02 再把用例转成 HTTP 方法、路径、状态和错误体；完成本章前先能准确说出“可信身份从哪来、拒绝后什么状态保持不变、S2 内存受理还不能证明哪些事”。
+下一章[09.02 HTTP 接口设计](./02_http_api_contract.md)再把用例转成方法、路径、状态和错误体；完成本章前先能准确说出“可信身份从哪来、拒绝后什么状态保持不变、S2 内存受理还不能证明哪些事”。

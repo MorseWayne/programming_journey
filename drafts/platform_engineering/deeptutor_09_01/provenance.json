@@ -26,9 +26,9 @@
     "upstream_implementation_claims": "req.MsgData presence and SessionType dispatch only, independently verified at pinned commit"
   },
   "generation_request_sha256": "b236dd76c79a48f59112139bbf346334305581b83d12d7f7893d990f064b1d85",
-  "reviewed_sha256": "f256e7009558bc7b933668977031b2e2f3e2308cd0ae758c3f81329639a77f78",
-  "reviewed_characters": 10100,
-  "reviewed_chinese_characters": 5125,
+  "reviewed_sha256": "5638193ee64f4d011d1ba77d64d3cc6eea6b3d0a5bb1d9bb66296fee4b07bede",
+  "reviewed_characters": 10199,
+  "reviewed_chinese_characters": 5129,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/01_requirements_boundaries.md",
-  "course_sha256": "965c4747c36fbe3123cc046e7d0d54574dea1be98cca69dbfca722792479ba81"
+  "course_sha256": "af802dfdcf5db56199a0bded9d30afac092358c28736132a7815c3cdcefe3094"
 }
