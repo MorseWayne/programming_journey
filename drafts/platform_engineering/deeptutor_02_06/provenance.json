@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_d2d242d08a",
+  "page_id": "pg_5d1fc7f863",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://algs4.cs.princeton.edu/32bst/",
+      "https://algs4.cs.princeton.edu/33balanced/",
+      "https://www.postgresql.org/docs/current/btree.html",
+      "https://www.sqlite.org/fileformat.html",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "82c2296af2088bf05fafc8731691eec27ec24009fe1d1f74d89ff14e4ab45c66",
+  "original_characters": 28787,
+  "generation_request_sha256": "5543c849e67e96b8771180c2b233b09c24fb4e2c79c0e985b8f1e3e0351917ad",
+  "reviewed_sha256": "3f7b98797671dca7d1cb44bd923e0e6b7543b377bb3b6eed6aa11fa4b7d5a34a",
+  "reviewed_characters": 7524,
+  "reviewed_chinese_characters": 3481,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/06_trees_ordered_index.md",
+  "course_sha256": "dfd1cd0379fbb77805a5cc0e02f841e15b321d700412771617f964fe759ffc3e"
+}

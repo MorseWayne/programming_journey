@@ -1,0 +1,31 @@
+{
+  "chapter": "02.06",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced tree and ordered-index lesson using fictional c-a conversation sequence ranges and m-a message ID point lookup",
+  "prerequisites": [
+    "02.01 asymptotic cost and data structures",
+    "02.03 search invariants and binary search",
+    "02.05 sorting and divide and conquer",
+    "06.02 SQL history query shape"
+  ],
+  "first_pass": [
+    "tree vocabulary and edge-count height",
+    "BST order invariant and search path",
+    "in-order traversal and bounded range output"
+  ],
+  "second_pass": [
+    "sorted insertion degeneration and rotation intuition",
+    "balanced height and O(h+k) range cost",
+    "64-key four-way toy multiway page tree",
+    "composite conversation_id plus seq order for IM history",
+    "point lookup versus ordered range tradeoffs"
+  ],
+  "not_yet_prerequisites": [
+    "06.04 buffer pool and page organization",
+    "06.05 physical database index details",
+    "06.06 query planning and execution plans"
+  ],
+  "next_chapter": "02.07 heaps and priority scheduling",
+  "upstream_inspection": "No OpenIM implementation claim; Princeton, MIT, PostgreSQL and SQLite primary materials support general algorithm and ordered-index concepts only.",
+  "shared_integration_pending": []
+}

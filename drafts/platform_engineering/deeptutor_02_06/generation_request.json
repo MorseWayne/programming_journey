@@ -1,0 +1,74 @@
+{
+  "code": "02.06",
+  "title": "树与有序索引：从会话序号范围走到B+树直觉",
+  "chapter_id": "ch_trees_ordered_index",
+  "summary": "面向Go初学者承接集合、二分、哈希、排序与SQL历史游标，以虚构IM会话c-a的seq键讲树词汇、BST插入/查找/中序/范围、退化和平衡，再进入多路页树和B+树的索引直觉；区分教学结构与PostgreSQL/OpenIM真实实现，静态纸上教材。",
+  "objectives": [
+    "解释树的根、父子、叶、层与高度",
+    "手工构造c-a序号BST并按不变量查找",
+    "用中序遍历得到有序序列和范围结果",
+    "比较退化链与平衡树的高度及最坏成本",
+    "解释旋转保持有序的直觉",
+    "用64键玩具模型估算多路页树层数",
+    "将(conversation_id,seq)范围查询映射到有序索引",
+    "比较map、有序切片、平衡树和多路索引的读写取舍"
+  ],
+  "sources": [
+    "https://algs4.cs.princeton.edu/32bst/",
+    "https://algs4.cs.princeton.edu/33balanced/",
+    "https://www.postgresql.org/docs/current/btree.html",
+    "https://www.sqlite.org/fileformat.html",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/"
+  ],
+  "sections": [
+    {
+      "title": "一、从c-a历史范围查询认识树",
+      "words": 2400,
+      "focus": "承接02.01成本/对数、02.02线性结构/指针、02.03二分、02.04哈希、02.05排序，及06.02 SQL seq cursor。IM需求：精确message_id查m-a vs按c-a seq范围[2,5]查多条，哈希点查与有序结构差异。树根/父子/叶/层/高度从小图补齐，静态纸上不运行。"
+    },
+    {
+      "title": "二、二叉搜索树不变量与插入/查找",
+      "words": 2900,
+      "focus": "唯一seq只在同会话范围，固定c-a keys 4,2,6,1,3,5,7 按此顺序入BST；左子树小右子树大，search5路径4→6→5，失败边界空指针；节点Go struct Key int64 Left Right *Node 静态，重复seq需明确拒绝或复合键策略，不直接把业务MessageID和TCP seq混为一谈。"
+    },
+    {
+      "title": "三、中序遍历与范围查询",
+      "words": 2700,
+      "focus": "inorder LNR返回1..7；range [2,5]得到2,3,4,5，若node<lower跳左，node>upper跳右；从树里找下界/向后迭代用于游标分页，复杂度O(h+k)访问路径加结果量的概念。与有序切片二分+顺序扫描、map无序比较。"
+    },
+    {
+      "title": "四、树退化与平衡直觉",
+      "words": 2800,
+      "focus": "排序1..7依次插入普通BST成右链高度6（边数），点查7需7节点而平衡树4,2,6,1,3,5,7高度2最多3节点；旋转1-2-3示意保持中序但降高度，AVL/RB具体规则后置；平衡树高度O(log n)与普通BST最坏O(n)，不把平均保证当最坏保证。"
+    },
+    {
+      "title": "五、多路树与页访问直觉",
+      "words": 2800,
+      "focus": "数据库页比指针节点大，一页放多个有序键和多个孩子，高扇出降低层数；玩具叶页4键，64键16叶，内层4页，根1页，总3层查找（忽略缓存、重复等）；B+教学模型内部键导向、叶子存可遍历条目并按序联结，范围查连续叶，不能说Postgres/SQLite实际完全等于玩具。"
+    },
+    {
+      "title": "六、把有序索引映射到IM查询",
+      "words": 2900,
+      "focus": "教学messages复合键(conversation_id,seq), GET c-a seq<cursor ORDER BY seq DESC LIMIT，索引先按会话前缀定位再沿范围走；message_id精确定位不同；没有索引时排序/扫描成本，索引维护写入/空间和页分裂。PostgreSQL B-tree可支持< <= = >= >，真实执行是否选索引留06.06 EXPLAIN，B+模型非OpenIM实际Mongo索引结构声明。"
+    },
+    {
+      "title": "七、正确性、复杂度与工程取舍",
+      "words": 2600,
+      "focus": "BST不变量为何查找可剪枝，inorder证明直觉，空树/重复键/倾斜顺序/并列时间戳等负例；Go map平均点查/有序切片更新成本/平衡BST/多路页树比较，内存/局部性/读写比例，索引不是免费；数据库事务并发/崩溃另章节。"
+    },
+    {
+      "title": "八、纸上索引方案与22道练习",
+      "words": 3000,
+      "focus": "交付两棵BST形状、search5路径、range[2,5]遍历、退化vs平衡高度、64键页树、c-a游标查询映射及证据限制；22题从树词汇、序列/中序、复杂度到B+页与IM查询附反馈。下一02.07堆与优先调度，后06.05深入B+与LSM。静态不运行Go/SQL/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《02.06 树与有序索引》，面向Go初学者。承接02.01–02.05与06.02会话历史查询，以虚构c-a消息seq为同一组纸上数据：4,2,6,1,3,5,7插入BST，查5、范围[2,5]、中序、1..7顺序插入退化，再讲平衡旋转和多路/B+页树、(conversation_id,seq)索引。八节丰富正文、22题附反馈。静态不运行Go/SQL/数据库/站点，不宣称OpenIM或数据库引擎内部就是玩具结构。\n1. 一、从c-a历史范围查询认识树：承接02.01成本/对数、02.02线性结构/指针、02.03二分、02.04哈希、02.05排序，及06.02 SQL seq cursor。IM需求：精确message_id查m-a vs按c-a seq范围[2,5]查多条，哈希点查与有序结构差异。树根/父子/叶/层/高度从小图补齐，静态纸上不运行。\n2. 二、二叉搜索树不变量与插入/查找：唯一seq只在同会话范围，固定c-a keys 4,2,6,1,3,5,7 按此顺序入BST；左子树小右子树大，search5路径4→6→5，失败边界空指针；节点Go struct Key int64 Left Right *Node 静态，重复seq需明确拒绝或复合键策略，不直接把业务MessageID和TCP seq混为一谈。\n3. 三、中序遍历与范围查询：inorder LNR返回1..7；range [2,5]得到2,3,4,5，若node<lower跳左，node>upper跳右；从树里找下界/向后迭代用于游标分页，复杂度O(h+k)访问路径加结果量的概念。与有序切片二分+顺序扫描、map无序比较。\n4. 四、树退化与平衡直觉：排序1..7依次插入普通BST成右链高度6（边数），点查7需7节点而平衡树4,2,6,1,3,5,7高度2最多3节点；旋转1-2-3示意保持中序但降高度，AVL/RB具体规则后置；平衡树高度O(log n)与普通BST最坏O(n)，不把平均保证当最坏保证。\n5. 五、多路树与页访问直觉：数据库页比指针节点大，一页放多个有序键和多个孩子，高扇出降低层数；玩具叶页4键，64键16叶，内层4页，根1页，总3层查找（忽略缓存、重复等）；B+教学模型内部键导向、叶子存可遍历条目并按序联结，范围查连续叶，不能说Postgres/SQLite实际完全等于玩具。\n6. 六、把有序索引映射到IM查询：教学messages复合键(conversation_id,seq), GET c-a seq<cursor ORDER BY seq DESC LIMIT，索引先按会话前缀定位再沿范围走；message_id精确定位不同；没有索引时排序/扫描成本，索引维护写入/空间和页分裂。PostgreSQL B-tree可支持< <= = >= >，真实执行是否选索引留06.06 EXPLAIN，B+模型非OpenIM实际Mongo索引结构声明。\n7. 七、正确性、复杂度与工程取舍：BST不变量为何查找可剪枝，inorder证明直觉，空树/重复键/倾斜顺序/并列时间戳等负例；Go map平均点查/有序切片更新成本/平衡BST/多路页树比较，内存/局部性/读写比例，索引不是免费；数据库事务并发/崩溃另章节。\n8. 八、纸上索引方案与22道练习：交付两棵BST形状、search5路径、range[2,5]遍历、退化vs平衡高度、64键页树、c-a游标查询映射及证据限制；22题从树词汇、序列/中序、复杂度到B+页与IM查询附反馈。下一02.07堆与优先调度，后06.05深入B+与LSM。静态不运行Go/SQL/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
