@@ -1,0 +1,25 @@
+{
+  "chapter": "01.09",
+  "business_scope": "local in-memory rules and bounded JSON file adapter only; no network, authentication, database, crash-atomic file update, server acceptance, delivery or read acknowledgement",
+  "first_pass": [
+    "directory, package name, import path and module path",
+    "exported identifiers and small public API",
+    "history domain rule versus historyfile JSON adapter versus command entry",
+    "package-level dependency direction and import cycles"
+  ],
+  "second_pass": [
+    "internal import scope",
+    "minimum version selection and semantic module versions",
+    "code version versus JSON format version",
+    "source, behavior, data and rollout compatibility"
+  ],
+  "not_yet_prerequisites": [
+    "testing framework and CI",
+    "complete CLI delivery and exit-code contract",
+    "network, authentication and concurrent synchronization",
+    "database transaction and durable file replacement"
+  ],
+  "next_chapter": "10.02 testing foundations, then 01.12 full command-line tool at the appropriate learning stage",
+  "upstream_inspection": "Only previously reviewed OpenIM method-interface and constructor facts are mentioned; no new OpenIM implementation or runtime fact asserted.",
+  "shared_integration_pending": []
+}

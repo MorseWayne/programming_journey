@@ -295,7 +295,7 @@ JSON 结构、字段名、转义和时间戳也占用输入字节。</details>
 解析只把文本转换为变量，空路径、负上限和未知格式仍可能不满足业务规则。</details>
 
 <details><summary>12. 本章下一步是什么？</summary>
-01.09 将把消息规则、文件 I/O 和命令入口拆成包与公开 API；HTTP、网络和并发仍须先完成 S2 前置。</details>
+下一章[01.09 包设计与依赖演进](../../../src/docs/platform_engineering/curriculum/01_go/09_packages_evolution.md)把消息规则、文件 I/O 和命令入口拆成包与公开 API；HTTP、网络和并发仍须先完成 S2 前置。</details>
 
 ## 本章来源
 

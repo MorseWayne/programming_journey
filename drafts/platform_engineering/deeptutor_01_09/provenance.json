@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_ee5a555af2",
+  "page_id": "pg_c7fb1783cf",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "75bcf0ee82e8db61777c011b25d06e5184e3e498a26036badbc2a9769c0aab55",
+  "original_sha256": "08e2def5c5415b3bae6445eebe9463aeabb1eaca3b7e9b6f3c7001dbf0830913",
+  "reviewed_sha256": "41a30b2a206222c077ead49503de6f25cb5ecb9c82f8a60b60d7b88692c0ec29",
+  "original_characters": 40389,
+  "reviewed_characters": 14609,
+  "reviewed_chinese_characters": 4667,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/09_packages_evolution.md",
+  "course_sha256": "1734469f7ab0cc4bc2eb5d76cdced1be1654a0263e0784d2abba5f9b74c6d04b",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/spec#Packages",
+      "https://go.dev/ref/spec#Exported_identifiers",
+      "https://go.dev/doc/modules/managing-dependencies",
+      "https://go.dev/ref/mod",
+      "https://go.dev/blog/package-names"
+    ],
+    "openim_reference": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/pkg/common/storage/controller/msg.go",
+    "input_scope": "Go specification and official documentation, plus only the OpenIM interface and constructor facts already reviewed for 01.06; no new upstream behavior claim."
+  }
+}

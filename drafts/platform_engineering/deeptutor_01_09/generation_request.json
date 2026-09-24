@@ -1,0 +1,74 @@
+{
+  "code": "01.09",
+  "title": "包设计与依赖演进：让消息规则和文件细节各守边界",
+  "chapter_id": "ch_go_packages_evolution",
+  "summary": "承接本地消息历史，将领域规则、JSON 文件、命令入口拆成依赖方向清楚的 Go 包；建立导出 API、内部实现、模块与兼容边界。没有网络、数据库、并发、真实发布或 OpenIM 运行结论。",
+  "learning_objectives": [
+    "解释目录、package 名、import path、module path 的关系",
+    "用导出标识符设计小而稳定的消息历史 API",
+    "区分领域规则、文件编码和命令入口的依赖方向",
+    "识别并拆开 import cycle",
+    "解释 internal 的访问边界",
+    "理解 go.mod、模块版本和最小版本选择的基本目的",
+    "用兼容表处理字段与函数演进",
+    "用虚构 IM 历史工具说明 API 变更的业务后果"
+  ],
+  "sections": [
+    {
+      "title": "一、为什么一个 main.go 会开始失控",
+      "words": 1900,
+      "focus": "读者完成01.01-01.08，会消息结构、error、JSON、文件和flag，但没系统学包和模块。用虚构本地历史工具的main同时校验、解码、写文件、打印说明重复和依赖混乱。先定义目录、包、导入路径、模块，不把它们混为一谈；不运行代码。"
+    },
+    {
+      "title": "二、包名、导出标识符与最小 API",
+      "words": 2100,
+      "focus": "从package history与package main开始；首字母大写导出，字段/函数小写仅包内可见；从Message、History、New、Add、Load/Save的职责中选择最小公开表面。解释返回值和错误是契约，结构体公开字段会扩大兼容负担；不要用接口或泛型过度设计。"
+    },
+    {
+      "title": "三、按依赖方向拆开领域、格式与入口",
+      "words": 2300,
+      "focus": "设计三个教学包：history只含Message/History/Validate，不导入os/json/flag；historyfile负责JSON字节与文件，依赖history；cmd/historytool收集flag并调用两者。画依赖箭头，解释业务规则不能依赖命令入口，文件适配器不应让领域层知道路径。完整多文件目录树和片段，明确不是可直接运行命令。"
+    },
+    {
+      "title": "四、import cycle 怎样出现，怎样通过责任移动消除",
+      "words": 2100,
+      "focus": "构造history导入historyfile以Load，historyfile又导入history以Message的循环；解释编译器拒绝的原因和调用关系不可清晰排序。三种拆法：调用方向改为上层编排、把共享类型放领域包、以小接口在使用方定义；不要用全局变量或复制类型掩盖。"
+    },
+    {
+      "title": "五、internal、测试边界与文件实现替换",
+      "words": 1900,
+      "focus": "解释internal目录只允许父目录树内代码导入，是编译访问边界不是认证；将jsonfile可放internal/historyfile或公开适配器取决是否承诺复用。测试框架只预告，不运行；先用内存实现和文件实现满足同一小接口的静态推演，说明接口来自调用者需要。"
+    },
+    {
+      "title": "六、go.mod、模块、版本和依赖最小选择",
+      "words": 2200,
+      "focus": "定义module path、require、go版本、package import path；go.mod记录直接需求不是锁定每个传递实现细节。讲语义版本vMAJOR.MINOR.PATCH、主版本不兼容路径/v2、最小版本选择只给概念，不给联网命令或真实升级。区分模块版本与历史JSON Version字段；二者不相互替代。"
+    },
+    {
+      "title": "七、兼容演进：改字段、改错误、改文件格式之前",
+      "words": 2100,
+      "focus": "以增加EditedAt、将Save改为Save(path) error、历史JSON version1->2为例，分别分析源码兼容、行为兼容、数据兼容和运营迁移。列兼容矩阵，先读旧再写新、拒绝未知、迁移工具的取舍；此章不实现迁移。错误身份和错误文字兼容也需要契约。"
+    },
+    {
+      "title": "八、综合：为 c-a 历史工具写包边界与练习",
+      "words": 2500,
+      "focus": "给目录树、history包的完整核心代码、historyfile适配器和main片段，逐条跟踪导入、错误和责任。至少18组反馈练习，覆盖包名/path、导出、循环、internal、接口位置、module/file version、兼容变更、依赖升级与本地文件不等于服务端历史。给Go规范、模块文档和包名文章链接。"
+    }
+  ],
+  "sources": [
+    "https://go.dev/ref/spec#Packages",
+    "https://go.dev/ref/spec#Exported_identifiers",
+    "https://go.dev/doc/modules/managing-dependencies",
+    "https://go.dev/ref/mod",
+    "https://go.dev/blog/package-names"
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材01.09《包设计与依赖演进：让消息规则和文件细节各守边界》。面向Go初学者，承接01.01-01.08，所有IM数据为虚构，本章严格由浅到深。\n1.一、为什么一个 main.go 会开始失控：读者完成01.01-01.08，会消息结构、error、JSON、文件和flag，但没系统学包和模块。用虚构本地历史工具的main同时校验、解码、写文件、打印说明重复和依赖混乱。先定义目录、包、导入路径、模块，不把它们混为一谈；不运行代码。\n2.二、包名、导出标识符与最小 API：从package history与package main开始；首字母大写导出，字段/函数小写仅包内可见；从Message、History、New、Add、Load/Save的职责中选择最小公开表面。解释返回值和错误是契约，结构体公开字段会扩大兼容负担；不要用接口或泛型过度设计。\n3.三、按依赖方向拆开领域、格式与入口：设计三个教学包：history只含Message/History/Validate，不导入os/json/flag；historyfile负责JSON字节与文件，依赖history；cmd/historytool收集flag并调用两者。画依赖箭头，解释业务规则不能依赖命令入口，文件适配器不应让领域层知道路径。完整多文件目录树和片段，明确不是可直接运行命令。\n4.四、import cycle 怎样出现，怎样通过责任移动消除：构造history导入historyfile以Load，historyfile又导入history以Message的循环；解释编译器拒绝的原因和调用关系不可清晰排序。三种拆法：调用方向改为上层编排、把共享类型放领域包、以小接口在使用方定义；不要用全局变量或复制类型掩盖。\n5.五、internal、测试边界与文件实现替换：解释internal目录只允许父目录树内代码导入，是编译访问边界不是认证；将jsonfile可放internal/historyfile或公开适配器取决是否承诺复用。测试框架只预告，不运行；先用内存实现和文件实现满足同一小接口的静态推演，说明接口来自调用者需要。\n6.六、go.mod、模块、版本和依赖最小选择：定义module path、require、go版本、package import path；go.mod记录直接需求不是锁定每个传递实现细节。讲语义版本vMAJOR.MINOR.PATCH、主版本不兼容路径/v2、最小版本选择只给概念，不给联网命令或真实升级。区分模块版本与历史JSON Version字段；二者不相互替代。\n7.七、兼容演进：改字段、改错误、改文件格式之前：以增加EditedAt、将Save改为Save(path) error、历史JSON version1->2为例，分别分析源码兼容、行为兼容、数据兼容和运营迁移。列兼容矩阵，先读旧再写新、拒绝未知、迁移工具的取舍；此章不实现迁移。错误身份和错误文字兼容也需要契约。\n8.八、综合：为 c-a 历史工具写包边界与练习：给目录树、history包的完整核心代码、historyfile适配器和main片段，逐条跟踪导入、错误和责任。至少18组反馈练习，覆盖包名/path、导出、循环、internal、接口位置、module/file version、兼容变更、依赖升级与本地文件不等于服务端历史。给Go规范、模块文档和包名文章链接。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -13,7 +13,7 @@ date: 2026-09-23
 
 经典书籍与大学课程帮助确定知识覆盖，教材按初学者的先修关系重新组织。业务主线改为虚构 IM，以 [OpenIM](./im_reference.md)为公开项目参照；早期旧案例保留为机制补充，后续逐章适配。
 
-当前包含 **14 卷分章设计、168 个章节单元、12 章独立长篇正文、35 课入门与衔接正文，以及 14 篇专题讲义**。长篇正文从 [01.01 程序与工具链](./01_go/01_program_toolchain.md)和 [01.02 类型与数据表示](./01_go/02_types_data.md)开始，继续进入 [01.03 控制流与函数](./01_go/03_control_functions.md)、[01.04 集合与文本](./01_go/04_collections_text.md)、[01.05 对象与指针](./01_go/05_maps_structs_pointers.md)、[01.06 方法与接口](./01_go/06_methods_interfaces.md)、[01.07 错误与资源生命周期](./01_go/07_errors_resources.md)和 [01.08 标准库协作](./01_go/08_standard_library.md)；[10.01 需求](./10_engineering/01_verifiable_requirements.md)和 [10.03 Git](./10_engineering/03_git_state.md)按前置穿插。168 个单元已有逐项 IM 练习与验收目标，尚未全部写成独立教材正文，详见[编写与能力验收](./assessment.md)。
+当前包含 **14 卷分章设计、168 个章节单元、13 章独立长篇正文、35 课入门与衔接正文，以及 14 篇专题讲义**。长篇正文从 [01.01 程序与工具链](./01_go/01_program_toolchain.md)和 [01.02 类型与数据表示](./01_go/02_types_data.md)开始，继续进入 [01.03 控制流与函数](./01_go/03_control_functions.md)、[01.04 集合与文本](./01_go/04_collections_text.md)、[01.05 对象与指针](./01_go/05_maps_structs_pointers.md)、[01.06 方法与接口](./01_go/06_methods_interfaces.md)、[01.07 错误与资源生命周期](./01_go/07_errors_resources.md)、[01.08 标准库协作](./01_go/08_standard_library.md)和 [01.09 包设计](./01_go/09_packages_evolution.md)；[10.01 需求](./10_engineering/01_verifiable_requirements.md)和 [10.03 Git](./10_engineering/03_git_state.md)按前置穿插。168 个单元已有逐项 IM 练习与验收目标，尚未全部写成独立教材正文，详见[编写与能力验收](./assessment.md)。
 
 第二批新增 [01.05 对象与指针](./01_go/05_maps_structs_pointers.md)、[02.01 数学成本](./02_algorithms/01_discrete_cost.md)和 [03.01 数据与存储层次](./03_systems/01_data_instructions_storage.md)，在已完成集合基础后分别进入。
 
@@ -21,7 +21,7 @@ date: 2026-09-23
 
 | 分卷与完整分章设计 | 已有入门与衔接内容 | 本轮新增讲解 |
 |---|---|---|
-| [01 · Go 语言、标准库与程序设计](./01_go/README.md) | A01–A10、B03 | [01.01](./01_go/01_program_toolchain.md) · [01.02](./01_go/02_types_data.md) · [01.03](./01_go/03_control_functions.md) · [01.04](./01_go/04_collections_text.md) · [01.05](./01_go/05_maps_structs_pointers.md) · [01.06](./01_go/06_methods_interfaces.md) · [01.07](./01_go/07_errors_resources.md) · [专题讲义](./01_go/core.md) |
+| [01 · Go 语言、标准库与程序设计](./01_go/README.md) | A01–A10、B03 | [01.01](./01_go/01_program_toolchain.md) · [01.02](./01_go/02_types_data.md) · [01.03](./01_go/03_control_functions.md) · [01.04](./01_go/04_collections_text.md) · [01.05](./01_go/05_maps_structs_pointers.md) · [01.06](./01_go/06_methods_interfaces.md) · [01.07](./01_go/07_errors_resources.md) · [01.08](./01_go/08_standard_library.md) · [01.09](./01_go/09_packages_evolution.md) · [专题讲义](./01_go/core.md) |
 | [02 · 数学基础、数据结构与问题求解](./02_algorithms/README.md) | A02–A06；原课程缺少独立主线 | [02.01 数学与成本](./02_algorithms/01_discrete_cost.md) · [专题讲义](./02_algorithms/core.md) |
 | [03 · 计算机系统、操作系统与 Linux](./03_systems/README.md) | B01、B04；原内容只介绍了进程与容器外观 | [03.01 数据与存储](./03_systems/01_data_instructions_storage.md) · [专题讲义](./03_systems/core.md) |
 | [04 · 网络协议与网络编程](./04_networks/README.md) | B02–B03、C04 的帧解析 | [专题讲义](./04_networks/core.md) |
