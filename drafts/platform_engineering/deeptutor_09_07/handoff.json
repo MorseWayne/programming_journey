@@ -1,0 +1,12 @@
+{
+  "chapter": "09.07",
+  "stage": "S3",
+  "business_scope": "fictional u-a member, u-b administrator and u-c nonmember of c-a, with m-a; paper authentication, object authorization and revocation design only, no running login service or OpenIM auth implementation claim",
+  "prerequisites": ["09.06 Cookie, Session, CORS and CSRF boundary", "09.05 trusted subject and data-access contract", "06.03 membership history limitation", "06.07 membership/send concurrency"],
+  "first_pass": ["authentication versus authorization", "password hash, salt and work factor", "opaque Session versus Bearer token and JWT", "deny-by-default subject/action/resource matrix"],
+  "second_pass": ["BOLA by changing conversation or message ID", "trusted sender identity across HTTP and WebSocket", "current-device/all-device logout versus conversation departure", "role change, stale claims and permission-cache invalidation", "external anti-enumeration versus internal error evidence"],
+  "not_yet_prerequisites": ["09.08 complete input/output defense", "S5 multi-device message delivery and read confirmation", "real deployed authentication configuration and revocation latency"],
+  "next_chapter": "09.08 input and output protection for IM text, attachments, URLs and logs",
+  "upstream_inspection": "No OpenIM authentication, authorization or browser session implementation asserted in this chapter.",
+  "shared_integration_pending": []
+}

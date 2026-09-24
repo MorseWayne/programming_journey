@@ -32,9 +32,9 @@
   "original_sha256": "c4ce618e4690a7392c6e676a41e9feaa72d957910a22bbed734de32b29cc701b",
   "original_characters": 35647,
   "generation_request_sha256": "04defb64c0e970ddb26a3d689a89f625bbcbcbdcc4994a7acff8936f07882837",
-  "reviewed_sha256": "e8b305a2035a641dbbca662010ce1789edf67a0bb03079afae58e39e66b2d563",
-  "reviewed_characters": 9676,
-  "reviewed_chinese_characters": 3822,
+  "reviewed_sha256": "b94093376f863074bdf8e7348439298b7887a791dec08573eccded6b15f22ad2",
+  "reviewed_characters": 9788,
+  "reviewed_chinese_characters": 3827,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/06_browser_client_boundary.md",
-  "course_sha256": "70db86968892c02ac3a9f06b8f2b9761ca23c21e50c6bacf2cfab277fe075ade"
+  "course_sha256": "34057c32bffd6e1c98104db6cd411e99f88119c487831be44dbba3023e508568"
 }

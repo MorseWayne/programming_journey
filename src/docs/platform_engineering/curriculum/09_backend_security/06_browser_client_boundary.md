@@ -207,4 +207,4 @@ GET 应用于安全读取；跨站导航等可能触发它，若改变状态会�
 - [OWASP：CSRF 防护](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)和[WebSocket 安全](https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html)：请求伪造与长连接来源。
 - [Go `html/template`](https://pkg.go.dev/html/template)、[`net/http`](https://pkg.go.dev/net/http)与[MDN：Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control)：模板、Cookie 属性和缓存语义。
 
-按[学习路线](../learning_path.md)，下一章 09.07 进一步讲凭据、会话、Token、会话成员授权和撤销；09.08 再系统讲输出编码、SQL 注入、文件/URL 与敏感日志。离开本章前，应能说明**浏览器来源、登录主体、用户意图、会话资源权限和设备送达各需要哪份独立证据**。
+按[学习路线](../learning_path.md)，下一章[09.07 认证与授权](./07_authentication_authorization.md)进一步讲凭据、会话、Token、会话成员授权和撤销；09.08 再系统讲输出编码、SQL 注入、文件/URL 与敏感日志。离开本章前，应能说明**浏览器来源、登录主体、用户意图、会话资源权限和设备送达各需要哪份独立证据**。

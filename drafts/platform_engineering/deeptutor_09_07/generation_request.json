@@ -1,0 +1,77 @@
+{
+  "code": "09.07",
+  "title": "认证与授权：从登录主体到会话消息权限",
+  "chapter_id": "ch_authn_authz",
+  "summary": "面向Go初学者承接09.06浏览器状态、09.05数据访问，以虚构IM的u-a/u-b/u-c和c-a讲凭据/口令哈希、Session与Bearer Token、默认拒绝和对象级权限、HTTP/WS可信主体、退群与多设备撤销；静态纸上教材，不宣称上游认证实现。",
+  "objectives": [
+    "区分身份认证与对具体会话/消息的授权",
+    "解释口令哈希、盐、成本与登录失败反馈",
+    "比较浏览器Session与Bearer Token的生命周期",
+    "写出c-a成员/管理员/非成员权限矩阵",
+    "识别修改conversation_id/message_id后的对象级越权",
+    "从受信上下文确定发件人并在HTTP/WS检查权限",
+    "区分登出、退群、角色变更与多设备撤销",
+    "为安全负例定义错误与最少日志证据"
+  ],
+  "sources": [
+    "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+    "https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/",
+    "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html",
+    "https://www.rfc-editor.org/rfc/rfc6750",
+    "https://pkg.go.dev/golang.org/x/crypto/argon2"
+  ],
+  "sections": [
+    {
+      "title": "一、u-a已登录为何仍不能读所有会话",
+      "words": 2400,
+      "focus": "承接09.06 Cookie/Session与09.05数据访问，虚构u-a/u-b/u-c,c-a,m-a，区分认证证明主体、授权判具体动作资源；u-c即使已登录也不能读c-a，默认拒绝。固定当前成员可读/可发、c-a管理员可移除成员的教学政策；历史资格变化后置。"
+    },
+    {
+      "title": "二、凭据与密码哈希的基础",
+      "words": 2700,
+      "focus": "用户名/口令是登录凭据不是长期Session，服务端不保存明文口令/快速SHA256；用成熟Argon2id等自带独立salt和成本参数的口令哈希，参数与盐随哈希记录，比较由审查过的库处理；login失败通用反馈、限速与审计，不在日志写口令/凭据。Go x/crypto/argon2只作入口非完整安全实现。"
+    },
+    {
+      "title": "三、Cookie Session与Bearer Token的身份生命周期",
+      "words": 2900,
+      "focus": "09.06 Cookie载体、server session映射u-a并有设备/过期/撤销，login与权限升级轮换会话ID、登出服务端失效；Bearer Authorization头的持有即使用风险，短期有效期/保护传输，JWT签名只证令牌完整与发行者条件，不自动反映退群或撤销；opaque vs signed取舍，不认为Cookie天然更安全或Token天然无CSRF。"
+    },
+    {
+      "title": "四、从角色到对象级权限矩阵",
+      "words": 2900,
+      "focus": "主体u-a(member),u-b(admin),u-c(nonmember)在c-a；操作read_history/send_message/invite/remove/member_read_receipt，默认拒绝，每请求按subject action resource current membership判断。角色是会话内角色而非全局万能管理员；资源ID可猜也不可作为权限。OWASP BOLA改变conversation_id或message_id。表格正反例。"
+    },
+    {
+      "title": "五、发送与读历史的受信身份路径",
+      "words": 2700,
+      "focus": "handler从可信认证context取subject，不接受payload sender_id；应用按会话及消息归属检查；数据访问实施可见性且事务/快照处理退群竞态，未授权与空历史分开但外部错误信息可避免资源枚举；HTTP/WS均每请求或每条应用消息检查。纸上伪代码与失败序列。"
+    },
+    {
+      "title": "六、退群、注销和多设备撤销",
+      "words": 2600,
+      "focus": "u-a浏览器和手机两Session，退出当前设备vs所有设备不同合同；退群后session身份仍是u-a但c-a权限撤销，WS旧连接不能继续发，订阅/发信逐条检查或收到撤销事件；角色变更旧Token声明可能陈旧，过期短时+服务端状态查或版本/denylist。消息历史可见范围需业务定义，不能只靠JWT role。"
+    },
+    {
+      "title": "七、错误、日志与负例验证",
+      "words": 2600,
+      "focus": "无凭据401、已认证无权403或隐匿404按合同、数据库失败5xx/结果未知不说无权；防枚举且保留内部分类。日志最少session事件/subject/action/resource template/outcome，不记口令/token/正文；单元权限决策、HTTP/WS集成、退群竞态和注销旧凭据负例，静态作者不运行。"
+    },
+    {
+      "title": "八、IM安全决策表和22道练习",
+      "words": 3000,
+      "focus": "交付登录→Session→读c-a/发送m-a→退群→旧连接拒绝时间线、权限矩阵和撤销政策；22题由认证/授权/口令哈希/Session和Token到BOLA/竞态/WS/多设备，附反馈。下一09.08输入输出防护，S5多设备消息确认。无实际服务/OpenIM auth源码声明。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.07 认证与授权》，面向Go初学者，承接09.06 Cookie/Session与09.05数据访问。虚构IM中u-a/u-b/u-c、c-a、m-a贯穿，先讲认证与授权区别、口令哈希、Session和Bearer Token，再以对象级权限矩阵讲读/发/管理，最后讲退群、注销、多设备和旧WebSocket权限撤销。八节充分展开、22题附反馈。静态教材不运行Go/IM/站点，不宣称固定OpenIM认证源码事实。\n1. 一、u-a已登录为何仍不能读所有会话：承接09.06 Cookie/Session与09.05数据访问，虚构u-a/u-b/u-c,c-a,m-a，区分认证证明主体、授权判具体动作资源；u-c即使已登录也不能读c-a，默认拒绝。固定当前成员可读/可发、c-a管理员可移除成员的教学政策；历史资格变化后置。\n2. 二、凭据与密码哈希的基础：用户名/口令是登录凭据不是长期Session，服务端不保存明文口令/快速SHA256；用成熟Argon2id等自带独立salt和成本参数的口令哈希，参数与盐随哈希记录，比较由审查过的库处理；login失败通用反馈、限速与审计，不在日志写口令/凭据。Go x/crypto/argon2只作入口非完整安全实现。\n3. 三、Cookie Session与Bearer Token的身份生命周期：09.06 Cookie载体、server session映射u-a并有设备/过期/撤销，login与权限升级轮换会话ID、登出服务端失效；Bearer Authorization头的持有即使用风险，短期有效期/保护传输，JWT签名只证令牌完整与发行者条件，不自动反映退群或撤销；opaque vs signed取舍，不认为Cookie天然更安全或Token天然无CSRF。\n4. 四、从角色到对象级权限矩阵：主体u-a(member),u-b(admin),u-c(nonmember)在c-a；操作read_history/send_message/invite/remove/member_read_receipt，默认拒绝，每请求按subject action resource current membership判断。角色是会话内角色而非全局万能管理员；资源ID可猜也不可作为权限。OWASP BOLA改变conversation_id或message_id。表格正反例。\n5. 五、发送与读历史的受信身份路径：handler从可信认证context取subject，不接受payload sender_id；应用按会话及消息归属检查；数据访问实施可见性且事务/快照处理退群竞态，未授权与空历史分开但外部错误信息可避免资源枚举；HTTP/WS均每请求或每条应用消息检查。纸上伪代码与失败序列。\n6. 六、退群、注销和多设备撤销：u-a浏览器和手机两Session，退出当前设备vs所有设备不同合同；退群后session身份仍是u-a但c-a权限撤销，WS旧连接不能继续发，订阅/发信逐条检查或收到撤销事件；角色变更旧Token声明可能陈旧，过期短时+服务端状态查或版本/denylist。消息历史可见范围需业务定义，不能只靠JWT role。\n7. 七、错误、日志与负例验证：无凭据401、已认证无权403或隐匿404按合同、数据库失败5xx/结果未知不说无权；防枚举且保留内部分类。日志最少session事件/subject/action/resource template/outcome，不记口令/token/正文；单元权限决策、HTTP/WS集成、退群竞态和注销旧凭据负例，静态作者不运行。\n8. 八、IM安全决策表和22道练习：交付登录→Session→读c-a/发送m-a→退群→旧连接拒绝时间线、权限矩阵和撤销政策；22题由认证/授权/口令哈希/Session和Token到BOLA/竞态/WS/多设备，附反馈。下一09.08输入输出防护，S5多设备消息确认。无实际服务/OpenIM auth源码声明。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

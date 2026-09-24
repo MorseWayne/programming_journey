@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_5d357c4cb9",
+  "page_id": "pg_9d0a65e522",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+      "https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/",
+      "https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html",
+      "https://www.rfc-editor.org/rfc/rfc6750",
+      "https://pkg.go.dev/golang.org/x/crypto/argon2"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "498322e9c7a6d0f2dbeb173f9559b713f190382d431cdf7d7d72fbdd650e549a",
+  "original_characters": 34184,
+  "generation_request_sha256": "69a3da02d70fba9a3c1434177e85cd1d74757f83d59fe301c06f48f1be86b832",
+  "reviewed_sha256": "1e2364deb3dbdd3cc97f04fdc8f3cdba0f3b0722072b51f3a57fc749ceb2f673",
+  "reviewed_characters": 8708,
+  "reviewed_chinese_characters": 4131,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/07_authentication_authorization.md",
+  "course_sha256": "675b4fa3ca7a56ad72c79124a85e20bb1ab48c0737bcf3c23cbd2c35f3319a8f"
+}
