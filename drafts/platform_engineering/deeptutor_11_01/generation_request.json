@@ -1,0 +1,72 @@
+{
+  "code": "11.01",
+  "title": "业务结果与测量：每个IM指标先写清分母和确认点",
+  "chapter_id": "ch_business_measurement",
+  "summary": "承接09.01应用成功边界、09.02HTTP状态、03.04CPU等待、04.01网络时延，面向Go初学者定义用户动作、成功事件、单位、时间窗、分母/负载/资源，区分请求尝试、内存受理、未来持久保存、设备收到和已读；用完全假设的数据计算比例与时延，S2没有真实在线服务。",
+  "objectives": [
+    "把用户动作映射到可观测阶段和确认点",
+    "为每个比例写出清楚的分子分母与时间窗口",
+    "区分请求尝试与唯一业务消息和重试放大",
+    "用同一尝试队列计算受理/持久/设备/已读比例",
+    "解释HTTP 200与业务正确性、空列表的区别",
+    "区分客户端、服务端与跨设备时钟的时延口径",
+    "比较负载率、资源利用和饱和等待而不互相替代",
+    "列出当前S2能测和未来S3/S5尚无证据的边界"
+  ],
+  "sources": [
+    "https://sre.google/sre-book/monitoring-distributed-systems/",
+    "https://sre.google/workbook/implementing-slos/",
+    "https://www.brendangregg.com/usemethod.html"
+  ],
+  "sections": [
+    {
+      "title": "一、先从u-a发m-a的用户目标定义成功",
+      "words": 2200,
+      "focus": "u-a/u-b/c-a/m-a虚构；当前仓库只有本地CLI与静态未来接口，09.02 POST200仅S2内存受理。将点击提交、HTTP回应、内存状态、未来持久、B设备收到、read分成事件，先给用户目标和观测点。不要声称OpenIM线上指标。SLO/告警11.08 later。"
+    },
+    {
+      "title": "二、指标四要素：事件、单位、时间窗、分母",
+      "words": 2400,
+      "focus": "每个比例写numerator/denominator、合格尝试定义、观察时间窗和聚合口径。请求数、消息数、用户数、会话数不是同一单位；每秒速率count/duration；0 denominator不应当0%或100%。SRE golden signals later,先可复核基础。"
+    },
+    {
+      "title": "三、尝试队列与下游事件窗口",
+      "words": 2500,
+      "focus": "同一纸上cohort:10:00–10:05发起100个合格发送尝试，每个观察开始后60s，最终可在10:06结算；accepted92,durable80,device70,read65 all nested, all hypothesis future; compute92%,80%,70%,65% of100; conditional70/80=87.5%; explain cohort vs event-time window, downstream events lag, cannot mix same 5-minute event counts directly。S2 currently only accepted_in_memory no other actual。"
+    },
+    {
+      "title": "四、重试、重复与结果未知改变分母",
+      "words": 2400,
+      "focus": "同一m-a因响应丢失重试，2 HTTP attempts but 1 intended business message;按attempt vs distinct message计算不同，09.02重复409不代表系统坏、超时未知不能认定未受理；选择用户感知或接口健康要写目标集合和去重键/窗口。合法拒绝/非法请求是否进分母需说明，不偷删失败。"
+    },
+    {
+      "title": "五、时延起止点与分层时间线",
+      "words": 2600,
+      "focus": "静态单时钟时间线A点击t0、服务收到12ms、内存commit25ms、A收到response40ms、B收到200ms、read5000ms，定义client ack40ms、service12→25=13ms、device200ms、read5s；时钟跨机器不能直接相减未同步墙钟。04.01 propagation/queue and03.04CPU vs I/O wait components；响应没到有censor/unknown not zero。分位数11.02。"
+    },
+    {
+      "title": "六、HTTP状态与业务正确性/负载资源",
+      "words": 2500,
+      "focus": "假设50合格历史GET，45返回HTTP200、只有42结果范围/分页正确，200rate90%, business success84%；空messages[] can be success when correct range；保留404 hiding/401 invalid excluded? define eligible cohort. 100 requests/300s≈0.333/s, workload include connection count/active mix/message body/fanout, CPU30% alone not capacity; resource utilization/saturation/error分开。"
+    },
+    {
+      "title": "七、反例、证据缺口与观测计划",
+      "words": 2400,
+      "focus": "反例:HTTP200=delivered,120 events/100 attempts due retries, client timestamps across hosts naive subtraction, CPUlow means spare, memoryaccepted=durable, count0 denominator. Specify event IDs/correlation/privacy and stage sources but no instrumentation implemented; 11.03 logs metrics trace, 11.08 SLI/SLO targets later；不能把纸上假设说实测。"
+    },
+    {
+      "title": "八、完整指标说明与分层练习",
+      "words": 2900,
+      "focus": "给IM send/query two metric cards with name/user action/cohort/numerator/denominator/time window/unknowns/what not prove，at least22 questions from unit and percentages to cohort/latency/business tradeoffs with answers。资料Google SRE author and Brendan Gregg; no Go/network/benchmark/site build, next11.02 distributions and percentiles。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《11.01 业务结果与测量》。把读者当Go后端初学者，承接09.01–09.04的虚构IM成功确认点、03.04调度与04.01时延；由用户目标逐层讲事件、单位、时间窗、分子分母、请求尝试与业务消息、时延边界、负载和资源。所有100/92/80/70/65等数值都只是纸上假设，当前S2无持久/投递/已读观测；静态教材不运行Go/服务/压测。\n1. 一、先从u-a发m-a的用户目标定义成功：u-a/u-b/c-a/m-a虚构；当前仓库只有本地CLI与静态未来接口，09.02 POST200仅S2内存受理。将点击提交、HTTP回应、内存状态、未来持久、B设备收到、read分成事件，先给用户目标和观测点。不要声称OpenIM线上指标。SLO/告警11.08 later。\n2. 二、指标四要素：事件、单位、时间窗、分母：每个比例写numerator/denominator、合格尝试定义、观察时间窗和聚合口径。请求数、消息数、用户数、会话数不是同一单位；每秒速率count/duration；0 denominator不应当0%或100%。SRE golden signals later,先可复核基础。\n3. 三、尝试队列与下游事件窗口：同一纸上cohort:10:00–10:05发起100个合格发送尝试，每个观察开始后60s，最终可在10:06结算；accepted92,durable80,device70,read65 all nested, all hypothesis future; compute92%,80%,70%,65% of100; conditional70/80=87.5%; explain cohort vs event-time window, downstream events lag, cannot mix same 5-minute event counts directly。S2 currently only accepted_in_memory no other actual。\n4. 四、重试、重复与结果未知改变分母：同一m-a因响应丢失重试，2 HTTP attempts but 1 intended business message;按attempt vs distinct message计算不同，09.02重复409不代表系统坏、超时未知不能认定未受理；选择用户感知或接口健康要写目标集合和去重键/窗口。合法拒绝/非法请求是否进分母需说明，不偷删失败。\n5. 五、时延起止点与分层时间线：静态单时钟时间线A点击t0、服务收到12ms、内存commit25ms、A收到response40ms、B收到200ms、read5000ms，定义client ack40ms、service12→25=13ms、device200ms、read5s；时钟跨机器不能直接相减未同步墙钟。04.01 propagation/queue and03.04CPU vs I/O wait components；响应没到有censor/unknown not zero。分位数11.02。\n6. 六、HTTP状态与业务正确性/负载资源：假设50合格历史GET，45返回HTTP200、只有42结果范围/分页正确，200rate90%, business success84%；空messages[] can be success when correct range；保留404 hiding/401 invalid excluded? define eligible cohort. 100 requests/300s≈0.333/s, workload include connection count/active mix/message body/fanout, CPU30% alone not capacity; resource utilization/saturation/error分开。\n7. 七、反例、证据缺口与观测计划：反例:HTTP200=delivered,120 events/100 attempts due retries, client timestamps across hosts naive subtraction, CPUlow means spare, memoryaccepted=durable, count0 denominator. Specify event IDs/correlation/privacy and stage sources but no instrumentation implemented; 11.03 logs metrics trace, 11.08 SLI/SLO targets later；不能把纸上假设说实测。\n8. 八、完整指标说明与分层练习：给IM send/query two metric cards with name/user action/cohort/numerator/denominator/time window/unknowns/what not prove，at least22 questions from unit and percentages to cohort/latency/business tradeoffs with answers。资料Google SRE author and Brendan Gregg; no Go/network/benchmark/site build, next11.02 distributions and percentiles。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

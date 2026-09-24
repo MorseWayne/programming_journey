@@ -257,6 +257,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/11_reliability/",
+            "curriculum/11_reliability/01_business_measurement",
             "curriculum/11_reliability/core"
           ]
         },

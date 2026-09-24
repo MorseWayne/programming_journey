@@ -1,0 +1,33 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_b255c5aa3d",
+  "page_id": "pg_9ef26b18ab",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "91b150a431fb500347b41ee05aca3e76ff7ba7c655cb743a8f137c55e097d5b9",
+  "original_characters": 31565,
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "https://sre.google/workbook/implementing-slos/",
+      "https://www.brendangregg.com/usemethod.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "bfadfb341cd66065e3b2817db83874631dea165b89d97d0e880d720786df6670",
+  "reviewed_sha256": "97e3d726f8e30e5c112c99d04cb70c4b5edee6d935b65f0e7ec908b68c2e1dac",
+  "reviewed_characters": 8721,
+  "reviewed_chinese_characters": 4514,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/01_business_measurement.md",
+  "course_sha256": "23e4d8cda1b7a05f32faef19dd029599d142ccb6ff0c4b7740835fbbcdee7725"
+}

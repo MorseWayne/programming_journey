@@ -1,0 +1,12 @@
+{
+  "chapter": "11.01",
+  "stage": "S2",
+  "business_scope": "fictional IM send/read outcome metrics and single-clock paper samples; no running online service, persistence, device acknowledgement or read telemetry",
+  "prerequisites": ["09.01 accepted-in-memory versus later confirmation points", "09.02 HTTP 200 and business result scope", "09.04 response loss and unknown outcome", "03.04 CPU waiting and 04.01 network delay components"],
+  "first_pass": ["user action and distinct success events", "event, unit, denominator and window", "same 100-attempt cohort with 92/80/70/65 hypothetical counts", "conditional versus common-denominator ratios"],
+  "second_pass": ["HTTP attempts versus unique message under retry", "single-clock latency stage definitions", "50 GET with 45 HTTP 200 and 42 correct", "load, utilization, saturation and evidence gaps"],
+  "not_yet_prerequisites": ["11.02 distributions and percentiles", "11.03 actual log/metric/trace instrumentation", "11.08 SLO and alert policy", "S3 persistence and S5 device/read events"],
+  "next_chapter": "11.02 distributions and statistics for IM latency samples",
+  "upstream_inspection": "No OpenIM implementation or runtime metric asserted in this chapter.",
+  "shared_integration_pending": []
+}

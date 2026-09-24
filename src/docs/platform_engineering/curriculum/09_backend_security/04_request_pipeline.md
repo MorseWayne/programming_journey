@@ -244,4 +244,4 @@ stage=app_send result=DUPLICATE_MESSAGE http_status=409 duration_ms=<实际测�
 - [Go `context`](https://pkg.go.dev/context)、[`log/slog`](https://pkg.go.dev/log/slog)：取消传播与脱敏结构化记录的 API 入口。
 - [09.02 HTTP 合同](./02_http_api_contract.md)和[09.03 程序组织](./03_program_organization.md)：本章所有状态、限额和责任分层的来源。
 
-下一批按[学习路线](../learning_path.md)补 09.08 的输入/输出防护、11 卷的基本观测与 10.09 CI，再进入 S3 的持久数据与真实身份。离开本章前，请能说清“panic 恢复”“请求取消”“HTTP 500”“服务内存状态”四者为何互不等价。
+下一章先读[11.01 业务结果与测量](../11_reliability/01_business_measurement.md)，再按[学习路线](../learning_path.md)补输入/输出防护所需的前置与 10.09 CI；SQL、HTML 等知识齐备后再完整展开 09.08。离开本章前，请能说清“panic 恢复”“请求取消”“HTTP 500”“服务内存状态”四者为何互不等价。
