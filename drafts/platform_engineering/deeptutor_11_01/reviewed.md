@@ -239,4 +239,4 @@ HTTP 200 比例：45/50 = 90%
 - [Brendan Gregg：USE Method](https://www.brendangregg.com/usemethod.html)：负载、利用、饱和和错误需分视角观察的后续参考。
 - [09.01 应用确认点](../../../src/docs/platform_engineering/curriculum/09_backend_security/01_requirements_boundaries.md)与[09.02 HTTP 合同](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)：本章例子的业务范围。
 
-下一章 11.02 将从样本分布、均值、分位数和聚合误区继续。进入前先能为一个比例写出分子、分母、对象单位、入组时间与结果观察期限。
+下一章[11.02 分布与统计](../../../src/docs/platform_engineering/curriculum/11_reliability/02_distributions_statistics.md)将从样本、均值、分位数和聚合误区继续。进入前先能为一个比例写出分子、分母、对象单位、入组时间与结果观察期限。

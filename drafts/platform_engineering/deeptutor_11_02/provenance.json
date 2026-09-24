@@ -1,0 +1,33 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_30d1612932",
+  "page_id": "pg_ae67eb4af7",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "71dc50c0a306e42da07b1d846ab9239bf0c346d3c0ad37a53866a44b12484f5f",
+  "original_characters": 30069,
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "https://sre.google/workbook/implementing-slos/",
+      "https://prometheus.io/docs/practices/histograms/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "578234b866ea50bb4d06464e9814a1b31cbc4b9add27e5fa34ba050480a72fc7",
+  "reviewed_sha256": "afa056f2b9d6adb6c51e9e802b90963a4b503896cb0bcfc7034996681bbfacd2",
+  "reviewed_characters": 8300,
+  "reviewed_chinese_characters": 3703,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/02_distributions_statistics.md",
+  "course_sha256": "5d1fae0b92205e5db9e6b638ddf345c285d6ca747593a622f27d7f1385de4183"
+}

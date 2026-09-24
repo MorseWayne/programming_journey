@@ -1,0 +1,12 @@
+{
+  "chapter": "11.02",
+  "stage": "S2",
+  "business_scope": "fictional IM memory-acceptance latency samples and future delivery latency comparison; pure paper statistics, no running service, measurement pipeline or OpenIM performance claim",
+  "prerequisites": ["11.01 same user action, event, unit, denominator and window", "03.01 time and byte units", "03.04 CPU waiting and 04.01 delay components"],
+  "first_pass": ["10 sorted samples with mean 32.6 and median 14.5", "nearest-rank P90 18 and P99 200", "noncumulative and cumulative histogram buckets", "small-n percentile instability"],
+  "second_pass": ["two-group P99 aggregation counterexample", "weighted mean aggregation 91 versus naive 55", "10 completed plus 5 timeouts and conditional latency", "IM acceptance versus device delivery distributions"],
+  "not_yet_prerequisites": ["11.03 real logging, metrics and trace design", "11.04 bottleneck diagnosis", "11.07 controlled load testing", "11.08 SLO targets", "S5 device delivery telemetry"],
+  "next_chapter": "11.03 logs, metrics and traces for IM request stages",
+  "upstream_inspection": "No OpenIM implementation or runtime measurement asserted in this chapter.",
+  "shared_integration_pending": []
+}

@@ -1,0 +1,72 @@
+{
+  "code": "11.02",
+  "title": "分布与统计：平均值为何掩盖 IM 尾延迟",
+  "chapter_id": "ch_latency_distribution_statistics",
+  "summary": "承接11.01指标分母与确认点、03.01单位、04.01时延、03.04排队，面向Go初学者用全假设IM消息延迟样本讲均值、中位数、最近秩分位数、直方图、样本量波动、跨组聚合误区、成功样本偏差与对照口径。静态算术无真实监控。",
+  "objectives": [
+    "从单一指标定义筛选同口径时延样本",
+    "手算十个样本的均值、中位数与nearest-rank P90/P99",
+    "构造普通和累积直方图桶并说明信息损失",
+    "解释小样本高分位数的不稳定性和算法定义差异",
+    "证明平均分组P99不等于合并后P99",
+    "用请求数权重合并均值而非直接平均均值",
+    "将超时/失败样本与成功时延分布分开报告",
+    "为IM发送受理、设备交付定义不同分布和可比实验条件"
+  ],
+  "sources": [
+    "https://sre.google/sre-book/monitoring-distributed-systems/",
+    "https://sre.google/workbook/implementing-slos/",
+    "https://prometheus.io/docs/practices/histograms/"
+  ],
+  "sections": [
+    {
+      "title": "一、从“平均很快但用户说慢”出发",
+      "words": 2200,
+      "focus": "虚构IM，当前无在线服务；11.01同用户动作、时间窗、确认点先固定。响应受理与设备送达是不同分布；不先混样本。解释观测单位ms、样本n、排序，平均不能描述尾部全部。没有Go/监控运行。"
+    },
+    {
+      "title": "二、手算10个样本的均值与中位数",
+      "words": 2500,
+      "focus": "固定排序 [10,11,12,13,14,15,16,17,18,200]ms，前九和126，总326，mean32.6，median(14+15)/2=14.5；最大200，范围10..200；解释mean受极值影响而median不代表坏用户未受影响，样本同确认点。给一个反例9个10一个200。"
+    },
+    {
+      "title": "三、最近秩P90/P99与样本量",
+      "words": 2600,
+      "focus": "明确nearest-rank p rank=ceil(p*n) 1-index，n10 p90 rank9=18,p99 rank10=200,p95也200；不同工具可能插值定义不同，需要记录方法；n10的P99就是max，非常不稳定，不能宣称真实长期尾延迟。样本时间窗/负载/来源、遗漏超时需说明。"
+    },
+    {
+      "title": "四、直方图和桶的口径",
+      "words": 2600,
+      "focus": "非累积桶 [0,20)9,[20,100)0,[100,∞)1，总10；累计 <=20 9,<=100 9,+Inf10（边界示例当前样本无恰20/100），sum326ms,count10;桶保留分布概要但丢失精确值，最后桶过宽无法知道200；Prometheus classic cumulative semantics与native high level，不让读者以直方图近似分位数当精确样本。"
+    },
+    {
+      "title": "五、跨组聚合与平均P99错误",
+      "words": 2700,
+      "focus": "nearest rank: A100req=99×10ms+1×1000ms =>P99=10; B100req=99×100ms+1×1000ms =>P99=100; naive平均55, merged200 sorted rankceil198=198th100ms。另一独立mean example A10req×10ms B90req×100ms weighted(100+9000)/100=91, naive55。不能混两例样本；保持相同metric/time window before combine。"
+    },
+    {
+      "title": "六、成功样本偏差与失败/超时",
+      "words": 2300,
+      "focus": "10个成功快样本+5个超时若只算成功P99好看却用户受影响；timeout不是0ms也非精确完成时延；11.01 eligible attempt denominator, report completion rate, latency distribution conditional on completed, timeout/unknown separately；负载变化、采样/遗漏可能偏差。没有正式统计置信区间。"
+    },
+    {
+      "title": "七、IM业务与公平对照",
+      "words": 2400,
+      "focus": "client click→service accepted vs click→B device received separate, HTTP200 vs delivered；对比部署前后要相同会话类型、body size、active ratio/fanout、time window/units and request cohort，不能从p99 alone infer CPU/network cause，stage trace11.03, diagnostic11.04。分层提出候选原因。"
+    },
+    {
+      "title": "八、完整纸上报告与22题反馈",
+      "words": 2900,
+      "focus": "完整表:metric user action window denominator completed count mean median p90 p99 timeout;22 questions numerical and conceptual, answer feedback. sources Google SRE and Prometheus official. static examples only no Go/benchmark/monitoring/site build. Next11.03 logs metrics trace。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《11.02 分布与统计》。面向Go初学者，承接11.01分母、窗口与确认点，用虚构IM消息受理时延的10个样本从均值/中位数深入到最近秩P90/P99、直方图、样本量、跨分组聚合和超时遗漏，再面向真实业务判断。所有数字纸上假设，当前无线上IM监控；静态课程，不运行Go、监控、基准或站点。\n1. 一、从“平均很快但用户说慢”出发：虚构IM，当前无在线服务；11.01同用户动作、时间窗、确认点先固定。响应受理与设备送达是不同分布；不先混样本。解释观测单位ms、样本n、排序，平均不能描述尾部全部。没有Go/监控运行。\n2. 二、手算10个样本的均值与中位数：固定排序 [10,11,12,13,14,15,16,17,18,200]ms，前九和126，总326，mean32.6，median(14+15)/2=14.5；最大200，范围10..200；解释mean受极值影响而median不代表坏用户未受影响，样本同确认点。给一个反例9个10一个200。\n3. 三、最近秩P90/P99与样本量：明确nearest-rank p rank=ceil(p*n) 1-index，n10 p90 rank9=18,p99 rank10=200,p95也200；不同工具可能插值定义不同，需要记录方法；n10的P99就是max，非常不稳定，不能宣称真实长期尾延迟。样本时间窗/负载/来源、遗漏超时需说明。\n4. 四、直方图和桶的口径：非累积桶 [0,20)9,[20,100)0,[100,∞)1，总10；累计 <=20 9,<=100 9,+Inf10（边界示例当前样本无恰20/100），sum326ms,count10;桶保留分布概要但丢失精确值，最后桶过宽无法知道200；Prometheus classic cumulative semantics与native high level，不让读者以直方图近似分位数当精确样本。\n5. 五、跨组聚合与平均P99错误：nearest rank: A100req=99×10ms+1×1000ms =>P99=10; B100req=99×100ms+1×1000ms =>P99=100; naive平均55, merged200 sorted rankceil198=198th100ms。另一独立mean example A10req×10ms B90req×100ms weighted(100+9000)/100=91, naive55。不能混两例样本；保持相同metric/time window before combine。\n6. 六、成功样本偏差与失败/超时：10个成功快样本+5个超时若只算成功P99好看却用户受影响；timeout不是0ms也非精确完成时延；11.01 eligible attempt denominator, report completion rate, latency distribution conditional on completed, timeout/unknown separately；负载变化、采样/遗漏可能偏差。没有正式统计置信区间。\n7. 七、IM业务与公平对照：client click→service accepted vs click→B device received separate, HTTP200 vs delivered；对比部署前后要相同会话类型、body size、active ratio/fanout、time window/units and request cohort，不能从p99 alone infer CPU/network cause，stage trace11.03, diagnostic11.04。分层提出候选原因。\n8. 八、完整纸上报告与22题反馈：完整表:metric user action window denominator completed count mean median p90 p99 timeout;22 questions numerical and conceptual, answer feedback. sources Google SRE and Prometheus official. static examples only no Go/benchmark/monitoring/site build. Next11.03 logs metrics trace。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
