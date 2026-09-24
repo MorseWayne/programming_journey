@@ -1,0 +1,73 @@
+{
+  "code": "05.02",
+  "title": "同步原语：保护共享会话状态的一次完整变化",
+  "chapter_id": "ch_sync_primitives",
+  "summary": "承接05.01 goroutine生命周期与WaitGroup初见、01.05 map和02.04判重，面向Go初学者解释共享状态、数据竞争与业务不变量；用虚构单会话历史的map+order统一锁展示Mutex、RWMutex快照、WaitGroup区别、Once与Cond使用边界、死锁与锁顺序。静态教材无Go执行。",
+  "objectives": [
+    "从同一会话并发追加识别共享可变状态",
+    "区分数据竞争和即使单次访问加锁仍可发生的业务竞争",
+    "用Mutex保护查重与写入的一整个状态变化",
+    "用RWMutex提供只读快照而不泄漏内部切片",
+    "说明WaitGroup只等待不保护共享map",
+    "说明Once只执行一次及失败后不自动重试",
+    "理解Cond.Wait解锁等待、醒来重锁与循环检查",
+    "设计锁顺序与避免网络I/O持锁的边界"
+  ],
+  "sources": [
+    "https://pkg.go.dev/sync",
+    "https://go.dev/ref/mem",
+    "https://go.dev/blog/maps",
+    "https://go.dev/doc/articles/race_detector"
+  ],
+  "sections": [
+    {
+      "title": "一、两条消息并发修改同一会话",
+      "words": 2200,
+      "focus": "面向Go初学者，先修05.01、01.05 map、02.04判重。虚构c-a两任务都保存m-a，需求同会话ID唯一、旧消息不能被覆盖、order与map一致。定义共享可变状态、临界区、不变量；不在本课程跑Go/网络服务。解释Go普通map并发读写需保护。"
+    },
+    {
+      "title": "二、Mutex：把业务不变量放在同一保护范围",
+      "words": 2500,
+      "focus": "sync.Mutex zero value可用, Lock/Unlock, defer unlock, pointer receiver,不可复制已使用锁；错误示例先RLock查不存在、释放、再Lock写，两个任务可同时通过查重，业务竞争；正确一把Lock包check+map set+order append, return ErrDuplicate。不要在锁内网络I/O；go协程结束不等于map安全。"
+    },
+    {
+      "title": "三、完整受控内存历史代码与状态表",
+      "words": 2800,
+      "focus": "给完整package history import errors,sync，Message{ID,Body string}、History{mu sync.RWMutex, byID map[string]Message, order []string}、NewHistory初始化、Append检查ID/body非空和重复并在Lock内更新、List用RLock生成新[]Message，释放后返回。明确教学单会话和顺序只表示Lock获取顺序，不是客户端时间或全球顺序，Body string不可变，map不暴露。并发案例m-a重复拒绝原值不改。代码静态未运行。"
+    },
+    {
+      "title": "四、RWMutex：读快照与写独占",
+      "words": 2400,
+      "focus": "RLock允许并发只读，Lock独占写；所有共享字段读写统一同一锁；返回slice快照避免unlock后暴露内部order/map，若Message含[]byte需深复制。不能持RLock直接升级Lock，可能死锁；RLock不自动提升性能，读写比例、临界区开销需测量。数据竞争与业务竞争分开。"
+    },
+    {
+      "title": "五、WaitGroup和Once各守自己的职责",
+      "words": 2300,
+      "focus": "WaitGroup Add/Done/Wait等待固定任务，不能保护map也不传递error；Add前后规则，先注册再go。Once.Do只执行初始化函数一次，同步并发调用，失败返回error要缓存结果但不会自动重试；示例不要把Once用于可恢复网络连接初始化。三者对比表：Mutex互斥、WaitGroup完成、Once一次。"
+    },
+    {
+      "title": "六、Cond：等待条件而非忙轮询",
+      "words": 2500,
+      "focus": "第二遍：消息队列为空的消费者要等条件，sync.NewCond(&mu), consumer Lock for len(queue)==0 {cond.Wait()} pop Unlock，producer Lock append Signal Unlock。Wait原子释放关联锁并挂起、醒来重新持锁，必须循环重查条件；Signal唤醒一个Broadcast全部，条件/锁保护，若无退出条件可能永远等，05.03 channel/context替代与退出。不要在本章写无界真实队列。"
+    },
+    {
+      "title": "七、死锁、锁顺序与验证范围",
+      "words": 2500,
+      "focus": "两个锁A/B反向顺序→循环等待；同goroutine再次Lock同一Mutex→死锁，Lock后早退不Unlock；网络I/O持锁放大尾延迟；一次map局部锁与check-then-act业务竞争。设计全局锁顺序、临界区最小但覆盖完整不变量、错误前后状态表。race detector只能发现执行过的冲突，不能证明业务唯一性或没有所有竞态；本次不运行。"
+    },
+    {
+      "title": "八、IM会话状态练习与分层反馈",
+      "words": 2800,
+      "focus": "综合需求同会话m-a重复，先纸上交错T1/T2，再锁保护和List快照，读多写少变式，初始化与条件等待，至少22题逐题反馈，从术语到业务取舍。学习者以后隔离实验go test/race记录真实结果，本轮只静态教材。官方sync/memory model/maps/race detector来源，下一05.03channel/context。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《05.02 同步原语》。面对Go初学者，承接05.01 goroutine/WaitGroup与01.05 map，以虚构IM会话c-a同时追加消息m-a为一条主线，由浅入深解释Mutex保护整个判重+更新不变量、RWMutex快照、WaitGroup/Once/Cond各自职责、死锁与数据/业务竞争。所有代码静态不运行、不实现在线IM服务；至少22题练习反馈。\n1. 一、两条消息并发修改同一会话：面向Go初学者，先修05.01、01.05 map、02.04判重。虚构c-a两任务都保存m-a，需求同会话ID唯一、旧消息不能被覆盖、order与map一致。定义共享可变状态、临界区、不变量；不在本课程跑Go/网络服务。解释Go普通map并发读写需保护。\n2. 二、Mutex：把业务不变量放在同一保护范围：sync.Mutex zero value可用, Lock/Unlock, defer unlock, pointer receiver,不可复制已使用锁；错误示例先RLock查不存在、释放、再Lock写，两个任务可同时通过查重，业务竞争；正确一把Lock包check+map set+order append, return ErrDuplicate。不要在锁内网络I/O；go协程结束不等于map安全。\n3. 三、完整受控内存历史代码与状态表：给完整package history import errors,sync，Message{ID,Body string}、History{mu sync.RWMutex, byID map[string]Message, order []string}、NewHistory初始化、Append检查ID/body非空和重复并在Lock内更新、List用RLock生成新[]Message，释放后返回。明确教学单会话和顺序只表示Lock获取顺序，不是客户端时间或全球顺序，Body string不可变，map不暴露。并发案例m-a重复拒绝原值不改。代码静态未运行。\n4. 四、RWMutex：读快照与写独占：RLock允许并发只读，Lock独占写；所有共享字段读写统一同一锁；返回slice快照避免unlock后暴露内部order/map，若Message含[]byte需深复制。不能持RLock直接升级Lock，可能死锁；RLock不自动提升性能，读写比例、临界区开销需测量。数据竞争与业务竞争分开。\n5. 五、WaitGroup和Once各守自己的职责：WaitGroup Add/Done/Wait等待固定任务，不能保护map也不传递error；Add前后规则，先注册再go。Once.Do只执行初始化函数一次，同步并发调用，失败返回error要缓存结果但不会自动重试；示例不要把Once用于可恢复网络连接初始化。三者对比表：Mutex互斥、WaitGroup完成、Once一次。\n6. 六、Cond：等待条件而非忙轮询：第二遍：消息队列为空的消费者要等条件，sync.NewCond(&mu), consumer Lock for len(queue)==0 {cond.Wait()} pop Unlock，producer Lock append Signal Unlock。Wait原子释放关联锁并挂起、醒来重新持锁，必须循环重查条件；Signal唤醒一个Broadcast全部，条件/锁保护，若无退出条件可能永远等，05.03 channel/context替代与退出。不要在本章写无界真实队列。\n7. 七、死锁、锁顺序与验证范围：两个锁A/B反向顺序→循环等待；同goroutine再次Lock同一Mutex→死锁，Lock后早退不Unlock；网络I/O持锁放大尾延迟；一次map局部锁与check-then-act业务竞争。设计全局锁顺序、临界区最小但覆盖完整不变量、错误前后状态表。race detector只能发现执行过的冲突，不能证明业务唯一性或没有所有竞态；本次不运行。\n8. 八、IM会话状态练习与分层反馈：综合需求同会话m-a重复，先纸上交错T1/T2，再锁保护和List快照，读多写少变式，初始化与条件等待，至少22题逐题反馈，从术语到业务取舍。学习者以后隔离实验go test/race记录真实结果，本轮只静态教材。官方sync/memory model/maps/race detector来源，下一05.03channel/context。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "chapter": "05.02",
+  "stage": "S2",
+  "business_scope": "fictional c-a single-conversation in-memory message history, concurrent m-a append and consistent order/map snapshot only; no file durability or online delivery",
+  "prerequisites": ["05.01 goroutine lifecycle and fixed WaitGroup", "01.05 maps, structs and pointer methods", "02.04 keys and duplicate membership"],
+  "first_pass": ["shared mutable state and business invariants", "data race versus check-then-act business race", "Mutex covering check, map write and order append", "complete History Append/List static example"],
+  "second_pass": ["RWMutex and snapshot ownership", "WaitGroup/Once role separation", "Cond.Wait unlock-and-relock with loop", "deadlock, lock order and race detector limits"],
+  "not_yet_prerequisites": ["05.03 channel/context cancellation", "05.04 full memory model", "05.08 bounded queue and backpressure", "10.07 concurrent property verification", "network and durable IM guarantees"],
+  "next_chapter": "05.03 channel and cancellation for a bounded receiver and connection shutdown contract",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

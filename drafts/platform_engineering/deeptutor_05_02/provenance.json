@@ -1,0 +1,33 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_90156ca2fe",
+  "page_id": "pg_f159da6493",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "f3e7f02ce41e07b96a70d3be3d125043565d3a29f873a6126e015755eaa81f6c",
+  "original_characters": 35196,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/sync",
+      "https://go.dev/ref/mem",
+      "https://go.dev/blog/maps",
+      "https://go.dev/doc/articles/race_detector"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "843fe2bd4e476544d864f61c0abed0b3f386b15fe2d472b8208771847345bbe3",
+  "reviewed_sha256": "860292dfbd461795a697ca6f871965252771f4c415d522ba60ea0ae6be8ab455",
+  "reviewed_characters": 10264,
+  "reviewed_chinese_characters": 4521,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/02_sync_primitives.md",
+  "course_sha256": "16654c3bfde83c17142d791b579639b89435b94e08275bfbdceac000ec549965"
+}

@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md)已完成。它承接 03.04 的运行/等待、04.03 的未来 HTTP/WebSocket 需求，从并发与并行开始，用有限小批量讲 `go` 语句、WaitGroup 的最小等待、结果和错误归属，再迁移到连接资源与有界任务。正文 8 节、22 道练习；05.02–05.12 仍按下方设计展开。
+[05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md)已完成。它承接 03.04 的运行/等待、04.03 的未来 HTTP/WebSocket 需求，从并发与并行开始，用有限小批量讲 `go` 语句、WaitGroup 的最小等待、结果和错误归属，再迁移到连接资源与有界任务。[05.02 同步原语](./02_sync_primitives.md)继续从同一会话内存历史的并发判重推导 Mutex、RWMutex、WaitGroup、Once 与 Cond。两章各 8 节、22 道练习；05.03–05.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -38,7 +38,7 @@ date: 2026-09-23
 | 章节 | 要详细讲解的内容 | IM 练习与验收目标 |
 |---|---|---|
 | [05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md) | 并发/并行、goroutine、等待、退出；资源拥有者与错误传播。 | 为有限连接任务定义启动、等待、退出与资源拥有者，说明完成和失败如何被观察。 |
-| 05.02 同步原语 | Mutex/RWMutex、WaitGroup、Once、Cond；保护范围与锁顺序。 | 保护共享会话表的一次完整状态变化，构造数据竞争、死锁与业务竞争反例。 |
+| [05.02 同步原语](./02_sync_primitives.md) | Mutex/RWMutex、WaitGroup、Once、Cond；保护范围与锁顺序。 | 保护共享会话表的一次完整状态变化，构造数据竞争、死锁与业务竞争反例。 |
 | 05.03 channel 与取消 | 缓冲、关闭、方向、select、context 树与 deadline。 | 处理接收方停止、发送阻塞和取消传播，明确channel关闭与context结束责任。 |
 
 ## 原理层

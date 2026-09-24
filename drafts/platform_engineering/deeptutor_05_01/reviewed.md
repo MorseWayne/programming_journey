@@ -288,4 +288,4 @@ func CheckAll(inputs []string, check func(string) error) []error {
 - [Go 官方博客：Pipelines and cancellation](https://go.dev/blog/pipelines)：后续理解任务退出和取消的资料入口。
 - [Effective Go：goroutine](https://go.dev/doc/effective_go#goroutines)：Go 并发任务的入门参考。
 
-下一章 05.02 将系统学习 WaitGroup 与 Mutex/RWMutex，保护共享会话表；05.03 再加入 channel 和 `context`。进入下一章前，请能为一个虚构 IM 任务写出“谁启动、谁等待、谁收错误、谁关资源、谁能停止”五项合同。
+下一章[05.02 同步原语](../../../src/docs/platform_engineering/curriculum/05_runtime/02_sync_primitives.md)将系统学习 WaitGroup 与 Mutex/RWMutex，保护共享会话表；05.03 再加入 channel 和 `context`。进入下一章前，请能为一个虚构 IM 任务写出“谁启动、谁等待、谁收错误、谁关资源、谁能停止”五项合同。
