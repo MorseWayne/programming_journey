@@ -1,0 +1,29 @@
+{
+  "chapter": "03.07",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Linux file and directory lesson for fictional c-a chat-log rotation",
+  "prerequisites": [
+    "03.02 process and system-call boundary",
+    "03.03 cwd, permissions and file descriptors",
+    "03.06 mapping and page-cache boundary"
+  ],
+  "first_pass": [
+    "path, directory entry, inode, hard and symbolic links",
+    "file descriptor versus open file description",
+    "dup-shared versus independent-open offsets"
+  ],
+  "second_pass": [
+    "rename and separate create with old FD still bound to I1",
+    "unlink, hard-link count and last open reference",
+    "relative path, directory search permission and Go os.File identity",
+    "short read/write, append and non-durability boundaries"
+  ],
+  "not_yet_prerequisites": [
+    "03.08 write, fsync, directory sync and crash durability",
+    "03.10 FD and filesystem diagnostics",
+    "03.11 cgroup and namespace filesystem boundaries"
+  ],
+  "next_chapter": "03.08 persistence mechanisms",
+  "upstream_inspection": "No OpenIM implementation claim; Linux man-pages and Go os official docs support file identity, descriptor and path semantics.",
+  "shared_integration_pending": []
+}

@@ -182,6 +182,7 @@ export default sidebar({
             "curriculum/03_systems/04_cpu_scheduling",
             "curriculum/03_systems/05_virtual_memory",
             "curriculum/03_systems/06_allocation_mapping",
+            "curriculum/03_systems/07_files_directories",
             "curriculum/03_systems/core"
           ]
         },

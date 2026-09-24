@@ -1,0 +1,77 @@
+{
+  "code": "03.07",
+  "title": "文件与目录：从聊天日志轮转理解名字与打开对象",
+  "chapter_id": "ch_files_directories",
+  "summary": "面向Go初学者，以虚构IM聊天日志轮转解释目录项、inode、FD、open file description、偏移、rename、unlink、路径权限及短读写；区分名称原子变更与持久性。",
+  "objectives": [
+    "区分路径名称与inode文件对象",
+    "画出FD到open file description和inode的两级引用",
+    "手算dup共享偏移与独立open独立偏移",
+    "推演rename后旧FD与新路径",
+    "解释unlink后空间仍被占用",
+    "区分相对路径和权限",
+    "识别短读写、page cache与durability边界"
+  ],
+  "sources": [
+    "https://man7.org/linux/man-pages/man2/open.2.html",
+    "https://man7.org/linux/man-pages/man7/inode.7.html",
+    "https://man7.org/linux/man-pages/man2/rename.2.html",
+    "https://man7.org/linux/man-pages/man2/unlink.2.html",
+    "https://man7.org/linux/man-pages/man2/dup.2.html",
+    "https://man7.org/linux/man-pages/man2/lseek.2.html",
+    "https://man7.org/linux/man-pages/man2/read.2.html",
+    "https://man7.org/linux/man-pages/man2/write.2.html",
+    "https://pkg.go.dev/os"
+  ],
+  "sections": [
+    {
+      "title": "一、日志改名后为何仍写旧文件",
+      "words": 2400,
+      "focus": "承接03.02系统调用、03.03 cwd/FD、03.06映射与页缓存；虚构IM聊天日志/chat.log含m-a\n和m-b\n共8字节，服务原FD7仍开，轮转rename后写入去向；先定义路径、对象、引用和状态。"
+    },
+    {
+      "title": "二、目录项与inode：名字不是内容",
+      "words": 2400,
+      "focus": "目录项把名字指向inode，inode含类型/权限/大小/链接数等元数据及数据定位；同一文件可有多个硬链接，跨文件系统不能同inode，符号链接保存路径式目标另有解析；文件身份要结合设备号+inode号，路径名可变。"
+    },
+    {
+      "title": "三、fd与open file description及偏移",
+      "words": 2500,
+      "focus": "Linux open创建open file description，进程FD仅索引它，description保存offset/status flags；fd7→O1→I1，read4得到m-a\n offset4，dup→fd8共享O1读m-b\n offset8；单独open同路径fd9→O2 offset0读m-a\n。解释EOF、短读和close责任，Go os.File作为入口。"
+    },
+    {
+      "title": "四、rename与日志轮转状态表",
+      "words": 2500,
+      "focus": "初始path chat.log→I1, fd7/8→O1→I1；rename chat.log to chat.log.1后旧FD仍I1；create new chat.log→I2，新open fd10→O3→I2；旧服务若不重新open继续写I1，路径访问见I2。rename替换的原子性范围及跨文件系统边界，不把重命名当持久保证。"
+    },
+    {
+      "title": "五、unlink与删除后占用空间",
+      "words": 2500,
+      "focus": "unlink chat.log.1移除名称/硬链接；若最后路径名已删但fd7/8仍开，I1及数据仍可由旧FD访问、磁盘块待最后引用关闭才可复用；再close7后fd8还在，close8后条件满足；还有其他硬链接/mmap需另算。与rm命令显示无文件但磁盘占用解释。"
+    },
+    {
+      "title": "六、路径解析、权限与相对路径",
+      "words": 2300,
+      "focus": "相对路径受cwd影响，目录搜索权限和文件访问权限不同；同名路径可能因工作目录不同指向不同对象，符号链接另有解析；Stat(path)与对已打开对象fstat不同。Go os.Open/OpenFile/Stat/Close对应概念，输入路径不可盲信。"
+    },
+    {
+      "title": "七、读写缓冲、偏移与失败边界",
+      "words": 2500,
+      "focus": "read/write返回实际字节数可小于请求，不能假设一次就是一条完整消息；普通文件page cache使write返回不等于落盘，O_APPEND每次写调到末尾但不等于业务消息原子或多进程可靠日志；03.08再讲fsync、目录fsync、rename崩溃顺序。容量/权限/磁盘满和FD泄漏的观察。"
+    },
+    {
+      "title": "八、纸上轮转评审与22题",
+      "words": 2500,
+      "focus": "交付path→inode、fd→open description→inode两层图，read/dup/independent open偏移表，rename/create/unlink/close状态表和日志轮转失败矩阵；22道从inode/链接到短写/耐久边界附反馈。下一03.08持久化机制；静态不运行文件操作/Go/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.07 文件与目录》，面向Go初学者，沿虚构IM聊天日志轮转由浅入深。固定chat.log初始内容m-a\\n与m-b\\n各4字节，fd7/O1/I1的两个read和dup共享偏移、另一次open独立偏移；rename/create新文件、unlink及旧fd关闭顺序。八节丰富正文和22题反馈。区分目录名、inode、open file description、FD；不能把rename原子性等同落盘可靠性，不能把write返回等同持久；静态不运行。\n1. 一、日志改名后为何仍写旧文件：承接03.02系统调用、03.03 cwd/FD、03.06映射与页缓存；虚构IM聊天日志/chat.log含m-a\n和m-b\n共8字节，服务原FD7仍开，轮转rename后写入去向；先定义路径、对象、引用和状态。\n2. 二、目录项与inode：名字不是内容：目录项把名字指向inode，inode含类型/权限/大小/链接数等元数据及数据定位；同一文件可有多个硬链接，跨文件系统不能同inode，符号链接保存路径式目标另有解析；文件身份要结合设备号+inode号，路径名可变。\n3. 三、fd与open file description及偏移：Linux open创建open file description，进程FD仅索引它，description保存offset/status flags；fd7→O1→I1，read4得到m-a\n offset4，dup→fd8共享O1读m-b\n offset8；单独open同路径fd9→O2 offset0读m-a\n。解释EOF、短读和close责任，Go os.File作为入口。\n4. 四、rename与日志轮转状态表：初始path chat.log→I1, fd7/8→O1→I1；rename chat.log to chat.log.1后旧FD仍I1；create new chat.log→I2，新open fd10→O3→I2；旧服务若不重新open继续写I1，路径访问见I2。rename替换的原子性范围及跨文件系统边界，不把重命名当持久保证。\n5. 五、unlink与删除后占用空间：unlink chat.log.1移除名称/硬链接；若最后路径名已删但fd7/8仍开，I1及数据仍可由旧FD访问、磁盘块待最后引用关闭才可复用；再close7后fd8还在，close8后条件满足；还有其他硬链接/mmap需另算。与rm命令显示无文件但磁盘占用解释。\n6. 六、路径解析、权限与相对路径：相对路径受cwd影响，目录搜索权限和文件访问权限不同；同名路径可能因工作目录不同指向不同对象，符号链接另有解析；Stat(path)与对已打开对象fstat不同。Go os.Open/OpenFile/Stat/Close对应概念，输入路径不可盲信。\n7. 七、读写缓冲、偏移与失败边界：read/write返回实际字节数可小于请求，不能假设一次就是一条完整消息；普通文件page cache使write返回不等于落盘，O_APPEND每次写调到末尾但不等于业务消息原子或多进程可靠日志；03.08再讲fsync、目录fsync、rename崩溃顺序。容量/权限/磁盘满和FD泄漏的观察。\n8. 八、纸上轮转评审与22题：交付path→inode、fd→open description→inode两层图，read/dup/independent open偏移表，rename/create/unlink/close状态表和日志轮转失败矩阵；22道从inode/链接到短写/耐久边界附反馈。下一03.08持久化机制；静态不运行文件操作/Go/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

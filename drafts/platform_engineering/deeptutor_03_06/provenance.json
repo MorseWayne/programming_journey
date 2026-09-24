@@ -30,9 +30,9 @@
   "original_sha256": "322f41cd0051fab21ef0cba1487ea55286f6db1f12ce800ee128161c7eb9a8d6",
   "original_characters": 32803,
   "generation_request_sha256": "ed53c78dc985b07b49aa0cf238c04e44810c283542546a585138096e92df5563",
-  "reviewed_sha256": "4f6966e9e8217986435be1fbc63e586cc0785f55e9ff2881a517748313b5efe6",
-  "reviewed_characters": 8847,
-  "reviewed_chinese_characters": 4401,
+  "reviewed_sha256": "33d86a5c9cdb4f7e182664ed1251245f1cb510fbe288f08a7acb2057c282eccb",
+  "reviewed_characters": 8939,
+  "reviewed_chinese_characters": 4406,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/06_allocation_mapping.md",
-  "course_sha256": "36731fcdb18a194cc1c1109ab56e4c0fe3a4f8e2db99ed3bd1640ce7e778e8fe"
+  "course_sha256": "5be3901bb3a9f4aa20b562df5acff0835b55ce262a305eb5f8ca2fa18856e8e0"
 }

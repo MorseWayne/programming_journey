@@ -218,4 +218,4 @@ Go 的 `GOMEMLIMIT` 是**Go 运行时管理内存的软限制**，官方说明�
 - [Linux `mmap(2)`](https://man7.org/linux/man-pages/man2/mmap.2.html)、[`/proc/<pid>/status`](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)与[`smaps`](https://man7.org/linux/man-pages/man5/proc_pid_smaps.5.html)：映射语义及进程内存视角。
 - [Linux 内核：Page Cache](https://www.kernel.org/doc/html/latest/mm/page_cache.html)与[OSTEP：Memory API](https://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf)：文件缓存与分配层次；OSTEP 的 `malloc/free` 例子属于 C，不是 Go 的对象释放接口。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 03.07 进入文件名、inode、描述符和打开文件的生命周期，为日志轮转与 03.08 持久化建立前置。离开本章前，应能解释**一个引用为何让大底层数组保留、GC 回收与页归还为何分时发生、映射/页缓存为何不能简单算作 Go 堆，以及哪种指标能检验自己的假设**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[03.07 文件与目录](../../../src/docs/platform_engineering/curriculum/03_systems/07_files_directories.md)进入文件名、inode、描述符和打开文件的生命周期，为日志轮转与 03.08 持久化建立前置。离开本章前，应能解释**一个引用为何让大底层数组保留、GC 回收与页归还为何分时发生、映射/页缓存为何不能简单算作 Go 堆，以及哪种指标能检验自己的假设**。
