@@ -1,7 +1,7 @@
 {
   "chapter": "10.09",
   "stage": "S2",
-  "business_scope": "fictional IM message 9-byte limit and future P2 in-memory acceptance contract; static CI workflow design only, no running IM, CI, build or OpenIM runtime claim",
+  "business_scope": "fictional IM PR proposing R9, a change from the current 6-byte S2 HTTP contract to a 9-byte limit; static CI workflow design only, no running IM, CI, build or OpenIM runtime claim",
   "prerequisites": ["10.01 independent requirements and byte-limit contract", "10.02 layered test evidence", "10.03 commits and remote state", "10.06 review and merge", "09.01–09.04 S2 in-memory request contract"],
   "first_pass": ["CI event, workflow, job, step and runner", "source commit identity and layered checks", "unit versus interface versus build evidence", "Go module and test/build command entry points"],
   "second_pass": ["environment and dependency inputs", "cache versus artifact and cross-job transfer", "reproducibility and artifact identity", "untrusted PR code and minimum permissions", "failure classification and unknown business outcomes"],

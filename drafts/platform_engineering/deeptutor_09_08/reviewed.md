@@ -27,10 +27,10 @@
 | 上限 | 本题解释 | 超过时应在哪里停下 |
 |---|---|---|
 | HTTP 请求体 | JSON/表单/上传元数据及编码开销的**总字节数** | 解析前或解析中有界拒绝 |
-| 单条正文 | 解码后正文的 UTF-8 **字节数**，本章教学上限 9 字节 | 写消息前由服务端业务规则拒绝 |
+| 单条正文 | 解码后正文的 UTF-8 **字节数**，沿用 09.02 当前 6 字节上限 | 写消息前由服务端业务规则拒绝 |
 | 单附件/总附件 | 每个文件与一次请求内附件总量 | 流式读取、存储及解码/处理前后各设边界 |
 
-`len("中文甲")=9`，`len("中文甲a")=10`（按 Go UTF-8 字节表示）。9 个汉字**不是**9 字节；浏览器输入框的“字符数”也不等于后端存储预算。若业务要求非空、禁止某些控制字符、保留换行或限制消息类型，应另写合同；不要把“去掉所有标点与尖括号”当安全校验，这会损伤正常聊天文本，也不能阻止后续使用位置的注入。
+`len("你好")=6`，`len("你好呀")=9`（按 Go UTF-8 字节表示），后者超过当前 6 字节上限。三个常见汉字可占 9 字节；浏览器输入框的“字符数”不能替代后端字节预算。若业务要求非空、禁止某些控制字符、保留换行或限制消息类型，应另写合同；不要把“去掉所有标点与尖括号”当安全校验，这会损伤正常聊天文本，也不能阻止后续使用位置的注入。
 
 附件还可能在压缩、图片解码或转码后变大；只检查上传时字节数不等于限制处理后的 CPU、内存和磁盘开销。客户端前端校验可以尽早提示，但恶意或原生客户端可绕过页面，所以每条入口都以服务端校验为准。大小验证**不会**替代 SQL 参数、HTML 输出转义或会话权限。
 
@@ -91,7 +91,7 @@ MongoDB 也要固定查询结构，只从受控字段构造过滤条件；不能
 
 | 负例 | 应在何处阻断或转义 | 仍要核对 |
 |---|---|---|
-| 10 字节 `"中文甲a"` | 正文字节上限，写入前拒绝 | 请求体总上限是否另设 |
+| 9 字节 `"你好呀"` | 正文字节上限，写入前拒绝 | 请求体总上限是否另设 |
 | 引号组成的 `conversation_id` | SQL 值参数化 | `u-a` 是否有权读目标会话 |
 | `"<b>你好</b>"` | HTML 文本上下文转义 | 若作为链接/富文本，另按使用位置处理 |
 | `../../private.txt` | 不把原名用作存储路径 | 生成对象键、下载权限与类型 |
@@ -116,11 +116,11 @@ MongoDB 也要固定查询结构，只从受控字段构造过滤条件；不能
 
 不够。真正读取请求体时仍需有界限制。</details>
 
-<details><summary>4. `len("中文甲")` 在本题 UTF-8 Go 字符串中是多少？</summary>
+<details><summary>4. `len("你好")` 在本题 UTF-8 Go 字符串中是多少？</summary>
 
-9 字节，不是 3 字节。</details>
+6 字节，不是 2 字节。</details>
 
-<details><summary>5. 前端输入框限制 9 个字符就满足 9 字节上限吗？</summary>
+<details><summary>5. 前端输入框限制 6 个字符就满足 6 字节上限吗？</summary>
 
 不能。字符与 UTF-8 字节数不同，服务端须重新检查。</details>
 
@@ -198,4 +198,4 @@ MongoDB 也要固定查询结构，只从受控字段构造过滤条件；不能
 - [OWASP：XSS 防护](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)与[Go `html/template`](https://pkg.go.dev/html/template)：按输出上下文处理不可信正文。
 - [OWASP：文件上传](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)、[SSRF 防护](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)、[日志](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html)及[Go `MaxBytesReader`](https://pkg.go.dev/net/http#MaxBytesReader)：文件、网络请求、资源和证据边界。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，接下来用 09.11 的应用测试与安全负例把本卷当前接口合同整理成可审查交付，再逐步组合 09.12 完整服务；09.09 的异步与长任务在 S5 深化。离开本章前，应能对任意输入指出：**谁提供的、在哪个解释器使用、何时限制、输出怎样编码、权限由谁核对**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，接下来读[09.11 应用测试与交付](../../../src/docs/platform_engineering/curriculum/09_backend_security/11_application_tests_delivery.md)，把本卷当前接口合同与安全负例整理成可审查交付，再逐步组合 09.12 完整服务；09.09 的异步与长任务在 S5 深化。离开本章前，应能对任意输入指出：**谁提供的、在哪个解释器使用、何时限制、输出怎样编码、权限由谁核对**。

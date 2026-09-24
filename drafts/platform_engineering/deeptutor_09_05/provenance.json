@@ -35,9 +35,9 @@
   "original_sha256": "15e2cd0f25f56213777405d64aa054215b04f6b7fbfb8ce6755aa55c20f0b2b9",
   "original_characters": 32939,
   "generation_request_sha256": "101febc0e8bae6a65229c83a7fd9c9dab1bef807101909e823be83a59f7b567a",
-  "reviewed_sha256": "30b35bb3a54cff201aa56f5b2d85ade3b9112e37ceffb622be7a3606d35247cb",
-  "reviewed_characters": 9847,
-  "reviewed_chinese_characters": 4193,
+  "reviewed_sha256": "c53d44c773200f5a74a18e8bbea00c6b367c62bb1c619b5ebad67a3f9de23244",
+  "reviewed_characters": 9949,
+  "reviewed_chinese_characters": 4198,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/05_data_access_migration.md",
-  "course_sha256": "7839168585c7fabf6b91a57ad7eb0bbedb65276adfb5ec90986d63eb0affbdb9"
+  "course_sha256": "4288d0f9f7fd8d3dd378c5bf664cc6cfb760a618286916f9c5825f23c11dbf10"
 }

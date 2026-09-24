@@ -105,6 +105,7 @@ HTTP 状态码给通用调用者一个**粗类别**，应用错误体再告诉�
 | 合法 GET，含空列表 | 200 | 正常表示与分页字段 | 不变 |
 | 合法 POST，写入本进程内存 | 200 | `accepted_in_memory` | 新增一项 |
 | `limit=0`、正文空、JSON 损坏、未知字段 | 400 | `BAD_LIMIT`、`EMPTY_BODY`、`BAD_JSON` 等 | 不变 |
+| 正文 UTF-8 字节数超过 6 B | 400 | `TOO_LONG` | 不变 |
 | 可信身份缺失或无效 | 401 | `UNAUTHENTICATED` | 不变 |
 | 已知成员但此动作被禁止 | 403 | `FORBIDDEN` | 不变 |
 | 会话不存在，或对非成员隐藏其存在 | 404 | `NOT_FOUND` | 不泄露受保护内容 |

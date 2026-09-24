@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_fd253f0c2f",
+  "page_id": "pg_8cdc6a000f",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/net/http/httptest",
+      "https://pkg.go.dev/testing",
+      "https://go.dev/doc/tutorial/add-a-test",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Testing_Automation_Cheat_Sheet.html",
+      "https://owasp.org/projects/asvs",
+      "https://go.dev/doc/database/execute-transactions",
+      "https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "7a08acaf4370ff4e9d012ed96489faea5b2906eee9250d71ab7f05ab2ec7e2e2",
+  "original_characters": 35665,
+  "generation_request_sha256": "6b1574a9684449eabf7a81d0eeaef1d7430d51819ae500e36805db9d4a362168",
+  "reviewed_sha256": "161e5d0d654c964380afd15c1062bce0ee228e7da7ea7147ef24101879c3226e",
+  "reviewed_characters": 9042,
+  "reviewed_chinese_characters": 3976,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/11_application_tests_delivery.md",
+  "course_sha256": "fba7fb06fc540b9e3f014358e77d3438c412050b1feca4ef44f25637eed9517f"
+}

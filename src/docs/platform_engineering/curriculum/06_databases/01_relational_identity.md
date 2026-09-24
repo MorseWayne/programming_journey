@@ -36,7 +36,7 @@ S3 要先设计**数据模型**：哪些业务对象要长期区分、对象之�
 | `members` | 某用户与某会话的一条**当前成员关系** | `conversation_id`, `user_id`, `joined_at`, `left_at` | 把用户与会话连起来 |
 | `messages` | 一条有身份的消息记录 | `message_id`, `conversation_id`, `sender_id`, `seq`, `body` | 属于会话，并指向发送者 |
 
-先不背 SQL。`TEXT` 用于教学 ID 和内容，`BIGINT` 用于会话内序号，`TIMESTAMPTZ` 用于带时区解释的时刻。这些是所选 PostgreSQL 教学方言中的类型；“把显示名写在 `user_id` 列”即使同为文本也违反**业务身份**含义，类型检查不能代替业务检查。消息正文上限在此沿用 S2 的 9 个 UTF-8 字节，不能把 9 个字符、9 个 Go rune 和 9 个字节混为一谈。
+先不背 SQL。`TEXT` 用于教学 ID 和内容，`BIGINT` 用于会话内序号，`TIMESTAMPTZ` 用于带时区解释的时刻。这些是所选 PostgreSQL 教学方言中的类型；“把显示名写在 `user_id` 列”即使同为文本也违反**业务身份**含义，类型检查不能代替业务检查。消息正文上限在此沿用 [09.02 的 S2 HTTP 合同](../09_backend_security/02_http_api_contract.md)：**6 个 UTF-8 字节**。工程卷的 R9 是将来把上限改成 9 字节的独立变更练习，尚未改变这份接口合同；不能把字符、Go rune 和字节混为一谈。
 
 纸上实例可以这样读：
 
@@ -96,12 +96,12 @@ CREATE TABLE messages (
   conversation_id TEXT NOT NULL REFERENCES conversations(conversation_id),
   sender_id TEXT NOT NULL REFERENCES users(user_id),
   seq BIGINT NOT NULL CHECK (seq > 0),
-  body TEXT NOT NULL CHECK (octet_length(body) BETWEEN 1 AND 9),
+  body TEXT NOT NULL CHECK (octet_length(body) BETWEEN 1 AND 6),
   UNIQUE (conversation_id, seq)
 );
 ```
 
-`body="中文甲"` 在 UTF-8 下是 9 字节，可满足本题上限；再添一个 ASCII `a` 就是 10 字节，应被拒绝。`octet_length` 是这里的 PostgreSQL 写法，不能不经核对就搬到所有 SQL 方言。数据库端 `CHECK` 只检查写入时这一行的内容，不能判断发送者当前是不是会话成员，也不解决并发分配 `seq` 的方式。应用层仍要在正确的业务边界做授权与输入校验；两个层次承担不同职责。
+`body="你好"` 在 UTF-8 下是 6 字节，可满足当前上限；`body="中文甲"` 是 9 字节，应被拒绝。`octet_length` 是这里的 PostgreSQL 写法，不能不经核对就搬到所有 SQL 方言。数据库端 `CHECK` 只检查写入时这一行的内容，不能判断发送者当前是不是会话成员，也不解决并发分配 `seq` 的方式。应用层仍要在正确的业务边界做授权与输入校验；两个层次承担不同职责。
 
 **NULL** 不是空字符串 `""`，不是数字 0，也不是“没有这行”。本模型约定 `members.left_at IS NULL` 表示这条当前成员记录**没有记载退出时刻**；是否真正有权访问仍应以业务合同和可靠状态为准。SQL 表达式遇到 NULL 可能得到第三种结果 **UNKNOWN**，因此 `left_at = NULL` 不能当作寻找未退出记录的写法，应使用 `IS NULL`。同样，PostgreSQL 的 `CHECK` 遇到 UNKNOWN 通常不会拒绝该行；必填列要另写 `NOT NULL`。初学阶段记住：**字段能否为空、空代表什么、谁更新它**都必须写入模式合同。
 
@@ -111,7 +111,7 @@ CREATE TABLE messages (
 
 | 纸上写入或读取 | 表约束能判断 | 还需业务判断 |
 |---|---|---|
-| 写入 `(m-a,c-a,u-a,seq=1)` | `m-a` 不重复；`c-a/u-a` 存在；序号正且在 `c-a` 内唯一；正文 1–9 字节 | `u-a` 当时有权发送；是否应保存和怎样确认 |
+| 写入 `(m-a,c-a,u-a,seq=1)` | `m-a` 不重复；`c-a/u-a` 存在；序号正且在 `c-a` 内唯一；正文 1–6 字节 | `u-a` 当时有权发送；是否应保存和怎样确认 |
 | 写入 `(m-x,c-z,u-a,seq=1)` | 若 `c-z` 不存在，外键拒绝 | 即使有 `c-z`，仍需检查会话权限 |
 | 写入 `(m-y,c-a,u-z,seq=2)` | 若 `u-z` 不存在，外键拒绝；若存在则这些外键可以通过 | `u-z` 是否 `c-a` 的可发送成员 |
 | 查询 `u-a` 的 `c-a` 历史 | 可按会话 ID 找到候选消息 | 当前身份是否允许读、历史可见范围、排序与分页 |
@@ -199,7 +199,7 @@ schema 是列、类型和约束的定义；instance 是当前实际数据行。<
 
 <details><summary>10. 3 个常见汉字为何可能恰好达到 9 字节？</summary>
 
-题设 UTF-8 下这几个汉字各占 3 字节；要按实际编码后的字节数计。</details>
+题设 UTF-8 下这几个汉字各占 3 字节；合计 9 字节，因此按当前 6 字节合同应拒绝。</details>
 
 <details><summary>11. `NULL` 与空字符串一样吗？</summary>
 

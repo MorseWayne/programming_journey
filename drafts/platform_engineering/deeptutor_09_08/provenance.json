@@ -30,9 +30,9 @@
   "original_sha256": "8508652cbaa4fc4b99a0ca954f3dbe16c2c5e3d651ee400043288fdaee8815cb",
   "original_characters": 32857,
   "generation_request_sha256": "af8528a28b8f26279561c7cbaf35868a2dde8ec7204229f745b6f1220812dc5c",
-  "reviewed_sha256": "1b7e05e5bbb8d1567d368c4a70f02b75832235233e8eaaa6403bc91715c0dd53",
-  "reviewed_characters": 8580,
-  "reviewed_chinese_characters": 4152,
+  "reviewed_sha256": "abc98fb814ede789f548d5c653eab36c94627de6c1f96da20b184c5dc1776f3c",
+  "reviewed_characters": 8701,
+  "reviewed_chinese_characters": 4165,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/08_input_output_defense.md",
-  "course_sha256": "8a142a81af5b57159ac91fe549c861d6fb2590452ed124e34f680dbd72ab441f"
+  "course_sha256": "94349b62d4727e741fa5895c9bdc5526a23f91d77952116d871e40495f415b90"
 }

@@ -1,0 +1,76 @@
+{
+  "code": "09.11",
+  "title": "应用测试与交付：把IM接口合同变成可复核证据",
+  "chapter_id": "ch_application_tests_delivery",
+  "summary": "面向Go初学者承接09.01–09.08，把虚构IM的S2当前6字节HTTP合同、S3持久扩展和待评审R9变更分清，分层讲Go httptest、独立预期、授权/安全负例、隔离数据库与事务故障、CI制品和交付文档；静态课程不运行服务。",
+  "objectives": [
+    "从既有合同独立写出当前6字节和待审R9预期",
+    "区分单元、handler、集成、端到端证据范围",
+    "用httptest纸上示例核对状态、JSON、头和状态不变",
+    "设计正常、拒绝、边界、重复与结果未知用例",
+    "覆盖对象级授权与输入输出安全负例",
+    "说明fake与真实数据库集成的证据差异",
+    "为事务/迁移故障写可复核测试数据和预期",
+    "整理提交身份、配置、错误码与未验证范围的交付包"
+  ],
+  "sources": [
+    "https://pkg.go.dev/net/http/httptest",
+    "https://pkg.go.dev/testing",
+    "https://go.dev/doc/tutorial/add-a-test",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Testing_Automation_Cheat_Sheet.html",
+    "https://owasp.org/projects/asvs",
+    "https://go.dev/doc/database/execute-transactions",
+    "https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts"
+  ],
+  "sections": [
+    {
+      "title": "一、从一次IM变更建立可验证合同",
+      "words": 2400,
+      "focus": "承接09.01–09.08，虚构u-a/u-b/u-c,c-a,m-a。明确09.02当前S2 HTTP合同正文6UTF8字节、总请求4096B、成功POST200 accepted_in_memory、重复409、非成员404；10.09的R9从6到9是待审PR，不可混入当前预期。测试真值来自独立需求、状态和确认点；静态课程不运行服务。"
+    },
+    {
+      "title": "二、分层证据：纯规则、handler、数据库和端到端",
+      "words": 2700,
+      "focus": "10.02已有Go testing，按业务问题区分纯函数单元/httptest handler/隔离DB集成/真实网络或设备端到端。假实现可控制错误但不能证明真实SQL/驱动和授权事务；测试通过只限输入环境与检查点。表格列每层能证明不能证明，写失败后状态。"
+    },
+    {
+      "title": "三、httptest从请求到响应的入门",
+      "words": 2900,
+      "focus": "Go net/http/httptest.NewRequest/NewRecorder/Result，静态小片段针对虚构GET或POST，设置Content-Type和受信测试主体注入而不公开身份后门；断言status、Content-Type、稳定错误码、JSON结构、敏感字段缺失及状态不变，不仅看200。Recorder直接调用handler不经真实网络/TLS；NewServer才走实际HTTP，仍非生产。无实际运行。"
+    },
+    {
+      "title": "四、HTTP合同矩阵与边界样本",
+      "words": 2900,
+      "focus": "当前6B: 好3B、你好6B合法、你好呀9B拒绝，原始请求4096/4097B区别，非法JSON、未知字段、错误Content-Type、GET limit0、空页/分页、重复m-a409且旧正文不变、响应丢失结果未知。正交拆解而非所有组合穷举，预期状态和body源自09.02及独立需求。R9拟议版单列新预期9允许10拒绝，不能同报告混算。"
+    },
+    {
+      "title": "五、授权与安全负例",
+      "words": 3000,
+      "focus": "u-a/u-b c-a成员，u-c非成员，未认证401，非成员隐藏404，已知成员但禁止动作403；改conversation_id/message_id BOLA、伪造sender_id、注销旧Session/WS、CSRF/Origin、SQL引号参数、HTML标签输出、附件路径/内网URL功能未实现则列为设计未验证。每行有主体/动作/资源/当前状态/外部/内部证据，无真实凭据。"
+    },
+    {
+      "title": "六、隔离依赖、故障和事务验证",
+      "words": 2700,
+      "focus": "可控stub/fake模拟DB timeout/duplicate,不能替代真实隔离DB集成; 迁移旧行NULL、Rows.Close/Err、Tx rollback、退群发送并发时间线、Commit附近未知需要稳定身份查验；测试环境应自建虚构种子和清理，不靠开发者本地文件或线上账号。注入可控错误不应镜像实现。S5真实故障演练后置。"
+    },
+    {
+      "title": "七、CI、文档与配置作为交付证据",
+      "words": 2700,
+      "focus": "10.09 CI输入提交SHA/Go版本/命令/测试数据版本，失败日志与制品身份；配置env/限额/数据库DSN引用但不明文，迁移版本、启动/关闭和权限说明、错误码/分页示例。静态课程只规定个人实践证据模板，不创真实工作流或部署。区分纸上/已执行/未验证三状态。"
+    },
+    {
+      "title": "八、评审交付包与22道练习",
+      "words": 3000,
+      "focus": "交付合同矩阵、两段httptest伪代码/示意、授权矩阵、依赖故障表、CI/README证据表和未来实际运行记录模板；22题从测试真值、Recorder/Server、字节6/R9版本、错误码、BOLA/XSS/SQL、Tx未知、制品到实务边界附反馈。下一09.12完整服务课程设计，09.09异步S5。静态不执行Go/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.11 应用测试与交付》，面向Go初学者，承接09.01–09.08和10.02/10.09。按虚构IM读历史与发消息合同，先讲测试真值，再分层讲纯规则、httptest、隔离数据库、HTTP/授权/安全负例、故障和CI交付证据。务必区分09.02当前6字节上限与10.09待审R9（9字节）变更，不混用预期。八节丰富正文、22道附反馈练习。静态教材不运行Go/数据库/服务/站点。\n1. 一、从一次IM变更建立可验证合同：承接09.01–09.08，虚构u-a/u-b/u-c,c-a,m-a。明确09.02当前S2 HTTP合同正文6UTF8字节、总请求4096B、成功POST200 accepted_in_memory、重复409、非成员404；10.09的R9从6到9是待审PR，不可混入当前预期。测试真值来自独立需求、状态和确认点；静态课程不运行服务。\n2. 二、分层证据：纯规则、handler、数据库和端到端：10.02已有Go testing，按业务问题区分纯函数单元/httptest handler/隔离DB集成/真实网络或设备端到端。假实现可控制错误但不能证明真实SQL/驱动和授权事务；测试通过只限输入环境与检查点。表格列每层能证明不能证明，写失败后状态。\n3. 三、httptest从请求到响应的入门：Go net/http/httptest.NewRequest/NewRecorder/Result，静态小片段针对虚构GET或POST，设置Content-Type和受信测试主体注入而不公开身份后门；断言status、Content-Type、稳定错误码、JSON结构、敏感字段缺失及状态不变，不仅看200。Recorder直接调用handler不经真实网络/TLS；NewServer才走实际HTTP，仍非生产。无实际运行。\n4. 四、HTTP合同矩阵与边界样本：当前6B: 好3B、你好6B合法、你好呀9B拒绝，原始请求4096/4097B区别，非法JSON、未知字段、错误Content-Type、GET limit0、空页/分页、重复m-a409且旧正文不变、响应丢失结果未知。正交拆解而非所有组合穷举，预期状态和body源自09.02及独立需求。R9拟议版单列新预期9允许10拒绝，不能同报告混算。\n5. 五、授权与安全负例：u-a/u-b c-a成员，u-c非成员，未认证401，非成员隐藏404，已知成员但禁止动作403；改conversation_id/message_id BOLA、伪造sender_id、注销旧Session/WS、CSRF/Origin、SQL引号参数、HTML标签输出、附件路径/内网URL功能未实现则列为设计未验证。每行有主体/动作/资源/当前状态/外部/内部证据，无真实凭据。\n6. 六、隔离依赖、故障和事务验证：可控stub/fake模拟DB timeout/duplicate,不能替代真实隔离DB集成; 迁移旧行NULL、Rows.Close/Err、Tx rollback、退群发送并发时间线、Commit附近未知需要稳定身份查验；测试环境应自建虚构种子和清理，不靠开发者本地文件或线上账号。注入可控错误不应镜像实现。S5真实故障演练后置。\n7. 七、CI、文档与配置作为交付证据：10.09 CI输入提交SHA/Go版本/命令/测试数据版本，失败日志与制品身份；配置env/限额/数据库DSN引用但不明文，迁移版本、启动/关闭和权限说明、错误码/分页示例。静态课程只规定个人实践证据模板，不创真实工作流或部署。区分纸上/已执行/未验证三状态。\n8. 八、评审交付包与22道练习：交付合同矩阵、两段httptest伪代码/示意、授权矩阵、依赖故障表、CI/README证据表和未来实际运行记录模板；22题从测试真值、Recorder/Server、字节6/R9版本、错误码、BOLA/XSS/SQL、Tx未知、制品到实务边界附反馈。下一09.12完整服务课程设计，09.09异步S5。静态不执行Go/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
