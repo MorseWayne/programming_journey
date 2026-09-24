@@ -1,0 +1,77 @@
+{
+  "code": "07.02",
+  "title": "Redis 数据模型：从访问方式选择结构",
+  "chapter_id": "ch_redis_data_model",
+  "summary": "面向Go初学者，围绕IM在线提示、会话预览、成员候选、排序列表、近期窗口、位标志和通知流选择Redis结构并标明业务边界。",
+  "objectives": [
+    "按访问形状选择String/Hash/Set/ZSET/List/Bitmap/Stream",
+    "解释缓存角色不由Redis类型决定",
+    "手算Set/ZSET/List/Bitmap小例",
+    "区分String INCR单命令与跨DB事务",
+    "区分Stream消费者ACK与设备交付",
+    "约束键TTL/大小/权限与重建来源",
+    "评审不适用或无界结构"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/develop/data-types/compare-data-types/",
+    "https://redis.io/docs/latest/develop/data-types/strings/",
+    "https://redis.io/docs/latest/develop/data-types/hashes/",
+    "https://redis.io/docs/latest/develop/data-types/lists/",
+    "https://redis.io/docs/latest/develop/data-types/sets/",
+    "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+    "https://redis.io/docs/latest/develop/data-types/strings/bitmaps/",
+    "https://redis.io/docs/latest/develop/data-types/streams/",
+    "https://redis.io/docs/latest/develop/reference/eviction/"
+  ],
+  "sections": [
+    {
+      "title": "一、从业务访问形状选类型而非记命令",
+      "words": 2500,
+      "focus": "承接07.01权威/派生/临时与S2/S3合同；虚构c-a seq9 m-9，u-a/u-b成员、u-c非成员。按点查、字段读取、集合包含、按分数排序、顺序追加/消费、位标志和回放/确认选择Redis类型，不让Redis类型自动改变业务承诺。"
+    },
+    {
+      "title": "二、String与Hash：状态和小字段",
+      "words": 2700,
+      "focus": "String可存presence:u-a:dev-1=online并配教学TTL30s，过期不证明人离线；INCR临时rate:u-a:minute单命令原子，不与SQL Tx原子；Hash preview:c-a字段last_id=m-9/seq=9，派生且权限另查，不混message原文权威。"
+    },
+    {
+      "title": "三、Set与Sorted Set：包含和排序不同",
+      "words": 2900,
+      "focus": "candidate_members:c-a={u-a,u-b}，SISMEMBER u-c false但成员缓存不可授权权威；Set无顺序。user_conversations:u-a ZSET c-a score100,c-b score90，排序c-a先；score是教学源事件派生分数非跨设备墙钟，更新和同分tie规则、容量/重建。"
+    },
+    {
+      "title": "四、List与Sorted Set的近期窗口",
+      "words": 2600,
+      "focus": "List recent:c-a=[m-9,m-8,m-7]可按LPUSH/LTRIM保有限最新窗口，pop移除不自动有消费ACK/重放；要按seq范围/乱序修正可能用ZSET/数据库，不能缓存整段无界历史；数据结构看操作而非名称queue。"
+    },
+    {
+      "title": "五、Bitmap的密集索引前提",
+      "words": 2700,
+      "focus": "Redis bitmap是String位操作；教学三设备分配稳定偏移0,1,2，bit2=1表示某标志、BITCOUNT=1。不能直接把任意字符串user_id或稀疏巨大数字当偏移，映射/范围/权限责任，位图不自动保存设备回执或已读权威。"
+    },
+    {
+      "title": "六、Stream与List/PubSub的语义边界",
+      "words": 3100,
+      "focus": "notify:c-a Stream N1,N2，worker G1读取并XACK N1，N2 pending；消费者确认只说明处理协议中确认，不证明B设备收到。Stream append entries/consumer groups/retention与List pop/临时PubSub差异；不把Stream自动当权威消息历史或跨DB事务outbox，07.06/07.07深入。"
+    },
+    {
+      "title": "七、键空间、TTL与内存/故障",
+      "words": 2900,
+      "focus": "给每个键标命名空间、角色、权限、最大元素、TTL/逐出和重建源；preview TTL60s只是玩具，不保新鲜；Redis maxmemory eviction/EXPIRE官方。跨Redis多命令与SQL事务不可由单命令原子推保证，预览旧seq8仍可能hit。"
+    },
+    {
+      "title": "八、结构选择评审与22题",
+      "words": 2900,
+      "focus": "交付七种类型候选+不适用反例，固定Set/ZSET/List/Bitmap/Stream小数据结果；22题从类型/命令含义到权限、缓存丢失、消费者确认业务评审附答案。静态不运行Redis/Go/DB/站点，下一07.03 cache-aside时间线。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.02 Redis 数据模型》，面向Go初学者，八节丰富理论及22道分层练习反馈。承接07.01：未来S3消息历史与members权限是权威，Redis候选只为派生/临时，不声称当前S2用Redis。固定虚构c-a最新m-9 seq9；String presence:u-a:dev-1 online TTL30秒（玩具）和INCR rate:u-a:minute临时计数；Hash preview:c-a {last_id:m-9,seq:9}；Set candidate_members:c-a={u-a,u-b}、u-c不在，但缓存Set不可独立授权；ZSET user_conversations:u-a有c-a score100,c-b score90，c-a先，分数是教学派生非客户端物理时间；List recent:c-a=[m-9,m-8,m-7]有界窗口，pop非可靠ACK；Bitmap三设备稳定偏移0/1/2，bit2=1，BITCOUNT=1，不能用任意稀疏user_id作偏移；Stream notify:c-a有N1,N2，worker G1 ACK N1，N2 pending，XACK不能证明B设备已收到。Stream保留/消费者组不自动成为消息历史或跨SQL事务原子outbox；06.12的conversation_counters.next_seq不能用临时Redis INCR替代。每种类型讲适用、不适用、TTL/内存/权限和重建。静态不运行Redis、Go、DB、站点。下一07.03缓存读写竞争。\n1. 一、从业务访问形状选类型而非记命令: 承接07.01权威/派生/临时与S2/S3合同；虚构c-a seq9 m-9，u-a/u-b成员、u-c非成员。按点查、字段读取、集合包含、按分数排序、顺序追加/消费、位标志和回放/确认选择Redis类型，不让Redis类型自动改变业务承诺。\n2. 二、String与Hash：状态和小字段: String可存presence:u-a:dev-1=online并配教学TTL30s，过期不证明人离线；INCR临时rate:u-a:minute单命令原子，不与SQL Tx原子；Hash preview:c-a字段last_id=m-9/seq=9，派生且权限另查，不混message原文权威。\n3. 三、Set与Sorted Set：包含和排序不同: candidate_members:c-a={u-a,u-b}，SISMEMBER u-c false但成员缓存不可授权权威；Set无顺序。user_conversations:u-a ZSET c-a score100,c-b score90，排序c-a先；score是教学源事件派生分数非跨设备墙钟，更新和同分tie规则、容量/重建。\n4. 四、List与Sorted Set的近期窗口: List recent:c-a=[m-9,m-8,m-7]可按LPUSH/LTRIM保有限最新窗口，pop移除不自动有消费ACK/重放；要按seq范围/乱序修正可能用ZSET/数据库，不能缓存整段无界历史；数据结构看操作而非名称queue。\n5. 五、Bitmap的密集索引前提: Redis bitmap是String位操作；教学三设备分配稳定偏移0,1,2，bit2=1表示某标志、BITCOUNT=1。不能直接把任意字符串user_id或稀疏巨大数字当偏移，映射/范围/权限责任，位图不自动保存设备回执或已读权威。\n6. 六、Stream与List/PubSub的语义边界: notify:c-a Stream N1,N2，worker G1读取并XACK N1，N2 pending；消费者确认只说明处理协议中确认，不证明B设备收到。Stream append entries/consumer groups/retention与List pop/临时PubSub差异；不把Stream自动当权威消息历史或跨DB事务outbox，07.06/07.07深入。\n7. 七、键空间、TTL与内存/故障: 给每个键标命名空间、角色、权限、最大元素、TTL/逐出和重建源；preview TTL60s只是玩具，不保新鲜；Redis maxmemory eviction/EXPIRE官方。跨Redis多命令与SQL事务不可由单命令原子推保证，预览旧seq8仍可能hit。\n8. 八、结构选择评审与22题: 交付七种类型候选+不适用反例，固定Set/ZSET/List/Bitmap/Stream小数据结果；22题从类型/命令含义到权限、缓存丢失、消费者确认业务评审附答案。静态不运行Redis/Go/DB/站点，下一07.03 cache-aside时间线。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -26,9 +26,9 @@
   "original_sha256": "8adaf028387e397ae316e804f00f5b397b355ca2f1ae5a029430fafe452f2d26",
   "original_characters": 28699,
   "generation_request_sha256": "10a2ab88a72cbdc66d6ff1ee67746ba12c5a9ebf6c87f228de92d46eab336020",
-  "reviewed_sha256": "e239f24d4ebf468c3b06f043f6f93f9ab1a513a7b12dba65d6c7bb65454ba682",
-  "reviewed_characters": 9070,
-  "reviewed_chinese_characters": 4437,
+  "reviewed_sha256": "1a7e93f8f58643dde3dd65fb510bf14b530fe04b32ca39f0ed2c875138c7cd9d",
+  "reviewed_characters": 9174,
+  "reviewed_chinese_characters": 4441,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/01_access_state_roles.md",
-  "course_sha256": "0ad847744dd23f123b23ad06547b8c12a3a03f9919f7e9ba5bd0facc6441bf19"
+  "course_sha256": "7f692003b94fd0ffce405d104f68b89cd0f31264f5c2934236c09ff7c7d4e597"
 }

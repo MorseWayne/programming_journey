@@ -1,0 +1,30 @@
+{
+  "chapter": "07.02",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced Redis data-type lesson for fictional IM derivative and ephemeral state",
+  "prerequisites": [
+    "07.01 authority, derived and ephemeral roles",
+    "02.04 hash/set and 02.06 ordered structure basics",
+    "06.12 authoritative message and sequence transaction"
+  ],
+  "first_pass": [
+    "String presence and temporary INCR versus Hash preview",
+    "candidate Set and ordered user-conversation ZSET",
+    "bounded recent List and three-offset Bitmap"
+  ],
+  "second_pass": [
+    "Stream N1/N2, group ACK and pending state versus device delivery",
+    "Pub/Sub, List and Stream delivery boundaries",
+    "key naming, TTL, maximum size, permission and rebuild source",
+    "Redis command atomicity does not cover SQL transaction"
+  ],
+  "not_yet_prerequisites": [
+    "07.03 cache-aside read/write races",
+    "07.06–07.09 message abstractions and acknowledgment",
+    "07.10 local outbox transaction boundary",
+    "real Redis version and data-size verification by the learner"
+  ],
+  "next_chapter": "07.03 cache read and update",
+  "upstream_inspection": "No OpenIM implementation claim; Redis primary documentation supports the stated data-type and Pub/Sub semantics only.",
+  "shared_integration_pending": []
+}

@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_3747bde2df",
+  "page_id": "pg_9f3df58f0f",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://redis.io/docs/latest/develop/data-types/compare-data-types/",
+      "https://redis.io/docs/latest/develop/data-types/strings/",
+      "https://redis.io/docs/latest/develop/data-types/hashes/",
+      "https://redis.io/docs/latest/develop/data-types/lists/",
+      "https://redis.io/docs/latest/develop/data-types/sets/",
+      "https://redis.io/docs/latest/develop/data-types/sorted-sets/",
+      "https://redis.io/docs/latest/develop/data-types/strings/bitmaps/",
+      "https://redis.io/docs/latest/develop/data-types/streams/",
+      "https://redis.io/docs/latest/develop/pubsub/",
+      "https://redis.io/docs/latest/develop/reference/eviction/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "b8a3496614be11e62553a697efe6b391bb7da986254b193f121c73bf32a1098a",
+  "original_characters": 31238,
+  "generation_request_sha256": "d011df45770b16c87b9a3c12e4a719f3048ec117af05f49d8ea5d8112c6dded5",
+  "reviewed_sha256": "5c374ffab5e6a5c0969c9b2f04d688e152493f025cba3db6504b325ce027801f",
+  "reviewed_characters": 9058,
+  "reviewed_chinese_characters": 3352,
+  "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/02_redis_data_model.md",
+  "course_sha256": "7e8453cbcababc3b41d585c610d3488097f2f628fc52d8608593f663a3e9c240"
+}

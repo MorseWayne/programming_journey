@@ -189,4 +189,4 @@ TTL 只是**键的生命周期边界**，不是“在 TTL 内始终新鲜”的�
 
 不看答案时，能把消息、成员资格、next_seq、预览、在线提示和临时限流逐一分类，并说清缓存重启后的恢复来源；还能手算 70% 命中且解释为何旧 seq8 的命中不合格，才算完成第一轮。第二轮由学习者在隔离环境测真实访问分布、陈旧与故障结果，本章没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 07.02 才选择 Redis 字符串、哈希、集合、有序集合与流等结构；07.03 再把读取、更新和失效的竞争画成时间线。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[07.02 Redis 数据模型](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/02_redis_data_model.md)才选择 Redis 字符串、哈希、集合、有序集合与流等结构；07.03 再把读取、更新和失效的竞争画成时间线。
