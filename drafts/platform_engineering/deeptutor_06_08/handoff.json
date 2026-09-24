@@ -1,0 +1,29 @@
+{
+  "chapter": "06.08",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced concurrency-control lesson using fictional u-a leave/send interleaving",
+  "prerequisites": [
+    "06.07 transaction anomalies and leave/send business ordering",
+    "06.02 SQL row predicates",
+    "06.10 Go transaction resource boundary"
+  ],
+  "first_pass": [
+    "v0 active versus v1 inactive as shorthand for members.left_at",
+    "Read Committed statement snapshots and Repeatable Read stable snapshot",
+    "two SELECT FOR UPDATE / UPDATE ordering timelines on the same member row"
+  ],
+  "second_pass": [
+    "row/table lock distinction and R1/R2 deadlock graph",
+    "two-administrator write skew and Serializable failure",
+    "long snapshot and PostgreSQL VACUUM cleanup pressure",
+    "MongoDB transaction stale reads/write conflicts as separate engine"
+  ],
+  "not_yet_prerequisites": [
+    "06.09 WAL and crash recovery",
+    "06.11 replication and migration",
+    "real isolation experiments by the learner"
+  ],
+  "next_chapter": "06.09 logging and crash recovery",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL and MongoDB primary documentation supports only their respective transaction and lock behavior.",
+  "shared_integration_pending": []
+}

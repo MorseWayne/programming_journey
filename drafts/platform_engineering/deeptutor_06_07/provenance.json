@@ -28,9 +28,9 @@
   "original_sha256": "07f50035360fcf94fa104dfb4c5a403c218dd8a1141e2dcb4fa0615fcd7ba510",
   "original_characters": 33201,
   "generation_request_sha256": "21b51b14d3d5875a5708af74aafc3b5d9b31be54b231bc61d6f9712de3d1e139",
-  "reviewed_sha256": "47823250815c8e03b9151b90e3c95dd0db4efbf363b579ffcc4462eb93a44969",
-  "reviewed_characters": 8799,
-  "reviewed_chinese_characters": 4119,
+  "reviewed_sha256": "996a04ba7b7e0437d03e4f00e3534f8b0ce14ef7516ed1aab055d7ece2d27572",
+  "reviewed_characters": 9065,
+  "reviewed_chinese_characters": 4124,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/07_transactions_anomalies.md",
-  "course_sha256": "cee79fe6e66266a85249f2bcbdbb7ba94e0fe2d4e0332155df9922ceaa7419b5"
+  "course_sha256": "f30d8f1c7eff18157a119a25a70ce24d41ae99c1dd84822a50b9ab4a0a88a2d3"
 }

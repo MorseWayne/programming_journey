@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_5eeab64abc",
+  "page_id": "pg_46e1aaf9c6",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/mvcc-intro.html",
+      "https://www.postgresql.org/docs/current/transaction-iso.html",
+      "https://www.postgresql.org/docs/current/explicit-locking.html",
+      "https://www.postgresql.org/docs/current/routine-vacuuming.html",
+      "https://www.mongodb.com/docs/manual/core/transactions-production-consideration/",
+      "https://www.mongodb.com/docs/manual/core/transactions/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "2bd7ca811433516e71dcc64ba73bc9bbc8e4e756fbe3e2b1f4bcc0e90b6a17a6",
+  "original_characters": 30918,
+  "generation_request_sha256": "fb233be4797b95eb9c459c19220fa03dd793298d3cd18754bfd85149649296d8",
+  "reviewed_sha256": "12bf1fabc18f15591835fb24500f94fa20504a63646a820c39dfae784739d45d",
+  "reviewed_characters": 9718,
+  "reviewed_chinese_characters": 4276,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/08_locks_mvcc.md",
+  "course_sha256": "c34a91b76d1877966fba105efc365e7dd8ac8b87a75431949e9a17b18c3b1c13"
+}

@@ -204,4 +204,4 @@ PostgreSQL 的规划器利用 `ANALYZE` 收集的采样统计（如分布、常�
 
 能在不看答案时从 11 行手算两条计划都返回 `6,5,4`，指出两条路径候选工作量的区别；能把成员权限接入正确语义，解释扫描/连接/排序/聚合与选择率，并在计划上区分**估计、实际、缓冲访问、设备 I/O 和端到端 P95**，才算完成第一轮。第二轮用自己的隔离数据执行只读查询与计划核对，保存版本、参数、数据规模和原始结果；本课程没有代替学习者运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 06.08 将从并发读写追问锁与 MVCC 如何决定“看见哪一版”，06.09 再解释日志与崩溃恢复；06.07 的事务异常是这两章的语义前置。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[06.08 锁与 MVCC](../../../src/docs/platform_engineering/curriculum/06_databases/08_locks_mvcc.md)将从并发读写追问锁与 MVCC 如何决定“看见哪一版”，06.09 再解释日志与崩溃恢复；06.07 的事务异常是这两章的语义前置。

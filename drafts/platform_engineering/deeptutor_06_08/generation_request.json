@@ -1,0 +1,74 @@
+{
+  "code": "06.08",
+  "title": "锁与 MVCC：成员变更时谁看见哪一版",
+  "chapter_id": "ch_locks_mvcc",
+  "summary": "面向Go初学者，围绕退群与发送并发推导快照、行版本、行锁、死锁、写偏斜及长事务回收。",
+  "objectives": [
+    "区分行版本、快照和锁",
+    "手算RC/RR下的成员可见性",
+    "用同一成员行锁建立发送与退群顺序",
+    "画两行死锁等待环",
+    "解释写偏斜和可串行化失败",
+    "分析长事务对版本回收的影响",
+    "区分PostgreSQL与MongoDB事务口径"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/mvcc-intro.html",
+    "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "https://www.postgresql.org/docs/current/explicit-locking.html",
+    "https://www.postgresql.org/docs/current/routine-vacuuming.html",
+    "https://www.mongodb.com/docs/manual/core/transactions-production-consideration/",
+    "https://www.mongodb.com/docs/manual/core/transactions/"
+  ],
+  "sections": [
+    {
+      "title": "一、从退群与发送建立可见性问题",
+      "words": 2500,
+      "focus": "承接06.07固定虚构u-a是c-a活跃成员、发送m-a与退群并发。规则：发送决定先成立则可写并先提交，退群先完成则发送拒绝。解释事务、行、版本、锁、快照、提交与外部HTTP/设备确认；不把SELECT看到旧成员当许可证。"
+    },
+    {
+      "title": "二、MVCC版本与快照的教学时间线",
+      "words": 2800,
+      "focus": "玩具成员行v0 active=true已提交，Tleave写v1 active=false未提交再提交；普通读在快照中选可见版本，不读未提交。PG Read Committed每条语句快照，Tsend先读true、Tleave提交后第二读false；Repeatable Read同事务稳定旧快照可仍读true，但冲突写可能失败；版本图非PG物理xmin/xmax。"
+    },
+    {
+      "title": "三、行锁把两条业务决策排成受控顺序",
+      "words": 2900,
+      "focus": "PostgreSQL SELECT ... FOR UPDATE锁当前成员行，Tsend先获锁→Tleave更新等待→Tsend插入m-a并提交→Tleave退出后提交；若Tleave先更新并提交，Tsend等待后在ReadCommitted重新检查active=false拒绝。所有发送/退出路径须参与同一规则；锁一行不能保护不存在行、其他事务和外部推送；PG文档锁行为。"
+    },
+    {
+      "title": "四、行锁、表锁、范围与死锁",
+      "words": 2800,
+      "focus": "共享/排它关系只讲必要冲突，PG行级FOR UPDATE和UPDATE、表级锁、谓词/范围条件；不能说PG Serializable predicate lock像传统gap锁阻塞写。两行R1/R2：T1先锁R1再要R2、T2先R2再要R1产生环，DB检测撤销一事务；统一锁顺序、短事务、有界整笔重试，锁超时和业务超时区别。"
+    },
+    {
+      "title": "五、隔离级别与写偏斜",
+      "words": 3000,
+      "focus": "PG RC语句快照、RR事务稳定快照但允许序列化异常，Serializable成功提交等效某串行序而可能serialization failure；两管理员A/B均读还有另一人，各自改不同成员行，RR可能零管理员，行锁各自行不能保证；锁共同保护对象/约束或可串行化整笔重试。"
+    },
+    {
+      "title": "六、长事务、旧版本回收与资源",
+      "words": 2800,
+      "focus": "PG MVCC更新产生旧行版本，VACUUM回收不再需要版本；长时间打开快照可能阻碍旧版本回收造成表/索引膨胀与可见性变化，具体取决于事务/配置。不要把所有bloat归因单个会话，不说普通读完全无锁；事务内远程HTTP/设备推送扩大持锁时间和未知边界。"
+    },
+    {
+      "title": "七、MongoDB事务对照与Go边界",
+      "words": 2600,
+      "focus": "MongoDB单文档原子，多文档事务有snapshot和写冲突/锁等待规则，按官方生产考虑；不要套PG SELECT FOR UPDATE或隔离名称。Go sql.Tx所有查询同Tx，Context和关闭责任；冲突重试整笔且外部副作用放在提交后另设计，提交未知沿稳定ID查询，S5再做可靠交付。"
+    },
+    {
+      "title": "八、可交接时间线与22题",
+      "words": 2500,
+      "focus": "交付v0/v1可见性表、两种锁顺序、R1R2死锁环、两管理员写偏斜和长事务证据清单；22题分层附可核对反馈，静态不运行Go/SQL/DB/站点。下一06.09 WAL崩溃恢复。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成面向Go初学者的完整中文静态教材《06.08 锁与MVCC》，八节丰富理论正文及22道分层练习反馈。沿06.07虚构u-a成员退群与发送m-a并发：v0 active=true，Tleave新版本v1 false；PostgreSQL RC普通读每语句快照，RR同事务稳定快照但可能冲突失败；SELECT FOR UPDATE在RC等待并重检更新后active状态。发送先锁同一成员行则Tleave等待，发送提交后退群；退群先提交则发送重检拒绝。所有路径需协调，锁当前行不保护不存在行或跨行管理员写偏斜。两成员行R1/R2交叉加锁形成死锁；长事务可能阻碍VACUUM回收旧版本。Serializable成功提交可等效串行但可能要求整笔重试。MongoDB只作为独立引擎对照，不套PG FOR UPDATE或隔离表。全为静态教学，不运行数据库、SQL、Go或站点。\n1. 一、从退群与发送建立可见性问题: 承接06.07固定虚构u-a是c-a活跃成员、发送m-a与退群并发。规则：发送决定先成立则可写并先提交，退群先完成则发送拒绝。解释事务、行、版本、锁、快照、提交与外部HTTP/设备确认；不把SELECT看到旧成员当许可证。\n2. 二、MVCC版本与快照的教学时间线: 玩具成员行v0 active=true已提交，Tleave写v1 active=false未提交再提交；普通读在快照中选可见版本，不读未提交。PG Read Committed每条语句快照，Tsend先读true、Tleave提交后第二读false；Repeatable Read同事务稳定旧快照可仍读true，但冲突写可能失败；版本图非PG物理xmin/xmax。\n3. 三、行锁把两条业务决策排成受控顺序: PostgreSQL SELECT ... FOR UPDATE锁当前成员行，Tsend先获锁→Tleave更新等待→Tsend插入m-a并提交→Tleave退出后提交；若Tleave先更新并提交，Tsend等待后在ReadCommitted重新检查active=false拒绝。所有发送/退出路径须参与同一规则；锁一行不能保护不存在行、其他事务和外部推送；PG文档锁行为。\n4. 四、行锁、表锁、范围与死锁: 共享/排它关系只讲必要冲突，PG行级FOR UPDATE和UPDATE、表级锁、谓词/范围条件；不能说PG Serializable predicate lock像传统gap锁阻塞写。两行R1/R2：T1先锁R1再要R2、T2先R2再要R1产生环，DB检测撤销一事务；统一锁顺序、短事务、有界整笔重试，锁超时和业务超时区别。\n5. 五、隔离级别与写偏斜: PG RC语句快照、RR事务稳定快照但允许序列化异常，Serializable成功提交等效某串行序而可能serialization failure；两管理员A/B均读还有另一人，各自改不同成员行，RR可能零管理员，行锁各自行不能保证；锁共同保护对象/约束或可串行化整笔重试。\n6. 六、长事务、旧版本回收与资源: PG MVCC更新产生旧行版本，VACUUM回收不再需要版本；长时间打开快照可能阻碍旧版本回收造成表/索引膨胀与可见性变化，具体取决于事务/配置。不要把所有bloat归因单个会话，不说普通读完全无锁；事务内远程HTTP/设备推送扩大持锁时间和未知边界。\n7. 七、MongoDB事务对照与Go边界: MongoDB单文档原子，多文档事务有snapshot和写冲突/锁等待规则，按官方生产考虑；不要套PG SELECT FOR UPDATE或隔离名称。Go sql.Tx所有查询同Tx，Context和关闭责任；冲突重试整笔且外部副作用放在提交后另设计，提交未知沿稳定ID查询，S5再做可靠交付。\n8. 八、可交接时间线与22题: 交付v0/v1可见性表、两种锁顺序、R1R2死锁环、两管理员写偏斜和长事务证据清单；22题分层附可核对反馈，静态不运行Go/SQL/DB/站点。下一06.09 WAL崩溃恢复。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
