@@ -1,0 +1,73 @@
+{
+  "code": "04.05",
+  "title": "TCP与长连接生命周期：握手、半关闭、心跳与重连",
+  "chapter_id": "ch_tcp_connection_lifecycle",
+  "summary": "面向Go初学者承接04.04可靠字节流，以虚构IM的u-a长连接从TCP三次握手、WebSocket升级到FIN/RST、半关闭、TIME_WAIT、Keepalive/Ping/业务心跳和重连的生命周期为主线，区分连接状态、身份、在线和消息确认；静态教材不运行网络。",
+  "objectives": [
+    "画出TCP三次握手与四元组",
+    "区分TCP established、WebSocket升级和应用认证",
+    "解释FIN、半关闭、EOF与TIME_WAIT",
+    "区分RST/超时/半开连接",
+    "比较TCP Keepalive、WebSocket Ping/Pong和业务心跳",
+    "说明重连新旧连接可能并存与消息ID责任",
+    "给Go Conn与deadline标资源所有者",
+    "列出连接状态、设备在线和业务消息确认各能证明什么"
+  ],
+  "sources": [
+    "https://www.rfc-editor.org/rfc/rfc9293.html",
+    "https://www.rfc-editor.org/rfc/rfc1122.html",
+    "https://www.rfc-editor.org/rfc/rfc6455.html",
+    "https://pkg.go.dev/net"
+  ],
+  "sections": [
+    {
+      "title": "一、u-a到网关的长连接会经历哪些阶段",
+      "words": 2300,
+      "focus": "承接04.01–04.04，虚构u-a/c-a/m-a，连接建立、应用认证、WebSocket升级、收发、空闲、关闭/异常与重连分层。TCP established不等于已登录、用户在线/设备可达或m-a送达。静态课程不运行网络。"
+    },
+    {
+      "title": "二、三次握手和四元组的入门时间线",
+      "words": 2700,
+      "focus": "RFC9293 SYN seq100 -> SYN+ACK peer seq500 ack101 -> ACK ack501，SYN占序号；源IP端口/目标IP端口识别连接，监听/连接与同一用户多设备多连接区别。HTTP/WS认证发生在TCP之后，不能从握手成功推断权限。"
+    },
+    {
+      "title": "三、FIN正常关闭、半关闭与TIME_WAIT",
+      "words": 2800,
+      "focus": "一端FIN表示该方向不再发字节，对端读完可得EOF，另一方向可继续发送；Go TCPConn.CloseWrite/CloseRead概念，most callers Close；双方FIN/ACK结束后主动关闭端通常TIME_WAIT用于处理迟到段/最后ACK，时长是规范2MSL但具体OS观察不同，不给固定秒数。"
+    },
+    {
+      "title": "四、RST、断路与半开连接",
+      "words": 2700,
+      "focus": "RST中断连接不同于FIN有序结束；网络断开/进程崩溃可让另一端暂时以为ESTABLISHED，直到读写/超时/探测才察觉。Conn.Write成功/失败和RST均不能单独判m-a应用提交；纸上t0写入t1响应丢t2重连。"
+    },
+    {
+      "title": "五、TCP Keepalive、WebSocket Ping/Pong和业务心跳",
+      "words": 2900,
+      "focus": "RFC1122 TCP keepalive可选且无响应单次探测不能断定死；RFC6455 Ping/Pong控制帧回答WS对端协议栈，业务心跳可检验应用处理及关联会话，但都不证明人在线或消息已读。期限/间隔和误判/资源成本取舍，区分网关/代理空闲超时。"
+    },
+    {
+      "title": "六、重连后的新身份与旧状态",
+      "words": 2800,
+      "focus": "新TCP连接有新四元组/序号，新WS握手和Session认证；旧连接在服务器可能尚未清理，双连接/旧请求处理与新请求交错。稳定message_id m-a和会话seq不能用TCP连接ID替代，09.02当前重复409，S5幂等查询后置。多设备online状态按设备/时间窗定义，不以一条连接真值代表用户。"
+    },
+    {
+      "title": "七、Go连接资源与期限入口",
+      "words": 2700,
+      "focus": "net.Dial/Listener.Accept/Conn.Read Write Close/SetReadDeadline SetWriteDeadline, TCPConn.CloseWrite; 责任谁关闭、空闲读避免永久等待，context取消不自动关闭任意底层conn除非设计联动。HTTP/WS框架可能管理连接，课程不让handler乱关共享；纸上资源所有者表与RST/EOF/timeout分类。"
+    },
+    {
+      "title": "八、连接生命周期图与22道练习",
+      "words": 3000,
+      "focus": "交付三次握手、FIN半关、RST/重连、心跳四时间线；22题从四元组/状态/SYN/FIN/RST/TIMEWAIT到Keepalive/Ping/业务心跳/重连IM业务确认附反馈。来源RFC9293/1122/6455/Go net；下一04.06流量与拥塞控制。静态不抓包/运行Go/站点/声称OpenIM实现。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《04.05 TCP与长连接生命周期》，面向Go初学者，承接04.04的字节确认。以虚构IM中u-a连网关、发m-a、断线重连为业务主线，先讲三次握手/四元组，再FIN半关闭/TIME_WAIT、RST/半开、TCP Keepalive与WebSocket Ping/Pong和业务心跳、重连与旧连接并存、Go连接资源。八节详细展开、22题附反馈练习。始终区分TCP连接状态、应用登录/用户在线、消息受理与设备送达；静态不运行Go/网络/抓包/站点，不宣称OpenIM运行事实。\n1. 一、u-a到网关的长连接会经历哪些阶段：承接04.01–04.04，虚构u-a/c-a/m-a，连接建立、应用认证、WebSocket升级、收发、空闲、关闭/异常与重连分层。TCP established不等于已登录、用户在线/设备可达或m-a送达。静态课程不运行网络。\n2. 二、三次握手和四元组的入门时间线：RFC9293 SYN seq100 -> SYN+ACK peer seq500 ack101 -> ACK ack501，SYN占序号；源IP端口/目标IP端口识别连接，监听/连接与同一用户多设备多连接区别。HTTP/WS认证发生在TCP之后，不能从握手成功推断权限。\n3. 三、FIN正常关闭、半关闭与TIME_WAIT：一端FIN表示该方向不再发字节，对端读完可得EOF，另一方向可继续发送；Go TCPConn.CloseWrite/CloseRead概念，most callers Close；双方FIN/ACK结束后主动关闭端通常TIME_WAIT用于处理迟到段/最后ACK，时长是规范2MSL但具体OS观察不同，不给固定秒数。\n4. 四、RST、断路与半开连接：RST中断连接不同于FIN有序结束；网络断开/进程崩溃可让另一端暂时以为ESTABLISHED，直到读写/超时/探测才察觉。Conn.Write成功/失败和RST均不能单独判m-a应用提交；纸上t0写入t1响应丢t2重连。\n5. 五、TCP Keepalive、WebSocket Ping/Pong和业务心跳：RFC1122 TCP keepalive可选且无响应单次探测不能断定死；RFC6455 Ping/Pong控制帧回答WS对端协议栈，业务心跳可检验应用处理及关联会话，但都不证明人在线或消息已读。期限/间隔和误判/资源成本取舍，区分网关/代理空闲超时。\n6. 六、重连后的新身份与旧状态：新TCP连接有新四元组/序号，新WS握手和Session认证；旧连接在服务器可能尚未清理，双连接/旧请求处理与新请求交错。稳定message_id m-a和会话seq不能用TCP连接ID替代，09.02当前重复409，S5幂等查询后置。多设备online状态按设备/时间窗定义，不以一条连接真值代表用户。\n7. 七、Go连接资源与期限入口：net.Dial/Listener.Accept/Conn.Read Write Close/SetReadDeadline SetWriteDeadline, TCPConn.CloseWrite; 责任谁关闭、空闲读避免永久等待，context取消不自动关闭任意底层conn除非设计联动。HTTP/WS框架可能管理连接，课程不让handler乱关共享；纸上资源所有者表与RST/EOF/timeout分类。\n8. 八、连接生命周期图与22道练习：交付三次握手、FIN半关、RST/重连、心跳四时间线；22题从四元组/状态/SYN/FIN/RST/TIMEWAIT到Keepalive/Ping/业务心跳/重连IM业务确认附反馈。来源RFC9293/1122/6455/Go net；下一04.06流量与拥塞控制。静态不抓包/运行Go/站点/声称OpenIM实现。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

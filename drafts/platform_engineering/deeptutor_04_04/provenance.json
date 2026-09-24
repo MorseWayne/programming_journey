@@ -27,9 +27,9 @@
   "original_sha256": "e36a42e7af86e5ce9e8fd4c44bbee4ed6ac6162b0df1309824d369afd585314c",
   "original_characters": 29545,
   "generation_request_sha256": "844f405a27fcddfe07f106a2b8ff7b07c94b2efef26bac1a0f9ac78d4b39a9cc",
-  "reviewed_sha256": "4288ced1127ae043c016a7cac5b612a3b776ddc7f79e929aaa8c9b0912e4a939",
-  "reviewed_characters": 7358,
-  "reviewed_chinese_characters": 3294,
+  "reviewed_sha256": "77b83d7269528ac0accafe45d50913f4fd2f98758710c5d0c020f1fbc05debf5",
+  "reviewed_characters": 7456,
+  "reviewed_chinese_characters": 3298,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/04_reliable_transport.md",
-  "course_sha256": "ce130d41eb290fc3de76ecde89516e8832dff4f4310334b175df28f00847f027"
+  "course_sha256": "296e933373e2bb26010b68c0a968ba78acb5f9ed8843162f6e91a1e866a70cb6"
 }

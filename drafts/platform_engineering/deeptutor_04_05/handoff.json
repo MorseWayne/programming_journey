@@ -1,0 +1,12 @@
+{
+  "chapter": "04.05",
+  "stage": "S3",
+  "business_scope": "fictional u-a client to teaching IM gateway TCP/WebSocket connection with m-a in c-a; paper lifecycle only, no running network or OpenIM implementation claim",
+  "prerequisites": ["04.02 address, port and endpoint", "04.03 HTTP/WebSocket upgrade and business message boundary", "04.04 TCP bytes, ACK and retransmission", "09.02 memory acceptance versus client response"],
+  "first_pass": ["four-tuple and SYN/SYN-ACK/ACK", "TCP established versus application login", "FIN, half-close and EOF", "RST versus ordered close and TIME_WAIT"],
+  "second_pass": ["TCP Keepalive, WebSocket Ping/Pong and business heartbeat", "temporarily half-open old connection during reconnect", "stable message ID versus per-connection sequence", "Go Conn owner, deadline and cancellation boundary", "online, device delivery and read are distinct"],
+  "not_yet_prerequisites": ["04.06 flow versus congestion control and BDP", "04.07 TLS and certificate identity", "04.08 Go framing and partial I/O", "S5 multi-device synchronization and reliable message confirmation"],
+  "next_chapter": "04.06 flow and congestion control for slow IM receivers and network bottlenecks",
+  "upstream_inspection": "No OpenIM TCP, WebSocket or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

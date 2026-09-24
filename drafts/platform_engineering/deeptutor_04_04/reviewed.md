@@ -200,4 +200,4 @@ ACK=108。</details>
 - [Kurose/Ross 作者互动题：可靠数据传输](https://gaia.cs.umass.edu/kurose_ross/interactive/rdt30.php)与[TCP 重传](https://gaia.cs.umass.edu/kurose_ross/interactive/tcp_retrans.php)：丢失与 ACK 丢失的纸上推演参考。
 - [Go `net` 包](https://pkg.go.dev/net)：后续 Go 网络 I/O 的接口入口；本章不运行套接字。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 04.05 再讲 TCP 长连接的建立、半关闭、重置、心跳和重连；04.06 解释接收方与网络拥塞，04.07 进入 TLS。离开本章前，应能分别写出：**哪一段字节已被 TCP 确认、哪一次 HTTP 请求有回应、哪条业务消息真正完成了哪个确认点**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[04.05 TCP 与长连接生命周期](../../../src/docs/platform_engineering/curriculum/04_networks/05_tcp_connection_lifecycle.md)再讲建立、半关闭、重置、心跳和重连；04.06 解释接收方与网络拥塞，04.07 进入 TLS。离开本章前，应能分别写出：**哪一段字节已被 TCP 确认、哪一次 HTTP 请求有回应、哪条业务消息真正完成了哪个确认点**。
