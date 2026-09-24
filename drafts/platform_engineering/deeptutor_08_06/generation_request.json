@@ -1,0 +1,72 @@
+{
+  "code": "08.06",
+  "title": "多数与共识：三副本何时能承诺消息",
+  "chapter_id": "ch_majority_consensus",
+  "summary": "面向Go初学者，独立纸上Raft复制日志用虚构m-9命令解释多数交集、任期选举、日志匹配、提交/应用、客户端重试和IM外部边界。",
+  "objectives": [
+    "手算三副本与五副本多数交集",
+    "区分append、commit、apply与业务送达",
+    "解释任期、单票和日志新旧选举限制",
+    "推演旧领导者与网络分区",
+    "解释旧任期条目提交规则和线性化读限制",
+    "把Raft教学模型与S2/S3/OpenIM真实证据分开"
+  ],
+  "sources": [
+    "https://raft.github.io/raft.pdf",
+    "https://raft.github.io/",
+    "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、为什么三副本不是三个都能承诺",
+      "words": 3000,
+      "focus": "独立教学Raft复制日志，不等于当前S2或未来S3 SQL实现。以m-9作为纸上复制状态机命令C9，term4 leader R1，日志index12；三节点R1/R2/R3。仅R1存入尚非提交，R1+R2存入当前term4条目达到多数2可提交，R3可落后；要分本地append、quorum commit、apply、客户端收到、B设备收到。"
+    },
+    {
+      "title": "二、多数交集与网络分区手算",
+      "words": 3100,
+      "focus": "三副本q=2，任意两组大小2交集至少1；R1与R2已提交条目后，R2+R3选新leader必须含已存条目的投票者且候选日志不能落后；R1孤立无多数不能继续承诺新命令。四副本q3仅容忍1，五副本q3容忍2；多数不是写两份就自动安全，依赖投票/log匹配/持久化。"
+    },
+    {
+      "title": "三、任期、选票、领导者和过期写者",
+      "words": 3200,
+      "focus": "term4 R1 leader，网络分区R2/R3进入term5竞选；每任期一票，候选须获得多数且日志足够新，随机超时是活性帮助而非安全证明。R1旧leader可能不知任期变化，不能拿旧身份做外部SQL写；应用目标需epoch/fencing与租约策略。明确N1/N2/N3与前章数据库节点不同玩具命名R1/R2/R3。"
+    },
+    {
+      "title": "四、日志匹配、提交索引和旧任期陷阱",
+      "words": 3400,
+      "focus": "AppendEntries prevLogIndex/prevLogTerm一致才接后续，冲突未提交后缀可被新leader覆盖；同index+term前缀同。current term entry index12在R1+R2持久化才算可推进commitIndex12；lastApplied可能暂小于commitIndex，R3还没收到commit notice。新term5领导者不能只数旧term条目的副本数就声明commit，先提交term5条目再间接提交前缀。"
+    },
+    {
+      "title": "五、状态机、客户端重试与读承诺",
+      "words": 2900,
+      "focus": "确定性命令按commitIndex顺序apply，不能未提交就对外施加不可逆效果；HTTP响应丢失后客户端查稳定command_id避免执行两次，当前S2重复409合同独立。leader读不自动线性化，旧leader须用多数心跳/读屏障确认仍领导；follower读可旧。Raft日志提交不等于搜索/Notify/B已完成，也不等于未来SQL事务。"
+    },
+    {
+      "title": "六、成员变更和可用性边界",
+      "words": 2800,
+      "focus": "三→五节点不能直接在各节点随意改多数分母；Raft joint consensus旧新配置分别多数，教学无需完整实现。少数分区保安全但不保证可用/低延迟；持久化投票term/log与崩溃恢复前提；拜占庭/磁盘撒谎/配置错误超出模型。租约依赖时钟假设。"
+    },
+    {
+      "title": "七、IM场景与固定OpenIM证据",
+      "words": 2900,
+      "focus": "把Raft可用于b1所有者epoch/配置元数据，或另设计消息权威复制日志；都要先选一个清楚的状态机，不能把教学R1/R2/R3当现有S3 SQL或OpenIM。固定OpenIM send.go MsgToMQ后返回、Mongo消费BatchInsertChat2DB并不证明其用Raft；需另核对依赖组件/配置。Raft多数只守复制日志，不替代成员授权、去重、outbox、外部效果或设备回执。"
+    },
+    {
+      "title": "八、22题与三节点推演",
+      "words": 3100,
+      "focus": "基础8/选举日志8/工程6，逐题答案：q2交集，R1仅一副本、R1R2提交、R3落后、旧leader、投票日志新旧、commitIndex vs lastApplied、旧任期条目、安全vs活性、线性化读、command_id重试、S2/S3/OpenIM边界。交付term4→term5时序、日志表和需求确认矩阵，静态不运行Raft/Go/DB/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.06 多数与共识》，面向Go初学者，以IM m-9为业务线索但明确这是独立Raft纸上复制日志方案，不等于当前S2 accepted_in_memory、拟议S3 stored_in_teaching_db的SQL实现或OpenIM实现。三节点R1/R2/R3；term4 R1领导者，m-9命令C9在复制日志index12（与会话seq9/ broker offset42不是同一编号）。仅R1有条目未提交，当前term4条目到R1+R2多数2可提交，R3落后；区分append/commitIndex/lastApplied/客户端收到/设备收到。term5 R2/R3竞选，日志较旧R3不能得到持有已提交条目的R2投票；旧R1孤立不能继续确认新写。讲随机超时、投票、AppendEntries前缀匹配、未提交后缀可被覆盖、旧任期条目不能单凭数副本提交，要当前term条目提交后间接承诺前缀；多数交集依赖完整规则而非只数机器。leader线性化读需额外确认领导权，多数提交仍不保证SearchIndex/Notify/B或授权去重。旧任期持有者做外部SQL写需应用epoch围栏。三→五成员变更使用联合配置旧新分别多数。固定OpenIM两处源码仅证明MsgToMQ返回和另一Mongo消费，不证明Raft。静态无Raft/Go/DB/站点运行，22题有反馈。\n1. 一、为什么三副本不是三个都能承诺: 独立教学Raft复制日志，不等于当前S2或未来S3 SQL实现。以m-9作为纸上复制状态机命令C9，term4 leader R1，日志index12；三节点R1/R2/R3。仅R1存入尚非提交，R1+R2存入当前term4条目达到多数2可提交，R3可落后；要分本地append、quorum commit、apply、客户端收到、B设备收到。\n2. 二、多数交集与网络分区手算: 三副本q=2，任意两组大小2交集至少1；R1与R2已提交条目后，R2+R3选新leader必须含已存条目的投票者且候选日志不能落后；R1孤立无多数不能继续承诺新命令。四副本q3仅容忍1，五副本q3容忍2；多数不是写两份就自动安全，依赖投票/log匹配/持久化。\n3. 三、任期、选票、领导者和过期写者: term4 R1 leader，网络分区R2/R3进入term5竞选；每任期一票，候选须获得多数且日志足够新，随机超时是活性帮助而非安全证明。R1旧leader可能不知任期变化，不能拿旧身份做外部SQL写；应用目标需epoch/fencing与租约策略。明确N1/N2/N3与前章数据库节点不同玩具命名R1/R2/R3。\n4. 四、日志匹配、提交索引和旧任期陷阱: AppendEntries prevLogIndex/prevLogTerm一致才接后续，冲突未提交后缀可被新leader覆盖；同index+term前缀同。current term entry index12在R1+R2持久化才算可推进commitIndex12；lastApplied可能暂小于commitIndex，R3还没收到commit notice。新term5领导者不能只数旧term条目的副本数就声明commit，先提交term5条目再间接提交前缀。\n5. 五、状态机、客户端重试与读承诺: 确定性命令按commitIndex顺序apply，不能未提交就对外施加不可逆效果；HTTP响应丢失后客户端查稳定command_id避免执行两次，当前S2重复409合同独立。leader读不自动线性化，旧leader须用多数心跳/读屏障确认仍领导；follower读可旧。Raft日志提交不等于搜索/Notify/B已完成，也不等于未来SQL事务。\n6. 六、成员变更和可用性边界: 三→五节点不能直接在各节点随意改多数分母；Raft joint consensus旧新配置分别多数，教学无需完整实现。少数分区保安全但不保证可用/低延迟；持久化投票term/log与崩溃恢复前提；拜占庭/磁盘撒谎/配置错误超出模型。租约依赖时钟假设。\n7. 七、IM场景与固定OpenIM证据: 把Raft可用于b1所有者epoch/配置元数据，或另设计消息权威复制日志；都要先选一个清楚的状态机，不能把教学R1/R2/R3当现有S3 SQL或OpenIM。固定OpenIM send.go MsgToMQ后返回、Mongo消费BatchInsertChat2DB并不证明其用Raft；需另核对依赖组件/配置。Raft多数只守复制日志，不替代成员授权、去重、outbox、外部效果或设备回执。\n8. 八、22题与三节点推演: 基础8/选举日志8/工程6，逐题答案：q2交集，R1仅一副本、R1R2提交、R3落后、旧leader、投票日志新旧、commitIndex vs lastApplied、旧任期条目、安全vs活性、线性化读、command_id重试、S2/S3/OpenIM边界。交付term4→term5时序、日志表和需求确认矩阵，静态不运行Raft/Go/DB/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

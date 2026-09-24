@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_2f465c7bd3",
+  "page_id": "pg_c0a3a8f70e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://raft.github.io/raft.pdf",
+      "https://raft.github.io/",
+      "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "959b28c129907276059f7e9e5a878625883b5b53899876d3bbec07172427aa87",
+  "original_characters": 29605,
+  "generation_request_sha256": "8c00c3d2c6f820b379f9b5bd1a0d673b22161d1a6122f0fc8c4ffc10668406ca",
+  "reviewed_sha256": "70692c246f81710aaa88cf89b7bcebfe2cf5cd45fbaaf738d465728596a455d4",
+  "reviewed_characters": 9062,
+  "reviewed_chinese_characters": 3790,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/06_majority_consensus.md",
+  "course_sha256": "4735a3b427c0b512a6c069d25c7b2bb8a0219cd65fd7b5d32ed98bdf095e2d73"
+}

@@ -1,0 +1,31 @@
+{
+  "chapter": "08.06",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced majority and Raft reasoning with fictional IM m-9 command in a separate three-replica teaching log",
+  "prerequisites": [
+    "08.01 partial failure",
+    "08.03 replica durability and failover",
+    "08.04 consistency models",
+    "08.05 partition owner epoch and fencing",
+    "07.12 cross-system IM confirmation boundaries"
+  ],
+  "first_pass": [
+    "separate Raft index12 from conversation seq9 and broker P0:42",
+    "calculate three/four/five-node majorities",
+    "differentiate local append, current-term majority commit, apply and client/device acknowledgements"
+  ],
+  "second_pass": [
+    "derive term4 to term5 election with R2 refusing R3's stale-log candidacy",
+    "explain log matching, commitIndex, lastApplied and prior-term commit restriction",
+    "handle isolated old leader and external fencing",
+    "state requirements for linearizable reads, client idempotency and joint membership change",
+    "keep current S2, proposed S3 SQL and fixed OpenIM evidence separate"
+  ],
+  "not_yet_prerequisites": [
+    "08.07 coordination and object ownership",
+    "learner's real consensus fault and read/write evidence"
+  ],
+  "next_chapter": "08.07 coordination and object ownership",
+  "upstream_inspection": "Fixed openimsdk/open-im-server send.go selected paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These two files do not establish a Raft deployment or any Raft commit semantics.",
+  "shared_integration_pending": []
+}

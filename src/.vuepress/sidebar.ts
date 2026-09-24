@@ -274,6 +274,7 @@ export default sidebar({
             "curriculum/08_distributed/03_replication_goals_costs",
             "curriculum/08_distributed/04_consistency_models",
             "curriculum/08_distributed/05_partition_rebalancing",
+            "curriculum/08_distributed/06_majority_consensus",
             "curriculum/08_distributed/core"
           ]
         },
