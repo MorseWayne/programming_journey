@@ -27,9 +27,9 @@
   "original_sha256": "1c8aa095934bd3449fc68d25bd1510542ad7e83d75968dc731a7dae480c246f3",
   "original_characters": 30306,
   "generation_request_sha256": "3d6c090351e1326775899e240848e193c50c6d933fd5ca9c927007fafb894382",
-  "reviewed_sha256": "f9f7d41a4fc618256617f7d0b3c9517e42ca4b6c77668d740e0ffeb0d6f4eced",
-  "reviewed_characters": 7330,
-  "reviewed_chinese_characters": 3634,
+  "reviewed_sha256": "776228ec429736af303b8a86f694e7b605d6f2d2138b3eaaeb4ae9466347438e",
+  "reviewed_characters": 7428,
+  "reviewed_chinese_characters": 3638,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/08_concurrency_composition.md",
-  "course_sha256": "2624b86da8cacf3737c86737689a3461fa121632f81686c7d3af3ce15110cb31"
+  "course_sha256": "a02a5a8aca7c599283a578fbedd2abf00721e58bad9c9d6c6e89cf80b2aecc71"
 }

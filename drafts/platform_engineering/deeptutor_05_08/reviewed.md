@@ -192,4 +192,4 @@ channel 有界但输入切片仍可能占大量内存，应该按需枚举或限
 - [Go `errgroup`](https://pkg.go.dev/golang.org/x/sync/errgroup)与[`semaphore`](https://pkg.go.dev/golang.org/x/sync/semaphore)：活跃任务限制、取得/释放许可与 Context 边界。
 - [Go `singleflight`](https://pkg.go.dev/golang.org/x/sync/singleflight)与[`context`](https://pkg.go.dev/context)：同键在途调用合并与取消信号的 API 语义。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 05.09 把这些纸上组合放进可控制调度、取消和资源泄漏的并发验证设计。离开本章前，应能同时说清**活跃数、排队数、尚未接纳数、已发生副作用与未知结果**，并为每个数量给出明确上限或记录方法。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[05.09 并发验证](../../../src/docs/platform_engineering/curriculum/05_runtime/09_concurrency_verification.md)把这些纸上组合放进可控制调度、取消和资源泄漏的并发验证设计。离开本章前，应能同时说清**活跃数、排队数、尚未接纳数、已发生副作用与未知结果**，并为每个数量给出明确上限或记录方法。

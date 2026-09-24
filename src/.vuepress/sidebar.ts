@@ -217,6 +217,7 @@ export default sidebar({
             "curriculum/05_runtime/06_memory_lifecycle",
             "curriculum/05_runtime/07_garbage_collection",
             "curriculum/05_runtime/08_concurrency_composition",
+            "curriculum/05_runtime/09_concurrency_verification",
             "curriculum/05_runtime/core"
           ]
         },

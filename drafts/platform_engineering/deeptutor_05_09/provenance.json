@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a34b633c6c",
+  "page_id": "pg_9b355f3d25",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/articles/race_detector",
+      "https://pkg.go.dev/testing",
+      "https://pkg.go.dev/context",
+      "https://go.dev/blog/pipelines",
+      "https://go.dev/ref/mem",
+      "https://go.dev/ref/spec"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "2294fcb1c8e21651da5fc2ff2d8e14feb96282d8558175191f4ba1c4acac0279",
+  "original_characters": 32324,
+  "generation_request_sha256": "bf08641af6d3b54b7980ebd5a2d416a5a783f1b0d3b5d706b748f82d071298ef",
+  "reviewed_sha256": "1e3a8b083e3b721d95ed9f47e96cfdca1d6be129404274fcb394695cf6665f69",
+  "reviewed_characters": 7125,
+  "reviewed_chinese_characters": 3370,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/09_concurrency_verification.md",
+  "course_sha256": "3eda23fd6553898ce3de5fb9cd23ee1176c2811236df1c9e035e062c338ef4b0"
+}

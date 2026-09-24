@@ -1,0 +1,73 @@
+{
+  "code": "05.09",
+  "title": "并发验证：从发送与关闭交错到资源退出证据",
+  "chapter_id": "ch_concurrency_verification",
+  "summary": "面向Go初学者，以虚构IM发送m-a与关闭交错为线索，讲可控channel门闩、select双就绪、关闭责任、race detector范围、业务竞争、泄漏与故障注入。",
+  "objectives": [
+    "区分数据竞争、业务竞争与资源泄漏",
+    "用ready/release/done控制交错",
+    "手算满/空队列在取消后的select结果",
+    "定义唯一关闭协调者与退出顺序",
+    "解释race detector动态覆盖限制",
+    "设计有限超时和done验收",
+    "分开替身/集成/真实业务确认的证据"
+  ],
+  "sources": [
+    "https://go.dev/doc/articles/race_detector",
+    "https://pkg.go.dev/testing",
+    "https://pkg.go.dev/context",
+    "https://go.dev/blog/pipelines",
+    "https://go.dev/ref/mem"
+  ],
+  "sections": [
+    {
+      "title": "一、并发验证要证明哪条业务和资源规则",
+      "words": 2200,
+      "focus": "承接05.04data race/业务竞争、05.03取消、05.08有限队列、10.02测试；虚构c-a发送m-a与客户端关闭同时发生。区分无数据race、无send-on-closed panic、队列接纳语义、所有G退出与设备确认，测试不能只看函数返回。"
+    },
+    {
+      "title": "二、用channel门闩控制交错而非Sleep",
+      "words": 2400,
+      "focus": "纸上测试门ready/release/done将生产者暂停在尝试发送前，测试先等ready再安排cancel/释放，确定因果；time.Sleep和次数碰运气不保证交错。等待必须有有限timeout，done用于确认退出，测试替身/时钟可控但本项目不运行。"
+    },
+    {
+      "title": "三、队列满/空两种select交错",
+      "words": 2600,
+      "focus": "容量1，T1初有m-b队列满，生产者携m-a暂停，测试cancel再release，此时send不可用应走取消，m-a未接纳；T2队列空，同样cancel后release，send和ctx.Done同时ready，select可任选，不能断言绝不入队。若需严格取消后不接纳，单所有者串行仲裁或锁内状态协议。"
+    },
+    {
+      "title": "四、关闭责任与状态机负例",
+      "words": 2500,
+      "focus": "receiver不能乱close仍有sender的channel；先阻止新发送、通知取消、等全部生产者done、唯一协调者close、消费者排空或记录未处理；重复close/send after close会panic。设计闭合状态Open→Stopping→Closed，测试每转移及错误路径。"
+    },
+    {
+      "title": "五、race detector和业务竞争的不同证据",
+      "words": 2500,
+      "focus": "go test -race（未来学习者实践）动态检测已执行的数据竞争，无报警不证明全路径；Plain Online读写故意竞态和修复同步作为学习。每次map访问都锁住但check不存在与insert分两锁区间仍会重复，race detector不会替业务断言；测试需按门闩锁定交错和检查不变量。"
+    },
+    {
+      "title": "六、泄漏与超时验证",
+      "words": 2300,
+      "focus": "下游退出、上游卡发送的goroutine leak纸图；cancel不会等待结束，明确done/WaitGroup和有限deadline，测试完成后检查每个启动G退出和队列/FD责任；仅比较runtime.NumGoroutine绝对值易受测试背景影响。超时诊断包含哪个G等待/哪个资源未关闭，不用无限sleep。"
+    },
+    {
+      "title": "七、可控故障、范围与证据记录",
+      "words": 2400,
+      "focus": "用可控假存储/假writer注入短写、取消、队列满、存储失败，记录预期/执行路径/最终状态；race探测、功能断言、资源退出、真实网络/DB集成各有范围，不把模拟结果当生产可靠交付。记录Go版本、命令、数据和失败变式，当前课程制作不执行。"
+    },
+    {
+      "title": "八、纸上验证矩阵与22题",
+      "words": 2400,
+      "focus": "交付T1/T2队列状态、Open→Stopping→Closed时序、普通字段race/业务判重竞争反例、G退出和有限超时矩阵，22题逐层反馈。下一05.10性能工具，静态不运行Go/race/网络/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.09 并发验证》，面向Go初学者。八节丰富正文和22题反馈，用虚构IM容量1队列及m-a发送与取消交错讲门闩、select和资源退出。T1队列满含m-b，cancel先于release则send不可用；T2队列空，cancel先于release后send与Done同ready，select可能任选，不能错误断言取消必阻止接纳。关闭责任单一，race detector只覆盖执行路径，无data race仍可业务竞争。静态不运行Go/race/网络/站点。\n1. 一、并发验证要证明哪条业务和资源规则：承接05.04data race/业务竞争、05.03取消、05.08有限队列、10.02测试；虚构c-a发送m-a与客户端关闭同时发生。区分无数据race、无send-on-closed panic、队列接纳语义、所有G退出与设备确认，测试不能只看函数返回。\n2. 二、用channel门闩控制交错而非Sleep：纸上测试门ready/release/done将生产者暂停在尝试发送前，测试先等ready再安排cancel/释放，确定因果；time.Sleep和次数碰运气不保证交错。等待必须有有限timeout，done用于确认退出，测试替身/时钟可控但本项目不运行。\n3. 三、队列满/空两种select交错：容量1，T1初有m-b队列满，生产者携m-a暂停，测试cancel再release，此时send不可用应走取消，m-a未接纳；T2队列空，同样cancel后release，send和ctx.Done同时ready，select可任选，不能断言绝不入队。若需严格取消后不接纳，单所有者串行仲裁或锁内状态协议。\n4. 四、关闭责任与状态机负例：receiver不能乱close仍有sender的channel；先阻止新发送、通知取消、等全部生产者done、唯一协调者close、消费者排空或记录未处理；重复close/send after close会panic。设计闭合状态Open→Stopping→Closed，测试每转移及错误路径。\n5. 五、race detector和业务竞争的不同证据：go test -race（未来学习者实践）动态检测已执行的数据竞争，无报警不证明全路径；Plain Online读写故意竞态和修复同步作为学习。每次map访问都锁住但check不存在与insert分两锁区间仍会重复，race detector不会替业务断言；测试需按门闩锁定交错和检查不变量。\n6. 六、泄漏与超时验证：下游退出、上游卡发送的goroutine leak纸图；cancel不会等待结束，明确done/WaitGroup和有限deadline，测试完成后检查每个启动G退出和队列/FD责任；仅比较runtime.NumGoroutine绝对值易受测试背景影响。超时诊断包含哪个G等待/哪个资源未关闭，不用无限sleep。\n7. 七、可控故障、范围与证据记录：用可控假存储/假writer注入短写、取消、队列满、存储失败，记录预期/执行路径/最终状态；race探测、功能断言、资源退出、真实网络/DB集成各有范围，不把模拟结果当生产可靠交付。记录Go版本、命令、数据和失败变式，当前课程制作不执行。\n8. 八、纸上验证矩阵与22题：交付T1/T2队列状态、Open→Stopping→Closed时序、普通字段race/业务判重竞争反例、G退出和有限超时矩阵，22题逐层反馈。下一05.10性能工具，静态不运行Go/race/网络/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

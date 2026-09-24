@@ -1,0 +1,30 @@
+{
+  "chapter": "05.09",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced verification lesson for fictional m-a queue send versus cancellation and close interleavings",
+  "prerequisites": [
+    "05.03 channel close and Context cancellation",
+    "05.04 data race and business race distinction",
+    "05.08 bounded composition and worker ownership",
+    "10.02 test expectations and failure evidence"
+  ],
+  "first_pass": [
+    "ready, release and done gates instead of sleep",
+    "T1 full-buffer deterministic cancellation branch",
+    "T2 empty-buffer dual-ready select branches"
+  ],
+  "second_pass": [
+    "Open to Stopping to Closed ownership protocol",
+    "dynamic race detector coverage limit",
+    "check-then-insert business race with no data race",
+    "finite task-exit wait and controlled fault evidence"
+  ],
+  "not_yet_prerequisites": [
+    "05.10 real profile and trace interpretation",
+    "S5 durable retry, cross-node idempotence and device delivery",
+    "learner-run controlled tests in their own environment"
+  ],
+  "next_chapter": "05.10 performance tools and interpretation",
+  "upstream_inspection": "No OpenIM implementation claim; Go race detector, language select specification, context/testing docs and pipeline guidance support test semantics.",
+  "shared_integration_pending": []
+}

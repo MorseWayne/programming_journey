@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md)已完成。它承接 03.04 的运行/等待、04.03 的未来 HTTP/WebSocket 需求，从并发与并行开始，用有限小批量讲 `go` 语句、WaitGroup 的最小等待、结果和错误归属。[05.02 同步原语](./02_sync_primitives.md)从单会话并发判重推导 Mutex、RWMutex、WaitGroup、Once 与 Cond。[05.03 channel 与取消](./03_channels_cancellation.md)再用容量 2 的发送队列讲缓冲、关闭、`select`、`context` 和过载选择。[05.04 Go 内存模型](./04_memory_model.md)在 S4 用两字段快照严谨解释同步边与数据竞争。[05.05 Go 调度模型](./05_scheduler_model.md)接着区分 G/M/P、系统调用与网络就绪。[05.06 内存生命周期](./06_memory_lifecycle.md)再用 8 字节预览与 64 KiB 缓冲讲切片可达性和对象账。[05.07 垃圾回收](./07_garbage_collection.md)用群聊扇出区分分配率、存活集和 GC 成本。[05.08 并发组合](./08_concurrency_composition.md)再用两个工作者与三槽队列约束执行和积压。八章各 8 节、22 道练习；05.09–05.12 仍按下方设计展开。
+[05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md)已完成。它承接 03.04 的运行/等待、04.03 的未来 HTTP/WebSocket 需求，从并发与并行开始，用有限小批量讲 `go` 语句、WaitGroup 的最小等待、结果和错误归属。[05.02 同步原语](./02_sync_primitives.md)从单会话并发判重推导 Mutex、RWMutex、WaitGroup、Once 与 Cond。[05.03 channel 与取消](./03_channels_cancellation.md)再用容量 2 的发送队列讲缓冲、关闭、`select`、`context` 和过载选择。[05.04 Go 内存模型](./04_memory_model.md)在 S4 用两字段快照严谨解释同步边与数据竞争。[05.05 Go 调度模型](./05_scheduler_model.md)接着区分 G/M/P、系统调用与网络就绪。[05.06 内存生命周期](./06_memory_lifecycle.md)再用 8 字节预览与 64 KiB 缓冲讲切片可达性和对象账。[05.07 垃圾回收](./07_garbage_collection.md)用群聊扇出区分分配率、存活集和 GC 成本。[05.08 并发组合](./08_concurrency_composition.md)再用两个工作者与三槽队列约束执行和积压。[05.09 并发验证](./09_concurrency_verification.md)用发送与关闭交错区分 race、业务结果和任务退出。九章各 8 节、22 道练习；05.10–05.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -55,7 +55,7 @@ date: 2026-09-23
 |---|---|---|
 | [05.07 垃圾回收](./07_garbage_collection.md) | 标记清扫、并发工作、暂停、分配速度、存活集与 GC 目标。 | 区分群聊扇出造成的高分配率和大存活集，提出所需GC与heap观察。 |
 | [05.08 并发组合](./08_concurrency_composition.md) | 工作池、扇出汇聚、流水线、信号量、按 key 串行和 singleflight。 | 设计有界投递流水线或按会话串行的处理模型，分别限制并发、排队和输入。 |
-| 05.09 并发验证 | race、可控制调度、超时失败上限、资源泄漏与故障注入。 | 用信号控制连接关闭与发送的交错，记录race、泄漏及超时检查的范围。 |
+| [05.09 并发验证](./09_concurrency_verification.md) | race、可控制调度、超时失败上限、资源泄漏与故障注入。 | 用信号控制连接关闭与发送的交错，记录race、泄漏及超时检查的范围。 |
 
 ## 进阶层
 
