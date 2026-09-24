@@ -219,6 +219,7 @@ export default sidebar({
             "curriculum/05_runtime/08_concurrency_composition",
             "curriculum/05_runtime/09_concurrency_verification",
             "curriculum/05_runtime/10_performance_tools",
+            "curriculum/05_runtime/11_optimization_boundaries",
             "curriculum/05_runtime/core"
           ]
         },

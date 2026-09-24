@@ -1,0 +1,31 @@
+{
+  "chapter": "05.11",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced optimization review for fictional c-g 10000-target fanout",
+  "prerequisites": [
+    "05.06 object aliasing and lifetime",
+    "05.07 GC allocation and live-set costs",
+    "05.08 bounded queue and recipient result contracts",
+    "05.09 concurrency and failure verification",
+    "05.10 same-load performance evidence"
+  ],
+  "first_pass": [
+    "unchanged IM authorization, identity, order and failure contracts",
+    "1 KiB per target versus immutable shared payload and 32 B metadata",
+    "Pool Get/Put lifetime and arbitrary item removal"
+  ],
+  "second_pass": [
+    "same-backend batch size 100 and partial result mapping",
+    "locality and access-pattern tradeoffs",
+    "unsafe and CAS maintenance gate",
+    "same-10000-target evidence and rollback conditions"
+  ],
+  "not_yet_prerequisites": [
+    "05.12 concurrency service retrospective",
+    "11.04–11.07 real load and capacity analysis",
+    "S5 durable delivery and retry semantics"
+  ],
+  "next_chapter": "05.12 concurrency service retrospective",
+  "upstream_inspection": "No OpenIM implementation claim; Go official sync.Pool, GC, slices, unsafe and atomic docs support the general options and constraints.",
+  "shared_integration_pending": []
+}

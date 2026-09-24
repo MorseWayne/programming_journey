@@ -186,4 +186,4 @@ Go execution trace。</details>
 - [Go `runtime/trace`](https://pkg.go.dev/runtime/trace)与[`net/http/pprof`](https://pkg.go.dev/net/http/pprof)：运行时事件和可选采集入口；本章没有暴露或调用端点。
 - [Go GC 指南](https://go.dev/doc/gc-guide)与[`testing` 包](https://pkg.go.dev/testing)：分配/存活视角及未来同负载基准入口。
 
-按[学习路线](../learning_path.md)，下一章 05.11 比较减少分配、池化、批量和局部性时应守住的正确性与维护边界。离开本章前，应能说出**每种工具采样了哪一层、看不到哪一层，以及何种同负载证据才能支持一次 IM 优化**。
+按[学习路线](../learning_path.md)，下一章[05.11 优化边界](./11_optimization_boundaries.md)比较减少分配、池化、批量和局部性时应守住的正确性与维护边界。离开本章前，应能说出**每种工具采样了哪一层、看不到哪一层，以及何种同负载证据才能支持一次 IM 优化**。

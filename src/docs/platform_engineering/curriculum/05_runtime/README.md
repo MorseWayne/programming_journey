@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md)已完成。它承接 03.04 的运行/等待、04.03 的未来 HTTP/WebSocket 需求，从并发与并行开始，用有限小批量讲 `go` 语句、WaitGroup 的最小等待、结果和错误归属。[05.02 同步原语](./02_sync_primitives.md)从单会话并发判重推导 Mutex、RWMutex、WaitGroup、Once 与 Cond。[05.03 channel 与取消](./03_channels_cancellation.md)再用容量 2 的发送队列讲缓冲、关闭、`select`、`context` 和过载选择。[05.04 Go 内存模型](./04_memory_model.md)在 S4 用两字段快照严谨解释同步边与数据竞争。[05.05 Go 调度模型](./05_scheduler_model.md)接着区分 G/M/P、系统调用与网络就绪。[05.06 内存生命周期](./06_memory_lifecycle.md)再用 8 字节预览与 64 KiB 缓冲讲切片可达性和对象账。[05.07 垃圾回收](./07_garbage_collection.md)用群聊扇出区分分配率、存活集和 GC 成本。[05.08 并发组合](./08_concurrency_composition.md)再用两个工作者与三槽队列约束执行和积压。[05.09 并发验证](./09_concurrency_verification.md)用发送与关闭交错区分 race、业务结果和任务退出。[05.10 性能工具](./10_performance_tools.md)按症状选择 Go profile 与 trace。十章各 8 节、22 道练习；05.11–05.12 仍按下方设计展开。
+[05.01 并发任务与生命周期](./01_concurrent_tasks_lifecycle.md)已完成。它承接 03.04 的运行/等待、04.03 的未来 HTTP/WebSocket 需求，从并发与并行开始，用有限小批量讲 `go` 语句、WaitGroup 的最小等待、结果和错误归属。[05.02 同步原语](./02_sync_primitives.md)从单会话并发判重推导 Mutex、RWMutex、WaitGroup、Once 与 Cond。[05.03 channel 与取消](./03_channels_cancellation.md)再用容量 2 的发送队列讲缓冲、关闭、`select`、`context` 和过载选择。[05.04 Go 内存模型](./04_memory_model.md)在 S4 用两字段快照严谨解释同步边与数据竞争。[05.05 Go 调度模型](./05_scheduler_model.md)接着区分 G/M/P、系统调用与网络就绪。[05.06 内存生命周期](./06_memory_lifecycle.md)再用 8 字节预览与 64 KiB 缓冲讲切片可达性和对象账。[05.07 垃圾回收](./07_garbage_collection.md)用群聊扇出区分分配率、存活集和 GC 成本。[05.08 并发组合](./08_concurrency_composition.md)再用两个工作者与三槽队列约束执行和积压。[05.09 并发验证](./09_concurrency_verification.md)用发送与关闭交错区分 race、业务结果和任务退出。[05.10 性能工具](./10_performance_tools.md)按症状选择 Go profile 与 trace。[05.11 优化边界](./11_optimization_boundaries.md)再比较少复制、池化、批量与安全成本。十一章各 8 节、22 道练习；05.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -62,7 +62,7 @@ date: 2026-09-23
 | 章节 | 要详细讲解的内容 | IM 练习与验收目标 |
 |---|---|---|
 | [05.10 性能工具与解释](./10_performance_tools.md) | CPU/heap/mutex/block profile、execution trace、基准与扰动。 | 根据消息时延症状选CPU、heap、mutex、block或trace，并说明工具扰动。 |
-| 05.11 优化边界 | 减少分配、复用与池化、批量、局部性；unsafe 和无锁的维护代价。 | 比较消息缓冲复用、批量和池化，验证正确性、负载、内存保留与维护代价。 |
+| [05.11 优化边界](./11_optimization_boundaries.md) | 减少分配、复用与池化、批量、局部性；unsafe 和无锁的维护代价。 | 比较消息缓冲复用、批量和池化，验证正确性、负载、内存保留与维护代价。 |
 | 05.12 并发服务复盘 | 热点、级联等待、取消失效、内存膨胀和退出失败。 | 复盘一次慢设备、大群积压或取消失效，给出正常、过载、退出与恢复路径。 |
 
 ## 本卷综合任务
