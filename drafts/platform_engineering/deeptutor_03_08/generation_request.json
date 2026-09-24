@@ -1,0 +1,74 @@
+{
+  "code": "03.08",
+  "title": "持久化机制：从历史文件替换到崩溃后恢复",
+  "chapter_id": "ch_persistence_mechanisms",
+  "summary": "面向Go初学者承接03.07文件身份与03.06页缓存，以虚构IM本地历史导出文件讲write、fsync、rename、目录同步和崩溃矩阵；区分可见性、原子名称替换与耐久。",
+  "objectives": [
+    "区分write返回、运行时可见和掉电耐久",
+    "解释页缓存、数据块、inode与目录项",
+    "指出直接覆盖旧文件的崩溃窗口",
+    "按成功条件推演temp-write-sync-rename-dir-sync",
+    "手算C0–C4崩溃证据",
+    "区分rename原子可见与同步后恢复",
+    "处理短写、失败和未知结果且不混淆业务确认合同"
+  ],
+  "sources": [
+    "https://pages.cs.wisc.edu/~remzi/OSTEP/file-intro.pdf",
+    "https://pages.cs.wisc.edu/~remzi/OSTEP/file-journaling.pdf",
+    "https://man7.org/linux/man-pages/man2/write.2.html",
+    "https://man7.org/linux/man-pages/man2/fsync.2.html",
+    "https://man7.org/linux/man-pages/man2/rename.2.html",
+    "https://pkg.go.dev/os"
+  ],
+  "sections": [
+    {
+      "title": "一、把本地历史保存的确认点说清",
+      "words": 2200,
+      "focus": "承接03.07路径/inode/FD与03.06页缓存；虚构c-a本地历史导出，已有history.json为旧完整版本，目标替换为含新序号的完整版本。先区分write返回、其他读者可见、掉电可恢复三种合同；不延伸为S3服务发送确认。"
+    },
+    {
+      "title": "二、从字节到持久介质的层次",
+      "words": 2300,
+      "focus": "应用缓冲→write→内核页缓存/文件数据与inode→文件系统与设备缓存→稳定介质；块/页/目录项是不同更新对象。write可能短写、错误延迟，close不是fsync；fsync文件负责数据及相关元数据，fdatasync条件不同，文件fsync不保证目录项持久。"
+    },
+    {
+      "title": "三、旧文件原地覆盖为何有崩溃窗口",
+      "words": 2300,
+      "focus": "直接open O_TRUNC history.json后逐步写新内容，掉电可能留下空/部分新内容，读者也可看到中间状态；构造old/new完整版本和纸上t0-t4崩溃点，说明即使最终写满也不保证耐久。不要把单个write当多块原子事务。"
+    },
+    {
+      "title": "四、同目录临时文件替换的逐步协议",
+      "words": 2500,
+      "focus": "目标在同一目录与同一文件系统：创建唯一temp→完整写且核对n/error→fsync temp文件→close检查错误→rename temp覆盖history.json→fsync父目录；约定旧目标之前已耐久、新temp内容正确、Linux+文件系统+设备尊重同步、步骤成功；rename给名称可见性原子切换，不自动给耐久。"
+    },
+    {
+      "title": "五、逐点崩溃矩阵",
+      "words": 2600,
+      "focus": "C0写temp前旧版本；C1写一半前后旧目标可见，temp可能不完整；C2 temp fsync后rename前旧目标可见、temp名是否持久不能断言；C3 rename后目录sync前运行时新目标可见、崩溃后名称恢复未证明；C4目录sync成功后在限定假设下新内容/名字可恢复。失败返回或外部存储异常单独列。"
+    },
+    {
+      "title": "六、原子可见性、顺序和耐久各自保证",
+      "words": 2400,
+      "focus": "rename覆盖目标的同文件系统名称原子可见性，目标读者新open见完整旧/新版本的条件；已打开FD仍指旧inode；fsync file和dir分工。fsync不能验证应用写的是正确消息，文件系统日志只保证自身一致性不自动保证应用记录完整/业务成功。"
+    },
+    {
+      "title": "七、Go入口、错误处理与IM业务合同",
+      "words": 2500,
+      "focus": "Go os.OpenFile/File.Write/File.Sync/File.Close/os.Rename与目录sync仅作静态步骤；每步错误使状态不同，返回给调用者时标注内存受理、文件同步、目录切换的哪一点，未知结果避免盲重试；P1本地导出与S2 HTTP 6B accepted_in_memory/S3 proposed DB存储合同不能混淆。"
+    },
+    {
+      "title": "八、纸上崩溃评审与22道练习",
+      "words": 2400,
+      "focus": "交付直接覆盖反例、temp替换状态表、C0-C4矩阵与恢复检查清单，22题附反馈，从页缓存到文件/目录fsync、rename、新旧FD、失败/未知结果。下一03.09 I/O与事件通知；静态不运行Go/文件系统/故障注入/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.08 持久化机制》，面向Go初学者，以虚构IM本地history.json完整替换为业务例。八节丰富正文和22道反馈练习。严格区分write返回/当前可见/崩溃后耐久；在Linux同目录同文件系统与各步骤成功的限定条件下，temp完整写→fsync文件→rename覆盖目标→fsync目录，逐点C0-C4分析；旧目标原先已耐久。不要把rename原子可见性说成多步事务或掉电耐久，不把S2内存受理说成持久消息确认，不运行Go/文件系统/故障注入/站点。\n1. 一、把本地历史保存的确认点说清：承接03.07路径/inode/FD与03.06页缓存；虚构c-a本地历史导出，已有history.json为旧完整版本，目标替换为含新序号的完整版本。先区分write返回、其他读者可见、掉电可恢复三种合同；不延伸为S3服务发送确认。\n2. 二、从字节到持久介质的层次：应用缓冲→write→内核页缓存/文件数据与inode→文件系统与设备缓存→稳定介质；块/页/目录项是不同更新对象。write可能短写、错误延迟，close不是fsync；fsync文件负责数据及相关元数据，fdatasync条件不同，文件fsync不保证目录项持久。\n3. 三、旧文件原地覆盖为何有崩溃窗口：直接open O_TRUNC history.json后逐步写新内容，掉电可能留下空/部分新内容，读者也可看到中间状态；构造old/new完整版本和纸上t0-t4崩溃点，说明即使最终写满也不保证耐久。不要把单个write当多块原子事务。\n4. 四、同目录临时文件替换的逐步协议：目标在同一目录与同一文件系统：创建唯一temp→完整写且核对n/error→fsync temp文件→close检查错误→rename temp覆盖history.json→fsync父目录；约定旧目标之前已耐久、新temp内容正确、Linux+文件系统+设备尊重同步、步骤成功；rename给名称可见性原子切换，不自动给耐久。\n5. 五、逐点崩溃矩阵：C0写temp前旧版本；C1写一半前后旧目标可见，temp可能不完整；C2 temp fsync后rename前旧目标可见、temp名是否持久不能断言；C3 rename后目录sync前运行时新目标可见、崩溃后名称恢复未证明；C4目录sync成功后在限定假设下新内容/名字可恢复。失败返回或外部存储异常单独列。\n6. 六、原子可见性、顺序和耐久各自保证：rename覆盖目标的同文件系统名称原子可见性，目标读者新open见完整旧/新版本的条件；已打开FD仍指旧inode；fsync file和dir分工。fsync不能验证应用写的是正确消息，文件系统日志只保证自身一致性不自动保证应用记录完整/业务成功。\n7. 七、Go入口、错误处理与IM业务合同：Go os.OpenFile/File.Write/File.Sync/File.Close/os.Rename与目录sync仅作静态步骤；每步错误使状态不同，返回给调用者时标注内存受理、文件同步、目录切换的哪一点，未知结果避免盲重试；P1本地导出与S2 HTTP 6B accepted_in_memory/S3 proposed DB存储合同不能混淆。\n8. 八、纸上崩溃评审与22道练习：交付直接覆盖反例、temp替换状态表、C0-C4矩阵与恢复检查清单，22题附反馈，从页缓存到文件/目录fsync、rename、新旧FD、失败/未知结果。下一03.09 I/O与事件通知；静态不运行Go/文件系统/故障注入/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "chapter": "03.08",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced crash-consistency lesson for fictional c-a local history export V1-to-V2 replacement",
+  "prerequisites": [
+    "01.12 local history CLI and versioned output",
+    "03.06 page cache and mapping distinction",
+    "03.07 path, inode, FD and rename lifetime"
+  ],
+  "first_pass": [
+    "write return versus runtime visibility versus crash durability",
+    "data, inode and directory entry layers",
+    "direct O_TRUNC overwrite counterexample"
+  ],
+  "second_pass": [
+    "same-directory temp write, file fsync, close, rename and directory fsync",
+    "C0–C4 crash evidence matrix",
+    "atomic visibility versus ordering and durability",
+    "unknown results, version check and IM confirmation boundaries"
+  ],
+  "not_yet_prerequisites": [
+    "03.09 event-driven I/O and readiness",
+    "06.09 database crash recovery",
+    "S5 durable asynchronous messaging and device delivery",
+    "real filesystem and power-loss testing by the learner"
+  ],
+  "next_chapter": "03.09 I/O and event notification",
+  "upstream_inspection": "No OpenIM implementation claim; OSTEP, Linux man-pages and Go os official docs support the file and directory sync concepts.",
+  "shared_integration_pending": []
+}

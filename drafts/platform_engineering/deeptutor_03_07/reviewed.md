@@ -202,4 +202,4 @@ close(fd8) 后：旧对象不再由这些 FD 持有，可由文件系统回收
 - [Linux `inode(7)`](https://man7.org/linux/man-pages/man7/inode.7.html)、[`rename(2)`](https://man7.org/linux/man-pages/man2/rename.2.html)与[`unlink(2)`](https://man7.org/linux/man-pages/man2/unlink.2.html)：名字、链接、重命名和打开对象的生命周期。
 - [Linux `read(2)`](https://man7.org/linux/man-pages/man2/read.2.html)、[`write(2)`](https://man7.org/linux/man-pages/man2/write.2.html)与[Go `os` 包](https://pkg.go.dev/os)：实际字节数和 Go 文件对象入口。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 03.08 用同一类历史保存场景推演 `write/fsync/rename` 之间的崩溃点。离开本章前，应能解释**路径名、inode、打开文件描述与 FD 的各自责任，旧 FD 为何不追随新名字，以及为什么删除名字和数据持久性都要单独判断**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[03.08 持久化机制](../../../src/docs/platform_engineering/curriculum/03_systems/08_persistence_mechanisms.md)用同一类历史保存场景推演 `write/fsync/rename` 之间的崩溃点。离开本章前，应能解释**路径名、inode、打开文件描述与 FD 的各自责任，旧 FD 为何不追随新名字，以及为什么删除名字和数据持久性都要单独判断**。
