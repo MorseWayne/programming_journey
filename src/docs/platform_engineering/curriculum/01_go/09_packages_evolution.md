@@ -221,6 +221,9 @@ func Load(path string, maxBytes int64) (*history.History, error) {
 	if file.Version != 1 {
 		return nil, fmt.Errorf("不支持历史文件版本 %d", file.Version)
 	}
+	if file.Messages == nil {
+		return nil, errors.New("messages 必须是数组，不能缺失或为 null")
+	}
 
 	h, err := history.New(file.ConversationID)
 	if err != nil {
@@ -275,6 +278,8 @@ func Save(path string, h *history.History) error {
 这个文件只依赖 `history`；`history` 不导入 `historyfile`。`Load` 在文件打开后承担关闭责任，先用 `maxBytes+1` 区分“刚好等于上限”和“超限”，再严格解码并由 `history.New`、`Add` 判断领域规则。任一记录失败时不会返回部分历史。`Save` 从领域值生成文件结构，先编码后覆盖写入。
 
 `Save` 将时刻规范化为 UTC，并使用 `RFC3339Nano` 保留可表示的亚秒精度；`Load` 的 RFC3339 解析器接受带小数秒的文本。示例导出上限为 1 MiB，编码后先检查大小再触碰目标文件。`os.WriteFile` 可能先截断已有文件，中途出错可能留下部分内容；返回 `nil` 也不承诺崩溃后的原子恢复或稳定介质。课程此处关注**包边界**，可靠文件更新与服务端持久化需要另立契约。
+
+`Load` 中 `file.Messages == nil` 专门拒绝缺失或 `null` 的数组；`Save` 用 `make([]wireMessage, 0, ...)` 明确写出可接受的空数组。这使文件版本 1 的“空历史”与“没有提供消息字段”保持不同含义。
 
 ### 命令入口只做编排
 
@@ -472,4 +477,4 @@ go 1.25
 - [Go 模块参考](https://go.dev/ref/mod)与[依赖管理](https://go.dev/doc/modules/managing-dependencies)：模块路径、版本与选择规则。
 - [Go 官方包名建议](https://go.dev/blog/package-names)：简短、清楚的包名如何帮助调用方阅读。
 
-下一次把本地历史工具交给学习者独立实现时，再进入 01.12《完整命令行工具》。在此之前，10.02 的测试正文会补上实际结果与预期的核对方法；01.10–01.11 的泛型和反射留到需要它们的高级问题中学习。
+学完[10.02 测试基本方法](../10_engineering/02_testing_basics.md)后，进入[01.12 完整命令行工具](./12_cli_capstone.md)，把本章包边界与测试预期用于独立实现。01.10–01.11 的泛型和反射留到需要它们的高级问题中学习。

@@ -1,0 +1,13 @@
+{
+  "chapter": "01.12",
+  "stage": "S1",
+  "business_scope": "static course project for local version-one JSON history CLI; no network, authentication, crash-atomic export, server acceptance, delivery or read acknowledgement",
+  "prerequisites": ["01.01–01.09 Go language, errors, JSON, files and package boundaries", "10.01 verifiable requirements", "10.02 testing fundamentals"],
+  "first_pass": ["check/list/export observable command contracts", "FlagSet per subcommand and explicit configuration precedence", "bounded strict JSON import", "stdout/stderr and stable teaching exit codes"],
+  "second_pass": ["os.Exit and deferred cleanup", "exclusive export and explicit replacement risk", "sensitive output boundary", "unit, local integration and command observation matrix"],
+  "cli_contract": {"commands": ["check", "list", "export"], "input": "local version-one JSON <=1 MiB", "precedence": "explicit -file > IMHISTORY_FILE > teaching default", "exit_codes": {"0":"success/help", "2":"usage", "3":"invalid history", "4":"file I/O or target conflict", "5":"other unexpected error"}, "default_export": "exclusive create, no overwrite"},
+  "not_yet_prerequisites": ["10.04 test doubles", "03/04/05 process, networking and concurrency", "06 durable storage and transactions", "08 distributed sync and delivery"],
+  "next_chapter": "10.04 test doubles and design using the local CLI boundary; later S2 system and network foundations",
+  "upstream_inspection": "No OpenIM runtime, CLI, format or delivery fact is asserted.",
+  "shared_integration_pending": []
+}

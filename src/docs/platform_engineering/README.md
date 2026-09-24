@@ -22,13 +22,13 @@ date: 2026-09-23
 - 查看经典书籍如何融合：[调研依据与知识覆盖](./curriculum/source_review.md)。
 - 判断当前有哪些正文：[编写状态与能力验收](./curriculum/assessment.md)。
 
-当前已有 **18 章独立长篇正文、35 课入门与衔接正文、14 篇分卷专题讲义**，以及 **14 卷共 168 个章节单元的教学设计**。168 个单元均已列出具体 IM 练习与验收目标；正文完成 01.01–01.09、02.01–02.05、03.01、10.01–10.03；最新章节用消息历史的排序键讲解稳定性、确定性与分治成本。前两章和部分旧短课、core 的原案例继续作为基础补充，其余长篇按先修关系展开。
+当前已有 **19 章独立长篇正文、35 课入门与衔接正文、14 篇分卷专题讲义**，以及 **14 卷共 168 个章节单元的教学设计**。168 个单元均已列出具体 IM 练习与验收目标；正文完成 01.01–01.09、01.12、02.01–02.05、03.01、10.01–10.03；最新章节将 Go 入门内容汇成虚构 IM 的本地历史 CLI 课程项目。前两章和部分旧短课、core 的原案例继续作为基础补充，其余长篇按先修关系展开。
 
 ## 每个领域都独立展开
 
 | 卷 | 课程领域与分章设计 | 当前可读正文 |
 |---|---|---|
-| 01 | [Go 语言、标准库与程序设计](./curriculum/01_go/README.md) | [01.01](./curriculum/01_go/01_program_toolchain.md) · [01.02](./curriculum/01_go/02_types_data.md) · [01.03](./curriculum/01_go/03_control_functions.md) · [01.04](./curriculum/01_go/04_collections_text.md) · [01.05](./curriculum/01_go/05_maps_structs_pointers.md) · [01.06](./curriculum/01_go/06_methods_interfaces.md) · [01.07](./curriculum/01_go/07_errors_resources.md) · [01.08](./curriculum/01_go/08_standard_library.md) · [01.09](./curriculum/01_go/09_packages_evolution.md) · [专题讲义](./curriculum/01_go/core.md) |
+| 01 | [Go 语言、标准库与程序设计](./curriculum/01_go/README.md) | [01.01](./curriculum/01_go/01_program_toolchain.md) · [01.02](./curriculum/01_go/02_types_data.md) · [01.03](./curriculum/01_go/03_control_functions.md) · [01.04](./curriculum/01_go/04_collections_text.md) · [01.05](./curriculum/01_go/05_maps_structs_pointers.md) · [01.06](./curriculum/01_go/06_methods_interfaces.md) · [01.07](./curriculum/01_go/07_errors_resources.md) · [01.08](./curriculum/01_go/08_standard_library.md) · [01.09](./curriculum/01_go/09_packages_evolution.md) · [01.12 CLI](./curriculum/01_go/12_cli_capstone.md) · [专题讲义](./curriculum/01_go/core.md) |
 | 02 | [数学基础、数据结构与问题求解](./curriculum/02_algorithms/README.md) | [02.01 数学与成本](./curriculum/02_algorithms/01_discrete_cost.md) · [02.02 线性结构](./curriculum/02_algorithms/02_linear_structures.md) · [02.03 搜索](./curriculum/02_algorithms/03_search_invariants.md) · [02.04 哈希](./curriculum/02_algorithms/04_hash_sets.md) · [02.05 排序](./curriculum/02_algorithms/05_sort_divide.md) · [专题讲义](./curriculum/02_algorithms/core.md) |
 | 03 | [计算机系统、操作系统与 Linux](./curriculum/03_systems/README.md) | [03.01 数据与存储](./curriculum/03_systems/01_data_instructions_storage.md) · [专题讲义](./curriculum/03_systems/core.md) |
 | 04 | [网络协议与网络编程](./curriculum/04_networks/README.md) | [专题讲义](./curriculum/04_networks/core.md) |

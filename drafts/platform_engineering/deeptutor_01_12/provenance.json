@@ -1,0 +1,28 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_6dddf700b0",
+  "page_id": "pg_0a56fc784b",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "f1251ab8757cfc2443dde8a0dea32da657ba04d6f8cbdd56ac7d622e517f3afd",
+  "original_sha256": "33af902616e91e80d562fec08c0862a0284a2680af2751b9075ca5d392862087",
+  "reviewed_sha256": "2e7d7c440fddcbfc137ba7ab5927140786d4004f67c9fc8904357ac4549f32a0",
+  "original_characters": 42485,
+  "reviewed_characters": 11321,
+  "reviewed_chinese_characters": 4208,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/12_cli_capstone.md",
+  "course_sha256": "994d6ed13c5bfb4300174daf89be011e32b593d294306c6c1ee3dc60eb5580c0",
+  "source_reference": {
+    "primary_sources": ["https://pkg.go.dev/flag#FlagSet", "https://pkg.go.dev/os#Exit", "https://pkg.go.dev/encoding/json#Decoder.DisallowUnknownFields", "https://pkg.go.dev/testing#T.TempDir", "https://pkg.go.dev/log/slog"],
+    "upstream_implementation_claims": false
+  }
+}

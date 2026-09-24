@@ -1,0 +1,74 @@
+{
+  "code": "01.12",
+  "title": "完整命令行工具：导入、核对与导出本地 IM 历史",
+  "chapter_id": "ch_go_cli_capstone",
+  "summary": "承接 01.01–01.09 和 10.01–10.02，把虚构 IM 本地消息校验、版本化 JSON、包边界、错误、资源上限和测试计划组织成可解释的 CLI 教材。仅静态课程，不运行、部署或声明真实发送保证。",
+  "objectives": [
+    "从用户任务定义命令、输入输出和失败合同",
+    "理解子命令、FlagSet、默认值与配置优先级",
+    "组织领域规则、文件适配器和命令入口的单向依赖",
+    "限量读取并严格验证版本化JSON",
+    "区分stdout结果、stderr诊断和退出码",
+    "说明覆盖写入、资源关闭和敏感正文边界",
+    "从需求表设计单元与临时文件集成案例",
+    "交付可供学习者独立实现和验证的CLI说明"
+  ],
+  "sources": [
+    "https://pkg.go.dev/flag#FlagSet",
+    "https://pkg.go.dev/os#Exit",
+    "https://pkg.go.dev/encoding/json#Decoder.DisallowUnknownFields",
+    "https://pkg.go.dev/testing#T.TempDir",
+    "https://pkg.go.dev/log/slog"
+  ],
+  "sections": [
+    {
+      "title": "一、从本地会话需求定义命令合同",
+      "words": 2000,
+      "focus": "面向Go初学者，先修01.01–01.09与10.01–10.02。虚构c-a/u-a/m-a，本地小文件history-c-a.json。用户需要check检查文件、list显示消息、export导出已验证副本；说明输入、stdout/stderr、成功/失败退出码、大小上限、版本1、拒绝不改源文件。不能把CLI成功说成服务端历史/送达/持久原子。所有命令和输出静态预期未执行。"
+    },
+    {
+      "title": "二、包边界与run/main职责",
+      "words": 2100,
+      "focus": "建立示意目录go.mod,history/,internal/historyfile/,cmd/imhistory/main.go；领域规则不导入os/flag，文件适配器依赖history，main负责FlagSet和输出。run(args []string,stdout,stderr io.Writer) error或int设计一种统一合同，main只在run返回后os.Exit以免跳过内部defer；解释os.Exit不运行defer。完整代码片段各自位置说明，不拼未定义符号。"
+    },
+    {
+      "title": "三、子命令与配置优先级",
+      "words": 2200,
+      "focus": "flag.NewFlagSet对check/list/export独立解析，flag.ContinueOnError返回错误；命令位置参数、-file、-out、-max-bytes；先定义全部flag再Parse。配置优先级显式CLI flag > 环境IMHISTORY_FILE >教学默认路径；环境上限解析失败要报错而不是静默使用默认，所有最大字节上限正数且有合理最大值。默认值不等于验证，路径为空与过大/非法参数单列。首次概念逐步解释。"
+    },
+    {
+      "title": "四、受控导入：版本、大小、尾随值与领域校验",
+      "words": 2300,
+      "focus": "承接01.08：os.Open成功后defer Close，io.LimitReader(max+1)、ReadAll、检查超限，json.Decoder.DisallowUnknownFields，第二次Decode确认io.EOF，Version=1，ConversationID/MessageID/SenderID/Body非空、RFC3339、会话内重复；所有校验成功后才向调用方返回。明确JSON语法成功不代表业务合法；未知未来版本拒绝，旧版本兼容须另定；没有网络认证。"
+    },
+    {
+      "title": "五、显示与导出：输出流、覆盖和资源责任",
+      "words": 2200,
+      "focus": "check输出已验证摘要，list按文件显式次序显示ID等字段，默认不直接输出完整敏感正文或提供-redact；export先验证和编码再写目标，默认不覆盖已有文件，明确--replace后才可覆盖，且os.WriteFile失败中途可能部分内容；若使用OpenFile O_EXCL须处理Close错误。区分stdout机器结果、stderr诊断，错误信息不泄漏真实身份/正文；记录输出范围。"
+    },
+    {
+      "title": "六、错误类型与退出状态",
+      "words": 1900,
+      "focus": "建议0成功、2使用方法/参数错误、3输入历史损坏/不支持版本、4文件I/O失败等教学退出码，必须有稳定映射与文档；errors.Is/As匹配身份，不比较err.Error文本。main调用run得到状态后os.Exit，run内部defer有机会执行。帮助信息与无子命令各自结果明确；日志可在stderr记录操作和路径但避免消息正文、用户凭据，slog只介绍位置非强制实现。"
+    },
+    {
+      "title": "七、测试与兼容：让个人实现可核对",
+      "words": 2200,
+      "focus": "用10.01需求表导出测试：纯领域校验、Version1 roundtrip、max+1拒绝、未知字段/第二个JSON值、重复ID不改状态、文件不存在、导出已有目标默认拒绝、显式replace风险、stdout/stderr/退出码；t.TempDir隔离，固定时间，不运行。覆盖率不等于需求覆盖，测试证据范围和源代码版本分开。文件v2兼容旧格式、CLI flag变更与退出码稳定性。"
+    },
+    {
+      "title": "八、综合：本地IM历史工具的实现路线与分层练习",
+      "words": 2600,
+      "focus": "给文件树、主调用流程、代表性Go完整函数与命令例子的静态预期，分阶段任务：check->list->export->失败变式->个人运行记录，指出每阶段验收。至少20折叠练习反馈，覆盖FlagSet、参数优先级、os.Exit defer、limit+1、严格JSON、版本与业务校验、stdout/stderr、退出码、文件覆盖、时间、重复ID、t.TempDir、脱敏、CLI本地范围与OpenIM源码阅读边界。列官方flag/os/json/testing/slog资料；全程无运行或发布。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《01.12 完整命令行工具：导入、核对与导出本地 IM 历史》。面向Go初学者，承接01.01–01.09与10.01–10.02，按先修由浅到深；全部用户、会话和消息为虚构教学数据。本次只写静态课程，不运行代码、测试或服务。\n1. 一、从本地会话需求定义命令合同：面向Go初学者，先修01.01–01.09与10.01–10.02。虚构c-a/u-a/m-a，本地小文件history-c-a.json。用户需要check检查文件、list显示消息、export导出已验证副本；说明输入、stdout/stderr、成功/失败退出码、大小上限、版本1、拒绝不改源文件。不能把CLI成功说成服务端历史/送达/持久原子。所有命令和输出静态预期未执行。\n2. 二、包边界与run/main职责：建立示意目录go.mod,history/,internal/historyfile/,cmd/imhistory/main.go；领域规则不导入os/flag，文件适配器依赖history，main负责FlagSet和输出。run(args []string,stdout,stderr io.Writer) error或int设计一种统一合同，main只在run返回后os.Exit以免跳过内部defer；解释os.Exit不运行defer。完整代码片段各自位置说明，不拼未定义符号。\n3. 三、子命令与配置优先级：flag.NewFlagSet对check/list/export独立解析，flag.ContinueOnError返回错误；命令位置参数、-file、-out、-max-bytes；先定义全部flag再Parse。配置优先级显式CLI flag > 环境IMHISTORY_FILE >教学默认路径；环境上限解析失败要报错而不是静默使用默认，所有最大字节上限正数且有合理最大值。默认值不等于验证，路径为空与过大/非法参数单列。首次概念逐步解释。\n4. 四、受控导入：版本、大小、尾随值与领域校验：承接01.08：os.Open成功后defer Close，io.LimitReader(max+1)、ReadAll、检查超限，json.Decoder.DisallowUnknownFields，第二次Decode确认io.EOF，Version=1，ConversationID/MessageID/SenderID/Body非空、RFC3339、会话内重复；所有校验成功后才向调用方返回。明确JSON语法成功不代表业务合法；未知未来版本拒绝，旧版本兼容须另定；没有网络认证。\n5. 五、显示与导出：输出流、覆盖和资源责任：check输出已验证摘要，list按文件显式次序显示ID等字段，默认不直接输出完整敏感正文或提供-redact；export先验证和编码再写目标，默认不覆盖已有文件，明确--replace后才可覆盖，且os.WriteFile失败中途可能部分内容；若使用OpenFile O_EXCL须处理Close错误。区分stdout机器结果、stderr诊断，错误信息不泄漏真实身份/正文；记录输出范围。\n6. 六、错误类型与退出状态：建议0成功、2使用方法/参数错误、3输入历史损坏/不支持版本、4文件I/O失败等教学退出码，必须有稳定映射与文档；errors.Is/As匹配身份，不比较err.Error文本。main调用run得到状态后os.Exit，run内部defer有机会执行。帮助信息与无子命令各自结果明确；日志可在stderr记录操作和路径但避免消息正文、用户凭据，slog只介绍位置非强制实现。\n7. 七、测试与兼容：让个人实现可核对：用10.01需求表导出测试：纯领域校验、Version1 roundtrip、max+1拒绝、未知字段/第二个JSON值、重复ID不改状态、文件不存在、导出已有目标默认拒绝、显式replace风险、stdout/stderr/退出码；t.TempDir隔离，固定时间，不运行。覆盖率不等于需求覆盖，测试证据范围和源代码版本分开。文件v2兼容旧格式、CLI flag变更与退出码稳定性。\n8. 八、综合：本地IM历史工具的实现路线与分层练习：给文件树、主调用流程、代表性Go完整函数与命令例子的静态预期，分阶段任务：check->list->export->失败变式->个人运行记录，指出每阶段验收。至少20折叠练习反馈，覆盖FlagSet、参数优先级、os.Exit defer、limit+1、严格JSON、版本与业务校验、stdout/stderr、退出码、文件覆盖、时间、重复ID、t.TempDir、脱敏、CLI本地范围与OpenIM源码阅读边界。列官方flag/os/json/testing/slog资料；全程无运行或发布。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

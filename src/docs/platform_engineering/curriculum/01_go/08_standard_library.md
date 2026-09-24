@@ -85,6 +85,8 @@ if err := json.Unmarshal(data, &decoded); err != nil {
 
 `&decoded` 是必需的：解码器要修改这个变量。`Unmarshal` 成功只说明 JSON 能转换到目标类型，不能证明文件版本正确、字段未缺失、消息不重复或时间可信。
 
+在本章新建的零值结构体中，`messages` 缺失或写成 `null` 都会让切片保持 nil；显式的 `[]` 则表示一个非 nil 的空切片。后面的 `validateHistory` 用这个差别实现“必须出现数组，允许数组为空”的文件合同。
+
 对当前版本的本地导入，使用 `Decoder` 可明确拒绝未知字段：
 
 ```go
@@ -116,6 +118,9 @@ func decodeOneHistory(r io.Reader) (HistoryFile, error) {
 func validateHistory(history HistoryFile) error {
 	if history.Version != 1 || history.ConversationID == "" {
 		return errors.New("历史版本或会话身份无效")
+	}
+	if history.Messages == nil {
+		return errors.New("messages 必须是数组，不能缺失或为 null")
 	}
 	seen := make(map[string]bool)
 	for index, message := range history.Messages {
