@@ -1,0 +1,31 @@
+{
+  "chapter": "08.07",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced device connection owner and stale gateway coordination lesson using fictional u-b/d-b1 G1/G2 timeline",
+  "prerequisites": [
+    "08.01 partial failure",
+    "08.02 time and ordering",
+    "08.05 owner epoch and route cutover",
+    "08.06 majority and consensus",
+    "07.12 notification versus device receipt and offline recovery"
+  ],
+  "first_pass": [
+    "separate physical socket, registered owner, task qualification and authoritative message history",
+    "understand etcd CAS, lease, revision and watch",
+    "walk G1 create_revision101, expiration deletion revision110, G2 creation revision111"
+  ],
+  "second_pass": [
+    "explain why local memory and a lease timeout do not establish current ownership",
+    "enforce monotonic owner generation at the side-effect target and state the installation gap",
+    "recover watch after disconnect or compaction using a fresh snapshot",
+    "separate duplicate network attempts, device deduplication and authorized history catch-up",
+    "limit fixed OpenIM claims to inspected send and Mongo consumer calls"
+  ],
+  "not_yet_prerequisites": [
+    "08.08 cross-service transactions",
+    "learner's real etcd and gateway failure evidence"
+  ],
+  "next_chapter": "08.08 cross-service transactions",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These files do not establish whether gateway ownership uses etcd leases, watches or fencing.",
+  "shared_integration_pending": []
+}

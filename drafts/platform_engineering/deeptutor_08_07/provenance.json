@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_2f465c7bd3",
-  "page_id": "pg_c0a3a8f70e",
+  "book_id": "bk_7f50c0157c",
+  "page_id": "pg_1879c660e6",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,21 +16,21 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://raft.github.io/raft.pdf",
-      "https://raft.github.io/",
-      "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "https://etcd.io/docs/v3.6/learning/api/",
+      "https://etcd.io/docs/v3.6/learning/api_guarantees/",
+      "https://etcd.io/docs/v3.6/learning/why/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "959b28c129907276059f7e9e5a878625883b5b53899876d3bbec07172427aa87",
-  "original_characters": 29605,
-  "generation_request_sha256": "8c00c3d2c6f820b379f9b5bd1a0d673b22161d1a6122f0fc8c4ffc10668406ca",
-  "reviewed_sha256": "28f70fedb1d8028dea429d928afba4422fd90a0e4e9c95dbfb9a17a41ed424d8",
-  "reviewed_characters": 9167,
-  "reviewed_chinese_characters": 3797,
-  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/06_majority_consensus.md",
-  "course_sha256": "309922d101604343e5b946ce9006fed1359d15b54c441d35669fdf7c6c63b83c"
+  "original_sha256": "ddb8d3d0662e635b6d7c3cab3d607443bb7e755db05ffd3c4a5a01885aaa7295",
+  "original_characters": 33871,
+  "generation_request_sha256": "d894ed2771cb686a1ac42f771266ef962cbc296bc81e9abffe928f023e117c8d",
+  "reviewed_sha256": "3b5f43861ff3753169481b82550b3a1ea2afa1c965a2fd8c29ff4677e1db87cc",
+  "reviewed_characters": 10397,
+  "reviewed_chinese_characters": 3764,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/07_coordination_ownership.md",
+  "course_sha256": "289a7c74e991336ab5b6535bc202496cd8ef6c517a492617f0ed61b80674cda0"
 }

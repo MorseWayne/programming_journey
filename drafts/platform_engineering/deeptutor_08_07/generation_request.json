@@ -1,0 +1,72 @@
+{
+  "code": "08.07",
+  "title": "协调与对象归属：旧网关恢复后还能投递吗",
+  "chapter_id": "ch_coordination_ownership",
+  "summary": "面向Go初学者，用虚构IM设备重连解释etcd lease、CAS、revision、watch、fencing、旧owner迟到副作用和业务补拉。",
+  "objectives": [
+    "区分物理连接、注册owner、通知执行资格与权威消息事实",
+    "用etcd CAS+lease推演G1/G2接管",
+    "区分create_revision、key version、lease ID与业务seq",
+    "说明旧owner为何需要目标端围栏与幂等",
+    "处理watch断线/压缩后重建视图",
+    "限定固定OpenIM源码能证明的范围"
+  ],
+  "sources": [
+    "https://etcd.io/docs/v3.6/learning/api/",
+    "https://etcd.io/docs/v3.6/learning/api_guarantees/",
+    "https://etcd.io/docs/v3.6/learning/why/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、B重连时旧连接为什么还活着",
+      "words": 2900,
+      "focus": "虚构u-b设备d-b1先连G1，G1冻结20s后B超时重连G2；旧TCP连接G1可能尚未被系统识别关闭。区分物理连接、协调存储的owner记录、Notify任务执行资格、权威聊天历史/设备已收。E9/m-9提示可能重复或漏，当前S2 accepted_in_memory与未来S3教学SQL分开。"
+    },
+    {
+      "title": "二、etcd的键、revision、CAS、lease和watch",
+      "words": 3300,
+      "focus": "教学键/owners/u-b/d-b1，值gateway_id+connection_id，附lease15s；etcd key version=0表示不存在，Txn Compare Version(key)==0 Put with lease原子抢占；create_revision是这次owner tenure单调代次，lease ID不作为排序token，键version删除后重置；cluster revision是逻辑时钟不是IM seq或墙钟。watch事件有序但不是线性化权威读取。"
+    },
+    {
+      "title": "三、G1/G2的r101→r110→r111时间线",
+      "words": 3200,
+      "focus": "T0 G1抢占成功create_revision101 lease15s，T1心跳暂停20s，etcd失去keepalive后过期删除revision110；B重连G2，T2 G2 Txn key缺失抢占create_revision111；T3 G1恢复仍持本地101/旧socket，若只信锁/本地计时可能重复投递E9。可用线性化Get核对当前owner，失败时停副作用；超时状态未知要查key/lease，不能自称仍owner。数值都是纸上。"
+    },
+    {
+      "title": "四、fencing必须落在副作用接受端",
+      "words": 3300,
+      "focus": "用owner_generation=101/111随Notify任务，目标持久ledger原子检查当前代次/消息版本/任务ID，见111后拒101；etcd锁只保护etcd键，检查etcd再写SQL有竞态。强调单调token目标未见111前仍可能收101，若要求切换瞬间严格无旧效果须原子共同仲裁/切换屏障；旧socket直接发WebSocket也不能被普通SQL token自动撤销，需连接层验代次/关闭+设备稳定ID去重，收到/已读另证。"
+    },
+    {
+      "title": "五、watch掉线、压缩与重新建立视图",
+      "words": 2900,
+      "focus": "先线性化Get含header revision R拿快照，再Watch从R+1；断开后从最后完整revision+1恢复，若compact_revision导致历史不可用则重新Get并重建缓存/订阅，不能静默接着旧路由；watch非线性化，不凭未见事件宣称无新owner。revision和Lease TTL、业务seq分别定义。"
+    },
+    {
+      "title": "六、锁、租约、活性与安全合同",
+      "words": 3000,
+      "focus": "lease检测客户端到etcd的存活不是进程/设备生死证明，TTL15s仅教学值；缩短加快接管但易误判/抖动，延长减少误切但故障恢复慢。锁不覆盖外部SQL、broker、socket；Go context取消可帮助停止本进程，不能防暂停后旧进程再活。明确最多一个注册owner与最多一个实际socket/一次提示是不同合同；隔离少数分区时停止危险动作，权威历史补拉兜底。"
+    },
+    {
+      "title": "七、值班排查与固定OpenIM证据边界",
+      "words": 2800,
+      "focus": "监测owner key/generation、lease keepalive、CAS失败、watch落后/compaction、target stale reject、G1/G2连接变更、Notify E9去重及B补拉；不记录私有正文。固定OpenIM已核对send.go MsgToMQ返回与另一Mongo consumer BatchInsertChat2DB，不从两段推断有etcd租约或设备owner模型。实际项目要追msg gateway连接管理与配置。"
+    },
+    {
+      "title": "八、22题和对象归属方案评审",
+      "words": 3100,
+      "focus": "基础8/时间线8/边界评审6，答案覆盖Version0 CAS、r101/110/111、lease vs lock、create_rev vs per-key version/leaseID、watch compact、旧G1 socket、目标围栏竞态、设备重复提示、S2/S3/固定源码。交付状态表、接管时序、目标原子规则和观测/补拉，静态不运行etcd/Go/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.07 协调与对象归属》，面向Go初学者，八节理论丰富、IM场景递进、22题带反馈。教学u-b设备d-b1先连G1，G1冻结20s，B重连G2，旧G1 socket可能仍活。etcd key /owners/u-b/d-b1 值G1/conn1附15s租约；G1通过Txn Compare Version(key)==0 Put原子抢占，create_revision=101。G1不续租，etcd过期删除revision110；G2 CAS取得create_revision111；G1醒后拿旧101可能发送E9。lease只反映etcd接到续租，锁只保护etcd键，不证明外部SQL/socket绝无旧副作用；旧G1应失败关闭/重验，目标端用单调代次围栏101<111拒绝，但若目标尚未观察111则仍有空窗，严格切换需要目标原子仲裁/屏障。设备去重不能反推网络未重复。create_revision用作tenure代次，per-key version删除重置，lease ID不是排序token，etcd revision不是会话seq/墙钟。线性化Get获得R后Watch R+1，watch非线性化，压缩断档后重新Get/重建。15s/20s纯纸上参数。当前S2 accepted_in_memory与拟议S3 stored_in_teaching_db仍分开。固定OpenIM send.go MsgToMQ与另一Mongo消费两处不证明etcd租约/owner实现。静态无Go/etcd/IM/站点运行。\n1. 一、B重连时旧连接为什么还活着: 虚构u-b设备d-b1先连G1，G1冻结20s后B超时重连G2；旧TCP连接G1可能尚未被系统识别关闭。区分物理连接、协调存储的owner记录、Notify任务执行资格、权威聊天历史/设备已收。E9/m-9提示可能重复或漏，当前S2 accepted_in_memory与未来S3教学SQL分开。\n2. 二、etcd的键、revision、CAS、lease和watch: 教学键/owners/u-b/d-b1，值gateway_id+connection_id，附lease15s；etcd key version=0表示不存在，Txn Compare Version(key)==0 Put with lease原子抢占；create_revision是这次owner tenure单调代次，lease ID不作为排序token，键version删除后重置；cluster revision是逻辑时钟不是IM seq或墙钟。watch事件有序但不是线性化权威读取。\n3. 三、G1/G2的r101→r110→r111时间线: T0 G1抢占成功create_revision101 lease15s，T1心跳暂停20s，etcd失去keepalive后过期删除revision110；B重连G2，T2 G2 Txn key缺失抢占create_revision111；T3 G1恢复仍持本地101/旧socket，若只信锁/本地计时可能重复投递E9。可用线性化Get核对当前owner，失败时停副作用；超时状态未知要查key/lease，不能自称仍owner。数值都是纸上。\n4. 四、fencing必须落在副作用接受端: 用owner_generation=101/111随Notify任务，目标持久ledger原子检查当前代次/消息版本/任务ID，见111后拒101；etcd锁只保护etcd键，检查etcd再写SQL有竞态。强调单调token目标未见111前仍可能收101，若要求切换瞬间严格无旧效果须原子共同仲裁/切换屏障；旧socket直接发WebSocket也不能被普通SQL token自动撤销，需连接层验代次/关闭+设备稳定ID去重，收到/已读另证。\n5. 五、watch掉线、压缩与重新建立视图: 先线性化Get含header revision R拿快照，再Watch从R+1；断开后从最后完整revision+1恢复，若compact_revision导致历史不可用则重新Get并重建缓存/订阅，不能静默接着旧路由；watch非线性化，不凭未见事件宣称无新owner。revision和Lease TTL、业务seq分别定义。\n6. 六、锁、租约、活性与安全合同: lease检测客户端到etcd的存活不是进程/设备生死证明，TTL15s仅教学值；缩短加快接管但易误判/抖动，延长减少误切但故障恢复慢。锁不覆盖外部SQL、broker、socket；Go context取消可帮助停止本进程，不能防暂停后旧进程再活。明确最多一个注册owner与最多一个实际socket/一次提示是不同合同；隔离少数分区时停止危险动作，权威历史补拉兜底。\n7. 七、值班排查与固定OpenIM证据边界: 监测owner key/generation、lease keepalive、CAS失败、watch落后/compaction、target stale reject、G1/G2连接变更、Notify E9去重及B补拉；不记录私有正文。固定OpenIM已核对send.go MsgToMQ返回与另一Mongo consumer BatchInsertChat2DB，不从两段推断有etcd租约或设备owner模型。实际项目要追msg gateway连接管理与配置。\n8. 八、22题和对象归属方案评审: 基础8/时间线8/边界评审6，答案覆盖Version0 CAS、r101/110/111、lease vs lock、create_rev vs per-key version/leaseID、watch compact、旧G1 socket、目标围栏竞态、设备重复提示、S2/S3/固定源码。交付状态表、接管时序、目标原子规则和观测/补拉，静态不运行etcd/Go/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
