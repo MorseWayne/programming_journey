@@ -213,4 +213,4 @@ Go 官方 GC 指南把堆 profile 分为 `alloc_space`（累计分配字节热�
 - [Go 官方 GC 指南](https://go.dev/doc/gc-guide)：根追踪、标记清扫、分配率/存活集、`GOGC` 目标、并发 GC 和内存限制的教学模型。
 - [Go `runtime.MemStats`](https://pkg.go.dev/runtime#MemStats)、[`runtime/metrics`](https://pkg.go.dev/runtime/metrics)和[`runtime/debug.SetMemoryLimit`](https://pkg.go.dev/runtime/debug#SetMemoryLimit)：指标与软限制的 API 口径。
 
-按[学习路线](../learning_path.md)，下一章 05.08 把有限工作池、按会话串行和扇出汇聚放回群聊处理链。离开本章前，应能把**分配速率、存活集、GC CPU、暂停和 RSS**分开说清，并说明哪项业务积压不是调 GC 参数能解决的。
+按[学习路线](../learning_path.md)，下一章[05.08 并发组合](./08_concurrency_composition.md)把有限工作池、按会话串行和扇出汇聚放回群聊处理链。离开本章前，应能把**分配速率、存活集、GC CPU、暂停和 RSS**分开说清，并说明哪项业务积压不是调 GC 参数能解决的。

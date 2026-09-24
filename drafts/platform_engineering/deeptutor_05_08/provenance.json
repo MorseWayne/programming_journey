@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_3eab1a6b90",
+  "page_id": "pg_60f112b459",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/blog/pipelines",
+      "https://pkg.go.dev/golang.org/x/sync/errgroup",
+      "https://pkg.go.dev/golang.org/x/sync/semaphore",
+      "https://pkg.go.dev/golang.org/x/sync/singleflight",
+      "https://pkg.go.dev/context"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "1c8aa095934bd3449fc68d25bd1510542ad7e83d75968dc731a7dae480c246f3",
+  "original_characters": 30306,
+  "generation_request_sha256": "3d6c090351e1326775899e240848e193c50c6d933fd5ca9c927007fafb894382",
+  "reviewed_sha256": "f9f7d41a4fc618256617f7d0b3c9517e42ca4b6c77668d740e0ffeb0d6f4eced",
+  "reviewed_characters": 7330,
+  "reviewed_chinese_characters": 3634,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/08_concurrency_composition.md",
+  "course_sha256": "2624b86da8cacf3737c86737689a3461fa121632f81686c7d3af3ce15110cb31"
+}

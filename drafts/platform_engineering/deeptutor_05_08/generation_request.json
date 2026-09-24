@@ -1,0 +1,73 @@
+{
+  "code": "05.08",
+  "title": "并发组合：从有限群扇出到按会话串行",
+  "chapter_id": "ch_concurrency_composition",
+  "summary": "面向Go初学者承接channel、GC和调度，以虚构IM六目标群扇出讲有界工作池、扇出汇聚、信号量、流水线取消、按key串行和singleflight边界。",
+  "objectives": [
+    "手算2worker+3槽的接纳上限",
+    "区分active/queued/producer-held工作",
+    "正确放置信号量避免先spawn万级G",
+    "定义fanout/fanin结果与取消后未知状态",
+    "关闭流水线通道与传播取消",
+    "区分本地按key串行与跨节点顺序",
+    "说明singleflight只合并同键在途调用"
+  ],
+  "sources": [
+    "https://go.dev/blog/pipelines",
+    "https://pkg.go.dev/golang.org/x/sync/errgroup",
+    "https://pkg.go.dev/golang.org/x/sync/semaphore",
+    "https://pkg.go.dev/golang.org/x/sync/singleflight",
+    "https://pkg.go.dev/context"
+  ],
+  "sections": [
+    {
+      "title": "一、大群任务为何要同时限并发与排队",
+      "words": 2200,
+      "focus": "承接05.03容量2队列/取消、05.07群扇出分配、05.05调度与09.12静态服务；虚构c-g一条已通过权限检查的消息面对u-a..u-f六目标，两个worker、等待队列cap3。定义在处理、已入队、生产者尚未交付的三状态，业务确认仍只教学边界。"
+    },
+    {
+      "title": "二、两worker与三槽队列逐步状态",
+      "words": 2500,
+      "focus": "t0 A/B工作，C/D/E入队，F无法入队必须等待/拒绝；已接纳工作最多5(2+3)，生产者仍可能持F。t1假定A完成、worker取C腾槽，F可入队；队列次序不证明设备交付次序；10k目标按需枚举以免一次物化10k任务。"
+    },
+    {
+      "title": "三、工作池、信号量和限额放置",
+      "words": 2400,
+      "focus": "固定worker数与有界channel限制活跃及等待；semaphore在启动goroutine前Acquire能限创建，若每目标先go再在内部Acquire仍产生大量等待G；errgroup SetLimit限制active Go调用但上游列表/结果和其他队列仍需界；每种策略记获得/释放/取消/错误。"
+    },
+    {
+      "title": "四、扇出与汇聚的结果边界",
+      "words": 2400,
+      "focus": "一个输入拆六目标任务为fanout，合并带recipientID的结果为fanin；完成顺序可乱，不当消息seq；若B慢/失败，等待所有会阻塞，需deadline和partial/unknown状态；已经成功的发送尝试不能因取消撤回，单请求受理不等于六设备成功。"
+    },
+    {
+      "title": "五、有界流水线与取消传播",
+      "words": 2500,
+      "focus": "预处理/编码/发送三阶段，每阶段有限队列/工人数；下游提前退出若上游继续发送会泄漏，ctx/done传播、生产者关闭自己输出，合并者待所有发送者结束再关闭；错误后已入队、进行中、未接纳工作分别清点，不能cancel自动清空。"
+    },
+    {
+      "title": "六、按会话键串行与全局并行",
+      "words": 2400,
+      "focus": "c-a任务seq1/seq2同键队列串行，c-b可并行；本地keyed worker/队列保证本进程选择的顺序，跨节点/DB提交/重试仍需业务协议；热点c-a可能积压，需每键容量、公平性和回收空闲key状态。"
+    },
+    {
+      "title": "七、singleflight合并只读同键调用",
+      "words": 2500,
+      "focus": "多个同时请求同一c-a历史页可用singleflight Do(key)共享同一在途计算结果；它不持久缓存、不跨进程、不保证后续调用，也不适合用作消息发送幂等；key须含会话/游标/权限范围，不能把不同用户权限的结果错误共享。"
+    },
+    {
+      "title": "八、组合评审与22题",
+      "words": 2400,
+      "focus": "交付A-F队列表、goroutine限额位置、fanout/fanin状态、流水线取消责任、按键串行和singleflight权限key反例；22题附反馈。下一05.09并发验证；静态不运行Go/服务/负载/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.08 并发组合》，面向Go初学者。八节丰富正文与22题反馈。固定虚构IM c-g 六目标A-F、2个worker和容量3等待队列：t0 A/B处理、C/D/E排队、F未接纳；t1假定A完成且C出队后F可入队，已接纳上限5不等于进程全部内存。渐进讲有界工作池/限额取得时机、扇出汇聚、取消流水线、按会话键串行、只读历史singleflight；不把它当持久幂等或跨节点顺序；静态不运行Go/服务/负载/站点。\n1. 一、大群任务为何要同时限并发与排队：承接05.03容量2队列/取消、05.07群扇出分配、05.05调度与09.12静态服务；虚构c-g一条已通过权限检查的消息面对u-a..u-f六目标，两个worker、等待队列cap3。定义在处理、已入队、生产者尚未交付的三状态，业务确认仍只教学边界。\n2. 二、两worker与三槽队列逐步状态：t0 A/B工作，C/D/E入队，F无法入队必须等待/拒绝；已接纳工作最多5(2+3)，生产者仍可能持F。t1假定A完成、worker取C腾槽，F可入队；队列次序不证明设备交付次序；10k目标按需枚举以免一次物化10k任务。\n3. 三、工作池、信号量和限额放置：固定worker数与有界channel限制活跃及等待；semaphore在启动goroutine前Acquire能限创建，若每目标先go再在内部Acquire仍产生大量等待G；errgroup SetLimit限制active Go调用但上游列表/结果和其他队列仍需界；每种策略记获得/释放/取消/错误。\n4. 四、扇出与汇聚的结果边界：一个输入拆六目标任务为fanout，合并带recipientID的结果为fanin；完成顺序可乱，不当消息seq；若B慢/失败，等待所有会阻塞，需deadline和partial/unknown状态；已经成功的发送尝试不能因取消撤回，单请求受理不等于六设备成功。\n5. 五、有界流水线与取消传播：预处理/编码/发送三阶段，每阶段有限队列/工人数；下游提前退出若上游继续发送会泄漏，ctx/done传播、生产者关闭自己输出，合并者待所有发送者结束再关闭；错误后已入队、进行中、未接纳工作分别清点，不能cancel自动清空。\n6. 六、按会话键串行与全局并行：c-a任务seq1/seq2同键队列串行，c-b可并行；本地keyed worker/队列保证本进程选择的顺序，跨节点/DB提交/重试仍需业务协议；热点c-a可能积压，需每键容量、公平性和回收空闲key状态。\n7. 七、singleflight合并只读同键调用：多个同时请求同一c-a历史页可用singleflight Do(key)共享同一在途计算结果；它不持久缓存、不跨进程、不保证后续调用，也不适合用作消息发送幂等；key须含会话/游标/权限范围，不能把不同用户权限的结果错误共享。\n8. 八、组合评审与22题：交付A-F队列表、goroutine限额位置、fanout/fanin状态、流水线取消责任、按键串行和singleflight权限key反例；22题附反馈。下一05.09并发验证；静态不运行Go/服务/负载/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

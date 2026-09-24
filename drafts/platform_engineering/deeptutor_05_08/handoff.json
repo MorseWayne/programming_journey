@@ -1,0 +1,31 @@
+{
+  "chapter": "05.08",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced bounded concurrency lesson for fictional c-g six-target IM fanout and safe same-key history reads",
+  "prerequisites": [
+    "05.03 bounded channels and cancellation",
+    "05.04 memory synchronization and ownership",
+    "05.05 goroutine scheduling and waiting",
+    "05.07 allocation rate versus retained queue objects",
+    "09.07 per-object authorization boundary"
+  ],
+  "first_pass": [
+    "2-worker, 3-slot A–F admission timeline",
+    "active versus queued versus producer-held work",
+    "fan-out and fan-in recipient result identity"
+  ],
+  "second_pass": [
+    "semaphore/errgroup limit placement before goroutine creation",
+    "pipeline cancellation and output-channel close ownership",
+    "per-conversation local serial execution and hotspot bounds",
+    "singleflight in-flight read coalescing with permission-safe key"
+  ],
+  "not_yet_prerequisites": [
+    "05.09 controlled concurrency verification",
+    "S5 durable retries and device delivery",
+    "cross-node conversation ordering and idempotence"
+  ],
+  "next_chapter": "05.09 concurrency verification",
+  "upstream_inspection": "No OpenIM implementation claim; Go official pipeline article and x/sync errgroup, semaphore and singleflight docs support the composition patterns.",
+  "shared_integration_pending": []
+}
