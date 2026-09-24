@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_1d7e5e3a21",
+  "page_id": "pg_3a3f7ef43a",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "9764889a6912efc86f1e9f058d4d89566f1f92639442bd291de8290f44f4e87c",
+  "original_characters": 36629,
+  "code_execution": false,
+  "network_experiments": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "https://www.rfc-editor.org/rfc/rfc9112",
+      "https://www.rfc-editor.org/rfc/rfc6455",
+      "https://pkg.go.dev/net/http"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "181b795f03389e4370f46257ad33489c4cd7b68792e9e1ca3d7c0fbae24ea487",
+  "reviewed_sha256": "e4af3ec5c3fd5acdc0913e448f3f8a8bd0bd038acc6bc330cd788dfc75d2bdc7",
+  "reviewed_characters": 10582,
+  "reviewed_chinese_characters": 4881,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/03_http_websocket_basics.md",
+  "course_sha256": "d57b0bce7b5379a73340fbeba4f02810ad1f39deb3de81f8913b5a760e71ec68"
+}

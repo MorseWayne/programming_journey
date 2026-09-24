@@ -1,0 +1,73 @@
+{
+  "code": "04.03",
+  "title": "HTTP 与 WebSocket 入门：从历史查询到双向消息通道",
+  "chapter_id": "ch_http_websocket_basics",
+  "summary": "承接04.01应用协议/确认点、04.02名称地址端口，面向Go初学者先用虚构IM只读历史查询讲HTTP方法、资源、请求行/头/正文、响应状态与JSON，再解释HTTP/1.1 WebSocket Upgrade、101握手、持久双向帧、应用消息和不同成功边界。静态课程不运行服务或网络实验。",
+  "objectives": [
+    "把URL、方法、路径、头部和正文映射到历史查询需求",
+    "区分HTTP协议状态与IM业务结果及权限",
+    "读懂一组示意HTTP/1.1请求和响应",
+    "理解GET的安全语义和分页/限额的需求边界",
+    "解释WebSocket的HTTP/1.1升级握手与101的含义",
+    "区分TCP字节流、WebSocket帧/消息和IM业务消息",
+    "区分Ping/Pong、连接存活、服务端受理、设备送达和已读",
+    "制定先HTTP查询后双向通道的个人实现与验证阶梯"
+  ],
+  "sources": [
+    "https://datatracker.ietf.org/doc/html/rfc9110",
+    "https://www.rfc-editor.org/rfc/rfc9112",
+    "https://www.rfc-editor.org/rfc/rfc6455",
+    "https://pkg.go.dev/net/http"
+  ],
+  "sections": [
+    {
+      "title": "一、从只读历史查询的用户任务出发",
+      "words": 2200,
+      "focus": "先修04.01分层/证据、04.02DNS/IP/端口、01.08JSON。u-a/u-b/c-a/m-a虚构，当前只有本地CLI，未来教学服务提供GET /v1/conversations/c-a/messages?limit=20。先定义输入会话、分页范围、权限和输出，不声称服务已实现。HTTP读查询先于WebSocket，避免先讲复杂长连接。"
+    },
+    {
+      "title": "二、HTTP请求：方法、资源、头部和正文",
+      "words": 2400,
+      "focus": "HTTP/1.1示意GET请求行、Host、Accept、空行，解释URL scheme/host/port/path/query但不把用户ID放网络地址，GET一般用于检索且按HTTP语义safe（不应要求改变资源状态），日志等副作用不等于业务修改；分页limit有上限、未知参数、非法输入。区分标头是元数据、正文是表示，不将本地JSON v1直接当HTTP接口格式。"
+    },
+    {
+      "title": "三、HTTP响应：状态、表示与业务合同",
+      "words": 2600,
+      "focus": "示意200 Content-Type application/json 和空messages[]，若需Content-Length必须字节准确；400非法输入、401缺有效认证、403拒绝、404目标资源未找到或不披露存在、500内部失败等RFC9110语义，具体映射由教学服务合同明确。HTTP 200不证明历史完整或IM送达，空结果可合法但需范围/游标。超时不是固定HTTP状态。不要暴露真实身份/正文。"
+    },
+    {
+      "title": "四、从轮询到WebSocket的需求",
+      "words": 2200,
+      "focus": "历史查询适合HTTP请求/响应；在线消息需可能的服务器主动推送，重复轮询/长轮询/双向通道各有成本。WebSocket在HTTP/1.1通过Upgrade握手建立持久双向连接，不是每条消息都一个HTTP请求，也不是默认替代所有HTTP API；ws/wss含义，TLS在04.07。连接建立不等于在线/授权/送达。"
+    },
+    {
+      "title": "五、握手：GET Upgrade 与101",
+      "words": 2500,
+      "focus": "用RFC6455官方示例key/accept值可以保持配对但路径和Host用chat.example.test文档域名；客户端GET /v1/events HTTP/1.1 Host Upgrade websocket Connection Upgrade Sec-WebSocket-Key/version13；服务端101 Switching Protocols Upgrade Connection Sec-WebSocket-Accept。解释101只表示协议切换，握手失败可能HTTP错误/版本/代理，不等于m-a已受理。Origin/身份必须另行验证，不把握手自带key当认证凭据。"
+    },
+    {
+      "title": "六、WebSocket帧、消息与应用载荷",
+      "words": 2600,
+      "focus": "TCP字节流，WebSocket用frame opcode/payload length/masking/FIN区分协议消息；一条WS消息可能分多帧，Ping/Pong/Close控制帧，客户端到服务端帧必须mask服务端不可mask（RFC6455），mask不是加密；应用在WS payload里自定义IM message ID/version/ack结构，不等同一帧。大小上限、未知版本、半条/关闭、超时后结果未知；安全/并发细节后续。"
+    },
+    {
+      "title": "七、HTTP与WS的故障和确认矩阵",
+      "words": 2400,
+      "focus": "DNS/连接失败与HTTP400/401/403/404/500及101握手、连接后close、ping/pong、业务ack分层；业务ack定义是服务端接受还是持久化需明确，B设备收到/已读另后续。对比历史GET与实时推送各自证据、缓存与连接资源，不能从HTTP200/WS101/TCP ACK推出送达。给业务场景反例与迁移。"
+    },
+    {
+      "title": "八、课程项目阶梯与分层练习",
+      "words": 2800,
+      "focus": "先纸上HTTP只读历史合同、空历史/非法limit/未授权/不存在，学习者后来自行实现Go net/http并记录真实结果；再纸上WebSocket握手和A->服务->B概念流程、关闭/版本失败变式。至少22题逐题反馈，由HTTP构成、状态、upgrade、帧到业务保证；所有代码和输出静态，不在本项目构建服务、运行Go、网络实验或宣称OpenIM实际实现。下一05.01或后续S2按学习路线。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《04.03 HTTP 与 WebSocket 入门》。面对Go初学者，承接04.01分层和04.02名称/端点，先详细讲只读历史HTTP查询的请求/响应，再由实时消息需求引出HTTP/1.1 WebSocket升级握手、帧与应用消息，最后用虚构IM业务确认点练习。当前项目只有本地CLI；只写静态课程，不运行Go、网络或服务、不声称已送达。\n1. 一、从只读历史查询的用户任务出发：先修04.01分层/证据、04.02DNS/IP/端口、01.08JSON。u-a/u-b/c-a/m-a虚构，当前只有本地CLI，未来教学服务提供GET /v1/conversations/c-a/messages?limit=20。先定义输入会话、分页范围、权限和输出，不声称服务已实现。HTTP读查询先于WebSocket，避免先讲复杂长连接。\n2. 二、HTTP请求：方法、资源、头部和正文：HTTP/1.1示意GET请求行、Host、Accept、空行，解释URL scheme/host/port/path/query但不把用户ID放网络地址，GET一般用于检索且按HTTP语义safe（不应要求改变资源状态），日志等副作用不等于业务修改；分页limit有上限、未知参数、非法输入。区分标头是元数据、正文是表示，不将本地JSON v1直接当HTTP接口格式。\n3. 三、HTTP响应：状态、表示与业务合同：示意200 Content-Type application/json 和空messages[]，若需Content-Length必须字节准确；400非法输入、401缺有效认证、403拒绝、404目标资源未找到或不披露存在、500内部失败等RFC9110语义，具体映射由教学服务合同明确。HTTP 200不证明历史完整或IM送达，空结果可合法但需范围/游标。超时不是固定HTTP状态。不要暴露真实身份/正文。\n4. 四、从轮询到WebSocket的需求：历史查询适合HTTP请求/响应；在线消息需可能的服务器主动推送，重复轮询/长轮询/双向通道各有成本。WebSocket在HTTP/1.1通过Upgrade握手建立持久双向连接，不是每条消息都一个HTTP请求，也不是默认替代所有HTTP API；ws/wss含义，TLS在04.07。连接建立不等于在线/授权/送达。\n5. 五、握手：GET Upgrade 与101：用RFC6455官方示例key/accept值可以保持配对但路径和Host用chat.example.test文档域名；客户端GET /v1/events HTTP/1.1 Host Upgrade websocket Connection Upgrade Sec-WebSocket-Key/version13；服务端101 Switching Protocols Upgrade Connection Sec-WebSocket-Accept。解释101只表示协议切换，握手失败可能HTTP错误/版本/代理，不等于m-a已受理。Origin/身份必须另行验证，不把握手自带key当认证凭据。\n6. 六、WebSocket帧、消息与应用载荷：TCP字节流，WebSocket用frame opcode/payload length/masking/FIN区分协议消息；一条WS消息可能分多帧，Ping/Pong/Close控制帧，客户端到服务端帧必须mask服务端不可mask（RFC6455），mask不是加密；应用在WS payload里自定义IM message ID/version/ack结构，不等同一帧。大小上限、未知版本、半条/关闭、超时后结果未知；安全/并发细节后续。\n7. 七、HTTP与WS的故障和确认矩阵：DNS/连接失败与HTTP400/401/403/404/500及101握手、连接后close、ping/pong、业务ack分层；业务ack定义是服务端接受还是持久化需明确，B设备收到/已读另后续。对比历史GET与实时推送各自证据、缓存与连接资源，不能从HTTP200/WS101/TCP ACK推出送达。给业务场景反例与迁移。\n8. 八、课程项目阶梯与分层练习：先纸上HTTP只读历史合同、空历史/非法limit/未授权/不存在，学习者后来自行实现Go net/http并记录真实结果；再纸上WebSocket握手和A->服务->B概念流程、关闭/版本失败变式。至少22题逐题反馈，由HTTP构成、状态、upgrade、帧到业务保证；所有代码和输出静态，不在本项目构建服务、运行Go、网络实验或宣称OpenIM实际实现。下一05.01或后续S2按学习路线。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

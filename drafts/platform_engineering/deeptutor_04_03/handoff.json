@@ -1,0 +1,12 @@
+{
+  "chapter": "04.03",
+  "stage": "S2",
+  "business_scope": "future fictional IM read-only history HTTP query followed by WebSocket event channel; current repository course project remains local CLI, no live server or delivery evidence",
+  "prerequisites": ["04.01 application protocol and confirmation boundaries", "04.02 DNS/IP/port and failure stages", "01.08 JSON and resource limits"],
+  "first_pass": ["GET resource, target and query limit", "HTTP/1.1 request and response structure", "status versus IM business contract", "39-byte empty-history response"],
+  "second_pass": ["HTTP/1.1 WebSocket Upgrade and 101", "RFC 6455 key/accept pair and identity separation", "TCP bytes versus WS frames/messages versus IM payload", "masking, Ping/Pong and business acknowledgement limits"],
+  "not_yet_prerequisites": ["05.01–05.03 Go concurrency and cancellation", "04.04–04.08 transport, connection lifecycle and network I/O", "09 authentication and authorization", "S5 offline delivery and read state"],
+  "next_chapter": "05.01 concurrent tasks and lifecycle before the first personal online IM implementation",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

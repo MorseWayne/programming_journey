@@ -28,9 +28,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "551e2d395b87458ecf5cf995ae75b4fb7bbfa5197ad26d82a0ce300f88c6d5ee",
-  "reviewed_sha256": "2ff077f5f6399ad78959875ac881e585096ead952bc1d167ced9f8afa89c7263",
-  "reviewed_characters": 9605,
-  "reviewed_chinese_characters": 4687,
+  "reviewed_sha256": "8faeb33eee581cfa04160f9dc7a3deec49ead3c15659ceab058b09be796e4638",
+  "reviewed_characters": 9701,
+  "reviewed_chinese_characters": 4692,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/02_addresses_names_routes.md",
-  "course_sha256": "2a3c92e82202951cd10154f3b4b5d3194fe29dc5cc5cf723cf2b2427057554ad"
+  "course_sha256": "6178deb189c182f69f333f455fd8e823c20f940e1707cc77d709144562ed38f6"
 }

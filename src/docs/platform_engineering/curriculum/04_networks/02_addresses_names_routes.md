@@ -254,4 +254,4 @@ Go 的 `net` 包有 `Dial`、`Listen` 等建立网络连接或监听的入口，
 - [RFC 1034：域名概念](https://www.rfc-editor.org/rfc/rfc1034)、[Linux `socket(7)`](https://man7.org/linux/man-pages/man7/socket.7.html)：名称与 socket 的职责。
 - [Go `net` 包](https://pkg.go.dev/net)：`Dial`、`Listen`、`JoinHostPort` 等后续网络编程入口。
 
-下一章 04.03 才用 HTTP 请求、响应和 WebSocket 握手把本章的“名字→地址→连接”接到应用协议。进入前应能把 DNS 失败、连接拒绝、连接超时与 HTTP 404 写在四个不同阶段，并说明每项观察尚不能证明哪项 IM 业务状态。
+下一章[04.03 HTTP 与 WebSocket 入门](./03_http_websocket_basics.md)才用请求、响应和升级握手把本章的“名字→地址→连接”接到应用协议。进入前应能把 DNS 失败、连接拒绝、连接超时与 HTTP 404 写在四个不同阶段，并说明每项观察尚不能证明哪项 IM 业务状态。
