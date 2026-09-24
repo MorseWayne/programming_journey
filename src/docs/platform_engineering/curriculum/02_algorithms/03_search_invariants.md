@@ -298,4 +298,4 @@ func main() {
 - [Go `sort.Search`](https://pkg.go.dev/sort#Search)核对“首个使单调谓词为真”的标准库合同。
 - [Algorithms, 4th Edition：基础模型](https://algs4.cs.princeton.edu/11model/)与[MIT 6.006 笔记目录](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/)用于核对查找与成本模型；本章的 IM 例子是原创教学设定。
 
-下一章 02.04 将从有序边界转向哈希与集合，处理按稳定消息 ID 的精确查找与本地去重；本章的二分只负责当前有序序列中的边界位置。
+下一章[02.04 哈希与集合](./04_hash_sets.md)从有序边界转向按复合消息 ID 的精确查找与本地去重；本章的二分只负责当前有序序列中的边界位置。

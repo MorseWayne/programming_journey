@@ -1,0 +1,13 @@
+{
+  "chapter": "02.04",
+  "stage": "S1",
+  "business_scope": "sequential in-process bounded deduplication of virtual IM MessageKey{ConversationID,MessageID}; no durable, concurrent or distributed idempotency guarantee",
+  "prerequisites": ["01.05 map and comparable struct keys", "02.01 operation-cost model", "02.02 ring queue order and capacity", "02.03 exact-key versus sorted-boundary lookup"],
+  "first_pass": ["message identity and set membership", "hash, bucket collision and full-key equality", "separate chaining versus open addressing", "load factor and conditional average cost", "Go map semantics and iteration boundary"],
+  "second_pass": ["capacity-N ring order plus map set invariant", "duplicate does not refresh", "oldest eviction", "bounded window versus long-lived idempotency"],
+  "window_contract": {"capacity": "positive N", "key": "MessageKey{ConversationID, MessageID}", "duplicate": "returns true without mutation", "new_when_full": "evicts oldest key from both ring and set, then inserts new key", "example": "N=3; A/B/C/A/D/A -> new,new,new,duplicate,new,new; final C,D,A"},
+  "not_yet_prerequisites": ["02.05 sorting and stable comparator", "05 concurrent map synchronization", "06 durable uniqueness and transactions", "08 distributed idempotency and replay"],
+  "next_chapter": "02.05 sorting and divide-and-conquer for stable IM history order",
+  "upstream_inspection": "OpenIM fixed storage interface is only a future source-reading prompt; no deduplication behavior is asserted.",
+  "shared_integration_pending": []
+}
