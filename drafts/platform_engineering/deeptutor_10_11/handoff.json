@@ -1,0 +1,30 @@
+{
+  "chapter": "10.11",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced technical writing and collaboration lesson using fictional IM m-9 troubleshooting and pending R9 decision",
+  "prerequisites": [
+    "10.01 verifiable requirements",
+    "10.10 continuous delivery and rollback gates",
+    "07.12 IM confirmation matrix",
+    "11.03 logs, metrics and trace evidence"
+  ],
+  "first_pass": [
+    "distinguish requirements, design, ADR, runbook and postmortem by reader task",
+    "keep current S2, proposed S3 and pending R9 distinct",
+    "write positive, negative and not-promised IM outcomes"
+  ],
+  "second_pass": [
+    "draft one Proposed ADR-R9 with options, consequences and confirmation",
+    "walk m-9 from API response to authority, outbox, broker, derived target and device with stop gates",
+    "separate fictional incident facts, inferred causes and unknown impact",
+    "assign actionable postmortem items and cross-team responsibilities",
+    "cite only inspected fixed OpenIM source paths"
+  ],
+  "not_yet_prerequisites": [
+    "10.12 maintainability assessment",
+    "learner's real reviewed docs and operational evidence"
+  ],
+  "next_chapter": "10.12 maintainability assessment",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish producer ACK level, teaching SQL outbox or device receipt.",
+  "shared_integration_pending": []
+}

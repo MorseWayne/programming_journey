@@ -1,0 +1,73 @@
+{
+  "code": "10.11",
+  "title": "技术写作与协作：让没参加讨论的人也能修m-9",
+  "chapter_id": "ch_technical_writing_collaboration",
+  "summary": "面向Go初学者，以虚构IM消息m-9故障与R9待审变更，写出需求、设计/ADR、值班手册、无责备复盘与跨团队证据交接。",
+  "objectives": [
+    "区分需求记录、设计说明、ADR、运行手册与复盘的读者任务",
+    "保持当前S2/拟议S3/R9状态清楚",
+    "写有选项/后果/状态的待决ADR",
+    "用消息身份串起runbook的证据与停止条件",
+    "把虚构事故影响和行动项写成可复核事实",
+    "限制固定OpenIM源码推论并维护文档版本"
+  ],
+  "sources": [
+    "https://adr.github.io/madr/decisions/adr-template.html",
+    "https://sre.google/workbook/postmortem-culture/",
+    "https://sre.google/sre-book/effective-troubleshooting/",
+    "https://sre.google/workbook/incident-response/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、四份文档回答不同读者问题",
+      "words": 2900,
+      "focus": "IM场景u-a发m-9/c-a/seq9，B未即时收到提示；当前S2 accepted_in_memory与拟议S3 stored_in_teaching_db分开，R9 6→9B待审。区分需求记录（谁要什么/验收）、设计说明（机制/失败/取舍）、ADR（单一已决或待决决定）、runbook（值班按证据操作）、postmortem（已发生事故事实/影响/行动），静态不报告真实事故。"
+    },
+    {
+      "title": "二、需求页从用户可见合同起写",
+      "words": 3000,
+      "focus": "模板：请求者/目标/输入/当前S2 6UTF8B/409/404、目标R9若批准、S3另提议，正反例、状态变化和未承诺项；m9发送成功到哪个点，B离线补拉；用已知/未知/下一证据，不写空泛可靠。接口旧新支持矩阵与前置。"
+    },
+    {
+      "title": "三、设计说明和ADR记录取舍",
+      "words": 3100,
+      "focus": "教学ADR-R9 status=Proposed: problem希望你好呀9B，选项直接改v1/新增版本化发送路径/维持6B，建议新增版本路径但未批准；驱动旧客户端兼容/安全/可回退，后果和验收证据。MADR context/options/outcome/consequences/confirmation，决策变化新ADR supersede而不篡改已采纳历史。设计说明另画SQL outbox/Notify与OpenIM证据边界。"
+    },
+    {
+      "title": "四、值班手册按m9身份逐站查",
+      "words": 3200,
+      "focus": "症状A说发送成功B未提示：先问当前S2 200还是S3提议，读取有权消息权威，再outbox event_id、broker确认、SearchIndex与Notify分开、N9任务、gateway尝试、B设备回执/离线授权补拉；每步条件/期望/未知/升级责任，停止条件，不能盲重放私有正文或把ACK当送达。"
+    },
+    {
+      "title": "五、虚构14分钟索引延迟复盘",
+      "words": 3300,
+      "focus": "纸上T0未来S3 m9+outbox commit，T+1 relay依赖故障，T+14 oldest pending告警，T+16 relay恢复，T+18 SearchIndex追上；历史始终可授权查，搜索延迟18min，B离线无设备确认。事实/推断/未知分栏，影响范围只给m9或需另查，避免编人数，复盘无责备，行动项有owner角色/期限/验收指标。"
+    },
+    {
+      "title": "六、跨团队交接和变更状态",
+      "words": 2800,
+      "focus": "产品定合同/限额，API mapping，DB事实，消息relay/消费，安全权限与脱敏，客户端旧版本/反馈，值班监测；每份文档状态Draft/Proposed/Accepted/Superseded与版本/链接/作者/日期/适用环境，跨团队问题有owner和截止。不能以会议讨论替正式决定。"
+    },
+    {
+      "title": "七、读者可复核的证据与固定OpenIM边界",
+      "words": 3000,
+      "focus": "引用固定OpenIM send.go MsgToMQ后返回、另Mongo consumer BatchInsertChat2DB，只能说发送RPC返回与该Mongo写入非同一位置，未知producer ack、outbox实际、设备链；文档给具体commit和函数/配置下一证据，未运行不写通过。自审新同事能从文档定位合同、故障、执行限制和回退。"
+    },
+    {
+      "title": "八、22题与文档交付",
+      "words": 3100,
+      "focus": "22题基础8/需求与runbook8/ADR复盘评审6，答案覆盖S2/S3/R9、m9确认点、Proposed vs Accepted、ADR选项、runbook已知未知、虚构T+14/T+18、无责备行动项、OpenIM范围。交四份静态可复核样本与检查表，无外发/部署/测试。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《10.11 技术写作与协作》，面向Go初学者，八节理论丰富、IM需求驱动，22题带反馈。虚构u-a发m-9/c-a/seq9，B未收到即时提示，当前S2 200 accepted_in_memory只进程内受理、正文非空最多6 UTF8字节/总请求4096B/同ID重复409/非成员u-c隐藏404，拟议S3 200 stored_in_teaching_db未部署，R9从6→9B待审。教五种文档：需求记录写用户可见合同/正反例/未承诺；设计说明写状态/机制/失败/取舍；ADR-R9只Proposed，选项直接改v1/新版本路径/维持6B，推荐新版本路径但未批准，记录context/options/outcome/consequences/confirmation及被新ADR supersede；值班runbook按当前确认点→权威message→outbox E9→broker→SearchIndex/Notify→N9→gateway→B回执/授权补拉，逐步写已知未知下一证据/停止门，不能盲重放；虚构复盘T0未来S3 commit、T+1 relay故障、T+14告警、T+16恢复、T+18索引追上，历史可查、搜索延迟18min、B离线无设备确认，事实/推断/未知和行动owner/验收/期限，不编用户数、不责怪个人。跨团队产品/API/DB/消息/安全/客户端/值班交接文档状态与版本。固定OpenIM send.go MsgToMQ后返回、另Mongo BatchInsertChat2DB两段只证局部位置，不证明SQL outbox/生产者ACK/设备。静态无外发、部署、测试或真实事故声明。\n1. 一、四份文档回答不同读者问题: IM场景u-a发m-9/c-a/seq9，B未即时收到提示；当前S2 accepted_in_memory与拟议S3 stored_in_teaching_db分开，R9 6→9B待审。区分需求记录（谁要什么/验收）、设计说明（机制/失败/取舍）、ADR（单一已决或待决决定）、runbook（值班按证据操作）、postmortem（已发生事故事实/影响/行动），静态不报告真实事故。\n2. 二、需求页从用户可见合同起写: 模板：请求者/目标/输入/当前S2 6UTF8B/409/404、目标R9若批准、S3另提议，正反例、状态变化和未承诺项；m9发送成功到哪个点，B离线补拉；用已知/未知/下一证据，不写空泛可靠。接口旧新支持矩阵与前置。\n3. 三、设计说明和ADR记录取舍: 教学ADR-R9 status=Proposed: problem希望你好呀9B，选项直接改v1/新增版本化发送路径/维持6B，建议新增版本路径但未批准；驱动旧客户端兼容/安全/可回退，后果和验收证据。MADR context/options/outcome/consequences/confirmation，决策变化新ADR supersede而不篡改已采纳历史。设计说明另画SQL outbox/Notify与OpenIM证据边界。\n4. 四、值班手册按m9身份逐站查: 症状A说发送成功B未提示：先问当前S2 200还是S3提议，读取有权消息权威，再outbox event_id、broker确认、SearchIndex与Notify分开、N9任务、gateway尝试、B设备回执/离线授权补拉；每步条件/期望/未知/升级责任，停止条件，不能盲重放私有正文或把ACK当送达。\n5. 五、虚构14分钟索引延迟复盘: 纸上T0未来S3 m9+outbox commit，T+1 relay依赖故障，T+14 oldest pending告警，T+16 relay恢复，T+18 SearchIndex追上；历史始终可授权查，搜索延迟18min，B离线无设备确认。事实/推断/未知分栏，影响范围只给m9或需另查，避免编人数，复盘无责备，行动项有owner角色/期限/验收指标。\n6. 六、跨团队交接和变更状态: 产品定合同/限额，API mapping，DB事实，消息relay/消费，安全权限与脱敏，客户端旧版本/反馈，值班监测；每份文档状态Draft/Proposed/Accepted/Superseded与版本/链接/作者/日期/适用环境，跨团队问题有owner和截止。不能以会议讨论替正式决定。\n7. 七、读者可复核的证据与固定OpenIM边界: 引用固定OpenIM send.go MsgToMQ后返回、另Mongo consumer BatchInsertChat2DB，只能说发送RPC返回与该Mongo写入非同一位置，未知producer ack、outbox实际、设备链；文档给具体commit和函数/配置下一证据，未运行不写通过。自审新同事能从文档定位合同、故障、执行限制和回退。\n8. 八、22题与文档交付: 22题基础8/需求与runbook8/ADR复盘评审6，答案覆盖S2/S3/R9、m9确认点、Proposed vs Accepted、ADR选项、runbook已知未知、虚构T+14/T+18、无责备行动项、OpenIM范围。交四份静态可复核样本与检查表，无外发/部署/测试。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
