@@ -1,0 +1,35 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_2f9de0890b",
+  "page_id": "pg_51e3e68312",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "dfc5a8e3e2f071aa0f3803e734365df4f910787e549be85eb3c238c87eef1ac1",
+  "original_characters": 33611,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/spec#Channel_types",
+      "https://go.dev/ref/spec#Select_statements",
+      "https://go.dev/ref/spec#Close",
+      "https://pkg.go.dev/context",
+      "https://go.dev/blog/pipelines",
+      "https://go.dev/blog/context"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "6876b2924e798682b9fb1184afec05f5f7288507124f1ddcc7ece63f3a0e5905",
+  "reviewed_sha256": "acd699c8480545b848957dfef66aaed733a9ff3fd541e12edd44efa20345f8b8",
+  "reviewed_characters": 10108,
+  "reviewed_chinese_characters": 4626,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/03_channels_cancellation.md",
+  "course_sha256": "a536e81f3cccf3f4d1f036be069b5408a4df48e916dc71ca236b4f36306277f6"
+}

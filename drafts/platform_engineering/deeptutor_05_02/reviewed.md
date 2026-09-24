@@ -297,4 +297,4 @@ T2：持有 B ──等待 A
 - [Go maps 官方说明](https://go.dev/blog/maps)与[Go 内存模型](https://go.dev/ref/mem)：共享 map 与同步关系的进一步阅读。
 - [Go race detector 文档](https://go.dev/doc/articles/race_detector)：后续个人并发验证的工具与覆盖边界。
 
-下一章 05.03 将用 channel 与 `context` 处理停止信号、队列和超时；进入前应能独立画出两条同 ID `Append` 的交错，并说明为何一把锁要覆盖查重、map 写和列表追加。
+下一章[05.03 channel 与取消](../../../src/docs/platform_engineering/curriculum/05_runtime/03_channels_cancellation.md)将处理停止信号、队列和超时；进入前应能独立画出两条同 ID `Append` 的交错，并说明为何一把锁要覆盖查重、map 写和列表追加。

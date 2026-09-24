@@ -1,0 +1,75 @@
+{
+  "code": "05.03",
+  "title": "channel 与取消：让 IM 发送队列能等待也能停止",
+  "chapter_id": "ch_channels_cancellation",
+  "summary": "承接05.01任务生命周期、05.02锁和03.04等待，用虚构IM有容量的发送队列讲无缓冲/有缓冲channel、发送接收、关闭/ok、select与context取消/期限、背压和连接关闭责任。所有Go代码静态，不运行服务。",
+  "objectives": [
+    "区分无缓冲交接与有缓冲容量",
+    "推演容量2队列中第三次发送的等待",
+    "理解通道方向、close所有权、排空后ok=false",
+    "用select组合发送/接收与取消但识别同时就绪选择",
+    "用context.WithCancel/WithTimeout传播协作式停止",
+    "区分取消请求、goroutine实际退出与业务结果",
+    "为满队列选择阻塞、拒绝或丢弃的业务合同",
+    "设计连接断开后的停止、等待和资源回收路径"
+  ],
+  "sources": [
+    "https://go.dev/ref/spec#Channel_types",
+    "https://go.dev/ref/spec#Select_statements",
+    "https://go.dev/ref/spec#Close",
+    "https://pkg.go.dev/context",
+    "https://go.dev/blog/pipelines",
+    "https://go.dev/blog/context"
+  ],
+  "sections": [
+    {
+      "title": "一、从慢接收方造成的有限队列需求出发",
+      "words": 2200,
+      "focus": "未来虚构IM，u-a/u-b/c-a/m-a等。服务接收待发送任务，但客户端B慢，不能无限go和无限buffer；05.01任务所有权、05.02锁前置。定义生产者、消费者、队列容量、满/空时的行为，当前无运行中服务。先纸上容量2 m-a/m-b/m-c。"
+    },
+    {
+      "title": "二、channel类型、发送接收与缓冲",
+      "words": 2500,
+      "focus": "make(chan Message)无缓冲交接需配对，make(chan Message,2)容量2，send ch<-m、receive m:=<-ch、方向chan<-/<-chan和初始化；容量2时m-a/m-b可进入缓冲、m-c发送等待直到取走，但调度与消费者情况需明确。len/cap是瞬时观察，不可无同步地当不变容量控制。channel传输值，若Message含可变引用仍需所有权规则。"
+    },
+    {
+      "title": "三、close与排空：谁宣布不再发送",
+      "words": 2500,
+      "focus": "关闭表示不会再发送，不是业务送达；close后缓存值先被接收，排空后receive零值+ok=false，for range结束；send或再close已关闭panic，nil channel send/recv阻塞，nil close panic。通常单生产者/协调者关闭，接收者不能擅自关闭共享发送队列，多生产者要先等待所有发送者再统一close。取消与close不同。"
+    },
+    {
+      "title": "四、select把等待与取消放在一起",
+      "words": 2500,
+      "focus": "select case out<-m/case <-ctx.Done(), case m,ok:=<-in, default非阻塞，若多个case同时就绪伪随机选择；不能承诺ctx取消后绝不入队，须独立合同或同步。default循环可忙等。给Offer(ctx,out,m) error与Receive(ctx,in)概念Go代码，解释上下限/错误。"
+    },
+    {
+      "title": "五、context的父子取消和截止时间",
+      "words": 2400,
+      "focus": "context.WithCancel/WithTimeout(parent,duration), defer cancel释放资源，Done channel, Err，deadline是协作式停止请求非强杀；父取消传子，不逆向；传ctx给每个会阻塞的函数，若handle忽略ctx仍可能不退出。context不代替结果通道/错误/资源关闭，也非用户消息载荷。区别超时/取消原因，具体API官方。"
+    },
+    {
+      "title": "六、完整静态发送/接收与关闭流程",
+      "words": 2700,
+      "focus": "构造容量2 queue的纸上时间线 t0 producer入m-a/m-b、t1 m-c等待、t2 consumer取m-a、t3 m-c可入、t4 A断开cancel、t5任务观察退出、t6协调者确认所有producer结束后close、t7 drain等；注意实际取消时可能停止消费造成未处理缓存，关闭不是投递保证。提供自洽Go示例：Offer/Consume或Receive，按外层协调者拥有close，代码片段不拼未定义符号。"
+    },
+    {
+      "title": "七、背压、错误与资源所有权取舍",
+      "words": 2400,
+      "focus": "满队列三选择：阻塞直到空间或deadline、立即拒绝/显式错误、丢弃需产品允许并计数；不能默默无限缓存。连接读/写任务A断开，主管取消、关闭或唤醒阻塞I/O、等待实际退出、记录未处理消息；context cancel不等于Wait返回/业务发送成功。ping/pong不是业务ACK，WebSocket帧与IM消息区别。"
+    },
+    {
+      "title": "八、分层练习与业务迁移",
+      "words": 2900,
+      "focus": "至少22题带反馈，从send/recv/cap、close/ok、select多ready、cancel到满队列和IM业务。用户后续在个人隔离环境实现/测试并记录，当前静态无Go、网络或服务执行。来源Go spec/context/blog，下一阶段04.04可靠传输或按路线09.01应用安全，按已有路径。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《05.03 channel 与取消》。面对Go初学者，承接05.01任务生命周期和05.02共享状态，用虚构IM容量2的发送队列由浅到深讲channel发送接收/缓冲/关闭、select、context取消与deadline、背压和连接退出。所有c-a/u-a/u-b/m-a为虚构，当前没有在线服务；只写静态课程，不执行Go、网络或服务。\n1. 一、从慢接收方造成的有限队列需求出发：未来虚构IM，u-a/u-b/c-a/m-a等。服务接收待发送任务，但客户端B慢，不能无限go和无限buffer；05.01任务所有权、05.02锁前置。定义生产者、消费者、队列容量、满/空时的行为，当前无运行中服务。先纸上容量2 m-a/m-b/m-c。\n2. 二、channel类型、发送接收与缓冲：make(chan Message)无缓冲交接需配对，make(chan Message,2)容量2，send ch<-m、receive m:=<-ch、方向chan<-/<-chan和初始化；容量2时m-a/m-b可进入缓冲、m-c发送等待直到取走，但调度与消费者情况需明确。len/cap是瞬时观察，不可无同步地当不变容量控制。channel传输值，若Message含可变引用仍需所有权规则。\n3. 三、close与排空：谁宣布不再发送：关闭表示不会再发送，不是业务送达；close后缓存值先被接收，排空后receive零值+ok=false，for range结束；send或再close已关闭panic，nil channel send/recv阻塞，nil close panic。通常单生产者/协调者关闭，接收者不能擅自关闭共享发送队列，多生产者要先等待所有发送者再统一close。取消与close不同。\n4. 四、select把等待与取消放在一起：select case out<-m/case <-ctx.Done(), case m,ok:=<-in, default非阻塞，若多个case同时就绪伪随机选择；不能承诺ctx取消后绝不入队，须独立合同或同步。default循环可忙等。给Offer(ctx,out,m) error与Receive(ctx,in)概念Go代码，解释上下限/错误。\n5. 五、context的父子取消和截止时间：context.WithCancel/WithTimeout(parent,duration), defer cancel释放资源，Done channel, Err，deadline是协作式停止请求非强杀；父取消传子，不逆向；传ctx给每个会阻塞的函数，若handle忽略ctx仍可能不退出。context不代替结果通道/错误/资源关闭，也非用户消息载荷。区别超时/取消原因，具体API官方。\n6. 六、完整静态发送/接收与关闭流程：构造容量2 queue的纸上时间线 t0 producer入m-a/m-b、t1 m-c等待、t2 consumer取m-a、t3 m-c可入、t4 A断开cancel、t5任务观察退出、t6协调者确认所有producer结束后close、t7 drain等；注意实际取消时可能停止消费造成未处理缓存，关闭不是投递保证。提供自洽Go示例：Offer/Consume或Receive，按外层协调者拥有close，代码片段不拼未定义符号。\n7. 七、背压、错误与资源所有权取舍：满队列三选择：阻塞直到空间或deadline、立即拒绝/显式错误、丢弃需产品允许并计数；不能默默无限缓存。连接读/写任务A断开，主管取消、关闭或唤醒阻塞I/O、等待实际退出、记录未处理消息；context cancel不等于Wait返回/业务发送成功。ping/pong不是业务ACK，WebSocket帧与IM消息区别。\n8. 八、分层练习与业务迁移：至少22题带反馈，从send/recv/cap、close/ok、select多ready、cancel到满队列和IM业务。用户后续在个人隔离环境实现/测试并记录，当前静态无Go、网络或服务执行。来源Go spec/context/blog，下一阶段04.04可靠传输或按路线09.01应用安全，按已有路径。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

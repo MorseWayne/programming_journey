@@ -25,9 +25,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "843fe2bd4e476544d864f61c0abed0b3f386b15fe2d472b8208771847345bbe3",
-  "reviewed_sha256": "860292dfbd461795a697ca6f871965252771f4c415d522ba60ea0ae6be8ab455",
-  "reviewed_characters": 10264,
-  "reviewed_chinese_characters": 4521,
+  "reviewed_sha256": "9b5feeabebbffb9dd43b6ed2bb16c9523b66367529dad1e3f03fb65fbfa9f318",
+  "reviewed_characters": 10344,
+  "reviewed_chinese_characters": 4522,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/02_sync_primitives.md",
-  "course_sha256": "16654c3bfde83c17142d791b579639b89435b94e08275bfbdceac000ec549965"
+  "course_sha256": "3a785ca1e0cca89e8b0dd34cbed8d3bd23ca7cbe06d076fc9633afd6e21457bd"
 }

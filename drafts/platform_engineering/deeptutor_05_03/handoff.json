@@ -1,0 +1,12 @@
+{
+  "chapter": "05.03",
+  "stage": "S2",
+  "business_scope": "fictional in-process IM send queue capacity two, m-a/m-b/m-c and a future slow receiver; no live WebSocket service or delivery evidence",
+  "prerequisites": ["05.01 goroutine lifecycle and task ownership", "05.02 shared-state synchronization", "03.04 waiting versus CPU service", "04.03 protocol-level and business confirmations"],
+  "first_pass": ["unbuffered versus capacity-two buffered channels", "send/receive and directional types", "close, drain and ok=false", "single close owner and multi-producer coordination"],
+  "second_pass": ["select send versus context cancellation with simultaneous-ready limit", "WithCancel/WithTimeout parent-child propagation and CancelFunc", "normal drain versus cancellation exit timelines", "bounded queue backpressure and IM acknowledgement boundaries"],
+  "not_yet_prerequisites": ["09.01 application requirements and boundaries", "Go net/http personal implementation", "04.04–04.08 transport and network I/O", "05.08 bounded workers", "S5 reliable delivery and deduplication"],
+  "next_chapter": "09.01 requirements and application boundaries for the first teaching IM HTTP/WS service",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}
