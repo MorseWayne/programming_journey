@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_d1d164ec95",
+  "page_id": "pg_c444c628d1",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/storage-page-layout.html",
+      "https://www.postgresql.org/docs/current/runtime-config-resource.html",
+      "https://www.postgresql.org/docs/current/using-explain.html",
+      "https://www.sqlite.org/arch.html",
+      "https://www.sqlite.org/fileformat.html",
+      "https://15445.courses.cs.cmu.edu/fall2024/project1/",
+      "https://www.mongodb.com/docs/manual/core/wiredtiger/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "8595c5ce5eb5161b00021503a55fd2e3e0272057735faa0c2c7b827c594268bd",
+  "original_characters": 28453,
+  "generation_request_sha256": "a2a08f05a50127afeda4c4632d5de22b6b2799648d6ac254b8a8d6a89f21efd2",
+  "reviewed_sha256": "91c2dc5a4d8bd0df1c43b01ecacbd14b358ba3889365531bbcc7bd640e5d719a",
+  "reviewed_characters": 7928,
+  "reviewed_chinese_characters": 3313,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/04_pages_buffer_pool.md",
+  "course_sha256": "ab1064c268afe1be001dd85764ea238577d0516a0ec0a083403ceea0d2b91875"
+}

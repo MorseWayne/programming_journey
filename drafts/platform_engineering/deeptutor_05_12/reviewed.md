@@ -191,4 +191,4 @@ B、D；E/F 仍等 worker。</details>
 - [Go GC 指南](https://go.dev/doc/gc-guide)与[内存模型](https://go.dev/ref/mem)：可达对象与并发读写的语言保证。
 - [Go 诊断指南](https://go.dev/doc/diagnostics)、[`runtime/pprof`](https://pkg.go.dev/runtime/pprof)与[`runtime/trace`](https://pkg.go.dev/runtime/trace)：等待、锁、GC 与调度的未来运行证据。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，S4 主线下一章 06.04 进入存储页与缓冲池，再用 06.05–06.06 深入有序索引和查询执行。离开本章前，应能把**症状、局部机制、竞争假设、缺失证据、修复不变量、验证门和未解决的 S5 保证**放进一份可交接的静态复盘。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，S4 主线下一章[06.04 页与缓冲池](../../../src/docs/platform_engineering/curriculum/06_databases/04_pages_buffer_pool.md)进入存储页，再用 06.05–06.06 深入有序索引和查询执行。离开本章前，应能把**症状、局部机制、竞争假设、缺失证据、修复不变量、验证门和未解决的 S5 保证**放进一份可交接的静态复盘。

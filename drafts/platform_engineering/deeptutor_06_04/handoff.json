@@ -1,0 +1,29 @@
+{
+  "chapter": "06.04",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced database-page and buffer-pool lesson using fictional c-a seq1..64 history records",
+  "prerequisites": [
+    "06.01–06.03 relational identity, SQL history and schema",
+    "02.06 tree and ordered-range cost",
+    "03.05–03.06 OS virtual pages and filesystem cache"
+  ],
+  "first_pass": [
+    "message row versus DB page versus OS memory page",
+    "toy page header, slots and record placement",
+    "64 rows times four per page gives P0..P15"
+  ],
+  "second_pass": [
+    "page-ID to frame mapping and buffer hit/miss",
+    "capacity-two LRU with four misses, one hit and two evictions",
+    "pin, dirty and WAL/commit boundaries",
+    "OS cache and PG/SQLite/Mongo observation limits"
+  ],
+  "not_yet_prerequisites": [
+    "06.05 B+ tree, hash and LSM indexes",
+    "06.06 actual optimizer and plan evidence",
+    "06.09 WAL and crash recovery"
+  ],
+  "next_chapter": "06.05 index structures",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL, SQLite, CMU and MongoDB primary docs support general page and cache concepts.",
+  "shared_integration_pending": []
+}

@@ -1,0 +1,76 @@
+{
+  "code": "06.04",
+  "title": "页与缓冲池：从会话历史行到缓存命中",
+  "chapter_id": "ch_pages_buffer_pool",
+  "summary": "面向Go初学者承接行、SQL、文件和虚拟内存，以虚构c-a消息seq1..64讲数据页/槽、buffer pool、pin/dirty、LRU玩具替换、OS缓存与PG/SQLite/Mongo实现边界。",
+  "objectives": [
+    "区分消息行、数据库页与OS页",
+    "画页头槽目录记录与空闲区",
+    "手算64条4每页与seq范围页",
+    "解释buffer页ID/内存frame和pin/dirty",
+    "推演容量2 LRU的4miss1hit2evict",
+    "区分buffer miss与物理盘I/O",
+    "区分dirty写回与事务提交",
+    "评审顺序历史与点查访问模式"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/storage-page-layout.html",
+    "https://www.postgresql.org/docs/current/runtime-config-resource.html",
+    "https://www.postgresql.org/docs/current/using-explain.html",
+    "https://www.sqlite.org/arch.html",
+    "https://www.sqlite.org/fileformat.html",
+    "https://15445.courses.cs.cmu.edu/fall2024/project1/",
+    "https://www.mongodb.com/docs/manual/core/wiredtiger/"
+  ],
+  "sections": [
+    {
+      "title": "一、历史查四条为何讨论页",
+      "words": 2300,
+      "focus": "承接06.01行/身份、06.02 SQL游标、02.06树、03.05 OS页与03.07文件；虚构c-a有seq1..64，纸上每数据页4条得16页，查[5,8]在P1。业务消息/数据库页/OS页不是同一对象；教学布局不代表PG/Mongo实际。"
+    },
+    {
+      "title": "二、页、槽和记录的教学布局",
+      "words": 2500,
+      "focus": "页含页头/槽目录/记录/空闲，槽保存行位置并可允许记录在页内移动而引用稳定；PostgreSQL官方通常8k页与ItemIdData，SQLite可配置页，不把4记录/页当真实字节布局。大消息可能外置/溢出页，页数不能由行数简单推断。"
+    },
+    {
+      "title": "三、复合键查询到页访问",
+      "words": 2500,
+      "focus": "P0 seq1-4,P1 5-8,P2 9-12等16页；闭区间[5,8]纸上只需P1数据页，SQL seq<9 DESC LIMIT4返回8,7,6,5；但先找到P1需索引/扫描，成员权限和索引页未计；06.05再讲B+页。顺序页访问与随机查点的代价方向。"
+    },
+    {
+      "title": "四、缓冲池：page ID到内存frame",
+      "words": 2600,
+      "focus": "内存池映射(关系,页号)→frame，命中复用、未命中取空槽/淘汰可驱逐页再读；pin保护正在使用页，unpin后可替换，dirty标修改未写回；PG shared_buffers、SQLite pager及Mongo WiredTiger内部缓存+文件系统缓存仅通用对照。"
+    },
+    {
+      "title": "五、容量2的LRU纸上状态",
+      "words": 2600,
+      "focus": "访问P0,P1,P0,P2,P1，LRU容量2空起：miss P0; miss P1; hit P0使P1旧; miss P2逐P1; miss P1逐P0，合计4miss1hit2evict。只为机制直觉，实际PG/Mongo不等于这个LRU；buffer miss不必等于磁盘物理I/O，可命中OS缓存。"
+    },
+    {
+      "title": "六、pin与dirty写回/提交边界",
+      "words": 2600,
+      "focus": "若池中P0/P1都pinned，P2不能靠逐出它们即时载入，需等待/失败策略；更新P0变dirty，逐出前须合适写回和WAL顺序，但dirty页写回≠业务事务commit，WAL/崩溃06.09；读者不能把缓存命中、写回、确认设备收到混同。"
+    },
+    {
+      "title": "七、按访问模式评审缓存与I/O",
+      "words": 2600,
+      "focus": "历史顺序翻页可复用相邻页，随机消息ID点查可能触多索引/数据页；缓存容量、页大小、热点、顺序/随机访问与并发pin影响成本；EXPLAIN ANALYZE BUFFERS的shared hit/read属于PG块访问，非物理I/O精确计数，需权限/实际查询计划核对。Mongo WiredTiger内部cache和filesystem cache对照，不宣称OpenIM真实页面。"
+    },
+    {
+      "title": "八、纸上页图与22道练习",
+      "words": 2500,
+      "focus": "交付64/4=16页、[5,8]页、P0P1P0P2P1的LRU命中表、pin全满和dirty/WAL反例，22道从页词汇到IM访问与来源边界附反馈。下一06.05索引结构；静态不运行SQL/DB/Go/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《06.04 页与缓冲池》，面向Go初学者。八节丰富正文与22题反馈。固定虚构c-a seq1..64、每玩具数据页4条得16页P0..P15，[5,8]在P1；容量2 LRU访问P0,P1,P0,P2,P1得4 miss/1 hit/2 eviction。先解释记录/DB页/OS页、槽与页头，再buffer pin/dirty，最后业务历史顺序与点查、PG/SQLite/Mongo缓存边界。Toy布局不是实际OpenIM/Mongo/PG布局，buffer miss不必物理disk read，dirty flush不等于transaction commit。静态不运行Go/SQL/数据库/站点。\n1. 一、历史查四条为何讨论页：承接06.01行/身份、06.02 SQL游标、02.06树、03.05 OS页与03.07文件；虚构c-a有seq1..64，纸上每数据页4条得16页，查[5,8]在P1。业务消息/数据库页/OS页不是同一对象；教学布局不代表PG/Mongo实际。\n2. 二、页、槽和记录的教学布局：页含页头/槽目录/记录/空闲，槽保存行位置并可允许记录在页内移动而引用稳定；PostgreSQL官方通常8k页与ItemIdData，SQLite可配置页，不把4记录/页当真实字节布局。大消息可能外置/溢出页，页数不能由行数简单推断。\n3. 三、复合键查询到页访问：P0 seq1-4,P1 5-8,P2 9-12等16页；闭区间[5,8]纸上只需P1数据页，SQL seq<9 DESC LIMIT4返回8,7,6,5；但先找到P1需索引/扫描，成员权限和索引页未计；06.05再讲B+页。顺序页访问与随机查点的代价方向。\n4. 四、缓冲池：page ID到内存frame：内存池映射(关系,页号)→frame，命中复用、未命中取空槽/淘汰可驱逐页再读；pin保护正在使用页，unpin后可替换，dirty标修改未写回；PG shared_buffers、SQLite pager及Mongo WiredTiger内部缓存+文件系统缓存仅通用对照。\n5. 五、容量2的LRU纸上状态：访问P0,P1,P0,P2,P1，LRU容量2空起：miss P0; miss P1; hit P0使P1旧; miss P2逐P1; miss P1逐P0，合计4miss1hit2evict。只为机制直觉，实际PG/Mongo不等于这个LRU；buffer miss不必等于磁盘物理I/O，可命中OS缓存。\n6. 六、pin与dirty写回/提交边界：若池中P0/P1都pinned，P2不能靠逐出它们即时载入，需等待/失败策略；更新P0变dirty，逐出前须合适写回和WAL顺序，但dirty页写回≠业务事务commit，WAL/崩溃06.09；读者不能把缓存命中、写回、确认设备收到混同。\n7. 七、按访问模式评审缓存与I/O：历史顺序翻页可复用相邻页，随机消息ID点查可能触多索引/数据页；缓存容量、页大小、热点、顺序/随机访问与并发pin影响成本；EXPLAIN ANALYZE BUFFERS的shared hit/read属于PG块访问，非物理I/O精确计数，需权限/实际查询计划核对。Mongo WiredTiger内部cache和filesystem cache对照，不宣称OpenIM真实页面。\n8. 八、纸上页图与22道练习：交付64/4=16页、[5,8]页、P0P1P0P2P1的LRU命中表、pin全满和dirty/WAL反例，22道从页词汇到IM访问与来源边界附反馈。下一06.05索引结构；静态不运行SQL/DB/Go/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
