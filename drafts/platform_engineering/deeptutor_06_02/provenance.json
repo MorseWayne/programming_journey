@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_7ceedb8b17",
+  "page_id": "pg_dd3c7d54ae",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/tutorial-populate.html",
+      "https://www.postgresql.org/docs/current/tutorial-select.html",
+      "https://www.postgresql.org/docs/current/tutorial-update.html",
+      "https://www.postgresql.org/docs/current/tutorial-delete.html",
+      "https://www.postgresql.org/docs/current/tutorial-join.html",
+      "https://www.postgresql.org/docs/current/tutorial-agg.html",
+      "https://www.postgresql.org/docs/current/queries-limit.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "3f17d6b6862fa5f199d3e849abd55aeae7f8235941f6d64c53345156f1a802c4",
+  "original_characters": 35905,
+  "generation_request_sha256": "a3a8568c9a9be503f9ac7cc2b1cbdf921e1b0d8f6477eb782866da0361f04c61",
+  "reviewed_sha256": "035cadcc9ff13bd983e4e974b15a1766e4bfd65e2dbb14ad50e2d2559157fb74",
+  "reviewed_characters": 10108,
+  "reviewed_chinese_characters": 3546,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/02_sql_queries.md",
+  "course_sha256": "fd0c42a60b9f6c2bf2612f5f088e724c0a70e623b173224031a92aa0eb61d1a5"
+}

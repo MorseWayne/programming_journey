@@ -208,6 +208,7 @@ export default sidebar({
           "children": [
             "curriculum/06_databases/",
             "curriculum/06_databases/01_relational_identity",
+            "curriculum/06_databases/02_sql_queries",
             "curriculum/06_databases/core"
           ]
         },

@@ -1,0 +1,12 @@
+{
+  "chapter": "06.02",
+  "stage": "S3",
+  "business_scope": "fictional IM conversation history on the 06.01 four-table PostgreSQL teaching model; SQL and results are paper examples, no running database, persistence confirmation, device delivery or OpenIM implementation claim",
+  "prerequisites": ["06.01 users/conversations/members/messages, keys and NULL", "09.01 trusted subject and read authorization", "11.01 acceptance and delivery confirmation points"],
+  "first_pass": ["explicit-column INSERT and SELECT projection/filter", "WHERE, NULL and parentheses", "scoped UPDATE/DELETE and affected rows", "current requester membership JOIN"],
+  "second_pass": ["JOIN row multiplication and LEFT JOIN NULL", "stable seq ordering and offset versus cursor pagination", "COUNT, GROUP BY and HAVING", "subquery IN, UNION versus UNION ALL, window ROW_NUMBER", "SQL evidence versus authorization and delivery"],
+  "not_yet_prerequisites": ["06.03 schema design and evolution", "06.05 indexes and access paths", "06.06 physical query execution", "06.07–06.08 transactions and snapshots", "06.10 Go database/sql", "09.08 full input and injection defenses"],
+  "next_chapter": "06.03 schema design, redundancy and evolution for message and membership history",
+  "upstream_inspection": "No OpenIM storage implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

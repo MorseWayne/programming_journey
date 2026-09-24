@@ -1,0 +1,77 @@
+{
+  "code": "06.02",
+  "title": "SQL 从读写到复杂查询：按会话安全读取消息历史",
+  "chapter_id": "ch_sql_history_queries",
+  "summary": "面向Go初学者承接06.01四表，沿虚构IM会话历史查询逐层讲INSERT/SELECT/WHERE、UPDATE/DELETE、JOIN、ORDER BY与分页、GROUP BY/HAVING、子查询/UNION/窗口；始终区分SQL结果、成员授权、持久确认与设备送达。静态纸上演算不运行数据库。",
+  "objectives": [
+    "用显式列INSERT和SELECT读取虚构消息表",
+    "区分投影、WHERE筛选与SQL NULL",
+    "用WHERE和影响行数限制UPDATE/DELETE范围",
+    "手算JOIN与意外行倍增",
+    "用唯一排序键解释LIMIT/OFFSET与游标分页",
+    "按会话/发送者计算COUNT并区分WHERE/HAVING",
+    "认识子查询、集合操作和窗口函数的职责",
+    "写出带受信身份和参数的历史查询纸上方案"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/tutorial-populate.html",
+    "https://www.postgresql.org/docs/current/tutorial-select.html",
+    "https://www.postgresql.org/docs/current/tutorial-update.html",
+    "https://www.postgresql.org/docs/current/tutorial-delete.html",
+    "https://www.postgresql.org/docs/current/tutorial-join.html",
+    "https://www.postgresql.org/docs/current/tutorial-agg.html",
+    "https://www.postgresql.org/docs/current/queries-limit.html",
+    "https://www.postgresql.org/docs/current/tutorial-sql.html"
+  ],
+  "sections": [
+    {
+      "title": "一、从按会话读历史的问题认识SQL",
+      "words": 2400,
+      "focus": "承接06.01四张静态教学表，u-a/u-b/c-a/c-b/m-a等均虚构，当前无DB服务。先固定纸上数据和业务目标：合法成员读c-a最新两条，非法成员不可读，消息顺序显式。SQL是向关系表声明要什么结果，不是Go遍历语法；区分模型/查询/执行/权限/持久与设备送达。"
+    },
+    {
+      "title": "二、INSERT与最简单SELECT",
+      "words": 2700,
+      "focus": "从06.01 users/conversations/members/messages的DDL与实际字段开始，显式列名INSERT几行纸上数据，SELECT列名 FROM messages，WHERE conversation_id=c-a，WHERE NULL需要IS NULL，AND/OR括号和字符串常量，投影vs筛选。避免SELECT *泄漏body或新字段，查询结果无顺序保证。纸上逐行筛选。"
+    },
+    {
+      "title": "三、UPDATE DELETE与影响行数",
+      "words": 2600,
+      "focus": "用成员退出更新left_at和消息展示文字变更两个例子，UPDATE SET WHERE、DELETE FROM WHERE；没有WHERE可能批量修改/删除，影响行数必须核对，主外键可拒绝删除。历史消息不应随意物理删除。参数占位符$1/$2和受信用户身份基本介绍，Go database/sql详见06.10，SQL注入完整09.08；事务/并发06.07后置。"
+    },
+    {
+      "title": "四、JOIN让会话、成员和消息相遇",
+      "words": 2900,
+      "focus": "内连接JOIN ON手算m-a m-b m-c与成员表，正确关联键conversation_id AND user_id=u-a；盲目只按conversation_id联结会使3消息×2成员=6行，COUNT被放大。LEFT JOIN无匹配行右侧NULL，WHERE右表条件可让外连接变内连接。当前member快照不能证明历史读权限；先检查服务端认证身份和规则。"
+    },
+    {
+      "title": "五、排序、分页与稳定游标",
+      "words": 2900,
+      "focus": "ORDER BY seq DESC, message_id DESC明确稳定顺序；06.01有UNIQUE(conversation_id,seq)则会话内seq本身唯一，可用seq cursor。LIMIT 2 OFFSET 0/2手算c-a三条m-c,m-b/m-a；插入新消息后OFFSET可能重叠/漏，keyset WHERE seq<cursor for descending. offset大仍计算跳过行；cursor仅用于已定义序号序列和固定过滤条件，不自动给快照一致性。next pages and empty."
+    },
+    {
+      "title": "六、GROUP BY HAVING与聚合",
+      "words": 2700,
+      "focus": "COUNT(*)、COUNT(nullable column)区别，WHERE先筛行GROUP BY分组HAVING筛组；c-a三消息，u-a2/u-b1，JOIN倍增错误。GROUP BY conversation_id、sender_id，HAVING COUNT(*)>=2。COUNT成功受理记录不等于发送尝试/设备送达分母；11.01业务确认口径。"
+    },
+    {
+      "title": "七、子查询、集合操作与窗口的第二遍",
+      "words": 2700,
+      "focus": "从成员可见会话子查询IN或EXISTS（关系步骤，非性能保证）；UNION去重与UNION ALL保留重复的纸上例子，列类型对齐；ROW_NUMBER() OVER(PARTITION BY conversation_id ORDER BY seq DESC)给每会话内消息编号，不改原seq不折叠行；窗口过滤需外层查询。逻辑书写顺序vs概念处理顺序、优化器物理执行后置06.06。"
+    },
+    {
+      "title": "八、完成一条授权历史查询与22道练习",
+      "words": 3000,
+      "focus": "整合身份→当前成员授权→会话筛选→稳定排序→游标分页，静态SQL模板参数$1会话ID/$2受信userID/$3上一页seq，解释首次/后续条件，不由客户端userID赋权；选择返回字段不直接泄露其他用户资料。22题从CRUD、NULL、JOIN倍增到GROUP/HAVING、OFFSET/游标、子查询、UNION/窗口和业务边界，附答案；下一06.03模式演进，06.10 Go访问，09.08注入。无DB/Go/站点执行。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《06.02 SQL 从读写到复杂查询》，面向Go初学者。承接06.01四张关系表与虚构IM身份，从按会话读历史的业务需求进入SQL基础，再深入连接、聚合、分页与子查询/集合/窗口。八节完整课程、22道附反馈练习。坚持同一纸上数据、不混淆确认点与权限；静态教学，不运行数据库、Go或站点，不宣称OpenIM实现细节。\n1. 一、从按会话读历史的问题认识SQL：承接06.01四张静态教学表，u-a/u-b/c-a/c-b/m-a等均虚构，当前无DB服务。先固定纸上数据和业务目标：合法成员读c-a最新两条，非法成员不可读，消息顺序显式。SQL是向关系表声明要什么结果，不是Go遍历语法；区分模型/查询/执行/权限/持久与设备送达。\n2. 二、INSERT与最简单SELECT：从06.01 users/conversations/members/messages的DDL与实际字段开始，显式列名INSERT几行纸上数据，SELECT列名 FROM messages，WHERE conversation_id=c-a，WHERE NULL需要IS NULL，AND/OR括号和字符串常量，投影vs筛选。避免SELECT *泄漏body或新字段，查询结果无顺序保证。纸上逐行筛选。\n3. 三、UPDATE DELETE与影响行数：用成员退出更新left_at和消息展示文字变更两个例子，UPDATE SET WHERE、DELETE FROM WHERE；没有WHERE可能批量修改/删除，影响行数必须核对，主外键可拒绝删除。历史消息不应随意物理删除。参数占位符$1/$2和受信用户身份基本介绍，Go database/sql详见06.10，SQL注入完整09.08；事务/并发06.07后置。\n4. 四、JOIN让会话、成员和消息相遇：内连接JOIN ON手算m-a m-b m-c与成员表，正确关联键conversation_id AND user_id=u-a；盲目只按conversation_id联结会使3消息×2成员=6行，COUNT被放大。LEFT JOIN无匹配行右侧NULL，WHERE右表条件可让外连接变内连接。当前member快照不能证明历史读权限；先检查服务端认证身份和规则。\n5. 五、排序、分页与稳定游标：ORDER BY seq DESC, message_id DESC明确稳定顺序；06.01有UNIQUE(conversation_id,seq)则会话内seq本身唯一，可用seq cursor。LIMIT 2 OFFSET 0/2手算c-a三条m-c,m-b/m-a；插入新消息后OFFSET可能重叠/漏，keyset WHERE seq<cursor for descending. offset大仍计算跳过行；cursor仅用于已定义序号序列和固定过滤条件，不自动给快照一致性。next pages and empty.\n6. 六、GROUP BY HAVING与聚合：COUNT(*)、COUNT(nullable column)区别，WHERE先筛行GROUP BY分组HAVING筛组；c-a三消息，u-a2/u-b1，JOIN倍增错误。GROUP BY conversation_id、sender_id，HAVING COUNT(*)>=2。COUNT成功受理记录不等于发送尝试/设备送达分母；11.01业务确认口径。\n7. 七、子查询、集合操作与窗口的第二遍：从成员可见会话子查询IN或EXISTS（关系步骤，非性能保证）；UNION去重与UNION ALL保留重复的纸上例子，列类型对齐；ROW_NUMBER() OVER(PARTITION BY conversation_id ORDER BY seq DESC)给每会话内消息编号，不改原seq不折叠行；窗口过滤需外层查询。逻辑书写顺序vs概念处理顺序、优化器物理执行后置06.06。\n8. 八、完成一条授权历史查询与22道练习：整合身份→当前成员授权→会话筛选→稳定排序→游标分页，静态SQL模板参数$1会话ID/$2受信userID/$3上一页seq，解释首次/后续条件，不由客户端userID赋权；选择返回字段不直接泄露其他用户资料。22题从CRUD、NULL、JOIN倍增到GROUP/HAVING、OFFSET/游标、子查询、UNION/窗口和业务边界，附答案；下一06.03模式演进，06.10 Go访问，09.08注入。无DB/Go/站点执行。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

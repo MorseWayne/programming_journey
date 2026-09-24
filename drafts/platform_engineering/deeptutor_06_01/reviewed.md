@@ -246,4 +246,4 @@ schema 是列、类型和约束的定义；instance 是当前实际数据行。<
 - [SQLite：外键语义](https://www.sqlite.org/foreignkeys.html)：“引用对象存在”及可空外键的边界。本文 SQL 示例仍采用 PostgreSQL 教学方言。
 - [MongoDB：数据建模](https://www.mongodb.com/docs/manual/data-modeling/)、[嵌入](https://www.mongodb.com/docs/manual/data-modeling/embedding/)与[引用](https://www.mongodb.com/docs/manual/data-modeling/referencing/)：文档、集合、访问模式与增长边界。
 
-下一章 06.02 才从 `SELECT`、`INSERT`、`UPDATE`、`DELETE` 写到连接、聚合和分页。离开本章前，请能不用 SQL 说清 `m-a` 是谁、属于谁、怎样查到、哪种约束能保护它，以及**哪些权限与确认仍不受这张表保护**。
+下一章[06.02 SQL 从读写到复杂查询](../../../src/docs/platform_engineering/curriculum/06_databases/02_sql_queries.md)才从 `SELECT`、`INSERT`、`UPDATE`、`DELETE` 写到连接、聚合和分页。离开本章前，请能不用 SQL 说清 `m-a` 是谁、属于谁、怎样查到、哪种约束能保护它，以及**哪些权限与确认仍不受这张表保护**。
