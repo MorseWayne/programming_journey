@@ -1,0 +1,29 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_4f35112bca",
+  "page_id": "pg_2e421ec2a9",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "0bb59283e644584bd5e050e43d80ade5ae73e7bbf022de6ffc026d77e96c5c31",
+  "original_sha256": "e1d28333a631c10a10ed4f88720a49cec97aead48bab5e6780f69109ec39bcdb",
+  "reviewed_sha256": "a647ff9f7c4744e2f038af76d1bac14df891744bf6cc31685345f872d37e8baf",
+  "original_characters": 35445,
+  "reviewed_characters": 9125,
+  "reviewed_chinese_characters": 3527,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md",
+  "course_sha256": "108570bed90e0dfee4a8dac511ca190842897ab0bff8eda479919432183ebfdf",
+  "source_reference": {
+    "primary_sources": ["https://pkg.go.dev/sort#Search", "https://algs4.cs.princeton.edu/11model/", "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/"],
+    "upstream_implementation_claims": false,
+    "openim_future_reading": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/sync_msg.go"
+  }
+}

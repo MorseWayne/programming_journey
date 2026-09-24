@@ -1,0 +1,13 @@
+{
+  "chapter": "02.03",
+  "stage": "S1",
+  "business_scope": "boundary position in a virtual IM local sorted-key slice; no network catch-up, authorization, history completeness or OpenIM protocol guarantee",
+  "prerequisites": ["01.01–01.05 loops, slices and structs", "02.01 operation-count model and invariant intuition", "02.02 linear order and current index versus stable identity"],
+  "first_pass": ["linear scan without ordering", "sorted input and monotonic predicate", "half-open unclassified array interval", "lower bound with initialization, preservation and termination"],
+  "second_pass": ["upper bound and equal-key range", "sort.Search", "O(log(n+1)) cost conditions", "duplicate-key cursor and completeness boundaries"],
+  "search_contract": {"input": "nondecreasing []int64 within one teaching conversation", "lower_bound": "first a[i] >= target, else n", "upper_bound": "first a[i] > target, else n", "unclassified_indices": "[lo, hi)", "answer_boundary": "[lo, hi]", "empty": "returns 0", "invalid_unsorted_input": "outside binary-search precondition"},
+  "not_yet_prerequisites": ["02.04 hashing", "02.05 sorting implementation", "distributed cursor and replay protocol", "server-side history completeness proof"],
+  "next_chapter": "02.04 hashing and sets for stable message-ID lookup and bounded local deduplication",
+  "upstream_inspection": "OpenIM sync_msg.go is a future fixed-version reading target; no implementation fact is asserted.",
+  "shared_integration_pending": []
+}

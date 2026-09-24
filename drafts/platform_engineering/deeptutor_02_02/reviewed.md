@@ -389,4 +389,4 @@ C、D、E、F；`head=2,count=4,tail=2`，已满。</details>
 - [MIT 6.006 课程笔记目录](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/)用于核对数组、动态数组与成本模型。
 - [Go 切片内部说明](https://go.dev/blog/slices-intro)与[container/list](https://pkg.go.dev/container/list)用于核对 Go 表示边界。
 
-下一章 02.03 将从顺序结构进入查找：先按稳定身份线性搜索，再在明确排序与区间约定后学习二分和循环不变量。本章没有审计 OpenIM 固定版本的具体队列；后续源码阅读须分别核对容量、状态和确认语义。
+下一章[02.03 搜索与循环不变量](../../../src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md)从顺序结构进入查找：先线性扫描，再在明确排序与区间约定后学习二分。本章没有审计 OpenIM 固定版本的具体队列；后续源码阅读须分别核对容量、状态和确认语义。

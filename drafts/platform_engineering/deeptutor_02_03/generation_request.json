@@ -1,0 +1,72 @@
+{
+  "code": "02.03",
+  "title": "搜索与循环不变量：在有序消息序号中定位补拉起点",
+  "chapter_id": "ch_search_invariants",
+  "summary": "承接线性结构与成本模型，从顺序扫描到半开区间二分查找，明确排序、边界、重复键与终止条件。用虚构 IM 已排序消息序号求补拉起点，不声称真实同步协议或 OpenIM 实现。",
+  "objectives": [
+    "区分按消息ID查询和按序号找起点",
+    "在无排序前提时使用线性扫描并说明成本",
+    "用半开区间[lo,hi)表达候选范围",
+    "证明二分过程中未排除正确答案",
+    "区分lower_bound和upper_bound及重复键处理",
+    "处理空输入、首尾越界与不存在结果",
+    "解释O(log n)比较次数的前提",
+    "把补拉起点与实际历史完整性分开"
+  ],
+  "sources": [
+    "https://pkg.go.dev/sort#Search",
+    "https://algs4.cs.princeton.edu/11model/",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/"
+  ],
+  "sections": [
+    {
+      "title": "一、从顺序查找到补拉起点问题",
+      "words": 2000,
+      "focus": "先修01.01-01.05、02.01-02.02：变量循环函数切片结构体指针、O记号、队列顺序。区分稳定消息ID、切片下标、每会话教学序号与最后已见位置。虚构c-a的序号[1,3,5,8,13]，客户端lastSeen=5要找首个>5的位置；此时只有本地有序切片，不发生网络请求，不能推断实际OpenIM协议。先给未排序时线性扫描的完整Go程序，返回index与bool，空输入处理。"
+    },
+    {
+      "title": "二、线性扫描的正确性、成本和输入范围",
+      "words": 1800,
+      "focus": "从for i,seq:=range解释逐项比较、首次满足谓词、返回n哨兵与(值,bool)区别。无排序时找第一个位置满足条件O(n)，但若要全部大于target项不能只取后缀，排序是二分的前置。定义循环不变量：扫描前i项均未满足；初始化、保持、终止逐步讲。比较固定宽整数O(1)教学模型，消息正文比较成本不同。"
+    },
+    {
+      "title": "三、排序前提与半开区间[lo,hi)",
+      "words": 2100,
+      "focus": "先解释非降序允许重复、不要求本章先会排序算法；原始消息先满足同一会话、序号有效、非降序这一函数前置，不从time字符串推断。定义[lo,hi)包含lo不含hi，初始[0,n)，候选数hi-lo，空区间lo==hi，n也可作为插入位置。对[1,3,3,6,8,11]画下标表，区分下标和seq值；不要用n位置取值。"
+    },
+    {
+      "title": "四、二分的中点、排除依据与不变量",
+      "words": 2400,
+      "focus": "求首个a[i]>=target的lower_bound，维护i<lo均<target，i>=hi均>=target（在已排序前提下）；mid=lo+(hi-lo)/2。若a[mid]<target则lo=mid+1，否则hi=mid。逐步表a=[1,3,3,6,8,11],target3，得到1；每次区间严格缩小，终止lo==hi。完整Go函数lowerBound([]int64,int64)int，空数组返回0，target大于末尾返回n，target小于首项返回0。分别解释初始化保持结束，不能说只测几个输入就证明。"
+    },
+    {
+      "title": "五、重复键、upper_bound与精确命中",
+      "words": 2200,
+      "focus": "lower_bound返回首个>=target；upper_bound返回首个>target，谓词不同。对[1,3,3,6,8,11] target3：lower1 upper3，半开等值段[1,3)；target4两者3；target12两者6。要找精确ID或序号，先lower再检查idx<len且a[idx]==target，未找到不能把插入点当已存在消息。IM补拉lastSeen=5需要upper_bound(5)；若按至少5则lower_bound。教学重复键只为算法，不声称真实服务允许重复序号。"
+    },
+    {
+      "title": "六、从Go函数到标准库sort.Search",
+      "words": 2100,
+      "focus": "给完整独立Go程序package/import/main：firstGreater(seq []int64,lastSeen int64) int 使用sort.Search(len(seq),func(i int)bool{return seq[i]>lastSeen})；说明谓词必须在下标上先false后true，即输入已排序，返回n表示没有符合位置。用case n0、lastSeen小于首、等于中项、大于末项。解释sort.Search只定位，不验证排序、历史连续性、权限或已读。函数值与闭包先修来自01.03。"
+    },
+    {
+      "title": "七、复杂度、终止与业务失败边界",
+      "words": 2100,
+      "focus": "二分每轮候选长度至少缩小约半，比较次数O(log(n+1))且固定宽seq比较O(1)前提；线性O(n)。未排序反例例如[1,8,3,6]会破坏谓词单调性，即使程序结束也可能给错结果；错误输入排序检查本身O(n)。缺号[1,3,5]可能是合法过滤也可能缺历史，不能从索引位置推出无丢消息。过期lastSeen、会话不匹配、重复序号、权限变化是上层规则，本章不解决。"
+    },
+    {
+      "title": "八、综合：补拉位置决策表和分层练习",
+      "words": 2500,
+      "focus": "用虚构c-a已排序seq[1,3,3,6,8,11]和lastSeen变化给完整决策表，明确通用重复排序键与真实消息序号身份分开。至少18道反馈练习：空数组、target首尾、重复lower/upper、等值区间、mid、半开区间、n哨兵、精确不存在、循环不变量、终止、未排序反例、O前提、sort.Search谓词单调、IM补拉局部结论/网络保证。附官方sort.Search、Princeton、MIT来源，OpenIM固定sync_msg.go只作后续阅读问题，不虚构序号同步实现。下一章02.04哈希。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《02.03 搜索与循环不变量：在有序消息序号中定位补拉起点》。面向Go初学者，承接02.01与02.02，先修逐个解释，由浅到深。所有IM身份、序号和规则是虚构教学设定；本次只写静态课程，不运行代码或上游。\n1. 一、从顺序查找到补拉起点问题：先修01.01-01.05、02.01-02.02：变量循环函数切片结构体指针、O记号、队列顺序。区分稳定消息ID、切片下标、每会话教学序号与最后已见位置。虚构c-a的序号[1,3,5,8,13]，客户端lastSeen=5要找首个>5的位置；此时只有本地有序切片，不发生网络请求，不能推断实际OpenIM协议。先给未排序时线性扫描的完整Go程序，返回index与bool，空输入处理。\n2. 二、线性扫描的正确性、成本和输入范围：从for i,seq:=range解释逐项比较、首次满足谓词、返回n哨兵与(值,bool)区别。无排序时找第一个位置满足条件O(n)，但若要全部大于target项不能只取后缀，排序是二分的前置。定义循环不变量：扫描前i项均未满足；初始化、保持、终止逐步讲。比较固定宽整数O(1)教学模型，消息正文比较成本不同。\n3. 三、排序前提与半开区间[lo,hi)：先解释非降序允许重复、不要求本章先会排序算法；原始消息先满足同一会话、序号有效、非降序这一函数前置，不从time字符串推断。定义[lo,hi)包含lo不含hi，初始[0,n)，候选数hi-lo，空区间lo==hi，n也可作为插入位置。对[1,3,3,6,8,11]画下标表，区分下标和seq值；不要用n位置取值。\n4. 四、二分的中点、排除依据与不变量：求首个a[i]>=target的lower_bound，维护i<lo均<target，i>=hi均>=target（在已排序前提下）；mid=lo+(hi-lo)/2。若a[mid]<target则lo=mid+1，否则hi=mid。逐步表a=[1,3,3,6,8,11],target3，得到1；每次区间严格缩小，终止lo==hi。完整Go函数lowerBound([]int64,int64)int，空数组返回0，target大于末尾返回n，target小于首项返回0。分别解释初始化保持结束，不能说只测几个输入就证明。\n5. 五、重复键、upper_bound与精确命中：lower_bound返回首个>=target；upper_bound返回首个>target，谓词不同。对[1,3,3,6,8,11] target3：lower1 upper3，半开等值段[1,3)；target4两者3；target12两者6。要找精确ID或序号，先lower再检查idx<len且a[idx]==target，未找到不能把插入点当已存在消息。IM补拉lastSeen=5需要upper_bound(5)；若按至少5则lower_bound。教学重复键只为算法，不声称真实服务允许重复序号。\n6. 六、从Go函数到标准库sort.Search：给完整独立Go程序package/import/main：firstGreater(seq []int64,lastSeen int64) int 使用sort.Search(len(seq),func(i int)bool{return seq[i]>lastSeen})；说明谓词必须在下标上先false后true，即输入已排序，返回n表示没有符合位置。用case n0、lastSeen小于首、等于中项、大于末项。解释sort.Search只定位，不验证排序、历史连续性、权限或已读。函数值与闭包先修来自01.03。\n7. 七、复杂度、终止与业务失败边界：二分每轮候选长度至少缩小约半，比较次数O(log(n+1))且固定宽seq比较O(1)前提；线性O(n)。未排序反例例如[1,8,3,6]会破坏谓词单调性，即使程序结束也可能给错结果；错误输入排序检查本身O(n)。缺号[1,3,5]可能是合法过滤也可能缺历史，不能从索引位置推出无丢消息。过期lastSeen、会话不匹配、重复序号、权限变化是上层规则，本章不解决。\n8. 八、综合：补拉位置决策表和分层练习：用虚构c-a已排序seq[1,3,3,6,8,11]和lastSeen变化给完整决策表，明确通用重复排序键与真实消息序号身份分开。至少18道反馈练习：空数组、target首尾、重复lower/upper、等值区间、mid、半开区间、n哨兵、精确不存在、循环不变量、终止、未排序反例、O前提、sort.Search谓词单调、IM补拉局部结论/网络保证。附官方sort.Search、Princeton、MIT来源，OpenIM固定sync_msg.go只作后续阅读问题，不虚构序号同步实现。下一章02.04哈希。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

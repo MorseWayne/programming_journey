@@ -161,6 +161,7 @@ export default sidebar({
             "curriculum/02_algorithms/",
             "curriculum/02_algorithms/01_discrete_cost",
             "curriculum/02_algorithms/02_linear_structures",
+            "curriculum/02_algorithms/03_search_invariants",
             "curriculum/02_algorithms/core"
           ]
         },
