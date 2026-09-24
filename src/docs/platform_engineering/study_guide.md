@@ -19,7 +19,7 @@ date: 2026-09-23
 
 A 篇讲清语法和代码组织；B 篇讲清后端运行与协作的基础；C 篇讨论可靠性与平台机制。D05–D06 服务于主线的方案与综合实践，D01–D04 属于 AI 扩展。每次只选当前阶段需要的衔接内容，尚缺的长篇讲解按内容状态表记录。
 
-集合基础之后，还可分别进入 [02.01 数学与成本](./curriculum/02_algorithms/01_discrete_cost.md)和 [03.01 数据与存储](./curriculum/03_systems/01_data_instructions_storage.md)。它们自行解释所需数学和系统定义，先完成第一遍的小模型，再回访概率、证明和缓存深化部分。
+集合基础之后，还可分别进入 [02.01 数学与成本](./curriculum/02_algorithms/01_discrete_cost.md)和 [03.01 数据与存储](./curriculum/03_systems/01_data_instructions_storage.md)。它们自行解释所需数学和系统定义；学完 01.05 的指针与 02.01 的成本模型后，再读[02.02 线性结构](./curriculum/02_algorithms/02_linear_structures.md)，先推导容量 4 的队列状态，再读不变量和复杂度。
 
 ## 初学时先完成什么
 

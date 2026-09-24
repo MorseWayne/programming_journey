@@ -160,6 +160,7 @@ export default sidebar({
           "children": [
             "curriculum/02_algorithms/",
             "curriculum/02_algorithms/01_discrete_cost",
+            "curriculum/02_algorithms/02_linear_structures",
             "curriculum/02_algorithms/core"
           ]
         },

@@ -1,0 +1,73 @@
+{
+  "code": "02.02",
+  "title": "线性结构：为有限 IM 发送队列选择表示",
+  "chapter_id": "ch_linear_structures",
+  "summary": "承接切片、指针和 02.01 成本模型，从线性次序进入数组、链表、栈、队列与固定容量环形缓冲。用虚构 IM 的有限待处理任务说明满队列、出队和内存保留，不建立网络或并发保证。",
+  "objectives": [
+    "区分线性次序与业务消息身份",
+    "解释数组切片与链式节点的不同表示和成本",
+    "用不变量解释栈的LIFO和队列的FIFO",
+    "区分Go切片截短与底层数组保留",
+    "推导固定容量环形队列的head/count/tail与满空条件",
+    "逐步追踪回绕、出队清零与容量拒绝",
+    "比较数组、链表和环形缓冲在IM任务中的取舍",
+    "分清数据结构操作、真实排队和消息交付"
+  ],
+  "sources": [
+    "https://algs4.cs.princeton.edu/13stacks/",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/",
+    "https://pkg.go.dev/container/list",
+    "https://go.dev/blog/slices-intro"
+  ],
+  "sections": [
+    {
+      "title": "一、线性次序与IM任务身份",
+      "words": 1900,
+      "focus": "面向Go初学者，先修01.01-01.05、02.01；会切片/struct/指针/for，成本模型从02.01引入。虚构c-a任务t-a/t-b/t-c，任务身份不是切片下标、消息身份或投递保证。定义线性次序、序列、操作集合、访问位置，区分当前排列与业务序号。所有程序静态推导，不运行。"
+    },
+    {
+      "title": "二、数组和切片：顺序访问与成本",
+      "words": 2200,
+      "focus": "复习固定数组、slice header、len/cap、共享底层数组、append可能新分配，不能把Go增长倍率当保证。成本表：已知下标O(1)在选定机器模型，查找任意消息O(n)且字符串比较随长度，末尾append摊还O(1)需假设/Go细节谨慎，前端移除若移动n项O(n)。用表追踪q=q[1:]后len下降但底层容量/引用可能保留，出队先零旧槽，周期性新分配/环形缓冲解决长寿命持有。不要用runtime内存测量冒充。"
+    },
+    {
+      "title": "三、链式节点：地址、连接和访问代价",
+      "words": 2100,
+      "focus": "用type node struct{task Task; next *node}，head/tail，给3节点图，解释nil终点、插头/删头、已知尾插尾O(1)但需维护tail。中间查找仍O(n)，节点分配、指针与局部性成本，不能说链表一定比切片快；Go container/list只作标准库对照不提前泛型/反射。边界空链、单节点删除后head/tail都nil。完整小程序或片段明确位置。"
+    },
+    {
+      "title": "四、栈与队列：行为先于实现",
+      "words": 2100,
+      "focus": "定义ADT抽象数据类型，以Push/Pop/Peek LIFO和Enqueue/Dequeue FIFO分别给c-a任务入出顺序，空结构结果显式(bool)，不以panic或零值伪造成功。栈可用slice末尾push/pop，pop清零以减少保留；队列朴素slice前端出队会导致保留和head增长，比较链表与环形缓冲。栈用于撤销最近本地编辑的教学模型，队列用于先到先处理的待处理任务；FIFO不保证网络到达顺序。"
+    },
+    {
+      "title": "五、固定容量环形队列：从图到不变量",
+      "words": 2400,
+      "focus": "定义capacity=4、slots[4]Task、head为最老项位置、count有效项数、tail=(head+count)%capacity为下一个入队槽，约束0<=count<=capacity，空count0满countcapacity，不用head==tail判满空。逐步表Enq A/B/C、Deq A/B、Enq D/E/F使回绕且满，再Deq直到空；计算每一步head/count/tail与slots，注意槽内旧值要清零。capacity>0构造检查，模零禁止。"
+    },
+    {
+      "title": "六、Go顺序环形实现与失败合同",
+      "words": 2300,
+      "focus": "完整独立Go程序含package/import/main、Task、RingQueue、NewRingQueue(capacity int)(*RingQueue,error)、Enqueue(Task) bool、Dequeue()(Task,bool)、Len/Cap，构造拒绝非正容量；入队满返回false且队列不改，出队空返回零值,false，成功出队将slots[head]=Task{}以解除引用。循环和模运算逐行解释；capacity4顺序A/B/C then two Deq, D/E/F wrap满，输出标预期。明确单线程教学，不含Mutex、goroutine、网络或持久。"
+    },
+    {
+      "title": "七、第二遍：不变量、复杂度、局部性与容量决策",
+      "words": 2200,
+      "focus": "对Enqueue/Dequeue证明head/count约束初始化/保持/终止，小表列空/单/满/回绕。操作成本O(1)在固定容量与固定宽任务引用模型；生成任务、字符串复制、等待时间不因此O(1)。链表尾指针失效和环形旧槽未清零是反例。有限队列满时选择拒绝/丢弃/阻塞/扩容是业务策略，本章只实现拒绝；实际IM不能悄悄丢消息。比较容量4到高峰5时行为，不以队列长度预测用户已收到。"
+    },
+    {
+      "title": "八、综合选择与分层练习",
+      "words": 2500,
+      "focus": "比较连续切片、链表、环形缓冲在历史查询/撤销/有限发送队列的适配前提、访问成本、分配、局部性、清理、容量；至少18道带反馈折叠练习，含下标非ID、切片共享、空/满、wrap、tail公式、模零、槽清零、单链头尾、append扩容、FIFO不等于发送完成、容量策略与业务保证。官方Go slice/container/list、Princeton、MIT来源。OpenIM只作为固定源码后续阅读问题，不声称已审计其队列策略或可靠性。下一章02.03搜索与循环不变量。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《02.02 线性结构：为有限 IM 发送队列选择表示》。面向Go初学者，承接01.04/01.05和02.01，由浅到深，内容丰富。所有IM身份、任务和容量是虚构教学设定；本次只写静态课程，不运行代码或上游。\n1. 一、线性次序与IM任务身份：面向Go初学者，先修01.01-01.05、02.01；会切片/struct/指针/for，成本模型从02.01引入。虚构c-a任务t-a/t-b/t-c，任务身份不是切片下标、消息身份或投递保证。定义线性次序、序列、操作集合、访问位置，区分当前排列与业务序号。所有程序静态推导，不运行。\n2. 二、数组和切片：顺序访问与成本：复习固定数组、slice header、len/cap、共享底层数组、append可能新分配，不能把Go增长倍率当保证。成本表：已知下标O(1)在选定机器模型，查找任意消息O(n)且字符串比较随长度，末尾append摊还O(1)需假设/Go细节谨慎，前端移除若移动n项O(n)。用表追踪q=q[1:]后len下降但底层容量/引用可能保留，出队先零旧槽，周期性新分配/环形缓冲解决长寿命持有。不要用runtime内存测量冒充。\n3. 三、链式节点：地址、连接和访问代价：用type node struct{task Task; next *node}，head/tail，给3节点图，解释nil终点、插头/删头、已知尾插尾O(1)但需维护tail。中间查找仍O(n)，节点分配、指针与局部性成本，不能说链表一定比切片快；Go container/list只作标准库对照不提前泛型/反射。边界空链、单节点删除后head/tail都nil。完整小程序或片段明确位置。\n4. 四、栈与队列：行为先于实现：定义ADT抽象数据类型，以Push/Pop/Peek LIFO和Enqueue/Dequeue FIFO分别给c-a任务入出顺序，空结构结果显式(bool)，不以panic或零值伪造成功。栈可用slice末尾push/pop，pop清零以减少保留；队列朴素slice前端出队会导致保留和head增长，比较链表与环形缓冲。栈用于撤销最近本地编辑的教学模型，队列用于先到先处理的待处理任务；FIFO不保证网络到达顺序。\n5. 五、固定容量环形队列：从图到不变量：定义capacity=4、slots[4]Task、head为最老项位置、count有效项数、tail=(head+count)%capacity为下一个入队槽，约束0<=count<=capacity，空count0满countcapacity，不用head==tail判满空。逐步表Enq A/B/C、Deq A/B、Enq D/E/F使回绕且满，再Deq直到空；计算每一步head/count/tail与slots，注意槽内旧值要清零。capacity>0构造检查，模零禁止。\n6. 六、Go顺序环形实现与失败合同：完整独立Go程序含package/import/main、Task、RingQueue、NewRingQueue(capacity int)(*RingQueue,error)、Enqueue(Task) bool、Dequeue()(Task,bool)、Len/Cap，构造拒绝非正容量；入队满返回false且队列不改，出队空返回零值,false，成功出队将slots[head]=Task{}以解除引用。循环和模运算逐行解释；capacity4顺序A/B/C then two Deq, D/E/F wrap满，输出标预期。明确单线程教学，不含Mutex、goroutine、网络或持久。\n7. 七、第二遍：不变量、复杂度、局部性与容量决策：对Enqueue/Dequeue证明head/count约束初始化/保持/终止，小表列空/单/满/回绕。操作成本O(1)在固定容量与固定宽任务引用模型；生成任务、字符串复制、等待时间不因此O(1)。链表尾指针失效和环形旧槽未清零是反例。有限队列满时选择拒绝/丢弃/阻塞/扩容是业务策略，本章只实现拒绝；实际IM不能悄悄丢消息。比较容量4到高峰5时行为，不以队列长度预测用户已收到。\n8. 八、综合选择与分层练习：比较连续切片、链表、环形缓冲在历史查询/撤销/有限发送队列的适配前提、访问成本、分配、局部性、清理、容量；至少18道带反馈折叠练习，含下标非ID、切片共享、空/满、wrap、tail公式、模零、槽清零、单链头尾、append扩容、FIFO不等于发送完成、容量策略与业务保证。官方Go slice/container/list、Princeton、MIT来源。OpenIM只作为固定源码后续阅读问题，不声称已审计其队列策略或可靠性。下一章02.03搜索与循环不变量。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

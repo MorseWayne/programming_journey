@@ -13,7 +13,7 @@ date: 2026-09-23
 
 已完成的新章还包括：[01.04 集合与文本](./curriculum/01_go/04_collections_text.md)定位数组、切片、共享、UTF-8 与字素簇；[10.01 可验证需求](./curriculum/10_engineering/01_verifiable_requirements.md)定位契约、状态、决策表和边界用例；[10.02 测试方法](./curriculum/10_engineering/02_testing_basics.md)定位测试入口、表驱动、状态断言和证据边界；[10.03 Git 状态](./curriculum/10_engineering/03_git_state.md)定位工作区、索引、提交和远端。
 
-第二批新增：[01.05](./curriculum/01_go/05_maps_structs_pointers.md)定位 map、对象身份、指针和复制；[02.01](./curriculum/02_algorithms/01_discrete_cost.md)定位集合、计数、渐近界与概率前提；[03.01](./curriculum/03_systems/01_data_instructions_storage.md)定位位、字节、地址、缓存与资源预算。新增 [01.06](./curriculum/01_go/06_methods_interfaces.md)定位方法与接口；[01.07](./curriculum/01_go/07_errors_resources.md)定位错误与资源；[01.08](./curriculum/01_go/08_standard_library.md)定位 JSON、时间和文件边界；[01.09](./curriculum/01_go/09_packages_evolution.md)定位包、导入路径、模块、循环依赖和兼容演进。
+第二批新增：[01.05](./curriculum/01_go/05_maps_structs_pointers.md)定位 map、对象身份、指针和复制；[02.01](./curriculum/02_algorithms/01_discrete_cost.md)定位集合、计数、渐近界与概率前提；[03.01](./curriculum/03_systems/01_data_instructions_storage.md)定位位、字节、地址、缓存与资源预算。后续 [02.02](./curriculum/02_algorithms/02_linear_structures.md)定位切片、链表、栈、队列与环形缓冲；[01.06](./curriculum/01_go/06_methods_interfaces.md)至[01.09](./curriculum/01_go/09_packages_evolution.md)依次深化方法、错误、文件和包。
 
 ## Go 语法与工程基础
 

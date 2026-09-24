@@ -1,0 +1,13 @@
+{
+  "chapter": "02.02",
+  "stage": "S1",
+  "business_scope": "sequential bounded in-memory teaching queue for virtual IM tasks; no network, durable queue, concurrent safety or delivery guarantee",
+  "prerequisites": ["01.04 slices and backing arrays", "01.05 structs and pointers", "02.01 discrete objects, operation-count model and O notation"],
+  "first_pass": ["linear order versus task identity", "slice and backing-array retention", "singly linked head/tail invariants", "stack LIFO and queue FIFO"],
+  "second_pass": ["fixed-capacity ring with head/count/tail", "capacity-four wraparound table", "operation invariants and cost scope", "full-queue business policy"],
+  "ring_contract": {"capacity": 4, "empty": "count == 0", "full": "count == capacity", "tail": "(head + count) % capacity", "full_enqueue": "returns false without mutation", "empty_dequeue": "returns zero Task and false", "dequeue_cleanup": "sets old slot to Task{}"},
+  "not_yet_prerequisites": ["02.03 binary search and full interval proof", "02.04 hash indexing", "05 concurrent synchronization", "07 durable queues and confirmation", "08 distributed delivery guarantees"],
+  "next_chapter": "02.03 search and loop invariants using ordered message sequence",
+  "upstream_inspection": "No OpenIM implementation fact is asserted in this chapter; only future reading questions are listed.",
+  "shared_integration_pending": []
+}
