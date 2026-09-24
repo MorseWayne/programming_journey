@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[09.01 需求与应用边界](./01_requirements_boundaries.md)已完成。它承接 10.01 的独立预期、04.03 的 HTTP/WS 确认点与 05.01–05.03 的并发前置，以虚构 IM 的读历史和发送消息为双用例，定义可信主体、领域/传输边界和内存受理状态。[09.02 HTTP 接口设计](./02_http_api_contract.md)进一步约定 GET/POST、分页、游标、过滤、状态、错误体和三种限额。[09.03 程序组织](./03_program_organization.md)将合同分给 handler、应用服务、领域与内存适配器。[09.04 请求处理链](./04_request_pipeline.md)沿一次 POST 讲中间件、取消、panic、响应提交和日志证据。[09.05 数据访问与迁移](./05_data_access_migration.md)把业务合同接到数据访问、事务与兼容迁移，并对照固定 OpenIM 源码的入队与 MongoDB 消费边界。五章各 8 节、22 道练习；09.06–09.12 仍按下方设计展开。
+[09.01 需求与应用边界](./01_requirements_boundaries.md)已完成。它承接 10.01 的独立预期、04.03 的 HTTP/WS 确认点与 05.01–05.03 的并发前置，以虚构 IM 的读历史和发送消息为双用例，定义可信主体、领域/传输边界和内存受理状态。[09.02 HTTP 接口设计](./02_http_api_contract.md)进一步约定 GET/POST、分页、游标、过滤、状态、错误体和三种限额。[09.03 程序组织](./03_program_organization.md)将合同分给 handler、应用服务、领域与内存适配器。[09.04 请求处理链](./04_request_pipeline.md)沿一次 POST 讲中间件、取消、panic、响应提交和日志证据。[09.05 数据访问与迁移](./05_data_access_migration.md)把业务合同接到数据访问、事务与兼容迁移，并对照固定 OpenIM 源码的入队与 MongoDB 消费边界。[09.06 浏览器与客户端边界](./06_browser_client_boundary.md)从表单、Cookie/Session 进入同源、CORS、CSRF、WebSocket 来源和私有历史缓存。六章各 8 节、22 道练习；09.07–09.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -47,7 +47,7 @@ date: 2026-09-23
 |---|---|---|
 | [09.04 请求处理链](./04_request_pipeline.md) | 中间件、上下文、超时、panic 边界、追踪与响应提交。 | 跟踪请求进入、校验、取消和响应的顺序，解释中间件与错误传播边界。 |
 | [09.05 数据访问与迁移](./05_data_access_migration.md) | 连接池、参数化 SQL、事务、约束、版本迁移与测试数据。 | 处理消息数据访问中的参数、资源、冲突、迁移与结果未知，保留领域职责。 |
-| 09.06 浏览器与客户端边界 | HTML 模板、表单、Cookie、Session、CORS、CSRF 与缓存。 | 区分Cookie/Session、跨源读取、请求伪造与会话授权，设计浏览器客户端边界。 |
+| [09.06 浏览器与客户端边界](./06_browser_client_boundary.md) | HTML 模板、表单、Cookie、Session、CORS、CSRF 与缓存。 | 区分Cookie/Session、跨源读取、请求伪造与会话授权，设计浏览器客户端边界。 |
 
 ## 工程层
 

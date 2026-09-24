@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_1dcf3f3a27",
+  "page_id": "pg_bc2023251e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/form",
+      "https://pkg.go.dev/html/template",
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies",
+      "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy",
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS",
+      "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html",
+      "https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html",
+      "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control",
+      "https://pkg.go.dev/net/http"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "c4ce618e4690a7392c6e676a41e9feaa72d957910a22bbed734de32b29cc701b",
+  "original_characters": 35647,
+  "generation_request_sha256": "04defb64c0e970ddb26a3d689a89f625bbcbcbdcc4994a7acff8936f07882837",
+  "reviewed_sha256": "e8b305a2035a641dbbca662010ce1789edf67a0bb03079afae58e39e66b2d563",
+  "reviewed_characters": 9676,
+  "reviewed_chinese_characters": 3822,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/06_browser_client_boundary.md",
+  "course_sha256": "70db86968892c02ac3a9f06b8f2b9761ca23c21e50c6bacf2cfab277fe075ade"
+}

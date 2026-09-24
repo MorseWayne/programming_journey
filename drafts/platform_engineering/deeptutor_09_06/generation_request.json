@@ -1,0 +1,79 @@
+{
+  "code": "09.06",
+  "title": "浏览器与客户端边界：Cookie、跨源与IM请求",
+  "chapter_id": "ch_browser_client_boundary",
+  "summary": "面向Go初学者从虚构IM浏览器打开会话历史和提交消息出发，先讲HTML表单/Go模板与浏览器请求，再解释Cookie/Session、同源/CORS、CSRF、WebSocket Origin、私有缓存和登出；区分浏览器与原生客户端及身份、权限、交付确认，静态教材不运行服务。",
+  "objectives": [
+    "描述浏览器表单、fetch与WebSocket三条请求路径",
+    "解释HTML表单和html/template文本转义职责",
+    "区分Cookie与服务器Session及Cookie属性",
+    "用scheme/host/port判断同源与跨源",
+    "解释CORS是浏览器读取许可而非认证或CSRF防护",
+    "构造已登录浏览器被诱导发消息的CSRF时序",
+    "说明WebSocket握手Origin和逐消息授权",
+    "为私有历史选择缓存与登出证据边界"
+  ],
+  "sources": [
+    "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/form",
+    "https://pkg.go.dev/html/template",
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies",
+    "https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Same-origin_policy",
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html",
+    "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control",
+    "https://pkg.go.dev/net/http"
+  ],
+  "sections": [
+    {
+      "title": "一、从u-a在浏览器打开c-a历史认识客户端边界",
+      "words": 2300,
+      "focus": "Go初学者承接04.03HTTP/WS和09.01–09.05，虚构c-a/u-a/m-a。区分浏览器标签页、同源站点、HTTP请求、服务端数据、原生移动客户端与网络脚本；把读历史、发消息、长连接各画一条路径。静态课程无浏览器或IM服务运行。"
+    },
+    {
+      "title": "二、HTML表单与Go模板的基础",
+      "words": 2600,
+      "focus": "先讲<form action method>、GET查询/POST状态变更、表单编码和Go handler读参数，前端校验仅改善体验，服务端仍校验。HTML模板把不可信聊天正文放入文本上下文需上下文转义，html/template自动转义但不等于任意富文本净化；切勿用template.HTML包装不可信正文。完整XSS后置09.08。"
+    },
+    {
+      "title": "三、Cookie、服务端Session与浏览器自动行为",
+      "words": 2800,
+      "focus": "Set-Cookie/Cookie往返，session cookie携带不可预测的opaque id，服务端映射u-a并验证失效；Cookie本身不是授权，c-a每次需成员校验。Secure/HttpOnly/SameSite/Path/Domain/过期基本含义，SameSite site不同于origin，不能把HttpOnly当XSS万能药或SameSite当完整CSRF防护。登出要服务端使session失效。"
+    },
+    {
+      "title": "四、同源策略与CORS怎样影响读取",
+      "words": 2800,
+      "focus": "origin=scheme host port，举app.example.test和api.example.test不同源、不同port也不同源。SOP限制跨源脚本读响应，不是让攻击者无法发送所有跨源请求。CORS是服务端给浏览器的跨源读取许可，preflight对某些方法/头先OPTIONS；credentialed fetch需要include和显式Allow-Origin及Allow-Credentials，不能*；Vary Origin when dynamic. 非浏览器Go客户端不靠CORS防越权。"
+    },
+    {
+      "title": "五、CSRF：浏览器替已登录用户发消息",
+      "words": 3000,
+      "focus": "u-a已登录有cookie，访问恶意站点后浏览器可能携cookie向IM提交状态改变请求；即使攻击脚本读不到响应，服务器可能已改状态。防护：GET无状态变更、CSRF token或可信Origin/FetchMetadata策略、SameSite作为辅助、每次应用资源授权；自定义头/CORS预检不能当所有客户端保证。区分CSRF与XSS/认证/授权。用纸上时序和反例。"
+    },
+    {
+      "title": "六、WebSocket握手与长连接权限",
+      "words": 2700,
+      "focus": "浏览器WebSocket握手可能带Cookie，服务端检查Origin allowlist，CORS规则不是WebSocket权限证明；握手认证只能建立连接身份，之后每条发送/订阅仍检查会话权限和消息大小，令牌退出/撤销及长连接状态后置09.07/S5。跨站WebSocket劫持纸上风险，非浏览器客户端Origin可伪造所以需要认证。"
+    },
+    {
+      "title": "七、缓存、历史隐私与注销",
+      "words": 2600,
+      "focus": "Cache-Control private vs no-store vs no-cache，私有IM历史尽量控制敏感响应，no-store阻止缓存保存但不能擦除旧缓存或屏幕截图；静态文件可以缓存而历史/令牌不同。注销服务器撤销session并让浏览器过期Cookie，已经渲染到DOM的历史仍需UI清理，其他设备session与业务权限需单独规则。敏感数据不进URL/日志。"
+    },
+    {
+      "title": "八、双客户端边界表与22道练习",
+      "words": 3000,
+      "focus": "交付浏览器表单/fetch/WebSocket与原生Go客户端三条请求线、cookie/session/CSRF/CORS对照、历史缓存与注销政策、22题从基础表单origin到凭据跨源/CSRF/WS/缓存/IM成员授权附反馈。来源MDN/OWASP/Go docs；下一09.07认证授权，09.08输出防护。静态不运行Go/浏览器/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.06 浏览器与客户端边界》，把读者当Go初学者。以虚构IM中u-a浏览器登录、读c-a历史、发m-a与建立WebSocket为业务主线；先讲表单/模板/浏览器基础，再层层讲Cookie/Session、同源/CORS、CSRF、WebSocket Origin、缓存和注销。务必区分认证、资源授权、跨源读取和请求伪造，22道附反馈练习。静态教材，无真实浏览器/Go/服务/站点运行；不宣称OpenIM浏览器实现。\n1. 一、从u-a在浏览器打开c-a历史认识客户端边界：Go初学者承接04.03HTTP/WS和09.01–09.05，虚构c-a/u-a/m-a。区分浏览器标签页、同源站点、HTTP请求、服务端数据、原生移动客户端与网络脚本；把读历史、发消息、长连接各画一条路径。静态课程无浏览器或IM服务运行。\n2. 二、HTML表单与Go模板的基础：先讲<form action method>、GET查询/POST状态变更、表单编码和Go handler读参数，前端校验仅改善体验，服务端仍校验。HTML模板把不可信聊天正文放入文本上下文需上下文转义，html/template自动转义但不等于任意富文本净化；切勿用template.HTML包装不可信正文。完整XSS后置09.08。\n3. 三、Cookie、服务端Session与浏览器自动行为：Set-Cookie/Cookie往返，session cookie携带不可预测的opaque id，服务端映射u-a并验证失效；Cookie本身不是授权，c-a每次需成员校验。Secure/HttpOnly/SameSite/Path/Domain/过期基本含义，SameSite site不同于origin，不能把HttpOnly当XSS万能药或SameSite当完整CSRF防护。登出要服务端使session失效。\n4. 四、同源策略与CORS怎样影响读取：origin=scheme host port，举app.example.test和api.example.test不同源、不同port也不同源。SOP限制跨源脚本读响应，不是让攻击者无法发送所有跨源请求。CORS是服务端给浏览器的跨源读取许可，preflight对某些方法/头先OPTIONS；credentialed fetch需要include和显式Allow-Origin及Allow-Credentials，不能*；Vary Origin when dynamic. 非浏览器Go客户端不靠CORS防越权。\n5. 五、CSRF：浏览器替已登录用户发消息：u-a已登录有cookie，访问恶意站点后浏览器可能携cookie向IM提交状态改变请求；即使攻击脚本读不到响应，服务器可能已改状态。防护：GET无状态变更、CSRF token或可信Origin/FetchMetadata策略、SameSite作为辅助、每次应用资源授权；自定义头/CORS预检不能当所有客户端保证。区分CSRF与XSS/认证/授权。用纸上时序和反例。\n6. 六、WebSocket握手与长连接权限：浏览器WebSocket握手可能带Cookie，服务端检查Origin allowlist，CORS规则不是WebSocket权限证明；握手认证只能建立连接身份，之后每条发送/订阅仍检查会话权限和消息大小，令牌退出/撤销及长连接状态后置09.07/S5。跨站WebSocket劫持纸上风险，非浏览器客户端Origin可伪造所以需要认证。\n7. 七、缓存、历史隐私与注销：Cache-Control private vs no-store vs no-cache，私有IM历史尽量控制敏感响应，no-store阻止缓存保存但不能擦除旧缓存或屏幕截图；静态文件可以缓存而历史/令牌不同。注销服务器撤销session并让浏览器过期Cookie，已经渲染到DOM的历史仍需UI清理，其他设备session与业务权限需单独规则。敏感数据不进URL/日志。\n8. 八、双客户端边界表与22道练习：交付浏览器表单/fetch/WebSocket与原生Go客户端三条请求线、cookie/session/CSRF/CORS对照、历史缓存与注销政策、22题从基础表单origin到凭据跨源/CSRF/WS/缓存/IM成员授权附反馈。来源MDN/OWASP/Go docs；下一09.07认证授权，09.08输出防护。静态不运行Go/浏览器/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -225,4 +225,4 @@ Go `BeginTx` 后的相关读写都用同一 `*sql.Tx`，失败回滚、成功提
 - [PostgreSQL：修改表结构](https://www.postgresql.org/docs/current/ddl-alter.html)与[MongoDB Go：Cursor](https://www.mongodb.com/docs/drivers/go/current/crud/query/cursor/)：兼容迁移与文档查询资源。
 - [固定 OpenIM `send.go`](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go)和[MongoDB 消费处理](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go)：本章只据实际阅读的调用与返回位置作有限对照。
 
-按[学习路线](../learning_path.md)，下一步补 09.06 的浏览器/客户端边界和 09.07 的认证授权，再用 09.08 系统整理输入/输出防护；S5 才追完整异步消息保证。离开本章前，应能指出**教学模型的提交点、上游已核对的入队与消费点、以及二者都尚未证明的客户端/设备结果**。
+按[学习路线](../learning_path.md)，下一步读[09.06 浏览器与客户端边界](./06_browser_client_boundary.md)，再进入 09.07 的认证授权和 09.08 的输入/输出防护；S5 才追完整异步消息保证。离开本章前，应能指出**教学模型的提交点、上游已核对的入队与消费点、以及二者都尚未证明的客户端/设备结果**。

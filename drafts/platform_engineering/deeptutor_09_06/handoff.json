@@ -1,0 +1,12 @@
+{
+  "chapter": "09.06",
+  "stage": "S3",
+  "business_scope": "fictional browser UI for u-a viewing c-a history and sending m-a, plus fetch and WebSocket clients; paper browser-security model only, no running UI, service or OpenIM browser-configuration claim",
+  "prerequisites": ["04.03 HTTP and WebSocket basics", "09.01–09.02 trusted subject and API contract", "09.04 request chain", "09.05 data and authorization boundaries"],
+  "first_pass": ["HTML form and fetch request shapes", "Go html/template text output", "Cookie versus server Session", "origin tuple and same-origin reading policy"],
+  "second_pass": ["credentialed CORS and preflight", "same-site cross-origin CSRF threat and defenses", "WebSocket Origin versus per-message authorization", "private/no-cache/no-store and logout limits"],
+  "not_yet_prerequisites": ["09.07 full authentication, token and revocation", "09.08 XSS and complete input/output defenses", "S5 multi-device session and delivery guarantees"],
+  "next_chapter": "09.07 authentication and resource authorization for the fictional IM",
+  "upstream_inspection": "No OpenIM browser, Cookie, CORS or WebSocket configuration is asserted in this chapter.",
+  "shared_integration_pending": []
+}
