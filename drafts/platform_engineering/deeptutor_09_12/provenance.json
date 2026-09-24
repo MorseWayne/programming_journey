@@ -1,0 +1,43 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_270d42e5ae",
+  "page_id": "pg_1f30091c19",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pkg.go.dev/net/http",
+      "https://go.dev/doc/database/execute-transactions",
+      "https://pkg.go.dev/net/http/httptest",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+      "https://www.rfc-editor.org/rfc/rfc9293.html",
+      "https://www.rfc-editor.org/rfc/rfc8446.html",
+      "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "inspected_files": [
+      "internal/rpc/msg/send.go",
+      "internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ]
+  },
+  "original_sha256": "c969d18a0c20021e743ffaf69976789ec8338be5314ab54b6a4ee8c9ed56708d",
+  "original_characters": 32345,
+  "generation_request_sha256": "8319c2dc5077fb22ecf98a76825cb51452487882c7f2aee6478deb248f689bfc",
+  "reviewed_sha256": "d42a5c1db6d917be5f1dff4c257210988069eaf308ebc9c84cd1d7d14e2f7abc",
+  "reviewed_characters": 9887,
+  "reviewed_chinese_characters": 4273,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/12_im_service_capstone.md",
+  "course_sha256": "8bb0cf99b3018f1334eaacbc08f593c1f7c437fc8012fce9aaab617d0847bc5c"
+}

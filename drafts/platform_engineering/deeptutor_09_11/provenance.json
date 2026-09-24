@@ -29,9 +29,9 @@
   "original_sha256": "7a08acaf4370ff4e9d012ed96489faea5b2906eee9250d71ab7f05ab2ec7e2e2",
   "original_characters": 35665,
   "generation_request_sha256": "6b1574a9684449eabf7a81d0eeaef1d7430d51819ae500e36805db9d4a362168",
-  "reviewed_sha256": "e62077d92146220ce79e0228d88bfee3e0d7f35795ce1e6a9dd442bd2eef90a0",
-  "reviewed_characters": 9174,
-  "reviewed_chinese_characters": 3991,
+  "reviewed_sha256": "2b8cf0a7d0593b23d7eceddf10a9ed36dbc964aa2627e73c224be1ca10e19887",
+  "reviewed_characters": 9266,
+  "reviewed_chinese_characters": 3986,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/11_application_tests_delivery.md",
-  "course_sha256": "22321993038e83011a0db690b124ff342a3c19b788061b434afe0e56c9400ca0"
+  "course_sha256": "e9a1fb36fa2c24b2175a2d62e6f8298272f5f9ec5ab8fb182739cab663f9b11e"
 }

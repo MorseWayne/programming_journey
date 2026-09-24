@@ -207,4 +207,4 @@ defer resp.Body.Close()
 - [OWASP：授权测试矩阵](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Testing_Automation_Cheat_Sheet.html)与[ASVS 项目](https://owasp.org/projects/asvs)：把主体/动作/对象政策转成负例和可追踪要求。
 - [Go：事务](https://go.dev/doc/database/execute-transactions)与[GitHub：工作流制品](https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts)：数据边界与运行证据身份。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一步先读[04.04 可靠传输](../../../src/docs/platform_engineering/curriculum/04_networks/04_reliable_transport.md)，补齐 04.04–04.07 的传输、连接、流控和 TLS，再用 09.12 把身份、会话、历史、消息规则与验证清单组合成**学习者的完整服务项目课程**；S5 的异步发送/重试与协议兼容仍另成章。离开本章前，应能对每份“通过”报告说明**验证的是哪个合同版本、在哪层运行、真正观察到了什么、还有什么没验证**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，先读[04.04 可靠传输](../../../src/docs/platform_engineering/curriculum/04_networks/04_reliable_transport.md)并补齐 04.04–04.07 的传输、连接、流控和 TLS，再用[09.12 完整教学 IM 服务项目](../../../src/docs/platform_engineering/curriculum/09_backend_security/12_im_service_capstone.md)把身份、会话、历史、消息规则与验证清单组合起来；S5 的异步发送/重试与协议兼容仍另成章。离开本章前，应能对每份“通过”报告说明**验证的是哪个合同版本、在哪层运行、真正观察到了什么、还有什么没验证**。

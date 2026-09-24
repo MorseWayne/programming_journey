@@ -1,0 +1,12 @@
+{
+  "chapter": "09.12",
+  "stage": "S3",
+  "business_scope": "static learner capstone for fictional u-a/u-b/u-c, c-a and m-a: current v1 six-byte in-memory contract, proposed separate v2 teaching SQL commit contract and pending R9; online WebSocket attempt only, no offline/device guarantee or built service",
+  "prerequisites": ["09.01–09.08 HTTP, identity, data and security", "09.11 evidence and contract-version testing", "06.01–06.03, 06.07 and 06.10 database foundations", "04.04–04.07 TCP, long connection, flow/congestion and TLS"],
+  "first_pass": ["S3 scope versus deferred S5 guarantees", "v1/v2/R9 versioned confirmation points", "users/conversations/members/messages teaching model", "trusted history query and send contract"],
+  "second_pass": ["SQL transaction and commit uncertainty", "post-commit online WebSocket attempt with finite queue", "failure matrix by phase", "fixed OpenIM MsgToMQ versus Mongo consumer evidence", "learner-only staged practice and CI evidence"],
+  "not_yet_prerequisites": ["S4 trees, heap, OS memory and network I/O", "06.09 crash recovery", "11.08 service objective depth", "S5 durable asynchronous retry, offline replay and multi-device sync"],
+  "next_chapter": "02.06 trees and ordered-index foundations as the S4 entry",
+  "upstream_inspection": "Reused fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f send.go MsgToMQ and online_msg_to_mongo_handler.go BatchInsertChat2DB facts; no queue ack, retry, write-concern or device claim.",
+  "shared_integration_pending": []
+}

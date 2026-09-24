@@ -1,0 +1,77 @@
+{
+  "code": "09.12",
+  "title": "完整服务项目：从内存单聊到有边界的持久教学IM",
+  "chapter_id": "ch_im_service_capstone",
+  "summary": "面向Go初学者将S1本地工具、S2内存HTTP/WS与S3数据库、认证授权、输入输出防护、网络/TLS和验证整合为一个逐阶段的虚构IM服务课程；当前v1 6字节内存合同与教学v2持久合同及待审R9分别标记，固定OpenIM只做已核对的异步源码对照；静态教材不实际构建服务。",
+  "objectives": [
+    "写出S3教学IM的范围及尚未提供的保证",
+    "区分v1内存、v2教学持久和待审R9合同",
+    "以四张表和受信身份完成有权历史查询",
+    "设计事务提交后的消息确认与结果未知处理",
+    "为在线WebSocket推送定义独立于数据库提交的边界",
+    "对慢设备使用有界队列并逐跳核对TLS",
+    "把故障变式映射到状态与下一证据",
+    "对照固定OpenIM入队/消费并提交分层验收和交付材料"
+  ],
+  "sources": [
+    "https://pkg.go.dev/net/http",
+    "https://go.dev/doc/database/execute-transactions",
+    "https://pkg.go.dev/net/http/httptest",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+    "https://www.rfc-editor.org/rfc/rfc9293.html",
+    "https://www.rfc-editor.org/rfc/rfc8446.html",
+    "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、S3完整教学IM项目的目标与边界",
+      "words": 2600,
+      "focus": "承接S1 imhistory CLI、S2 HTTP/WS内存版、S3 06/09与04.04–07前置，虚构u-a/u-b/u-c,c-a,m-a。当前09.02 v1正文6B、4096B请求、200 accepted_in_memory；教学持久版应另立v2纸上合同例如200 stored_in_teaching_db，不悄改v1，R9仍待审。静态课程不实际搭服务。"
+    },
+    {
+      "title": "二、从需求到四张表与确认点",
+      "words": 2800,
+      "focus": "users/conversations/members/messages纸上模型，当前成员权限、消息ID/seq，6B上限与NULL历史昵称。业务动作登录/查历史/发送/在线B收到推送尝试，状态区分请求受理/事务提交/A收到HTTP/B设备确认/已读；当前S3只承诺数据库提交和可读，不宣称离线恢复、多设备同步。"
+    },
+    {
+      "title": "三、HTTP和身份路径分阶段组合",
+      "words": 2900,
+      "focus": "先只读GET按受信Session主体和c-a成员授权，有界seq游标与空列表；后POST用服务端主体、6B UTF8、请求体4096B、非法JSON/未知字段、重复ID409、非成员隐藏404；handler/app/store职责与接口。v2教学合同另定持久提交后200 status stored，不改变v1基线；Cookie/CSRF/CORS作用与逐请求授权。"
+    },
+    {
+      "title": "四、SQL存储与事务的业务流程",
+      "words": 2900,
+      "focus": "06.01四表PostgreSQL教学实现，Go database/sql池句柄、Rows.Close/Err、参数SQL、成员检查与发送事务并发顺序06.07、seq分配和唯一约束、Commit附近结果未知按稳定messageID查；迁移快照扩展/旧行NULL，不伪造历史名。教学SQL不是OpenIM实际路径。"
+    },
+    {
+      "title": "五、WebSocket在线通道、TLS与有界队列",
+      "words": 2900,
+      "focus": "u-a和u-b在线时WSS握手前TCP/TLS/HTTP升级/Session+Origin，逐条会话权限；消息提交后可尝试给在线B发送事件，但该尝试在数据库事务外，WS Write/TCP ACK/Pong不证明B展示或已读，离线B待S5。容量2出站队列慢设备策略，04.06 rwnd/cwnd, 04.07代理TLS每跳。"
+    },
+    {
+      "title": "六、失败变式和状态机审查",
+      "words": 2900,
+      "focus": "bad body/too large/unauth/nonmember/duplicate/DB timeout/unknown commit/response loss/B offline/old WS/slow receiver/cert fail matrix，每行标提交前后是否改状态、HTTP可见、下一证据。反例：提交成功后响应丢+A重试换ID造成重复；B离线不等于消息没存。S3只做静态方案。"
+    },
+    {
+      "title": "七、固定OpenIM源码对照与验证交付",
+      "words": 2800,
+      "focus": "固定f641... send.go group & isSend single calls MsgToMQ then response, online_msg_to_mongo_handler.go separate consumer calls BatchInsertChat2DB; only限事实，不推断ack/失败重试/设备保证。09.11测试矩阵、httptest/隔离DB/端到端证据、10.09 CI commit/artifact,配置与凭据/迁移/运行手册，作者不运行Go。"
+    },
+    {
+      "title": "八、增量完成路线、验收表与22道练习",
+      "words": 3300,
+      "focus": "给学习者P2内存→S3受信身份→持久存储→在线通道→故障/交付五个递进里程碑，每阶段前置、纸上产物、个人实现后才记录实测。22题从版本/字节/身份/SQL/事务/WS/TLS/背压/上游源码/故障到最终答辩，附反馈。下一S3 11.08 SLO起步或S4? S3完成后回访11.08最小目标，S4系统/算法深入。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.12 完整服务项目》，面向Go初学者，由浅入深把S1本地工具、S2内存HTTP/WS、S3持久数据/登录授权/网络TLS/验证组合成**静态课程**，不是由作者在本仓库构建服务。虚构u-a/u-b/c-a/m-a贯穿，当前09.02 v1 6字节/200 accepted_in_memory，与教学v2持久提交及待审R9明确分开；在线WS发送尝试、设备收到、已读也分开。对照固定OpenIM send.go MsgToMQ返回和Mongo消费 BatchInsertChat2DB，仅限已读源码，不推断额外保证。八节丰富正文、22题附反馈，给学习者增量实践和验收目标；作者不运行Go/数据库/IM/站点。\n1. 一、S3完整教学IM项目的目标与边界：承接S1 imhistory CLI、S2 HTTP/WS内存版、S3 06/09与04.04–07前置，虚构u-a/u-b/u-c,c-a,m-a。当前09.02 v1正文6B、4096B请求、200 accepted_in_memory；教学持久版应另立v2纸上合同例如200 stored_in_teaching_db，不悄改v1，R9仍待审。静态课程不实际搭服务。\n2. 二、从需求到四张表与确认点：users/conversations/members/messages纸上模型，当前成员权限、消息ID/seq，6B上限与NULL历史昵称。业务动作登录/查历史/发送/在线B收到推送尝试，状态区分请求受理/事务提交/A收到HTTP/B设备确认/已读；当前S3只承诺数据库提交和可读，不宣称离线恢复、多设备同步。\n3. 三、HTTP和身份路径分阶段组合：先只读GET按受信Session主体和c-a成员授权，有界seq游标与空列表；后POST用服务端主体、6B UTF8、请求体4096B、非法JSON/未知字段、重复ID409、非成员隐藏404；handler/app/store职责与接口。v2教学合同另定持久提交后200 status stored，不改变v1基线；Cookie/CSRF/CORS作用与逐请求授权。\n4. 四、SQL存储与事务的业务流程：06.01四表PostgreSQL教学实现，Go database/sql池句柄、Rows.Close/Err、参数SQL、成员检查与发送事务并发顺序06.07、seq分配和唯一约束、Commit附近结果未知按稳定messageID查；迁移快照扩展/旧行NULL，不伪造历史名。教学SQL不是OpenIM实际路径。\n5. 五、WebSocket在线通道、TLS与有界队列：u-a和u-b在线时WSS握手前TCP/TLS/HTTP升级/Session+Origin，逐条会话权限；消息提交后可尝试给在线B发送事件，但该尝试在数据库事务外，WS Write/TCP ACK/Pong不证明B展示或已读，离线B待S5。容量2出站队列慢设备策略，04.06 rwnd/cwnd, 04.07代理TLS每跳。\n6. 六、失败变式和状态机审查：bad body/too large/unauth/nonmember/duplicate/DB timeout/unknown commit/response loss/B offline/old WS/slow receiver/cert fail matrix，每行标提交前后是否改状态、HTTP可见、下一证据。反例：提交成功后响应丢+A重试换ID造成重复；B离线不等于消息没存。S3只做静态方案。\n7. 七、固定OpenIM源码对照与验证交付：固定f641... send.go group & isSend single calls MsgToMQ then response, online_msg_to_mongo_handler.go separate consumer calls BatchInsertChat2DB; only限事实，不推断ack/失败重试/设备保证。09.11测试矩阵、httptest/隔离DB/端到端证据、10.09 CI commit/artifact,配置与凭据/迁移/运行手册，作者不运行Go。\n8. 八、增量完成路线、验收表与22道练习：给学习者P2内存→S3受信身份→持久存储→在线通道→故障/交付五个递进里程碑，每阶段前置、纸上产物、个人实现后才记录实测。22题从版本/字节/身份/SQL/事务/WS/TLS/背压/上游源码/故障到最终答辩，附反馈。下一S3 11.08 SLO起步或S4? S3完成后回访11.08最小目标，S4系统/算法深入。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
