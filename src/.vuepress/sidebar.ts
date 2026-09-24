@@ -181,6 +181,7 @@ export default sidebar({
             "curriculum/03_systems/03_linux_process_resources",
             "curriculum/03_systems/04_cpu_scheduling",
             "curriculum/03_systems/05_virtual_memory",
+            "curriculum/03_systems/06_allocation_mapping",
             "curriculum/03_systems/core"
           ]
         },

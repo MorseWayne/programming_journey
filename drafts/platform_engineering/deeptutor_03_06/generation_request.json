@@ -1,0 +1,76 @@
+{
+  "code": "03.06",
+  "title": "分配与映射：从 Go 对象到进程 RSS",
+  "chapter_id": "ch_allocation_mapping",
+  "summary": "面向Go初学者承接03.05虚拟内存，以虚构IM消息缓冲解释栈/堆、逃逸、对象可达性、GC与分配器复用、mmap、页缓存及Go/Linux内存统计口径；静态纸上教材。",
+  "objectives": [
+    "区分Go对象、Go堆、进程地址空间与RSS",
+    "解释切片引用和GC可达性",
+    "用玩具span理解空闲槽与未归还页",
+    "推演引用消失、清扫、复用和归还的时间差",
+    "比较匿名和文件mmap、MAP_PRIVATE与MAP_SHARED",
+    "区分页缓存和进程RSS",
+    "正确阅读HeapAlloc、HeapSys、HeapReleased与RSS"
+  ],
+  "sources": [
+    "https://go.dev/doc/gc-guide",
+    "https://pkg.go.dev/runtime#MemStats",
+    "https://pkg.go.dev/runtime/metrics",
+    "https://man7.org/linux/man-pages/man2/mmap.2.html",
+    "https://man7.org/linux/man-pages/man5/proc_pid_status.5.html",
+    "https://man7.org/linux/man-pages/man5/proc_pid_smaps.5.html",
+    "https://www.kernel.org/doc/html/latest/mm/page_cache.html",
+    "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf"
+  ],
+  "sections": [
+    {
+      "title": "一、消息缓冲释放后 RSS 为什么不立刻下降",
+      "words": 2400,
+      "focus": "承接03.05虚拟页/RSS、01.04切片底层数组、01.05指针、03.02进程；虚构IM c-a 批次消息临时缓冲和长连接读缓冲，业务引用撤销、GC回收、分配器复用、物理页归还、RSS变化是分离时刻。引入完整的内存责任层次。"
+    },
+    {
+      "title": "二、Go 栈与堆：生命周期和逃逸直觉",
+      "words": 2500,
+      "focus": "先区分goroutine栈、Go GC堆、进程地址空间与02.07数据结构二叉堆；局部变量不保证栈、取地址也不必然逃逸，编译器按使用情境判断；slice header与底层数组、另一个引用保留数组，GC仅回收不可达对象，不能手动承诺何时RSS下降。"
+    },
+    {
+      "title": "三、分配器复用、大小类别和碎片",
+      "words": 2400,
+      "focus": "玩具4KiB页放4个1KiB槽，仅1个对象仍活，其余3个槽可复用但页未必能整页归还；内部空洞/外部碎片与Go实际size class/mspan分开，不能把物理页不连续误作程序虚拟地址不连续；容量保留和复用解释RSS暂稳。"
+    },
+    {
+      "title": "四、时间线：引用、GC、分配器、OS",
+      "words": 2400,
+      "focus": "固定t0两个4KiB纸上缓冲，t1 B失去最后引用但尚未回收，t2 GC/sweep后HeapAlloc可能下降，t3 span空闲后runtime可复用/释放、HeapReleased或RSS不一定同步；引用残留/暂存与真泄漏反例；不把GC触发当立即还OS。"
+    },
+    {
+      "title": "五、mmap与匿名/文件映射",
+      "words": 2500,
+      "focus": "mmap建立虚拟映射，匿名页与文件页来源不同；MAP_PRIVATE写时复制与MAP_SHARED共享写入区分，关闭fd不等于munmap；msync/fsync与耐久另03.08，不能因映射可见宣称落盘。用聊天日志只读映射、消息缓冲匿名映射作纯纸上示例。"
+    },
+    {
+      "title": "六、页缓存与RSS的不同视角",
+      "words": 2400,
+      "focus": "Linux页缓存保存文件内容以供后续读；普通read带来的cache不必体现在进程RSS，映射文件驻留页可体现在RssFile；共享页跨进程重复计数，Pss作为分摊视角；系统/容器内存压力和进程匿名页不同，smaps与status只作口径。"
+    },
+    {
+      "title": "七、对齐Go MemStats与Linux进程指标",
+      "words": 2700,
+      "focus": "Go官方HeapAlloc含未清扫的不可达对象，TotalAlloc累计；HeapSys是堆虚拟地址预留，HeapIdle-HeapReleased是可能可归还但保留的空闲span，HeapInuse-HeapAlloc估计size-class未用空间上界；RSS=进程驻留页含Go之外，GOMEMLIMIT仅runtime管理内存不是cgroup/RSS硬上限。用状态表做假设诊断，非实测。"
+    },
+    {
+      "title": "八、IM缓冲诊断纸上交付与练习",
+      "words": 2400,
+      "focus": "交付引用图、t0-t3状态表、4KiB槽碎片图、mmap私有/共享表、HeapAlloc/HeapSys/HeapReleased/RSS口径矩阵；22题带反馈。下一03.07文件与目录，静态不运行Go、mmap、Linux或站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.06 分配与映射》，面向Go初学者。八节丰富内容、22题附反馈，承接03.05页/RSS，以虚构IM消息缓冲释放后RSS不立刻下降的问题贯穿。正确区分Go可达对象、HeapAlloc、HeapSys、HeapReleased、进程RSS、匿名/文件mmap和页缓存；局部变量/取地址不保证固定栈或堆；GC不保证立刻归还OS；不运行Go/Linux/服务/站点。\n1. 一、消息缓冲释放后 RSS 为什么不立刻下降：承接03.05虚拟页/RSS、01.04切片底层数组、01.05指针、03.02进程；虚构IM c-a 批次消息临时缓冲和长连接读缓冲，业务引用撤销、GC回收、分配器复用、物理页归还、RSS变化是分离时刻。引入完整的内存责任层次。\n2. 二、Go 栈与堆：生命周期和逃逸直觉：先区分goroutine栈、Go GC堆、进程地址空间与02.07数据结构二叉堆；局部变量不保证栈、取地址也不必然逃逸，编译器按使用情境判断；slice header与底层数组、另一个引用保留数组，GC仅回收不可达对象，不能手动承诺何时RSS下降。\n3. 三、分配器复用、大小类别和碎片：玩具4KiB页放4个1KiB槽，仅1个对象仍活，其余3个槽可复用但页未必能整页归还；内部空洞/外部碎片与Go实际size class/mspan分开，不能把物理页不连续误作程序虚拟地址不连续；容量保留和复用解释RSS暂稳。\n4. 四、时间线：引用、GC、分配器、OS：固定t0两个4KiB纸上缓冲，t1 B失去最后引用但尚未回收，t2 GC/sweep后HeapAlloc可能下降，t3 span空闲后runtime可复用/释放、HeapReleased或RSS不一定同步；引用残留/暂存与真泄漏反例；不把GC触发当立即还OS。\n5. 五、mmap与匿名/文件映射：mmap建立虚拟映射，匿名页与文件页来源不同；MAP_PRIVATE写时复制与MAP_SHARED共享写入区分，关闭fd不等于munmap；msync/fsync与耐久另03.08，不能因映射可见宣称落盘。用聊天日志只读映射、消息缓冲匿名映射作纯纸上示例。\n6. 六、页缓存与RSS的不同视角：Linux页缓存保存文件内容以供后续读；普通read带来的cache不必体现在进程RSS，映射文件驻留页可体现在RssFile；共享页跨进程重复计数，Pss作为分摊视角；系统/容器内存压力和进程匿名页不同，smaps与status只作口径。\n7. 七、对齐Go MemStats与Linux进程指标：Go官方HeapAlloc含未清扫的不可达对象，TotalAlloc累计；HeapSys是堆虚拟地址预留，HeapIdle-HeapReleased是可能可归还但保留的空闲span，HeapInuse-HeapAlloc估计size-class未用空间上界；RSS=进程驻留页含Go之外，GOMEMLIMIT仅runtime管理内存不是cgroup/RSS硬上限。用状态表做假设诊断，非实测。\n8. 八、IM缓冲诊断纸上交付与练习：交付引用图、t0-t3状态表、4KiB槽碎片图、mmap私有/共享表、HeapAlloc/HeapSys/HeapReleased/RSS口径矩阵；22题带反馈。下一03.07文件与目录，静态不运行Go、mmap、Linux或站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

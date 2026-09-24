@@ -1,0 +1,33 @@
+{
+  "chapter": "03.06",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced allocation and mapping lesson for fictional c-a history buffers and IM gateway memory questions",
+  "prerequisites": [
+    "01.04 slices and backing arrays",
+    "01.05 pointers and references",
+    "03.02 process address space",
+    "03.05 virtual pages, resident memory and RSS"
+  ],
+  "first_pass": [
+    "Go stack versus GC heap versus process memory",
+    "slice backing-array reachability",
+    "unreachable object versus sweeping and reuse"
+  ],
+  "second_pass": [
+    "toy size-class slots and partly occupied spans",
+    "t0–t3 GC, allocator and page-release timeline",
+    "anonymous and file mmap, private versus shared semantics",
+    "page cache versus process RSS",
+    "HeapAlloc, TotalAlloc, HeapSys, HeapIdle, HeapReleased and RSS scope"
+  ],
+  "not_yet_prerequisites": [
+    "03.07 files, inodes and descriptor lifecycle",
+    "03.08 write and sync durability",
+    "03.10 actual system diagnostics",
+    "03.11 cgroup limits",
+    "05.07 Go GC optimization and evidence"
+  ],
+  "next_chapter": "03.07 files and directories",
+  "upstream_inspection": "No OpenIM implementation claim; Go official docs, Linux man-pages, Linux kernel docs and OSTEP support general memory semantics.",
+  "shared_integration_pending": []
+}

@@ -28,9 +28,9 @@
   "original_sha256": "ee4da9df964cf711c7af54152e5b5d9749936ed3604506a69fb440b790f336f9",
   "original_characters": 30310,
   "generation_request_sha256": "0172acd8437fd7626f58bdca8e0c4e94f2f837fd088472a95b90fe6ad156f4a9",
-  "reviewed_sha256": "64ce0d5d2161df15333bcab290ecc7922925dc6b0dd24f55710d39f02a77f2e6",
-  "reviewed_characters": 7339,
-  "reviewed_chinese_characters": 3456,
+  "reviewed_sha256": "4b7cb0ad5eca5c9ed43b9a0e8bf4de572aa791f99b3141ea92a7ac3a2209904e",
+  "reviewed_characters": 7432,
+  "reviewed_chinese_characters": 3461,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/05_virtual_memory.md",
-  "course_sha256": "9221bdcee090e4a2e8d5699eacc0cadc2d9d250dd9dbf09c56d880a94ffdabb4"
+  "course_sha256": "cf7212e98241e4d0717b8af19648f2689262b282278e63a447880d837258ba7d"
 }

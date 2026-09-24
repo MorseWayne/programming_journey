@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_34fb892af7",
+  "page_id": "pg_7375e201d3",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/gc-guide",
+      "https://pkg.go.dev/runtime#MemStats",
+      "https://pkg.go.dev/runtime/metrics",
+      "https://man7.org/linux/man-pages/man2/mmap.2.html",
+      "https://man7.org/linux/man-pages/man5/proc_pid_status.5.html",
+      "https://man7.org/linux/man-pages/man5/proc_pid_smaps.5.html",
+      "https://www.kernel.org/doc/html/latest/mm/page_cache.html",
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-api.pdf"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "322f41cd0051fab21ef0cba1487ea55286f6db1f12ce800ee128161c7eb9a8d6",
+  "original_characters": 32803,
+  "generation_request_sha256": "ed53c78dc985b07b49aa0cf238c04e44810c283542546a585138096e92df5563",
+  "reviewed_sha256": "4f6966e9e8217986435be1fbc63e586cc0785f55e9ff2881a517748313b5efe6",
+  "reviewed_characters": 8847,
+  "reviewed_chinese_characters": 4401,
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/06_allocation_mapping.md",
+  "course_sha256": "36731fcdb18a194cc1c1109ab56e4c0fe3a4f8e2db99ed3bd1640ce7e778e8fe"
+}

@@ -210,4 +210,4 @@ Linux `/proc/<pid>/status` 的 `VmSize` 描述虚拟内存大小，`VmRSS` 描�
 - [Linux 内核内存管理概念](https://www.kernel.org/doc/html/v4.19/admin-guide/mm/concepts.html)：虚拟内存、页表和 TLB 的系统层背景。
 - [Linux `/proc/<pid>/status`](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)与[`statm`](https://man7.org/linux/man-pages/man5/proc_pid_statm.5.html)：虚拟大小、RSS 及统计精度的口径。
 
-按[学习路线](../learning_path.md)，下一章 03.06 进一步解释分配、映射、页缓存与 Go heap/RSS 的差别。离开本章前，应能从“连接多但 CPU 不高、RSS 变化”这个症状出发，说清**地址范围、翻译、首次触碰、驻留和统计视角**各回答什么问题。
+按[学习路线](../learning_path.md)，下一章[03.06 分配与映射](./06_allocation_mapping.md)进一步解释分配、映射、页缓存与 Go heap/RSS 的差别。离开本章前，应能从“连接多但 CPU 不高、RSS 变化”这个症状出发，说清**地址范围、翻译、首次触碰、驻留和统计视角**各回答什么问题。
