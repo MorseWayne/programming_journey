@@ -1,0 +1,12 @@
+{
+  "chapter": "06.07",
+  "stage": "S3",
+  "business_scope": "fictional u-a membership exit in c-a racing with m-a message acceptance; paper PostgreSQL transaction/isolation and MongoDB single/multi-document comparison only, no runtime or OpenIM storage claim",
+  "prerequisites": ["06.01 members/messages keys and foreign-key limits", "06.02 SELECT/UPDATE/INSERT scope", "06.10 Go Tx and context entry", "11.01 acceptance versus device confirmation"],
+  "first_pass": ["define business decision order and transaction boundary", "ACID with database-only evidence", "Read Committed membership exit/send interleaving", "lost update, nonrepeatable read and phantom"],
+  "second_pass": ["administrator write skew", "PostgreSQL-specific isolation table and serialization retries", "same-Tx Go operations and unknown commit", "MongoDB single-document versus multi-document transaction and UnknownTransactionCommitResult"],
+  "not_yet_prerequisites": ["06.08 lock, MVCC, deadlock and snapshot mechanisms", "06.09 WAL and crash durability", "S5 retry identity and device delivery", "06.05–06.06 index and query execution costs"],
+  "next_chapter": "06.08 locks and MVCC around IM membership and message history",
+  "upstream_inspection": "No OpenIM storage implementation or runtime measurement asserted in this chapter.",
+  "shared_integration_pending": []
+}

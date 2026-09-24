@@ -33,9 +33,9 @@
   "original_sha256": "615095dbc1349459fc33ff5b3a8c9ec03c33367b61bdcae43613dcbe7814f75f",
   "original_characters": 38357,
   "generation_request_sha256": "46b4ddb09dda2b0e0cc323d6b023c00aa9617e3db2f9b4a35202446394021d64",
-  "reviewed_sha256": "1ba05622e9a00503c5247f63674bbd7e03c34cd796f908dabd51dc7072ccd134",
-  "reviewed_characters": 11298,
-  "reviewed_chinese_characters": 3766,
+  "reviewed_sha256": "08a3e8b09d7df3c7de6fa21468cd9fee9c5568ba1be7355074cec9f15926a71c",
+  "reviewed_characters": 11399,
+  "reviewed_chinese_characters": 3773,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/10_go_data_access.md",
-  "course_sha256": "7a763469acce6c240249e2b3c3bc7cf6f218b69af97cfcab3594f69bc0dfa8de"
+  "course_sha256": "5c41d93147508e29200eb1376fc99ff9c7f8d44f05974222b3b6e07377aaa858"
 }

@@ -1,0 +1,75 @@
+{
+  "code": "06.07",
+  "title": "事务与并发异常：成员退出时还能发送吗",
+  "chapter_id": "ch_tx_anomalies",
+  "summary": "面向Go初学者承接06.01–06.03与06.10，以虚构IM成员退出和消息提交竞态讲ACID、事务范围、读已提交交错、丢失更新/不可重复读/幻读/写偏斜，辨别PostgreSQL隔离实际语义和MongoDB单文档/多文档事务，保留提交未知与设备送达边界；静态纸上课程。",
+  "objectives": [
+    "界定IM消息保存事务与三个不同确认点",
+    "解释ACID每个字母能保证的范围",
+    "画出成员退出与消息提交的并发交错",
+    "识别丢失更新、不可重复读、幻读和写偏斜",
+    "区分PostgreSQL隔离级别的实际行为",
+    "在Go中保持全部相关操作属于同一Tx",
+    "为明确冲突设计有界整笔重试并处理提交未知",
+    "比较MongoDB单文档原子性与多文档事务"
+  ],
+  "sources": [
+    "https://go.dev/doc/database/execute-transactions",
+    "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+    "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "https://www.mongodb.com/docs/manual/core/write-operations-atomicity/",
+    "https://www.mongodb.com/docs/drivers/go/current/crud/transactions/",
+    "https://www.mongodb.com/docs/manual/core/transactions-in-applications/"
+  ],
+  "sections": [
+    {
+      "title": "一、消息保存为何需要一个事务问题",
+      "words": 2400,
+      "focus": "虚构u-a在c-a，提交m-a；产品规则先明定：成员在消息提交时仍有发言资格，且一次业务提交同时保存消息与会话摘要（摘要是否权威另说明）。当前课程无运行DB。画开始/检查成员/分配seq/插入/更新摘要/commit/HTTP回应，区分数据库提交、A收到200、B设备送达。"
+    },
+    {
+      "title": "二、ACID四字母和事务边界的入门",
+      "words": 2700,
+      "focus": "A原子性 all or none for committed transaction, C约束/业务不变量需正确表达不自动授权, I并发等效程度取决隔离级别, D成功提交在配置/故障模型下可恢复而不是多设备送达。Go BeginTx/Tx methods/Commit/Rollback，DB方法混入不在Tx。纸上中途错误与回滚。"
+    },
+    {
+      "title": "三、读已提交下成员退出的交错",
+      "words": 2900,
+      "focus": "PostgreSQL Read Committed默认，每条命令自己的快照；T1读members active，T2退出并提交，T1继续插消息并提交，单个Tx不自动守住提交时仍是成员规则。先画精确t0..t5表，解释规则若按检查时刻不同结论，需产品定义。锁同一成员行到提交或Serializable+整体重试可形成受控顺序，具体锁后置06.08。"
+    },
+    {
+      "title": "四、丢失更新、不可重复读、幻读与写偏斜",
+      "words": 3000,
+      "focus": "纸上counter=4两事务各读4并写5导致丢失更新，原子UPDATE count=count+1 or guarded version needed；同一行两次读不同是不可重复读；active成员集合新行是幻读；两个管理员同时看到另一个仍在并各自离开，最终零管理员是写偏斜。脏读定义但PG不允许，读者不需记所有级别表前先会用时间线。"
+    },
+    {
+      "title": "五、隔离级别与PostgreSQL实际语义",
+      "words": 2700,
+      "focus": "标准Read Uncommitted/Read Committed/Repeatable Read/Serializable与PG区别：PG RU按RC执行；RC不脏读但可非重复/幻读；PG RR固定快照无幻读但可能串行化异常/写偏斜；Serializable只承诺成功提交事务等同某串行顺序，可能报serialization failure应整笔重试。隔离越强有代价，不能从事务存在就断言保证。版本/数据库不同需核对。"
+    },
+    {
+      "title": "六、Go Tx控制流、重试与提交未知",
+      "words": 2700,
+      "focus": "db.BeginTx(ctx,opts), defer tx.Rollback, all dependent reads/writes via tx, Commit; err分类，事务重试只针对明确可重试冲突，带边界/次数并重算全部读，外部WebSocket push不能放进自动重试回调。网络断在Commit附近结果可能未知，稳定message_id或op_id查询受理状态，不盲目生成新消息重试。Go源官方。"
+    },
+    {
+      "title": "七、MongoDB单文档和多文档事务对照",
+      "words": 2600,
+      "focus": "MongoDB单文档写原子，但更新members文档与messages文档不因同一请求自动原子；multi-document transaction Session/WithTransaction可用，需合理读写关注、错误标签/重试，callback可能重跑，不写外部副作用。UnknownTransactionCommitResult means commit may have succeeded; retry commit vs rerun business区别。文档嵌入适合有界但无界历史独立，关联/送达还需合同。"
+    },
+    {
+      "title": "八、业务判断表与22道练习",
+      "words": 3100,
+      "focus": "交付事务边界、时间线、隔离选型与失败/重试表；22道从ACID和SQL Tx流程到读异常、PG隔离、Mongo文档原子、提交未知和设备交付，附反馈。未来06.08锁/MVCC和06.09恢复再深入，09.05数据访问集成，静态不运行DB/Go/站点或宣称OpenIM实现。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《06.07 事务与并发异常》，面向Go初学者，承接06.01–06.03数据模型和06.10访问API，以虚构IM成员退群与消息提交竞态为业务问题，逐层讲ACID、事务边界、交错异常、PostgreSQL隔离和MongoDB单/多文档事务。八节丰富正文、22道附反馈练习；静态纸上推演，不运行Go/数据库/IM/站点，不宣称OpenIM实现。\n1. 一、消息保存为何需要一个事务问题：虚构u-a在c-a，提交m-a；产品规则先明定：成员在消息提交时仍有发言资格，且一次业务提交同时保存消息与会话摘要（摘要是否权威另说明）。当前课程无运行DB。画开始/检查成员/分配seq/插入/更新摘要/commit/HTTP回应，区分数据库提交、A收到200、B设备送达。\n2. 二、ACID四字母和事务边界的入门：A原子性 all or none for committed transaction, C约束/业务不变量需正确表达不自动授权, I并发等效程度取决隔离级别, D成功提交在配置/故障模型下可恢复而不是多设备送达。Go BeginTx/Tx methods/Commit/Rollback，DB方法混入不在Tx。纸上中途错误与回滚。\n3. 三、读已提交下成员退出的交错：PostgreSQL Read Committed默认，每条命令自己的快照；T1读members active，T2退出并提交，T1继续插消息并提交，单个Tx不自动守住提交时仍是成员规则。先画精确t0..t5表，解释规则若按检查时刻不同结论，需产品定义。锁同一成员行到提交或Serializable+整体重试可形成受控顺序，具体锁后置06.08。\n4. 四、丢失更新、不可重复读、幻读与写偏斜：纸上counter=4两事务各读4并写5导致丢失更新，原子UPDATE count=count+1 or guarded version needed；同一行两次读不同是不可重复读；active成员集合新行是幻读；两个管理员同时看到另一个仍在并各自离开，最终零管理员是写偏斜。脏读定义但PG不允许，读者不需记所有级别表前先会用时间线。\n5. 五、隔离级别与PostgreSQL实际语义：标准Read Uncommitted/Read Committed/Repeatable Read/Serializable与PG区别：PG RU按RC执行；RC不脏读但可非重复/幻读；PG RR固定快照无幻读但可能串行化异常/写偏斜；Serializable只承诺成功提交事务等同某串行顺序，可能报serialization failure应整笔重试。隔离越强有代价，不能从事务存在就断言保证。版本/数据库不同需核对。\n6. 六、Go Tx控制流、重试与提交未知：db.BeginTx(ctx,opts), defer tx.Rollback, all dependent reads/writes via tx, Commit; err分类，事务重试只针对明确可重试冲突，带边界/次数并重算全部读，外部WebSocket push不能放进自动重试回调。网络断在Commit附近结果可能未知，稳定message_id或op_id查询受理状态，不盲目生成新消息重试。Go源官方。\n7. 七、MongoDB单文档和多文档事务对照：MongoDB单文档写原子，但更新members文档与messages文档不因同一请求自动原子；multi-document transaction Session/WithTransaction可用，需合理读写关注、错误标签/重试，callback可能重跑，不写外部副作用。UnknownTransactionCommitResult means commit may have succeeded; retry commit vs rerun business区别。文档嵌入适合有界但无界历史独立，关联/送达还需合同。\n8. 八、业务判断表与22道练习：交付事务边界、时间线、隔离选型与失败/重试表；22道从ACID和SQL Tx流程到读异常、PG隔离、Mongo文档原子、提交未知和设备交付，附反馈。未来06.08锁/MVCC和06.09恢复再深入，09.05数据访问集成，静态不运行DB/Go/站点或宣称OpenIM实现。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

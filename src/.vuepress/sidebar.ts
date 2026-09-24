@@ -210,6 +210,7 @@ export default sidebar({
             "curriculum/06_databases/01_relational_identity",
             "curriculum/06_databases/02_sql_queries",
             "curriculum/06_databases/03_schema_evolution",
+            "curriculum/06_databases/07_transactions_anomalies",
             "curriculum/06_databases/10_go_data_access",
             "curriculum/06_databases/core"
           ]

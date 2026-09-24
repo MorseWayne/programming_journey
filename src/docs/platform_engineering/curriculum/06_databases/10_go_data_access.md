@@ -268,4 +268,4 @@ Next/Decode、遍历后 Err，并在用完或出错时 Close。</details>
 - [Go：修改数据](https://go.dev/doc/database/change-data)、[防 SQL 注入](https://go.dev/doc/database/sql-injection)、[取消操作](https://go.dev/doc/database/cancel-operations)及[`database/sql` API](https://pkg.go.dev/database/sql)：参数、执行结果、Context 与错误。
 - [MongoDB Go 驱动：连接池](https://www.mongodb.com/docs/drivers/go/current/connect/connection-options/connection-pools/)、[查询](https://www.mongodb.com/docs/drivers/go/current/crud/query/retrieve/)与[Cursor](https://www.mongodb.com/docs/drivers/go/current/crud/query/cursor/)：文档路径的客户端复用、有界遍历和关闭责任。
 
-按[学习路线](../learning_path.md)，下一章 06.07 回到“检查成员资格和写消息怎样作为一个操作，以及并发会发生什么”；06.05–06.06 的索引与执行计划在 S4 深化。离开本章前，要能画出**谁拥有 DB/Client、谁拥有 Rows/Cursor、何时释放、超时时还能确认什么**。
+按[学习路线](../learning_path.md)，下一章[06.07 事务与并发异常](./07_transactions_anomalies.md)回到“检查成员资格和写消息怎样作为一个操作，以及并发会发生什么”；06.05–06.06 的索引与执行计划在 S4 深化。离开本章前，要能画出**谁拥有 DB/Client、谁拥有 Rows/Cursor、何时释放、超时时还能确认什么**。
