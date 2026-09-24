@@ -1,0 +1,30 @@
+{
+  "chapter": "05.04",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go memory-model lesson for a fictional c-a two-field session snapshot",
+  "prerequisites": [
+    "05.01 goroutine lifecycle and completion",
+    "05.02 Mutex protection scope",
+    "05.03 channel send, receive and buffered queues",
+    "03.05 virtual memory as a distinct OS concept"
+  ],
+  "first_pass": [
+    "shared ordinary reads and writes",
+    "data race and Go's limited race-program guarantees",
+    "sequenced-before, synchronized-before and happens-before"
+  ],
+  "second_pass": [
+    "same Mutex protecting complete two-field snapshot",
+    "channel publication and mutable-reference ownership",
+    "atomic field versus pair consistency and CAS winner scope",
+    "dynamic race detection versus business concurrency invariants"
+  ],
+  "not_yet_prerequisites": [
+    "05.05 G/M/P scheduling and netpoll",
+    "05.09 controlled race and resource testing",
+    "S5 cross-node state and message guarantees"
+  ],
+  "next_chapter": "05.05 Go scheduling model",
+  "upstream_inspection": "No OpenIM implementation claim; Go official memory model, sync/atomic docs and race detector docs support the language semantics.",
+  "shared_integration_pending": []
+}

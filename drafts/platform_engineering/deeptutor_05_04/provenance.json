@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_7b824247e1",
+  "page_id": "pg_dba77cd29e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/mem",
+      "https://pkg.go.dev/sync",
+      "https://pkg.go.dev/sync/atomic",
+      "https://go.dev/doc/articles/race_detector"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "cc2094dc6dc1d3732905dad4cd3c291f351abf6a31041c239950ec190287dd4c",
+  "original_characters": 34499,
+  "generation_request_sha256": "5ca25c4ed0cb17496c480a102ea1c5a0c64321390e29b20e735cd0be306e3a66",
+  "reviewed_sha256": "5cee9d8db0467e2d4341e47d038f72f31f9b3215688f50085318353110952935",
+  "reviewed_characters": 8016,
+  "reviewed_chinese_characters": 3698,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/04_memory_model.md",
+  "course_sha256": "975b2915557dd12dc2a4bf54626616b8a1fe5ddbd98a3064b8be7451fb05a86e"
+}

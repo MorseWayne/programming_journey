@@ -1,0 +1,73 @@
+{
+  "code": "05.04",
+  "title": "Go 内存模型：从共享在线状态到同步保证",
+  "chapter_id": "ch_go_memory_model",
+  "summary": "面向Go初学者承接任务、锁和channel，以虚构IM会话两字段状态解释数据竞争、happens-before、Mutex发布、channel交接、atomic/CAS及业务竞争边界。",
+  "objectives": [
+    "定义共享读写与数据竞争",
+    "画出happens-before同步边",
+    "区分goroutine启动与完成的同步",
+    "用Mutex保护两字段一致快照",
+    "说明channel发送与对应接收的发布关系",
+    "区分单字段atomic与多字段不变量",
+    "解释race检测与业务竞争的不同"
+  ],
+  "sources": [
+    "https://go.dev/ref/mem",
+    "https://pkg.go.dev/sync",
+    "https://pkg.go.dev/sync/atomic",
+    "https://go.dev/doc/articles/race_detector",
+    "https://pkg.go.dev/io"
+  ],
+  "sections": [
+    {
+      "title": "一、同一个会话状态为何可能被看成半更新",
+      "words": 2100,
+      "focus": "承接05.01goroutine、05.02锁、05.03channel、03.10只读证据；虚构c-a会话State{Online bool,Version int64}从(false,0)变(true,1)。定义共享变量、读写、先后与业务快照，不把真实IM在线定义为这个toy。"
+    },
+    {
+      "title": "二、数据竞争与非同步读写",
+      "words": 2400,
+      "focus": "一个goroutine先写Online=true再Version=1，另一个普通读两字段且无同步；至少同址读写未被happens-before排序即data race，不能凭睡眠/CPU核数/日志顺序保障。Go内存模型不等于C式完全undefined，但竞态程序错误且无DRF-SC保障。"
+    },
+    {
+      "title": "三、happens-before与发布链",
+      "words": 2400,
+      "focus": "单goroutine程序顺序、goroutine创建同步到新goroutine开始但完成不自动同步回；用画箭头A写Version、B发送channel、C接收、D读取，传递形成happens-before。时间上先发生或sleep不等于同步边，channel发送与对应接收、close/receive特例。"
+    },
+    {
+      "title": "四、互斥锁保护两字段完整快照",
+      "words": 2500,
+      "focus": "状态从(false,0)到(true,1)的两次写和读者复制快照都在同一mu.Lock/Unlock保护区；读者在writer前得旧对，后得新对，不得混合。仅给每字段各自短锁但跨锁读取仍可能不一致；锁只保本进程内存，不保DB事务/设备交付。"
+    },
+    {
+      "title": "五、channel值发布与所有权",
+      "words": 2500,
+      "focus": "writer构造不可再修改Snapshot{true,1}后send；receive对应值完成后安全读字段，缓冲channel也满足send→receive，但send返回不表示消费完成。发送含slice/map/指针的值仍可能共享可变底层；交接后不再修改或复制，别把channel当自动深拷贝。"
+    },
+    {
+      "title": "六、atomic与CAS的边界",
+      "words": 2600,
+      "focus": "atomic.Bool/Int64可做单字段无竞态Load/Store/Add，atomic操作顺序一致；分别Store Online和Version时两字段可能被读取为混合代，虽无数据race但违反toy快照。CAS(0,1)只保证单状态转移赢家，不会同步提交成员表、消息数据库和输出队列；完整状态用锁/不可变快照或事务。"
+    },
+    {
+      "title": "七、race检测与业务竞争",
+      "words": 2500,
+      "focus": "go test -race只对实际执行路径检测动态数据竞争（作为未来学习者实践，不在课程制作时运行）；无报警不证明全路径安全，有报警先修正确同步。race-free不保证业务正确：检查成员资格后退出/发送的跨进程事务，或检查重复再插入拆成两个锁区间，仍可能违反业务规则。"
+    },
+    {
+      "title": "八、纸上时序评审与22题",
+      "words": 2400,
+      "focus": "交付无同步数据race图、mu前后快照、channel发布HB链、两个atomic字段混合状态/CAS失败分支、race与业务竞争区分；22题附反馈。下一05.05调度模型，静态不运行Go/race/服务/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.04 Go 内存模型》，面向Go初学者。八节丰富正文和22题带反馈，以虚构c-a会话状态(false,0)→(true,1)讲共享变量/数据竞争/happens-before/Mutex/channel/atomic/CAS。不得把Go竞态程序说成C式完全未定义；不得把缓冲channel发送返回说成消费完成；两个字段各自atomic也不自动提供同一版本快照；race-free不等于业务事务正确。静态不运行Go/race检测/服务/站点。\n1. 一、同一个会话状态为何可能被看成半更新：承接05.01goroutine、05.02锁、05.03channel、03.10只读证据；虚构c-a会话State{Online bool,Version int64}从(false,0)变(true,1)。定义共享变量、读写、先后与业务快照，不把真实IM在线定义为这个toy。\n2. 二、数据竞争与非同步读写：一个goroutine先写Online=true再Version=1，另一个普通读两字段且无同步；至少同址读写未被happens-before排序即data race，不能凭睡眠/CPU核数/日志顺序保障。Go内存模型不等于C式完全undefined，但竞态程序错误且无DRF-SC保障。\n3. 三、happens-before与发布链：单goroutine程序顺序、goroutine创建同步到新goroutine开始但完成不自动同步回；用画箭头A写Version、B发送channel、C接收、D读取，传递形成happens-before。时间上先发生或sleep不等于同步边，channel发送与对应接收、close/receive特例。\n4. 四、互斥锁保护两字段完整快照：状态从(false,0)到(true,1)的两次写和读者复制快照都在同一mu.Lock/Unlock保护区；读者在writer前得旧对，后得新对，不得混合。仅给每字段各自短锁但跨锁读取仍可能不一致；锁只保本进程内存，不保DB事务/设备交付。\n5. 五、channel值发布与所有权：writer构造不可再修改Snapshot{true,1}后send；receive对应值完成后安全读字段，缓冲channel也满足send→receive，但send返回不表示消费完成。发送含slice/map/指针的值仍可能共享可变底层；交接后不再修改或复制，别把channel当自动深拷贝。\n6. 六、atomic与CAS的边界：atomic.Bool/Int64可做单字段无竞态Load/Store/Add，atomic操作顺序一致；分别Store Online和Version时两字段可能被读取为混合代，虽无数据race但违反toy快照。CAS(0,1)只保证单状态转移赢家，不会同步提交成员表、消息数据库和输出队列；完整状态用锁/不可变快照或事务。\n7. 七、race检测与业务竞争：go test -race只对实际执行路径检测动态数据竞争（作为未来学习者实践，不在课程制作时运行）；无报警不证明全路径安全，有报警先修正确同步。race-free不保证业务正确：检查成员资格后退出/发送的跨进程事务，或检查重复再插入拆成两个锁区间，仍可能违反业务规则。\n8. 八、纸上时序评审与22题：交付无同步数据race图、mu前后快照、channel发布HB链、两个atomic字段混合状态/CAS失败分支、race与业务竞争区分；22题附反馈。下一05.05调度模型，静态不运行Go/race/服务/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
