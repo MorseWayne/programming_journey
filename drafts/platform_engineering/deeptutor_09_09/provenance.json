@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_36d28ca337",
+  "page_id": "pg_ed2d060efb",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.rfc-editor.org/rfc/rfc9110.html",
+      "https://www.rfc-editor.org/rfc/rfc9111.html",
+      "https://www.rfc-editor.org/rfc/rfc9457.html",
+      "https://pkg.go.dev/context",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "1365ffaf027e2db581811ca3fdcadcc72fafddabeed019b0ce1f5d5cf6a30616",
+  "original_characters": 33914,
+  "generation_request_sha256": "4d2276ffb86ef36a6b8f8a71ef45ac0c98c49d33d459c27fa0ab61ba4628ca44",
+  "reviewed_sha256": "6ca39c782202351bd71011bc657d88f7ad5ab7389aaa52375c117c92f469757f",
+  "reviewed_characters": 11102,
+  "reviewed_chinese_characters": 3904,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/09_async_long_tasks.md",
+  "course_sha256": "53631b6d3cbc8e78424d612e28f620693bbcad8dbb3ae2d73f1adab59b4a42e3"
+}

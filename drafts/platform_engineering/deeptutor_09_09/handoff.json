@@ -1,0 +1,31 @@
+{
+  "chapter": "09.09",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced asynchronous HTTP API for fictional authorized IM history export operation exp-9",
+  "prerequisites": [
+    "09.02 current S2 HTTP request/response contract",
+    "09.07 object-level authentication and authorization",
+    "08.08 cross-service status and unknown result",
+    "08.09 reliable task identity and worker takeover",
+    "09.12 proposed S3 SQL service boundary"
+  ],
+  "first_pass": [
+    "keep current S2, proposed S3 and new paper /v3 export resource separate",
+    "explain 202 Accepted, Location and GET status monitor",
+    "distinguish accepted operation, completed artifact and authorized download"
+  ],
+  "second_pass": [
+    "bind trusted user, Idempotency-Key and canonical request fingerprint within a retention window",
+    "recover lost 202 response by same-key lookup/retry",
+    "handle worker artifact result unknown and orphan cleanup",
+    "resolve CANCEL_REQUESTED versus SUCCEEDED using atomic state conditions",
+    "recheck permission at submit, execution, status and download"
+  ],
+  "not_yet_prerequisites": [
+    "09.10 protocol compatibility and RPC",
+    "learner's real HTTP, storage and browser fault evidence"
+  ],
+  "next_chapter": "09.10 protocol compatibility and RPC",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These files do not establish the paper /v3 export API, operation resource or cancellation semantics.",
+  "shared_integration_pending": []
+}

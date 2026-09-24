@@ -1,0 +1,73 @@
+{
+  "code": "09.09",
+  "title": "异步与长任务：提交历史导出后如何查询和取消",
+  "chapter_id": "ch_async_long_running_api",
+  "summary": "面向Go初学者，以虚构IM有权历史导出任务exp-9说明HTTP 202、状态资源、幂等提交、取消竞态、私有结果权限和用户反馈。",
+  "objectives": [
+    "区分当前S2/拟议S3发送与新纸上导出API",
+    "解释202/Location/状态查询",
+    "设计幂等键与回应未知处理",
+    "画出持久任务和取消状态机",
+    "保护导出结果、当前成员权限与缓存",
+    "限制固定OpenIM源码能证明的范围"
+  ],
+  "sources": [
+    "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "https://www.rfc-editor.org/rfc/rfc9111.html",
+    "https://www.rfc-editor.org/rfc/rfc9457.html",
+    "https://pkg.go.dev/context",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、为什么IM历史导出不能一直占一个请求",
+      "words": 2900,
+      "focus": "虚构u-b仍有c-a访问权，想导出至seq9的有权历史，可能跨大量记录并慢；与当前S2 POST消息200 accepted_in_memory、拟议S3 v2 200 stored_in_teaching_db分开。提出新纸上/v3/conversations/c-a/exports，不是已部署API，讲请求受理、工作完成、下载各阶段。"
+    },
+    {
+      "title": "二、提交/查询/结果资源的HTTP合同",
+      "words": 3300,
+      "focus": "POST /v3/conversations/c-a/exports带Idempotency-Key与format/jsonl/before_seq9，只有持久operation+enqueue意图同库提交后202 Accepted, Location /v3/operations/exp-9，响应QUEUED/status_url；RFC9110 202非最终结果。GET /v3/operations/exp-9 200 state/updated_at，SUCCEEDED后授权GET /v3/exports/exp-9/result；可用303但需明确跳转。所有私有响应Cache-Control no-store，不把正文放status。"
+    },
+    {
+      "title": "三、幂等键与提交回应未知",
+      "words": 3100,
+      "focus": "同一受信user+Idempotency-Key+规范请求指纹限定作用域/保留窗口：相同指纹重试返回同exp-9与当前状态，key相同参数不同409；响应丢不能断言没创建，客户端重试同key，过保留窗需查询或明确未知策略。只在新/v3教学合同如此，当前S2同message_id即使正文同仍409且非成员隐藏404，6 UTF8字节不改。"
+    },
+    {
+      "title": "四、操作状态机和worker责任",
+      "words": 3200,
+      "focus": "QUEUED→RUNNING(owner/token/attempt)→SUCCEEDED(result_ref)或RETRY_AT/FAILED_REPAIR；状态/worker lease持久，外部对象写成功但状态回应丢→查稳定artifact_id/条件更新，不能重复曝光或把未知当失败。状态接口只证明operation阶段，不证明客户端已下载/阅读；通知/WS事件仅更新提示，GET为授权状态源。"
+    },
+    {
+      "title": "五、取消语义与终态竞态",
+      "words": 3300,
+      "focus": "POST /v3/operations/exp-9/cancel 202表示CANCEL_REQUESTED持久，不表示worker已停止、已创建文件消失或消息历史被删；worker协作检查/cleanup后CANCELED。若SUCCEEDED先通过CAS进入终态，迟到cancel返回明确ALREADY_TERMINAL如409并继续授权下载；若cancel先赢，worker不得发布结果，已写临时对象要安全清理。Go context cancel不撤销外部已完成效果。"
+    },
+    {
+      "title": "六、权限、快照和私有产物",
+      "words": 3200,
+      "focus": "u-b submit/check/status/download每步当前成员/对象权限；u-c已登录非成员隐藏404；u-b执行期间退群/消息撤回需要按产品政策中止或过滤，不能把旧快照导出私有正文。定义数据快照范围和一致游标，不把SQL snapshot与broker offset混用。私有artifact鉴权/短保留/Cache-Control no-store与日志脱敏。"
+    },
+    {
+      "title": "七、轮询/反馈、运维与源码证据",
+      "words": 2900,
+      "focus": "客户端根据Location轮询有界退避/抖动/限流，可能用WS事件作唤醒但断线可查询；UI分别显示排队/运行/取消中/完成/失败，不能202时显示成功下载。指标QUEUED oldest age/attempt/failure/cancel/artifact cleanup，状态保留窗口。固定OpenIM send.go MsgToMQ和另Mongo消费只证明局部发送存储路径，不证明此v3导出/异步API存在。"
+    },
+    {
+      "title": "八、22题与接口验收",
+      "words": 3100,
+      "focus": "22题基础8/故障8/评审6带反馈：202/Location、202不完成、same-key/same-fingerprint、不同请求409、response unknown、cancel requested vs canceled、terminal race、result auth/cache、currentS2 and proposedS3区别、OpenIM证据。交付HTTP请求响应示意、状态转移/故障矩阵和真实待验证，静态不运行Go/IM/DB/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《09.09 异步与长任务》，面向Go初学者，以虚构u-b导出c-a至seq9的有权历史为主线，八节基础理论丰富，逐步到真实API问题，22题分层反馈。当前S2 POST /v1消息成功仍200 accepted_in_memory，非空正文最多6 UTF8字节、总请求4096B、同消息ID即使同内容重复409、非成员u-c隐藏404；拟议S3/v2 200 stored_in_teaching_db仍非部署。本章另提出未实现纸上/v3/conversations/c-a/exports：POST带Idempotency-Key+format/before_seq9，只有持久operation与enqueue意图同库提交才202 Accepted，Location /v3/operations/exp-9，返回QUEUED与status_url，202不证明工作完成。GET status 200、SUCCEEDED后有权下载私有结果。相同用户/幂等键/规范请求指纹重试在保留窗复用同exp-9，key相同但参数不同409；HTTP响应丢未知不能换key盲重建。状态QUEUED/RUNNING/RETRY_AT/FAILED_REPAIR/SUCCEEDED/CANCEL_REQUESTED/CANCELED，worker lease/token/attempt持久，外部artifact写后状态未知查稳定artifact ID。POST cancel只接受取消请求，不等于已经停工；SUCCEEDED与CANCEL_REQUESTED用CAS决定终态，已发生外部效果不可context cancel回滚。提交、状态、下载均需当前c-a权限；u-b中途退群/消息撤回按政策停止或过滤，u-c 404；私有导出物短保留、no-store、日志脱敏。轮询退避/WS提示只是唤醒，GET是状态来源。固定OpenIM send.go MsgToMQ与另Mongo BatchInsertChat2DB不证明此v3 API。静态不运行Go/IM/DB/站点。\n1. 一、为什么IM历史导出不能一直占一个请求: 虚构u-b仍有c-a访问权，想导出至seq9的有权历史，可能跨大量记录并慢；与当前S2 POST消息200 accepted_in_memory、拟议S3 v2 200 stored_in_teaching_db分开。提出新纸上/v3/conversations/c-a/exports，不是已部署API，讲请求受理、工作完成、下载各阶段。\n2. 二、提交/查询/结果资源的HTTP合同: POST /v3/conversations/c-a/exports带Idempotency-Key与format/jsonl/before_seq9，只有持久operation+enqueue意图同库提交后202 Accepted, Location /v3/operations/exp-9，响应QUEUED/status_url；RFC9110 202非最终结果。GET /v3/operations/exp-9 200 state/updated_at，SUCCEEDED后授权GET /v3/exports/exp-9/result；可用303但需明确跳转。所有私有响应Cache-Control no-store，不把正文放status。\n3. 三、幂等键与提交回应未知: 同一受信user+Idempotency-Key+规范请求指纹限定作用域/保留窗口：相同指纹重试返回同exp-9与当前状态，key相同参数不同409；响应丢不能断言没创建，客户端重试同key，过保留窗需查询或明确未知策略。只在新/v3教学合同如此，当前S2同message_id即使正文同仍409且非成员隐藏404，6 UTF8字节不改。\n4. 四、操作状态机和worker责任: QUEUED→RUNNING(owner/token/attempt)→SUCCEEDED(result_ref)或RETRY_AT/FAILED_REPAIR；状态/worker lease持久，外部对象写成功但状态回应丢→查稳定artifact_id/条件更新，不能重复曝光或把未知当失败。状态接口只证明operation阶段，不证明客户端已下载/阅读；通知/WS事件仅更新提示，GET为授权状态源。\n5. 五、取消语义与终态竞态: POST /v3/operations/exp-9/cancel 202表示CANCEL_REQUESTED持久，不表示worker已停止、已创建文件消失或消息历史被删；worker协作检查/cleanup后CANCELED。若SUCCEEDED先通过CAS进入终态，迟到cancel返回明确ALREADY_TERMINAL如409并继续授权下载；若cancel先赢，worker不得发布结果，已写临时对象要安全清理。Go context cancel不撤销外部已完成效果。\n6. 六、权限、快照和私有产物: u-b submit/check/status/download每步当前成员/对象权限；u-c已登录非成员隐藏404；u-b执行期间退群/消息撤回需要按产品政策中止或过滤，不能把旧快照导出私有正文。定义数据快照范围和一致游标，不把SQL snapshot与broker offset混用。私有artifact鉴权/短保留/Cache-Control no-store与日志脱敏。\n7. 七、轮询/反馈、运维与源码证据: 客户端根据Location轮询有界退避/抖动/限流，可能用WS事件作唤醒但断线可查询；UI分别显示排队/运行/取消中/完成/失败，不能202时显示成功下载。指标QUEUED oldest age/attempt/failure/cancel/artifact cleanup，状态保留窗口。固定OpenIM send.go MsgToMQ和另Mongo消费只证明局部发送存储路径，不证明此v3导出/异步API存在。\n8. 八、22题与接口验收: 22题基础8/故障8/评审6带反馈：202/Location、202不完成、same-key/same-fingerprint、不同请求409、response unknown、cancel requested vs canceled、terminal race、result auth/cache、currentS2 and proposedS3区别、OpenIM证据。交付HTTP请求响应示意、状态转移/故障矩阵和真实待验证，静态不运行Go/IM/DB/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

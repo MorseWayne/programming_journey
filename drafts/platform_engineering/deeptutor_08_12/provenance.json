@@ -31,9 +31,9 @@
   "original_sha256": "f7dce1265766e3e71859f31433ab5031513d81f97b1b2bb22702ce47129f9511",
   "original_characters": 34947,
   "generation_request_sha256": "e862b6a11108833e47ad335538c217ee8446d79be793d7c46e33c47d1aa1a6eb",
-  "reviewed_sha256": "90dba0bef153829217317f079129109873839b5a58f45bec1cb527d605142906",
-  "reviewed_characters": 11886,
+  "reviewed_sha256": "e420d9cf00de0e903d1198407e484a8252e0abc7a11583f06a0e52a8d5f1f97c",
+  "reviewed_characters": 11981,
   "reviewed_chinese_characters": 3788,
   "course_file": "src/docs/platform_engineering/curriculum/08_distributed/12_full_consistency_case.md",
-  "course_sha256": "4f81ee98bf0ffa52d622c59d02ada9c7e38873d531e5db16410884f20524505c"
+  "course_sha256": "0882acba6eea01cde36281cc7a529917cb6a47d760bfb633e16c3fc0207a46e5"
 }

@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[09.01 需求与应用边界](./01_requirements_boundaries.md)已完成。它承接 10.01 的独立预期、04.03 的 HTTP/WS 确认点与 05.01–05.03 的并发前置，以虚构 IM 的读历史和发送消息为双用例，定义可信主体、领域/传输边界和内存受理状态。[09.02 HTTP 接口设计](./02_http_api_contract.md)进一步约定 GET/POST、分页、游标、过滤、状态、错误体和三种限额。[09.03 程序组织](./03_program_organization.md)将合同分给 handler、应用服务、领域与内存适配器。[09.04 请求处理链](./04_request_pipeline.md)沿一次 POST 讲中间件、取消、panic、响应提交和日志证据。[09.05 数据访问与迁移](./05_data_access_migration.md)把业务合同接到数据访问、事务与兼容迁移，并对照固定 OpenIM 源码的入队与 MongoDB 消费边界。[09.06 浏览器与客户端边界](./06_browser_client_boundary.md)从表单、Cookie/Session 进入同源、CORS、CSRF、WebSocket 来源和私有历史缓存。[09.07 认证与授权](./07_authentication_authorization.md)再把登录身份与会话/消息对象权限、退群及多设备撤销分开。[09.08 输入与输出防护](./08_input_output_defense.md)沿正文、附件和链接的不同使用位置讲参数、编码、路径、网络与日志边界。[09.11 应用测试与交付](./11_application_tests_delivery.md)把当前 6 字节合同、待审 R9、授权负例和 CI 证据分层整理。[09.12 完整服务项目](./12_im_service_capstone.md)在 04.04–04.07 网络前置后将本卷 S3 能力合为学习者的增量实践说明。十章各 8 节、22 道练习；09.09–09.10 仍按下方设计展开。
+[09.01 需求与应用边界](./01_requirements_boundaries.md)已完成。它承接 10.01 的独立预期、04.03 的 HTTP/WS 确认点与 05.01–05.03 的并发前置，以虚构 IM 的读历史和发送消息为双用例，定义可信主体、领域/传输边界和内存受理状态。[09.02 HTTP 接口设计](./02_http_api_contract.md)进一步约定 GET/POST、分页、游标、过滤、状态、错误体和三种限额。[09.03 程序组织](./03_program_organization.md)将合同分给 handler、应用服务、领域与内存适配器。[09.04 请求处理链](./04_request_pipeline.md)沿一次 POST 讲中间件、取消、panic、响应提交和日志证据。[09.05 数据访问与迁移](./05_data_access_migration.md)把业务合同接到数据访问、事务与兼容迁移，并对照固定 OpenIM 源码的入队与 MongoDB 消费边界。[09.06 浏览器与客户端边界](./06_browser_client_boundary.md)从表单、Cookie/Session 进入同源、CORS、CSRF、WebSocket 来源和私有历史缓存。[09.07 认证与授权](./07_authentication_authorization.md)再把登录身份与会话/消息对象权限、退群及多设备撤销分开。[09.08 输入与输出防护](./08_input_output_defense.md)沿正文、附件和链接的不同使用位置讲参数、编码、路径、网络与日志边界。[09.09 异步与长任务](./09_async_long_tasks.md)以有权历史导出 exp-9 区分 202 提交、状态查询、幂等重试、取消和私有结果。[09.11 应用测试与交付](./11_application_tests_delivery.md)把当前 6 字节合同、待审 R9、授权负例和 CI 证据分层整理。[09.12 完整服务项目](./12_im_service_capstone.md)在 04.04–04.07 网络前置后将本卷 S3 能力合为学习者的增量实践说明。十一章各 8 节、22 道练习；09.10 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -55,7 +55,7 @@ date: 2026-09-23
 |---|---|---|
 | [09.07 认证与授权](./07_authentication_authorization.md) | 凭据、口令哈希、会话、token、角色、资源所有权与撤销。 | 验证可信发送者、群成员资格、设备会话和撤销；覆盖伪造身份与越权历史。 |
 | [09.08 输入与输出防护](./08_input_output_defense.md) | SQL 注入、XSS、路径与文件、SSRF、大小限制和敏感日志。 | 按文本、附件、URL和日志的使用位置设计校验、编码、大小限制和敏感信息处理。 |
-| 09.09 异步与长任务 | 提交/查询/取消 API、幂等身份、后台任务、事件与用户反馈。 | 设计异步发送或导出任务的提交、查询、取消与用户反馈，明确请求重试语义。 |
+| [09.09 异步与长任务](./09_async_long_tasks.md) | 提交/查询/取消 API、幂等身份、后台任务、事件与用户反馈。 | 设计异步发送或导出任务的提交、查询、取消与用户反馈，明确请求重试语义。 |
 
 ## 进阶层
 
