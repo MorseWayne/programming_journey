@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_547864057f",
+  "page_id": "pg_04ad618264",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://man7.org/linux/man-pages/man7/epoll.7.html",
+      "https://man7.org/linux/man-pages/man2/epoll_wait.2.html",
+      "https://man7.org/linux/man-pages/man2/recv.2.html",
+      "https://man7.org/linux/man-pages/man2/write.2.html",
+      "https://pkg.go.dev/net#Conn",
+      "https://pkg.go.dev/io#ReadFull",
+      "https://www.rfc-editor.org/rfc/rfc9293.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "8349c78cfce3295f0804cc40852f929f95924e830797ba50152d521cce77c5c7",
+  "original_characters": 30849,
+  "generation_request_sha256": "b55edea7b8e65547f994ae61eed79173099bb080e755f09030a6a87243edd6d5",
+  "reviewed_sha256": "095cea998ad45eb10e5fa5ba59e9f1951c70fb971d56e05ffde43111eb23d568",
+  "reviewed_characters": 7764,
+  "reviewed_chinese_characters": 3697,
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/09_io_event_notification.md",
+  "course_sha256": "24584396c257d92560b5a8e2c81a8315f3041b27353e075195556964f0c3a764"
+}

@@ -1,0 +1,75 @@
+{
+  "code": "03.09",
+  "title": "I/O 与事件通知：从长连接就绪到完整消息",
+  "chapter_id": "ch_io_event_notification",
+  "summary": "面向Go初学者承接FD、调度和TCP字节流，以虚构IM两个设备说明阻塞/非阻塞、epoll就绪、长度前缀解析、短读写、有限输出队列与LT/ET反例。",
+  "objectives": [
+    "区分阻塞等待、非阻塞EAGAIN和EOF",
+    "解释epoll兴趣表与就绪表",
+    "用固定7字节玩具帧推导三次短读",
+    "维护每连接解析状态与输入上限",
+    "按实际n推导部分写与有限队列",
+    "区分LT与ET的重唤醒条件",
+    "说明Go net.Conn抽象与业务确认边界"
+  ],
+  "sources": [
+    "https://man7.org/linux/man-pages/man7/epoll.7.html",
+    "https://man7.org/linux/man-pages/man2/epoll_wait.2.html",
+    "https://man7.org/linux/man-pages/man2/recv.2.html",
+    "https://man7.org/linux/man-pages/man2/write.2.html",
+    "https://pkg.go.dev/net#Conn",
+    "https://pkg.go.dev/io#ReadFull",
+    "https://www.rfc-editor.org/rfc/rfc9293.html"
+  ],
+  "sections": [
+    {
+      "title": "一、空闲连接多为何不必有同数线程忙等",
+      "words": 2200,
+      "focus": "承接03.03 FD、03.04可运行/等待、04.04 TCP字节流、04.05连接生命周期、05.03有限队列；虚构IM两个设备fd11/fd12连接，强调FD资源仍占用、阻塞线程和事件通知解决不同问题。先区分数据到达、描述符可读、完整应用消息。"
+    },
+    {
+      "title": "二、阻塞与非阻塞的读写结果",
+      "words": 2300,
+      "focus": "阻塞read等待条件，非阻塞read无数据返回EAGAIN/EWOULDBLOCK；有数据也可能短读，0在非零请求的有序关闭stream socket表示EOF，错误不同。write可短写/等待可写，n>0和err同时处理；不要busy loop，等待事件/期限。"
+    },
+    {
+      "title": "三、就绪通知与epoll的兴趣和就绪集合",
+      "words": 2300,
+      "focus": "Linux epoll实例注册感兴趣FD，epoll_wait返回可处理事件；就绪是当前可尝试而非保留未来数据，也非消息完整；fd11/fd12事件时间线、读事件/写事件/错误与HUP。Go net.Conn为调用方隐藏底层机制，不宣称OpenIM或Go每连接一线程。"
+    },
+    {
+      "title": "四、字节流与长度前缀解析全过程",
+      "words": 2600,
+      "focus": "单独的玩具TCP流帧2字节大端长度+5字节hello，总7字节，header bytes00 05；t0读00，t1读05 h e，t2读l l o，按每连接缓冲累计、解析len5、完成hello。fd12状态独立；限额8字节、长度0或超过上限拒绝；不能把一次可读当完整帧，与HTTP/WebSocket标准帧区别。"
+    },
+    {
+      "title": "五、部分写和慢设备的有限输出队列",
+      "words": 2400,
+      "focus": "toy发送hello 5B，第一次write接受2B，剩3B保留偏移；等可写再发送3B；就绪不保证整包，避免忙轮询。每连接输出队列容量和满队列策略，慢设备不能拖无限内存；设备TCP接收不等于应用确认/展示。"
+    },
+    {
+      "title": "六、水平与边沿触发以及EAGAIN",
+      "words": 2500,
+      "focus": "LT未读完数据会再报告；ET仅状态变化时报告，若本来有6B仅读2B后直接等待可能不再醒来，非阻塞读/写到EAGAIN并维护待办公平；EPOLLONESHOT需rearm。对初学者先LT正确，ET作为第二遍；不要把epoll说成自动解包。"
+    },
+    {
+      "title": "七、Go与资源成本取舍",
+      "words": 2300,
+      "focus": "Go net.Conn与io.ReadFull给阻塞式抽象/完整读取帮助，deadline/cancel/close可释放等待；底层OS就绪机制与goroutine调度各有层次。传统每连接阻塞线程vs事件循环的成本概念、FD/内核缓冲/用户态状态/队列仍需预算，事件循环若处理业务太久会拖其他FD。静态无具体平台性能数字。"
+    },
+    {
+      "title": "八、纸上状态机与22题",
+      "words": 2400,
+      "focus": "交付fd11 00|05he|llo的解析状态表、fd12独立性、两次write偏移、LT/ET剩余数据反例、EOF/EAGAIN/超时区别、容量与业务确认边界；22道练习附反馈。下一03.10系统诊断；静态不运行Go、网络、epoll或站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.09 I/O与事件通知》，面向Go初学者，用虚构IM长连接场景渐进讲FD、阻塞/非阻塞、epoll、TCP字节流、短读写、LT/ET。固定玩具帧00 05 + hello共7字节，三次读取00 | 05 h e | l l o，解释每连接缓冲和解析状态，不将它说成真实HTTP/WebSocket/OpenIM线上帧。22道带反馈练习。区分可读就绪、完整应用消息、TCP接收和业务确认；静态不运行Go/网络/epoll/站点。\n1. 一、空闲连接多为何不必有同数线程忙等：承接03.03 FD、03.04可运行/等待、04.04 TCP字节流、04.05连接生命周期、05.03有限队列；虚构IM两个设备fd11/fd12连接，强调FD资源仍占用、阻塞线程和事件通知解决不同问题。先区分数据到达、描述符可读、完整应用消息。\n2. 二、阻塞与非阻塞的读写结果：阻塞read等待条件，非阻塞read无数据返回EAGAIN/EWOULDBLOCK；有数据也可能短读，0在非零请求的有序关闭stream socket表示EOF，错误不同。write可短写/等待可写，n>0和err同时处理；不要busy loop，等待事件/期限。\n3. 三、就绪通知与epoll的兴趣和就绪集合：Linux epoll实例注册感兴趣FD，epoll_wait返回可处理事件；就绪是当前可尝试而非保留未来数据，也非消息完整；fd11/fd12事件时间线、读事件/写事件/错误与HUP。Go net.Conn为调用方隐藏底层机制，不宣称OpenIM或Go每连接一线程。\n4. 四、字节流与长度前缀解析全过程：单独的玩具TCP流帧2字节大端长度+5字节hello，总7字节，header bytes00 05；t0读00，t1读05 h e，t2读l l o，按每连接缓冲累计、解析len5、完成hello。fd12状态独立；限额8字节、长度0或超过上限拒绝；不能把一次可读当完整帧，与HTTP/WebSocket标准帧区别。\n5. 五、部分写和慢设备的有限输出队列：toy发送hello 5B，第一次write接受2B，剩3B保留偏移；等可写再发送3B；就绪不保证整包，避免忙轮询。每连接输出队列容量和满队列策略，慢设备不能拖无限内存；设备TCP接收不等于应用确认/展示。\n6. 六、水平与边沿触发以及EAGAIN：LT未读完数据会再报告；ET仅状态变化时报告，若本来有6B仅读2B后直接等待可能不再醒来，非阻塞读/写到EAGAIN并维护待办公平；EPOLLONESHOT需rearm。对初学者先LT正确，ET作为第二遍；不要把epoll说成自动解包。\n7. 七、Go与资源成本取舍：Go net.Conn与io.ReadFull给阻塞式抽象/完整读取帮助，deadline/cancel/close可释放等待；底层OS就绪机制与goroutine调度各有层次。传统每连接阻塞线程vs事件循环的成本概念、FD/内核缓冲/用户态状态/队列仍需预算，事件循环若处理业务太久会拖其他FD。静态无具体平台性能数字。\n8. 八、纸上状态机与22题：交付fd11 00|05he|llo的解析状态表、fd12独立性、两次write偏移、LT/ET剩余数据反例、EOF/EAGAIN/超时区别、容量与业务确认边界；22道练习附反馈。下一03.10系统诊断；静态不运行Go、网络、epoll或站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

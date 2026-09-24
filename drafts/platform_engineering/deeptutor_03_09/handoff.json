@@ -1,0 +1,31 @@
+{
+  "chapter": "03.09",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced I/O readiness lesson for two fictional IM device connections and toy TCP stream frames",
+  "prerequisites": [
+    "03.03 file descriptors and process resources",
+    "03.04 runnable versus waiting tasks",
+    "04.04 reliable ordered TCP byte stream",
+    "04.05 long-connection lifecycle",
+    "05.03 finite queues and cancellation"
+  ],
+  "first_pass": [
+    "blocking versus nonblocking and EAGAIN/EOF",
+    "epoll interest versus ready sets",
+    "per-connection state and 2-byte length-prefixed toy frame"
+  ],
+  "second_pass": [
+    "partial writes and finite slow-device output queues",
+    "level-triggered versus edge-triggered unread-byte counterexample",
+    "ET drain or explicit user-space pending-work bookkeeping",
+    "Go net.Conn abstraction and application confirmation boundary"
+  ],
+  "not_yet_prerequisites": [
+    "03.10 real system diagnostic evidence",
+    "05.08–05.12 concurrency and runtime performance depth",
+    "S5 reliable device delivery and replay semantics"
+  ],
+  "next_chapter": "03.10 system diagnostics",
+  "upstream_inspection": "No OpenIM implementation claim; Linux epoll/recv/write manuals, Go net/io docs and TCP RFC support general I/O concepts.",
+  "shared_integration_pending": []
+}

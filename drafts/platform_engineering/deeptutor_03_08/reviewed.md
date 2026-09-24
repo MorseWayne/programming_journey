@@ -208,4 +208,4 @@ Go 初学者可把上述步骤对应到 `os.OpenFile`、`(*File).Write`、`(*Fil
 - [Linux `write(2)`](https://man7.org/linux/man-pages/man2/write.2.html)、[`fsync(2)`](https://man7.org/linux/man-pages/man2/fsync.2.html)与[`rename(2)`](https://man7.org/linux/man-pages/man2/rename.2.html)：短写、文件/目录同步与同文件系统名称替换。
 - [Go `os` 包](https://pkg.go.dev/os)：文件打开、写入、同步、关闭与重命名的 API 入口；Linux 纸上语义不可直接推广为所有平台保证。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 03.09 进入 I/O 阻塞、就绪通知与短读短写的运行机制。离开本章前，应能说出**V1/V2 各在什么时刻可见、哪一步使文件内容有同步证据、哪一步使名字有同步证据，以及反馈丢失时应怎样核对版本**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[03.09 I/O 与事件通知](../../../src/docs/platform_engineering/curriculum/03_systems/09_io_event_notification.md)进入 I/O 阻塞、就绪通知与短读短写的运行机制。离开本章前，应能说出**V1/V2 各在什么时刻可见、哪一步使文件内容有同步证据、哪一步使名字有同步证据，以及反馈丢失时应怎样核对版本**。
