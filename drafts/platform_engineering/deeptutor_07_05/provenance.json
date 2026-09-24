@@ -28,9 +28,9 @@
   "original_sha256": "f60e4334e025edf29c3f11db504f24d74fedda860577c5185eee9814a1480798",
   "original_characters": 30256,
   "generation_request_sha256": "a581ecc61643bc183db006ced4282c506b0c4d39f32041f7a889c59e23d59f39",
-  "reviewed_sha256": "c9246ae1cbe942e05fba1dddb89c55c4e5c2d8a3a993e057b0806cf4237b6941",
-  "reviewed_characters": 8619,
-  "reviewed_chinese_characters": 3714,
+  "reviewed_sha256": "9ef103cde0ebd66ed155403d866e098ebae58e2a5ddfb925697f70fe8858c913",
+  "reviewed_characters": 8721,
+  "reviewed_chinese_characters": 3718,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/05_cache_persistence_failure.md",
-  "course_sha256": "7468cf11f781bc03121611825a9f1b436f1f38e80918fe18b880d016067564a1"
+  "course_sha256": "f733a74a8c9c488c324b70c7c90aeb2ec56ca15c9bdf996457ee251b8590b424"
 }

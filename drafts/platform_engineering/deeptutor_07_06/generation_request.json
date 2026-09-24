@@ -1,0 +1,72 @@
+{
+  "code": "07.06",
+  "title": "消息抽象：在线提示、后台任务与可回放日志",
+  "chapter_id": "ch_message_abstractions",
+  "summary": "面向Go初学者，沿IM消息提交后通知、搜索索引和离线补拉需求比较队列、发布订阅与可回放日志的分发、保留和确认。",
+  "objectives": [
+    "区分数据库消息事实与broker通知事件",
+    "按在线提示/后台索引/离线补拉选择消息抽象",
+    "解释PubSub离线不重放边界",
+    "解释竞争消费者任务ACK的两个崩溃窗口",
+    "区分业务message_id/seq与broker partition offset",
+    "解释组间各消费、组内分工和保留窗口",
+    "列出DB到broker跨系统空窗及各确认点"
+  ],
+  "sources": [
+    "https://redis.io/docs/latest/develop/pubsub/",
+    "https://redis.io/docs/latest/develop/data-types/streams/",
+    "https://docs.nats.io/learn/jetstream/pull-consumers",
+    "https://kafka.apache.org/intro/"
+  ],
+  "sections": [
+    {
+      "title": "一、一条已提交消息为何需要三种后续路径",
+      "words": 2600,
+      "focus": "承接06.12未来S3教学DB已知提交m-9/c-a seq9，当前S2仍accepted_in_memory。业务需求：在线B提示可补拉，后台搜索索引更新，离线历史补拉。先定义事实记录、通知事件E9、生产者/中间件/消费者、确认与保留；不把消息队列当消息权威表。"
+    },
+    {
+      "title": "二、队列、发布订阅、日志的最小模型",
+      "words": 3000,
+      "focus": "queue一个工作项在一个竞争消费者间分工；PubSub向当前订阅者扇出，Redis PubSub at-most-once无离线回放；append log按分区有序、可按保留期重读，Kafka/Redis Streams/NATS JetStream各具体不同。明确一份事件可通过两个逻辑组分别处理。"
+    },
+    {
+      "title": "三、在线提示选PubSub的边界",
+      "words": 2800,
+      "focus": "G在S3 DB提交后发布m-9 available hint，B在线订阅可收到，离线无订阅则错过；这可接受仅当客户端重连能按授权从DB历史补拉。发布成功不代表B设备收/展示/已读；若合同要求离线保留，PubSub alone不够。"
+    },
+    {
+      "title": "四、后台任务队列与确认时机",
+      "words": 2900,
+      "focus": "SearchIndex group有worker W1,W2，同一索引任务E9只交给其中一个处理；若处理前ack进程崩溃会丢效果，若先写索引再ack崩溃可能重投，需幂等message_id/version。NATS JetStream consumer ACK等按官方对照，07.07深入，不保证恰好一次外部效果。"
+    },
+    {
+      "title": "五、可回放分区日志与消费组",
+      "words": 3200,
+      "focus": "教学E9 broker partition P0 offset42，业务m-9身份、c-a seq9与offset42三者不同。假设稳定按conversation_id分区，c-a事件留P0顺序，跨c-b所在P1无全局序；Search组与Notify组各自消费E9，组内多个worker分摊分区而非每人都收到；Kafka官方概念。"
+    },
+    {
+      "title": "六、保留窗口与离线恢复",
+      "words": 2900,
+      "focus": "日志玩具保留24h，B离线25h后不能只靠日志补齐；DB历史仍为权威并按当前权限/游标补拉。consumer offset/stream pending/重放受保留配置与版本，重放可能重复，不能把保留期限当设备已读/永久历史。"
+    },
+    {
+      "title": "七、五个确认点与跨系统空窗",
+      "words": 3100,
+      "focus": "S3 DB commit、broker publish ack、consumer ack、G通知尝试、B应用/阅读分别标边界；DB commit之后发布E9失败，挑队列/日志类型不能跨DB原子，需07.10 outbox等方案。当前S2只内存受理不套S3确认。"
+    },
+    {
+      "title": "八、选择矩阵与22题",
+      "words": 2800,
+      "focus": "交付在线hint/搜索后台/历史补拉三路，E9 offset42、组内外分发、24h/25h窗口和确认表；22题从抽象/手算/故障评审附反馈，不运行broker/Redis/Go/DB/站点。下一07.07确认重投去重。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《07.06 消息抽象》，面向Go初学者，八节丰富理论与业务实践，22道分层练习反馈。承接06.12未来S3教学DB已提交m-9/c-a seq9，当前S2 200仍accepted_in_memory。三个需求：在线B提示有消息可补拉、SearchIndex后台更新、B离线后查历史。定义E9通知事件；Redis PubSub在线订阅at-most-once，B离线不回放，必须由权威DB历史补拉。队列SearchIndex组W1/W2竞争同任务，处理前ACK崩溃丢效果，先处理后ACK崩溃重投需按m-9/version幂等。可回放日志E9在教学partition P0 offset42，message_id=m-9、会话seq9、broker offset42完全不同；按conversation_id分区可在稳定分区策略下保同会话分区顺序，不给跨分区全序。Search与Notify两逻辑消费组各见E9，组内worker分摊，不是每个worker都得同一项。玩具日志保留24h，B离线25h不能只靠日志历史，DB仍权威。五确认点DB commit/broker publish ACK/consumer ACK/网关通知尝试/B应用收到阅读分开；DB commit后发布失败不是换队列类型即可原子解决，07.10再outbox。不声称OpenIM具体broker路径，不运行Go/Redis/Kafka/NATS/DB/站点。\n1. 一、一条已提交消息为何需要三种后续路径: 承接06.12未来S3教学DB已知提交m-9/c-a seq9，当前S2仍accepted_in_memory。业务需求：在线B提示可补拉，后台搜索索引更新，离线历史补拉。先定义事实记录、通知事件E9、生产者/中间件/消费者、确认与保留；不把消息队列当消息权威表。\n2. 二、队列、发布订阅、日志的最小模型: queue一个工作项在一个竞争消费者间分工；PubSub向当前订阅者扇出，Redis PubSub at-most-once无离线回放；append log按分区有序、可按保留期重读，Kafka/Redis Streams/NATS JetStream各具体不同。明确一份事件可通过两个逻辑组分别处理。\n3. 三、在线提示选PubSub的边界: G在S3 DB提交后发布m-9 available hint，B在线订阅可收到，离线无订阅则错过；这可接受仅当客户端重连能按授权从DB历史补拉。发布成功不代表B设备收/展示/已读；若合同要求离线保留，PubSub alone不够。\n4. 四、后台任务队列与确认时机: SearchIndex group有worker W1,W2，同一索引任务E9只交给其中一个处理；若处理前ack进程崩溃会丢效果，若先写索引再ack崩溃可能重投，需幂等message_id/version。NATS JetStream consumer ACK等按官方对照，07.07深入，不保证恰好一次外部效果。\n5. 五、可回放分区日志与消费组: 教学E9 broker partition P0 offset42，业务m-9身份、c-a seq9与offset42三者不同。假设稳定按conversation_id分区，c-a事件留P0顺序，跨c-b所在P1无全局序；Search组与Notify组各自消费E9，组内多个worker分摊分区而非每人都收到；Kafka官方概念。\n6. 六、保留窗口与离线恢复: 日志玩具保留24h，B离线25h后不能只靠日志补齐；DB历史仍为权威并按当前权限/游标补拉。consumer offset/stream pending/重放受保留配置与版本，重放可能重复，不能把保留期限当设备已读/永久历史。\n7. 七、五个确认点与跨系统空窗: S3 DB commit、broker publish ack、consumer ack、G通知尝试、B应用/阅读分别标边界；DB commit之后发布E9失败，挑队列/日志类型不能跨DB原子，需07.10 outbox等方案。当前S2只内存受理不套S3确认。\n8. 八、选择矩阵与22题: 交付在线hint/搜索后台/历史补拉三路，E9 offset42、组内外分发、24h/25h窗口和确认表；22题从抽象/手算/故障评审附反馈，不运行broker/Redis/Go/DB/站点。下一07.07确认重投去重。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

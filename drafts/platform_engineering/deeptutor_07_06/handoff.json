@@ -1,0 +1,30 @@
+{
+  "chapter": "07.06",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced queue, Pub/Sub and replayable-log lesson for fictional m-9/E9",
+  "prerequisites": [
+    "06.12 authoritative message commit and HTTP contract",
+    "07.01 state roles and 07.02 Redis Stream entry",
+    "08.01 partial failure and unknown response boundary"
+  ],
+  "first_pass": [
+    "m-9 database fact versus E9 processing event",
+    "online Pub/Sub hint and offline authority-history catch-up",
+    "SearchIndex worker queue and two ACK crash windows"
+  ],
+  "second_pass": [
+    "partition P0 offset42 versus message_id m-9 and c-a seq9",
+    "SearchIndex/Notify groups each see E9, workers divide within a group",
+    "24-hour event retention versus 25-hour offline client",
+    "DB commit, broker publish, consumer ACK, gateway attempt and device/user result"
+  ],
+  "not_yet_prerequisites": [
+    "07.07 acknowledgment, retry and deduplication",
+    "07.08 per-key ordering and concurrent consumption",
+    "07.10 outbox cross-system boundary",
+    "real broker and device verification by the learner"
+  ],
+  "next_chapter": "07.07 acknowledgment, retry and deduplication",
+  "upstream_inspection": "No OpenIM implementation claim; Redis, NATS and Kafka primary documentation supports only their own delivery models.",
+  "shared_integration_pending": []
+}

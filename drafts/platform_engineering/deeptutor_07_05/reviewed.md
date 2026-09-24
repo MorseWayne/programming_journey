@@ -173,4 +173,4 @@ RDB 是某时点数据集快照；AOF 记录修改数据的命令以供回放。
 
 不看答案时，能逐项解释无持久/RDB/AOF/落后副本切换会恢复什么、可能丢什么；能指出 RDB 恢复出旧预览和旧 presence 的不同错误，并设计冷缓存 1000/s 对 DB 200/s 的有界恢复，才算完成第一轮。第二轮由学习者在隔离环境保存真实 Redis 配置、故障时刻、源版本、读结果与容量数据；本章没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 07.06 转入队列、发布订阅、日志与消费组；07.07 再细化生产确认、消费 ACK 和重复处理。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[07.06 消息抽象](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/06_message_abstractions.md)转入队列、发布订阅、日志与消费组；07.07 再细化生产确认、消费 ACK 和重复处理。
