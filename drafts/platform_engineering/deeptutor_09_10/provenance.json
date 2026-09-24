@@ -30,9 +30,9 @@
   "original_sha256": "d69a5aa0e24cf97ddba9cc4c3b27aaeb3916a0570d9b42abd9e45e702d12e1cd",
   "original_characters": 33498,
   "generation_request_sha256": "b69d9b3682c731a314cbf11d4ee3d6b8b95284fd43943a5b1892ce9c207901a0",
-  "reviewed_sha256": "9e731f107a7dd66ef419abc511dbc82bc61222546a5dc7981a13c11b14b1ab3a",
-  "reviewed_characters": 10759,
-  "reviewed_chinese_characters": 3757,
+  "reviewed_sha256": "3cb1f80d812d9b77f85b2947f72b5b43460ac5a5b0b97f6e2509e722a7079989",
+  "reviewed_characters": 10880,
+  "reviewed_chinese_characters": 3765,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/10_protocol_compatibility_rpc.md",
-  "course_sha256": "233f526855a61a4209c8249da4c7fb9441be4a1cadacfa905c40602e64448f99"
+  "course_sha256": "1c0a09c38e3cdc95abf0eaa0688122bd394d884df5c3e9b6c9007dcc72caa78e"
 }

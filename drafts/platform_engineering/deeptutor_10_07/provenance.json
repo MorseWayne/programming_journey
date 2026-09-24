@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_6b8200b204",
+  "page_id": "pg_8d281a160e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/tutorial/fuzz",
+      "https://pkg.go.dev/testing",
+      "https://go.dev/doc/articles/race_detector",
+      "https://go.dev/ref/mem",
+      "https://github.com/anishathalye/porcupine",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "8b8741c5456f0cdcb77523b5a6ec633ae65375e9da7cfa85641cbe46ec0bfed0",
+  "original_characters": 31865,
+  "generation_request_sha256": "9b5d76c421b0aa7a93c17e1ba8389a6c04796a3adf87875de31b952bee7cec8e",
+  "reviewed_sha256": "2465aa9e1e52e210cf97b0715fb1ce11d493cb63fedc73f779abb1b1f68e648c",
+  "reviewed_characters": 10523,
+  "reviewed_chinese_characters": 3643,
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/07_concurrency_property_validation.md",
+  "course_sha256": "7be28372fad1108bd4667de7c36e60220eaffcfb020a7dcffcf2c4e76fa90435"
+}

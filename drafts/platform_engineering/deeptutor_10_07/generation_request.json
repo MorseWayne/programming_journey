@@ -1,0 +1,74 @@
+{
+  "code": "10.07",
+  "title": "并发与属性验证：没有data race为何还重复发送",
+  "chapter_id": "ch_concurrency_property_validation",
+  "summary": "面向Go初学者，沿虚构IM解码、去重和连接生命周期说明Go fuzzing、race detector、受控并发交错、状态机与回归证据各自边界。",
+  "objectives": [
+    "从S2接口规则提炼可测性质",
+    "设计Go Fuzz解码边界与种子",
+    "区分数据竞争与逻辑并发错",
+    "用barrier复现原子查重反例",
+    "给连接代次状态机写合法转移",
+    "把失败输入变回归并标明证据范围"
+  ],
+  "sources": [
+    "https://go.dev/doc/tutorial/fuzz",
+    "https://pkg.go.dev/testing",
+    "https://go.dev/doc/articles/race_detector",
+    "https://go.dev/ref/mem",
+    "https://github.com/anishathalye/porcupine",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、从IM规则选择验证工具",
+      "words": 2900,
+      "focus": "当前S2消息POST正文非空最多6UTF8字节、总请求4096B、同ID重复即使同正文409、非成员404、200 accepted_in_memory；未来S3 stored_in_teaching_db仍提议。选解码/去重/连接三类性质，区分例子测试、fuzz输入、-race内存冲突、状态机有序交错、08.11跨节点历史，不因一项绿推全系统。"
+    },
+    {
+      "title": "二、解析器性质与Go模糊测试",
+      "words": 3200,
+      "focus": "纸上FuzzDecodeMessage(f *testing.F)种子空、你好6B、你好呀9B、截断JSON、非法UTF8、未知字段/边界4096B；随机输入性质无panic、有界内存、接受时正文合法≤6B/发件人受信、拒绝时状态不变/错误不泄密。Go f.Add/F.Fuzz/testdata/fuzz，真实执行未来由学习者，不在本仓库运行。"
+    },
+    {
+      "title": "三、race detector与无数据竞争仍错的交错",
+      "words": 3300,
+      "focus": "Go -race找实际运行路径内存data race，不找未执行路径或跨节点逻辑；无锁map会race；即使Check(m9)与Insert(m9)分别加锁，T1/T2交错二者都见不存在再各插/推送，map安全仍双效果。应将查重+插入作为一个原子临界区或DB唯一约束，HTTP当前重复规则一成一409，旧内容不覆盖。"
+    },
+    {
+      "title": "四、连接/任务生命周期状态机",
+      "words": 3000,
+      "focus": "设备d-b1连接DISCONNECTED→CONNECTING→ACTIVE(G1,gen41)→DRAINING/CLOSED，重连G2 gen42；旧G1迟到回调不能把owner改回41或发送过期任务，目标比较代次，外部socket字节可能已发。模型操作Connect/Disconnect/Deliver/Timeout，限制合法转移和稳定消息去重；与08.07分布式owner区别。"
+    },
+    {
+      "title": "五、用barrier/fake clock注入确定性交错",
+      "words": 3200,
+      "focus": "不用time.Sleep赌顺序；可控依赖与channel barrier安排T1查缺、T2查缺、T1插、T2插；fake clock让lease到期/取消，记录事件序列和每个工作者状态；Go context取消协作、不撤销远端。测试超时避免死锁并记录失败时的seed/阶段。"
+    },
+    {
+      "title": "六、失败样本缩小、回归与性质边界",
+      "words": 2900,
+      "focus": "fuzz失败输入纳入testdata/fuzz/FuzzXxx，保留脱敏最小输入与触发的合同；修复后回归正常/拒绝/并发变式，不仅保留随机种子。性质如decode(encode(x))针对规范化字段和安全有效输入，不能因ProtoJSON未知字段损失写成所有字节往返一致；避免镜像实现作为oracle。"
+    },
+    {
+      "title": "七、验证证据分层与固定OpenIM边界",
+      "words": 3000,
+      "focus": "表：例子测试具体结果、fuzz发现未知输入、-race实际路径数据竞争、模型受控交错、集成真实数据库/网关、08.11有界分布式历史；通过范围需记录Go版本/commit/命令/seed/故障/输出与未覆盖。固定OpenIM send.go MsgToMQ/另Mongo BatchInsert为只读源码证据，不等于本章测试已对上游运行。"
+    },
+    {
+      "title": "八、22题与教学验收",
+      "words": 3100,
+      "focus": "22题基础8/交错与性质8/证据评审6，答案覆盖6B UTF8/409/404、fuzz有效输入性质、Go testing.F、-race限度、data-race-free logical race、barrier、gen41/42、context cancel、fuzz corpus、OpenIM边界。交付三类不变量、最小失败时序与回归计划，静态不运行Go测试/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《10.07 并发与属性验证》，面向Go初学者，八节丰富基础理论、IM例子由浅入深，22题带反馈。当前S2/v1消息POST正文非空最多6UTF8字节、总请求4096B、同ID重复即使同正文409、非成员目标404、200 accepted_in_memory；未来S3 stored_in_teaching_db只是提议。以解析/去重/连接三类为例：Go FuzzDecodeMessage种子空、你好6B合法、你好呀9B超限、损坏JSON/非法UTF8/4096边界，性质无panic、有效接受时满足字节/可信身份、拒绝时状态不变和错误不泄密，F.Add/F.Fuzz与testdata/fuzz回归。Go -race只找实际执行到的内存data race；即便map用锁无data race，若Check(m9)与Insert(m9)分别加锁，T1/T2都先见缺再各插/发仍逻辑重复，需原子临界区/唯一约束。设备d-b1连接状态DISCONNECTED/CONNECTING/ACTIVE(G1gen41)/DRAINING/CLOSED，新G2gen42后旧回调不可把owner回退，外部socket字节仍可能已发。用channel barrier/fake clock控制交错与lease/取消，不用Sleep赌调度；Go context取消非远端rollback。fuzz失败样本回归，性质/模型/执行证据分层，08.11跨节点history另验。固定OpenIM send.go MsgToMQ与另Mongo BatchInsert只为只读源码证据，不写成已执行测试。静态不运行Go测试/IM/站点。\n1. 一、从IM规则选择验证工具: 当前S2消息POST正文非空最多6UTF8字节、总请求4096B、同ID重复即使同正文409、非成员404、200 accepted_in_memory；未来S3 stored_in_teaching_db仍提议。选解码/去重/连接三类性质，区分例子测试、fuzz输入、-race内存冲突、状态机有序交错、08.11跨节点历史，不因一项绿推全系统。\n2. 二、解析器性质与Go模糊测试: 纸上FuzzDecodeMessage(f *testing.F)种子空、你好6B、你好呀9B、截断JSON、非法UTF8、未知字段/边界4096B；随机输入性质无panic、有界内存、接受时正文合法≤6B/发件人受信、拒绝时状态不变/错误不泄密。Go f.Add/F.Fuzz/testdata/fuzz，真实执行未来由学习者，不在本仓库运行。\n3. 三、race detector与无数据竞争仍错的交错: Go -race找实际运行路径内存data race，不找未执行路径或跨节点逻辑；无锁map会race；即使Check(m9)与Insert(m9)分别加锁，T1/T2交错二者都见不存在再各插/推送，map安全仍双效果。应将查重+插入作为一个原子临界区或DB唯一约束，HTTP当前重复规则一成一409，旧内容不覆盖。\n4. 四、连接/任务生命周期状态机: 设备d-b1连接DISCONNECTED→CONNECTING→ACTIVE(G1,gen41)→DRAINING/CLOSED，重连G2 gen42；旧G1迟到回调不能把owner改回41或发送过期任务，目标比较代次，外部socket字节可能已发。模型操作Connect/Disconnect/Deliver/Timeout，限制合法转移和稳定消息去重；与08.07分布式owner区别。\n5. 五、用barrier/fake clock注入确定性交错: 不用time.Sleep赌顺序；可控依赖与channel barrier安排T1查缺、T2查缺、T1插、T2插；fake clock让lease到期/取消，记录事件序列和每个工作者状态；Go context取消协作、不撤销远端。测试超时避免死锁并记录失败时的seed/阶段。\n6. 六、失败样本缩小、回归与性质边界: fuzz失败输入纳入testdata/fuzz/FuzzXxx，保留脱敏最小输入与触发的合同；修复后回归正常/拒绝/并发变式，不仅保留随机种子。性质如decode(encode(x))针对规范化字段和安全有效输入，不能因ProtoJSON未知字段损失写成所有字节往返一致；避免镜像实现作为oracle。\n7. 七、验证证据分层与固定OpenIM边界: 表：例子测试具体结果、fuzz发现未知输入、-race实际路径数据竞争、模型受控交错、集成真实数据库/网关、08.11有界分布式历史；通过范围需记录Go版本/commit/命令/seed/故障/输出与未覆盖。固定OpenIM send.go MsgToMQ/另Mongo BatchInsert为只读源码证据，不等于本章测试已对上游运行。\n8. 八、22题与教学验收: 22题基础8/交错与性质8/证据评审6，答案覆盖6B UTF8/409/404、fuzz有效输入性质、Go testing.F、-race限度、data-race-free logical race、barrier、gen41/42、context cancel、fuzz corpus、OpenIM边界。交付三类不变量、最小失败时序与回归计划，静态不运行Go测试/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

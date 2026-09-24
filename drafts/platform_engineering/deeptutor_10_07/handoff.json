@@ -1,0 +1,31 @@
+{
+  "chapter": "10.07",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go concurrency and property validation lesson for fictional IM decoding, deduplication and connection lifecycle",
+  "prerequisites": [
+    "10.02 test basics and state assertions",
+    "10.04 controllable fakes and dependency boundaries",
+    "05.09 Go concurrency verification and race detector limits",
+    "09.02 current S2 six-byte HTTP contract",
+    "09.10 protocol decoding and unknown-field boundaries"
+  ],
+  "first_pass": [
+    "derive parser, duplicate-ID and connection-generation properties from the current S2 contract",
+    "distinguish Fuzz seed inputs from business acceptance checks",
+    "explain what go test -race can and cannot report"
+  ],
+  "second_pass": [
+    "reproduce a data-race-free double-send from separately locked Check and Insert",
+    "model gen41 stale callbacks after gen42 connection takeover",
+    "control goroutine interleavings with barriers and time with fakes",
+    "turn minimal fuzz failures into sanitized regression examples",
+    "separate local, model, integration and distributed-history evidence"
+  ],
+  "not_yet_prerequisites": [
+    "10.08 dependency and quality tools",
+    "learner's real Go test, fuzz and race evidence"
+  ],
+  "next_chapter": "10.08 dependency and quality tools",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These read-only facts are not Go test, race, fuzz or end-to-end runtime evidence.",
+  "shared_integration_pending": []
+}
