@@ -1,0 +1,29 @@
+{
+  "chapter": "05.12",
+  "stage": "S4",
+  "business_scope": "static capstone retrospective for a fully fictional IM group slow-device and shutdown scenario",
+  "prerequisites": [
+    "05.01–05.06 concurrency, state and Go runtime foundations",
+    "05.07–05.11 GC, bounded composition, verification and evidence",
+    "11.01–11.03 business result and telemetry semantics"
+  ],
+  "first_pass": [
+    "separate request acceptance, online target attempt and device confirmation",
+    "A–F six-target t0–t4 worker and queue timeline",
+    "slow target versus lock hotspot competing mechanisms"
+  ],
+  "second_pass": [
+    "conditional 500 slow devices times cap2 memory slot accounting",
+    "Open to Stopping to Closed and result-channel ownership",
+    "bounded work, per-device budget and unknown result semantics",
+    "same-load validation, rollback and S5 handoff"
+  ],
+  "not_yet_prerequisites": [
+    "06.04 storage page and buffer-pool foundations next in S4",
+    "S5 durable task retry, offline replay and multi-device sync",
+    "learner-run IM service failure and load tests"
+  ],
+  "next_chapter": "06.04 storage pages and buffer pool",
+  "upstream_inspection": "No OpenIM implementation or actual incident claim; Go official pipeline, context, GC, memory model and diagnostics materials support general mechanisms.",
+  "shared_integration_pending": []
+}

@@ -188,4 +188,4 @@ Pool.Get → 当前工作者独占借用 → 重置/编码 → 确认所有异�
 - [Go `unsafe`](https://pkg.go.dev/unsafe)与[`sync/atomic`](https://pkg.go.dev/sync/atomic)：绕过类型边界和单位置无锁原语的约束。
 - [Go 诊断指南](https://go.dev/doc/diagnostics)：同口径 profile/trace 与采样扰动。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 05.12 将把慢设备、大群积压、取消失效和退出失败放进一份并发服务复盘。离开本章前，应能为任何“优化”同时交代**不变的业务合同、预计资源账、真实热点证据、失败反例和回退条件**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[05.12 并发服务复盘](../../../src/docs/platform_engineering/curriculum/05_runtime/12_concurrency_service_review.md)将把慢设备、大群积压、取消失效和退出失败放进一份并发服务复盘。离开本章前，应能为任何“优化”同时交代**不变的业务合同、预计资源账、真实热点证据、失败反例和回退条件**。

@@ -28,9 +28,9 @@
   "original_sha256": "474b377b788c365898858d27bd5002b9a984ebd02873b83c38fca5f9f6a36b9e",
   "original_characters": 29800,
   "generation_request_sha256": "27e4b33c856950c9f45d63d4835b560ffb658f409ad97d01156da0f23d76546a",
-  "reviewed_sha256": "9e23880dc3bf58c36a29f19d508bb2d25143e1299c0c75ebb96b9b665a08afef",
-  "reviewed_characters": 7203,
-  "reviewed_chinese_characters": 3603,
+  "reviewed_sha256": "a339a8e5243e8d653f85719996776df95bd6f587e36adeb91c6e045b37c51c58",
+  "reviewed_characters": 7305,
+  "reviewed_chinese_characters": 3609,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/11_optimization_boundaries.md",
-  "course_sha256": "71449cd08b711ae07b475fff9e31a2bfad47eb3b41e203fbe8f4241c2afe4fce"
+  "course_sha256": "a9212fdb7e9db905686e3bfe795fefc4a971dc2b5ea6a751799fef3a26f8c7d6"
 }
