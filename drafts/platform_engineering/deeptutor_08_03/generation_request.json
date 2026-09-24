@@ -1,0 +1,75 @@
+{
+  "code": "08.03",
+  "title": "复制的目标与代价：确认到哪一层才可读",
+  "chapter_id": "ch_replication_goals_costs",
+  "summary": "面向Go初学者，沿三节点IM历史副本推导主库提交、副本持久/回放、同步确认、读取滞后与故障切换成本。",
+  "objectives": [
+    "区分复制的可用、读扩展和故障恢复目标",
+    "手算P/R1/R2副本位置和读可见",
+    "比较本地、远端持久、远端回放确认",
+    "解释复制成本与写入等待",
+    "说明副本选择不能只看节点存活",
+    "为读己之写选择路由或水位等待",
+    "区分MongoDB writeConcern与readPreference"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/warm-standby.html",
+    "https://www.postgresql.org/docs/current/runtime-config-wal.html",
+    "https://www.postgresql.org/docs/current/high-availability.html",
+    "https://www.mongodb.com/docs/manual/replication/",
+    "https://www.mongodb.com/docs/manual/reference/write-concern/",
+    "https://www.mongodb.com/docs/manual/reference/read-concern/",
+    "https://www.mongodb.com/docs/manual/core/read-preference/"
+  ],
+  "sections": [
+    {
+      "title": "一、从seq9已提交但副本只读到8建立问题",
+      "words": 2500,
+      "focus": "承接08.01 A/G/S/B与08.02因果、06.11复制操作。虚构P权威主库、R1/R2副本；c-a seq1..8已有，P本地提交seq9，R1收到/刷日志但未回放，R2只到8。分清客户端收到200、主本地commit、副本位置、设备交付。"
+    },
+    {
+      "title": "二、复制想买到什么与要付什么",
+      "words": 2800,
+      "focus": "目标故障恢复、读扩展、地理接近、备份/迁移辅助但副本不是备份；代价额外存储、网络、CPU/WAL保留、写确认等待、运维和读滞后。纸上每副本1KiB记录三节点至少3KiB数据副本而非实际成本，当前HTTP正文6B不能混同。"
+    },
+    {
+      "title": "三、P/R1/R2三个阶段水位手算",
+      "words": 3100,
+      "focus": "纸上P在t=10ms本地WAL durable seq9，R1 t=40ms durable log seq9、t=70ms replay9；R2始终seq8。t=40 R1查询仍最多8；t=70 R1可查询9；R2仍8。主提交、远端收到/写/flush/replay分开，业务seq不等于LSN。"
+    },
+    {
+      "title": "四、确认策略：本地、远端持久、远端可读",
+      "words": 3100,
+      "focus": "以PG同步复制具体模式为对照：无同步standby时synchronous_commit on仅本地flush；配置同步standby后remote_write vs on remote flush vs remote_apply replay；纸上ack时间本地10、R1flush40、R1apply70，只是示例，真实不固定。等待副本失联可能拉长写入/返回错误但不能自动证明未提交；S2 accepted_in_memory与S3 proposed stored分开。"
+    },
+    {
+      "title": "五、故障切换不是挑任意副本",
+      "words": 3000,
+      "focus": "t40 P+R1有seq9持久，R2只8；提升R2可能遗失已确认seq9，即使两份存在于原P/R1。要考虑候选安全日志位置、旧主隔离、选举/复制协议与确认政策；08.06讲多数/共识，不把2of3玩具说成零丢失保证。客户端未知沿稳定ID对账，RPO/RTO分开。"
+    },
+    {
+      "title": "六、读扩展与会话写后读",
+      "words": 2900,
+      "focus": "把c-a最新历史从R2读得8,7,6，P/R1回放后读9,8,7；副本可降低主读负载但不是无条件，副本长查询/回放冲突和滞后需度量。若A刚发后必见，路由主或等待特定副本回放目标提交水位；读取其他副本不保证。权限不能从旧副本决定新写。"
+    },
+    {
+      "title": "七、MongoDB副本语义对照",
+      "words": 2900,
+      "focus": "MongoDB primary/secondary异步oplog，writeConcern w:1、majority/j:true分别说明确认条件；majority不等于所有secondary已应用、非primary readPreference仍可陈旧；j:true alone不阻止故障切换回滚，wtimeout不撤销已做写入。不同引擎不把PG LSN/remote_apply套Mongo。"
+    },
+    {
+      "title": "八、复制证据与22题",
+      "words": 2700,
+      "focus": "交付P/R1/R2时间线、确认政策矩阵、故障候选评审、读己之写方案与成本表；22题概念→纸上水位→IM业务取舍附反馈。不运行DB/Go/复制/站点。下一08.04一致性模型。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.03 复制的目标与代价》，面向Go初学者，八节丰富理论与纸上实践，22道分层练习附反馈。承接08.01–08.02、06.11。固定P主库、R1/R2副本，c-a已有seq1..8，P t10ms本地持久提交seq9；R1 t40ms远端日志持久但仍未回放（查询只见8），t70ms回放可见9；R2始终只到8。以PG具体配置说明本地同步、远端写/flush/apply差异，纸上ack10/40/70ms不是实测；synchronous_commit=on无同步备库时不等于所有副本回放。t40即使P/R1有seq9，盲目提升R2也可能丢9；2份存储本身不保证任意选主零丢，后续08.06才讲多数/共识。读R2旧历史8,7,6，读P或回放后的R1得9,8,7；发送后必见要选权威/等可见水位。当前S2 200=accepted_in_memory，未来S3 stored仅提议。Mongo w:1、majority、j:true、readPreference按官方口径，wtimeout不撤销已发生写。成本含存储网络写等待WAL保留、读扩展与滞后。静态不运行DB/Go/复制/站点。\n1. 一、从seq9已提交但副本只读到8建立问题: 承接08.01 A/G/S/B与08.02因果、06.11复制操作。虚构P权威主库、R1/R2副本；c-a seq1..8已有，P本地提交seq9，R1收到/刷日志但未回放，R2只到8。分清客户端收到200、主本地commit、副本位置、设备交付。\n2. 二、复制想买到什么与要付什么: 目标故障恢复、读扩展、地理接近、备份/迁移辅助但副本不是备份；代价额外存储、网络、CPU/WAL保留、写确认等待、运维和读滞后。纸上每副本1KiB记录三节点至少3KiB数据副本而非实际成本，当前HTTP正文6B不能混同。\n3. 三、P/R1/R2三个阶段水位手算: 纸上P在t=10ms本地WAL durable seq9，R1 t=40ms durable log seq9、t=70ms replay9；R2始终seq8。t=40 R1查询仍最多8；t=70 R1可查询9；R2仍8。主提交、远端收到/写/flush/replay分开，业务seq不等于LSN。\n4. 四、确认策略：本地、远端持久、远端可读: 以PG同步复制具体模式为对照：无同步standby时synchronous_commit on仅本地flush；配置同步standby后remote_write vs on remote flush vs remote_apply replay；纸上ack时间本地10、R1flush40、R1apply70，只是示例，真实不固定。等待副本失联可能拉长写入/返回错误但不能自动证明未提交；S2 accepted_in_memory与S3 proposed stored分开。\n5. 五、故障切换不是挑任意副本: t40 P+R1有seq9持久，R2只8；提升R2可能遗失已确认seq9，即使两份存在于原P/R1。要考虑候选安全日志位置、旧主隔离、选举/复制协议与确认政策；08.06讲多数/共识，不把2of3玩具说成零丢失保证。客户端未知沿稳定ID对账，RPO/RTO分开。\n6. 六、读扩展与会话写后读: 把c-a最新历史从R2读得8,7,6，P/R1回放后读9,8,7；副本可降低主读负载但不是无条件，副本长查询/回放冲突和滞后需度量。若A刚发后必见，路由主或等待特定副本回放目标提交水位；读取其他副本不保证。权限不能从旧副本决定新写。\n7. 七、MongoDB副本语义对照: MongoDB primary/secondary异步oplog，writeConcern w:1、majority/j:true分别说明确认条件；majority不等于所有secondary已应用、非primary readPreference仍可陈旧；j:true alone不阻止故障切换回滚，wtimeout不撤销已做写入。不同引擎不把PG LSN/remote_apply套Mongo。\n8. 八、复制证据与22题: 交付P/R1/R2时间线、确认政策矩阵、故障候选评审、读己之写方案与成本表；22题概念→纸上水位→IM业务取舍附反馈。不运行DB/Go/复制/站点。下一08.04一致性模型。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "chapter": "08.03",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced replication goals and costs lesson using fictional P/R1/R2 c-a seq9",
+  "prerequisites": [
+    "08.01 partial failure and A/G/S/B model",
+    "08.02 event order and business sequence",
+    "06.11 physical/logical database replication and migration"
+  ],
+  "first_pass": [
+    "replication goals and storage/network/latency cost categories",
+    "P local commit at t10, R1 durable log t40 and replay t70, R2 seq8",
+    "read visibility requires replay and a new applicable snapshot"
+  ],
+  "second_pass": [
+    "local, selected remote durable and selected remote apply acknowledgment",
+    "t40 failover to lagging R2 may lose seq9 despite two durable copies",
+    "read-your-writes routing or specific replica watermarks",
+    "MongoDB write concern, journal and read preference as separate conditions"
+  ],
+  "not_yet_prerequisites": [
+    "08.04 consistency models",
+    "08.06 majority and consensus protocol details",
+    "real replica failure and lag measurement by the learner"
+  ],
+  "next_chapter": "08.04 consistency models",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL and MongoDB primary documentation supports only their own replication modes.",
+  "shared_integration_pending": []
+}
