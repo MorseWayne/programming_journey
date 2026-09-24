@@ -174,4 +174,4 @@ t=70 ms；不能外推到仍停在 8 的 R2。</details>
 
 不看答案时，能手算 t=10/40/70 的 P/R1/R2 日志与可读状态，区分本地、远端持久和远端回放确认，说明为何 t=40 提升 R2 可能丢 9；还能写出发送后必见的读路径与复制成本范围，才算完成第一轮。第二轮由学习者在隔离环境保存真实配置、复制位置、故障和读结果；本章没有代替运行。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 08.04 将把“写后应看见什么、换设备后能否倒退、哪些并发操作可观察”写成明确的一致性模型，再进入第七卷。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[08.04 一致性模型](../../../src/docs/platform_engineering/curriculum/08_distributed/04_consistency_models.md)将把“写后应看见什么、换设备后能否倒退、哪些并发操作可观察”写成明确的一致性模型，再进入第七卷。

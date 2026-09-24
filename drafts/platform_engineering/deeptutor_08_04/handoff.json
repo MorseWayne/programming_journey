@@ -1,0 +1,31 @@
+{
+  "chapter": "08.04",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced consistency-model lesson using fictional c-a seq9 across P/R1/R2",
+  "prerequisites": [
+    "08.01 partial failure and request observation",
+    "08.02 causality and local versus business order",
+    "08.03 replica durability/replay/read visibility",
+    "06.07 transaction isolation axis"
+  ],
+  "first_pass": [
+    "eventual catch-up only with healthy replication and no new writes",
+    "A write9 then R2 read8 violates promised read-your-writes",
+    "A read9 then R2 read8 violates promised monotonic reads"
+  ],
+  "second_pass": [
+    "four independent session guarantees including monotonic writes and writes-follow-reads",
+    "notification causal dependency depends on explicit product contract",
+    "independent C read8 after completed A write9 may be sequentially consistent but not linearizable",
+    "transaction isolation separate from cross-replica/session consistency",
+    "abstract W9 token routing, new snapshot and failure policy"
+  ],
+  "not_yet_prerequisites": [
+    "07.01 state roles and caching",
+    "08.05–08.12 later distribution and coordination detail",
+    "real observation-history verification by the learner"
+  ],
+  "next_chapter": "07.01 access patterns and state roles",
+  "upstream_inspection": "No OpenIM implementation claim; original session guarantees and linearizability papers plus PostgreSQL/MongoDB docs support only the stated models.",
+  "shared_integration_pending": []
+}

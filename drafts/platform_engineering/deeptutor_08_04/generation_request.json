@@ -1,0 +1,73 @@
+{
+  "code": "08.04",
+  "title": "一致性模型：刚发的消息何时可见",
+  "chapter_id": "ch_consistency_models",
+  "summary": "面向Go初学者，沿IM主副本历史观察推导最终收敛、会话保证、因果一致、顺序一致与线性化，并与事务隔离区分。",
+  "objectives": [
+    "定义读到版本与会话范围",
+    "识别读己之写和单调读违例",
+    "解释因果通知依赖与允许的异步提示",
+    "区分顺序一致与线性化真实时间约束",
+    "区分事务隔离与跨副本一致性",
+    "设计写后读最低水位与失败策略",
+    "用观察历史评审业务合同"
+  ],
+  "sources": [
+    "https://www.cs.cornell.edu/courses/cs734/2000FA/cached%20papers/SessionGuaranteesPDIS_1.html",
+    "https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf",
+    "https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/",
+    "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "https://www.postgresql.org/docs/current/hot-standby.html"
+  ],
+  "sections": [
+    {
+      "title": "一、同一条历史为什么不同设备看见不同版本",
+      "words": 2500,
+      "focus": "承接08.03 P t10提交c-a seq9，R1 t70回放9，R2仍8。定义一次read返回值、会话session、版本水位W9（抽象提交位置，非业务seq9）、调用开始/结束。IM需求A刚发必见、换设备不倒退、B收通知后可拉到消息、普通旧历史可稍后追平。"
+    },
+    {
+      "title": "二、最终收敛与读己之写",
+      "words": 2900,
+      "focus": "如果停止新写且健康复制持续，R2最终追到9是最终收敛目标，不给固定上界；A已确认写9却t40读R2得8，违反读己之写若产品承诺。解决读P或携W9等副本可见，等待可失败，不能只查received/flush。"
+    },
+    {
+      "title": "三、单调读与四种会话保证",
+      "words": 2900,
+      "focus": "A先从P或t70R1看到9，后来从仍8的R2看到8，违反monotonic reads。Terry四种会话保证RYW/MR/MW/WFR逐一定义，用IM编辑/撤回作为写跟随读、同会话先发后撤回的单调写；session边界、跨设备共享token需要定义，不等于事务。"
+    },
+    {
+      "title": "四、因果可见：通知与历史读",
+      "words": 3000,
+      "focus": "A写9后G发通知B，B收到通知后到R2查历史只到8；若合同要求通知后立刻能拉到9，则违反因果依赖可见性；若通知仅hint并允许稍后补拉，不自动构成违约。08.02 send→receive, causally related vs independent concurrent edits；用W9携依赖等可见，不能把seq9或物理时间直接当全局依赖。"
+    },
+    {
+      "title": "五、顺序一致与线性化的纸上反例",
+      "words": 3200,
+      "focus": "单对象最新消息头初始8。A写9并收到成功t10；独立C无任何通信在t20才读R2得8。此历史可把C读排A写前以满足每客户端程序顺序，故可能是sequential consistency；却违反linearizability，因为写完成先于读开始，线性化需保真实时间先后。若A本人写后读8连会话顺序都违背。Herlihy-Wing原论文。"
+    },
+    {
+      "title": "六、事务隔离与复制一致性两轴",
+      "words": 2700,
+      "focus": "PG Read Committed/Repeatable Read/Serializable讨论同库事务并发可见/异常；replica session RYW/MR/linearizability是跨调用/节点历史观察，不可凭启用Serializable推任意R2最新或凭majority写推任意secondary可读。限定对象/事务/会话范围，别把所有读语义混成强一致。"
+    },
+    {
+      "title": "七、把合同落成水位和证据",
+      "words": 3000,
+      "focus": "写返回抽象W9；A读强制P或等指定副本replay>=W9且新快照，单调读令session最低水位不下降；B通知附依赖W9或允许pending状态。过期/失效token、故障切换和权限变化要有明确失败策略。成本是路由/等待/元数据/可用性，不能无条件成功。Mongo causal sessions需官方配置前提。"
+    },
+    {
+      "title": "八、22题与业务验收",
+      "words": 2800,
+      "focus": "22道从模型词汇、t40/t70读数、会话保证、因果反例、SC vs linearizability、事务轴、token取舍分层附反馈。交付历史观察表、合同判定和验证计划，静态不运行Go/DB/站点。之后进入07.01状态角色缓存。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.04 一致性模型》，面向Go初学者，八节丰富基础理论到业务判断、22道分层练习反馈。固定08.03玩具：c-a初始head8，P在t10提交seq9并答A，R1 t70回放9，R2仍8。抽象提交水位W9不同于业务seq9。A t40读R2得8，若合同读己之写则违规；A先从P/R1见9再读R2见8，若单调读则违规。A写9后G通知B，B收到后读R2只到8：若合同通知后立刻可拉到9则违反因果依赖，若通知仅提示可稍后补拉则不自动违规。最终一致需要无新写、健康传播下R2最终追到9，无固定时限。顺序一致与线性化反例：单对象head初始8，A写9完成t10，独立C无通信t20开始读R2得8；可把C读排A写前满足各客户端程序顺序，故可能顺序一致，却违反线性化的非并发真实时间先后；A自己写后读8则连其程序顺序都违背。Terry四种会话保证RYW/MR/MW/WFR解释，事务隔离与副本一致性两轴。用W9路由主/等指定副本可见且新快照，需失败策略。Mongo因果会话仅按官方前提，不声称OpenIM实现。静态不运行Go/DB/站点，完成后再进07卷。\n1. 一、同一条历史为什么不同设备看见不同版本: 承接08.03 P t10提交c-a seq9，R1 t70回放9，R2仍8。定义一次read返回值、会话session、版本水位W9（抽象提交位置，非业务seq9）、调用开始/结束。IM需求A刚发必见、换设备不倒退、B收通知后可拉到消息、普通旧历史可稍后追平。\n2. 二、最终收敛与读己之写: 如果停止新写且健康复制持续，R2最终追到9是最终收敛目标，不给固定上界；A已确认写9却t40读R2得8，违反读己之写若产品承诺。解决读P或携W9等副本可见，等待可失败，不能只查received/flush。\n3. 三、单调读与四种会话保证: A先从P或t70R1看到9，后来从仍8的R2看到8，违反monotonic reads。Terry四种会话保证RYW/MR/MW/WFR逐一定义，用IM编辑/撤回作为写跟随读、同会话先发后撤回的单调写；session边界、跨设备共享token需要定义，不等于事务。\n4. 四、因果可见：通知与历史读: A写9后G发通知B，B收到通知后到R2查历史只到8；若合同要求通知后立刻能拉到9，则违反因果依赖可见性；若通知仅hint并允许稍后补拉，不自动构成违约。08.02 send→receive, causally related vs independent concurrent edits；用W9携依赖等可见，不能把seq9或物理时间直接当全局依赖。\n5. 五、顺序一致与线性化的纸上反例: 单对象最新消息头初始8。A写9并收到成功t10；独立C无任何通信在t20才读R2得8。此历史可把C读排A写前以满足每客户端程序顺序，故可能是sequential consistency；却违反linearizability，因为写完成先于读开始，线性化需保真实时间先后。若A本人写后读8连会话顺序都违背。Herlihy-Wing原论文。\n6. 六、事务隔离与复制一致性两轴: PG Read Committed/Repeatable Read/Serializable讨论同库事务并发可见/异常；replica session RYW/MR/linearizability是跨调用/节点历史观察，不可凭启用Serializable推任意R2最新或凭majority写推任意secondary可读。限定对象/事务/会话范围，别把所有读语义混成强一致。\n7. 七、把合同落成水位和证据: 写返回抽象W9；A读强制P或等指定副本replay>=W9且新快照，单调读令session最低水位不下降；B通知附依赖W9或允许pending状态。过期/失效token、故障切换和权限变化要有明确失败策略。成本是路由/等待/元数据/可用性，不能无条件成功。Mongo causal sessions需官方配置前提。\n8. 八、22题与业务验收: 22道从模型词汇、t40/t70读数、会话保证、因果反例、SC vs linearizability、事务轴、token取舍分层附反馈。交付历史观察表、合同判定和验证计划，静态不运行Go/DB/站点。之后进入07.01状态角色缓存。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -260,6 +260,7 @@ export default sidebar({
             "curriculum/08_distributed/01_system_partial_failure",
             "curriculum/08_distributed/02_time_order",
             "curriculum/08_distributed/03_replication_goals_costs",
+            "curriculum/08_distributed/04_consistency_models",
             "curriculum/08_distributed/core"
           ]
         },

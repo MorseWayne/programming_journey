@@ -30,9 +30,9 @@
   "original_sha256": "6657dddd2c43fbd7ea1bb8b4d00c8ebd4f054df55db103b999f0df5a3acac0dc",
   "original_characters": 30114,
   "generation_request_sha256": "07484d6278285a2b8a23990c50efd5182711c2e4ef6b5460589db1f2e21b87ab",
-  "reviewed_sha256": "64c0f728e425a858b26f0056347c0b87808516116deff0a135f5ad97f8c34e46",
-  "reviewed_characters": 8312,
-  "reviewed_chinese_characters": 3583,
+  "reviewed_sha256": "71f1d27bc6c8edea12d140cfce477154fdbd94ea5597f69715e63f2977262130",
+  "reviewed_characters": 8409,
+  "reviewed_chinese_characters": 3588,
   "course_file": "src/docs/platform_engineering/curriculum/08_distributed/03_replication_goals_costs.md",
-  "course_sha256": "b36aed3c02988dce5f135af4164efe286f72d0c71dc956b194a38e5afbc25af4"
+  "course_sha256": "48d6eac93fae35c7b9de3e6429df588f55d5fb6ef687c006326f5264decdc894"
 }
