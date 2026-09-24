@@ -1,0 +1,32 @@
+{
+  "chapter": "10.12",
+  "stage": "S6–S7",
+  "business_scope": "static beginner-to-advanced maintainability lesson using fictional IM body-length R9 impact assessment",
+  "prerequisites": [
+    "10.01 verifiable requirements and current S2 contract",
+    "10.05 behavior-preserving refactoring and boundaries",
+    "09.10 protocol compatibility",
+    "10.10 versioned release and rollback gates",
+    "10.11 technical writing and decision records"
+  ],
+  "first_pass": [
+    "explain maintainability through the cost of the next safe business change",
+    "distinguish Go string byte length from rune count and raw HTTP body limit",
+    "draw an R9 change, verify and unchanged impact map",
+    "keep current S2/v1 6-byte behavior distinct from pending R9 and proposed S3"
+  ],
+  "second_pass": [
+    "compare a shared global limit with explicit version policy and a small pure validation function",
+    "protect existing behavior before any approved feature change",
+    "rank technical debt by authorization, authoritative facts, compatibility and verification cost",
+    "record measurable maintenance evidence with context and observation window",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.04–11.07 workload and capacity analysis",
+    "learner's real repository change and operational measurements"
+  ],
+  "next_chapter": "11.04 workload models",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish whole-repository maintainability, producer ACK level, teaching SQL outbox or device receipt.",
+  "shared_integration_pending": []
+}

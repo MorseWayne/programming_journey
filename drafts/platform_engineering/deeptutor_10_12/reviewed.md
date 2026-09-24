@@ -1,0 +1,184 @@
+# 10.12 维护性评估：R9 为何会牵动这么多地方
+
+> DeepTutor 八节初稿经技术与教学审阅后的静态课程。以下“代码方案 A/B”、模块影响和故障均为**脱敏纸上评审**，没有在本仓库新增 IM 服务或运行 Go、测试、数据库、部署/站点。当前 S2 `/v1` 的消息 POST 仍是正文非空且最多 **6 UTF-8 字节**、原始 HTTP 请求正文最多 **4096 B**、同 ID 即使同正文重复也 **409**、非成员目标隐藏 **404**、成功 `200 accepted_in_memory`；未来 S3 `/v2` `stored_in_teaching_db` 仍是提议且沿用 6 B，R9 的 6→9 B **未批准**。[09.02 当前合同](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md) · [09.12 S3 提议](../../../src/docs/platform_engineering/curriculum/09_backend_security/12_im_service_capstone.md)
+
+## 一、维护性由“下一次安全改动”检验
+
+用户希望消息 `"你好呀"`（UTF-8 **9 B**）将来可发送，这就是待审 **R9**。维护性不是“Go 文件越少越好”或“接口越多越高级”，而是未来若批准 R9，工程师能**找到真正负责上限的规则、限定变更影响、保住旧客户端 6 B/409/404/200 合同、用有限证据验证并知道怎样回退**。一项看似只有 `6→9` 的数字修改，可能穿过 HTTP 参数、业务校验、客户端提示、事件版本、历史存储和发布支持窗口。[10.10 四轴发布门](../../../src/docs/platform_engineering/curriculum/10_engineering/10_continuous_delivery_versions.md)
+
+| 观察维护性的角度 | 评审问题 | 不足以单独下结论的指标 |
+|---|---|---|
+| 定位成本 | 哪个包/规则拥有“正文最多 6 B”？为何是 6 B？ | 全仓总代码行数 |
+| 变更扩散 | 改 R9 后哪些路径必须改，哪些应保持原样？ | 修改文件数越少越好 |
+| 验证成本 | 能否用独立预期快速找出 v1 漂移、非成员泄露？ | 只有 `gofmt/vet` 绿色 |
+| 协作/回退 | 旧客户端、旧事件、当前数据如何继续被解释？ | 镜像可以 `rollout undo` |
+
+内部代码质量通常要在后续变更里才能感受到：若每次增加一个消息规则都要猜许多隐藏调用、引发回归或难以回退，维护成本会上升。Martin Fowler 对内部质量与持续变更成本的讨论可作这种判断的背景；具体结论仍由本题影响图与证据决定。[Fowler：内部质量与成本](https://martinfowler.com/articles/is-quality-worth-cost.html)
+
+## 二、把 R9 的影响画成“改、验、不动”三栏
+
+R9 **还没批准**，因此当前生产行为**不改**。现在可以先交一份影响图，假设未来批准后才执行：
+
+| 触点 | 未来获批后可能要改什么 | 现在/未来必须验证什么 | 不应顺带改变什么 |
+|---|---|---|---|
+| HTTP `/v1` handler | **不在旧路径放宽**；若有新版本/能力，路由到其规则 | 旧客户端 `"你好"=6B`、`"你好呀"=9B` 拒绝与 Content-Type/请求体 4096 B | `/v1` 200 `accepted_in_memory`、重复 409、非成员 404 |
+| 领域正文规则 | 新合同明确 9 B 上限时，给可信路由传入显式规则 | 非空、UTF-8 字节数，旧/新版本各自预期 | 身份、会话成员与消息 ID 判定 |
+| 客户端/UI/WS | 新客户端提示限额和旧端能力/错误展示 | 旧版仍按 6 B 拒绝；长连接消息能否按新版本解释 | B 的设备收到/已读含义 |
+| SQL/事件/搜索 | **未必因字节上限必改 schema**；若新数据会流经这些层，要审容量和格式 | 9 B 历史与存量事件、版本、权限/撤回、索引结果 | `event_v2`、S3 DB 提交不因 R9 自动启用 |
+| 测试/文档/发布 | 补版本矩阵、正反例、回退/支持窗口 | CI/隔离样本的实际结果与残余风险 | 把纸上预期写成已运行/已获批 |
+
+这个图不声称真实仓库已经有这些 Go 文件，也不以“修改 7 个文件”冒充测量。它把**必须修改**、**只需验证**与**应保持不变**分开，减少一次需求在多个层里被误改。若存储列的容量足够，改上限可能无需 SQL schema 变化；若客户端、搜索或通知另有字段上限，则要凭实际定义和测试判断，不从 UI 文案猜。[09.10 兼容矩阵](../../../src/docs/platform_engineering/curriculum/09_backend_security/10_protocol_compatibility_rpc.md)
+
+## 三、错误的全局常量与正确的 Go 字节长度
+
+**坏方案 A：**一个全局 `MaxMessageBytes=6` 同时被当前 `/v1` 和未来新路径引用，R9 时直接改成 9。旧 `/v1` 也会悄悄接受 9 B，破坏既有拒绝和回退合同。另一个坏方案是各 handler/WS 客户端分别硬写限制，某处按**字符数**、某处按**字节数**，形成两个答案。[09.02 字节上限](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)
+
+这里要把 Go 前置知识讲准：**`len(body)` 对 Go `string` 返回字节数**；`len([]byte(body))` 也是同一串字节的长度。`"你好"` 的 `len` 是 6，`utf8.RuneCountInString("你好")` 或 `len([]rune("你好"))` 才是 2。真正危险的混用是**字节数与 rune/用户感知字符数**，或把 `len(rawJSONBody)` 的 4096 B 请求体限制与解码后的 `len(message.Body)` 6 B 正文限制混为一个变量。Go 规范将 string 定义为字节序列，`len` 给其字节数。[Go 语言规范：string 长度](https://go.dev/ref/spec) · [Go 字符串与 rune](https://go.dev/blog/strings)
+
+**较小的方案 B：**让可信的接口版本/路由选择一个明确的正文校验政策：当前 `/v1` 固定 6 B；未来 R9 若获批，在批准的新合同里才用 9 B。共享的纯函数可负责“非空、有效文本和字节上限”的**机制**，调用方负责“本版本上限是多少”的**政策**；原始 HTTP body 的 4096 B 要在解析前单独限制。不能只信客户端请求体填 `version=9` 就放宽规则。为两个版本建立十个接口、插件注册中心或空仓储，也会增加定位和测试成本。[10.05 信息隐藏与小步重构](../../../src/docs/platform_engineering/curriculum/10_engineering/05_refactoring_boundaries.md)
+
+Go 官方审查建议通常让接口出现在使用它的包，而不是为了 mock 在实现包预先造接口；这给“必要的抽象”一条可检查的反例。若一份真实变化只需纯字节校验函数和版本化业务政策，就不必先抽象所有传输、存储与通知适配器。[Go Code Review Comments：Interfaces](https://go.dev/wiki/CodeReviewComments)
+
+## 四、先保持 S2 行为，再讨论 R9 新能力
+
+重构和功能改变应分两步。第一步给**当前 S2**写行为刻画：`"你好"` 6 B 合法，`"你好呀"` 9 B 当前拒绝；空正文/坏 JSON/超 4096 B 分层拒绝；首次有效 `m-9` 返回 `200 accepted_in_memory`，再提交相同 ID 为 409 且旧正文/顺序不变；`u-c` 非成员为 404 且不泄密。再把散落的字节机制提取到可解释的小函数，保持接口响应和状态完全不变。每个小提交都能让审阅者独立看“行为没变、只是规则位置清晰了”。[10.02 表驱动与状态断言](../../../src/docs/platform_engineering/curriculum/10_engineering/02_testing_basics.md) · [10.05 行为保持](../../../src/docs/platform_engineering/curriculum/10_engineering/05_refactoring_boundaries.md)
+
+第二步**只有在 R9 审批与新版本合同明确后**才增加 9 B 路径。S3 的成功点 `stored_in_teaching_db` 是另一个接口/存储变更，不能借 R9 代码复用时顺手切换。回退也要按版本化消息历史、旧客户端和事件保留窗口评审，不能简单把常量改回 6 后让系统无法解释已经合法接纳的 9 B 消息。[10.10 数据回退](../../../src/docs/platform_engineering/curriculum/10_engineering/10_continuous_delivery_versions.md)
+
+验证成本分层计算：纯校验函数的单元/模糊测试看 5/6/7/9 B 等边界；HTTP 层查 400/413/409/404、身份与状态未变；并发重复提交用受控交错查“只一项成功”；混部/存量消息/客户端和数据库行为要在隔离集成环境另验。`-race` 只能找执行到的内存冲突，不证跨节点或业务唯一性。[10.07 属性与并发验证](../../../src/docs/platform_engineering/curriculum/10_engineering/07_concurrency_property_validation.md)
+
+## 五、技术债排序：先解决可能泄露或丢事实的路径
+
+技术债不是“看到重复代码就必须马上抽象”。排序要考虑**业务影响、暴露频率/即将到来的变更、耦合范围、修复/验证成本与可逆性**。下面是纸上优先级，**不声称 OpenIM 或本仓库存在这些真实缺陷**：
+
+| 假设风险 | 若存在的业务后果 | 为什么该级别 |
+|---|---|---|
+| 退群后搜索仍泄露私有正文 | 越权数据暴露，旧索引/缓存回放可能再次出现 | 先核当前权限/删除与修复来源，安全性优先 |
+| 同 ID 并发双受理并两次发 E9 | 权威消息/派生副作用可能重复或不一致 | 先用原子身份裁决及受控并发回归守事实 |
+| 全局 6→9 常量使 `/v1` 漂移 | 旧客户端接口/回退合同破坏 | R9 进入评审前先隔离版本政策 |
+| 两处相似命名/格式风格不同 | 审阅摩擦，但未发现行为风险 | 可在相关改动附近渐进整理，不抢高风险修复资源 |
+
+Martin Fowler 的技术债讨论提醒区分取舍背景，而不是把所有“不喜欢的代码”直接叫债。对每项候选应写“何时会付利息、如何知道修复有效、若不修当前怎样安全运行”，并有负责人与复核时间。[Fowler 技术债象限](https://martinfowler.com/bliki/TechnicalDebtQuadrant.html) · [10.11 记录决策与行动](../../../src/docs/platform_engineering/curriculum/10_engineering/11_technical_writing_collaboration.md)
+
+**兼容分支可能是必要的，不是天然债。** 旧客户端仍在线、broker 保留旧 `event_v1`、DLQ/备份可能重放时，双读与旧错误映射即使看着重复，也是在守历史合同；只有旧版本支持窗、存量回放/隔离、权限和数据迁移有收尾证据，才能删除。反过来，永久无人负责的开关和多套默认规则会不断抬高变更成本，应在引入时写清 owner 与清理门。[09.10 旧新端混部](../../../src/docs/platform_engineering/curriculum/09_backend_security/10_protocol_compatibility_rpc.md)
+
+## 六、量维护成本不能只数文件和绿色测试
+
+对一次真实变更可记录：从需求澄清到找到规则用了多久、需要多少前置沟通、补丁审阅范围、测试/CI 耗时、反复回滚次数、缺陷逃逸后的定位/修复时间、旧客户端与数据回填的支持成本。数值要附需求大小、团队/工具链与观察窗口，否则“本次改了 3 个文件、上次 8 个”并不能说明维护性真的改善；也可能只是把复杂逻辑藏进一个巨大函数。[Google 工程审查：代码健康](https://google.github.io/eng-practices/review/reviewer/standard.html) · [小而可审的变更](https://google.github.io/eng-practices/review/developer/small-cls.html)
+
+| 指标/证据 | 有用的解读 | 常见误读 |
+|---|---|---|
+| 触点和依赖图 | 哪些合同确实耦合，一处变化影响哪些读写者 | “文件越少越好” |
+| 失败/回归用例 | 当前 S2 正反例、并发/授权和新旧版本风险是否被覆盖 | “CI 绿色＝任何业务风险都消失” |
+| 评审与修复时间 | 同规模变化是否更容易理解和回退 | 单次快慢当长期趋势 |
+| 历史/客户端支持窗 | 兼容分支何时可有证据删除 | 看见旧代码就立即删 |
+
+本章没有真实 IM 代码改动或测试结果，这些都是未来学习者可以收集的**观察维度**，不填虚构的“效率提升 40%”。维护性评估要服务下一次安全变更，而不是给代码打一个无法复核的漂亮分数。
+
+## 七、固定 OpenIM 两处源码不足以给整仓“维护性评分”
+
+固定 `openimsdk/open-im-server` 提交 `f6411a8a1a31d3df36f4c2b3ad28481a94141e1f` 的 [`send.go` 所述分支](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go#L46-L70)调用 `MsgToMQ` 后返回；[另一路 MongoDB 消费处理](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go#L43-L69)调用 `BatchInsertChat2DB`。它们足以引出**发送返回与落库消费的异步边界**，不能仅凭这两段就评判 OpenIM 全部包的耦合、真实正文限额、R9 影响文件数、测试成本或维护团队习惯。[09.05 源码阅读边界](../../../src/docs/platform_engineering/curriculum/09_backend_security/05_data_access_migration.md)
+
+若要做公开项目的实际维护性评估，学习者先固定仓库提交，沿 R9 这类**明确需求**追真实 HTTP/WS 入口、领域规则、protobuf、存储/队列、客户端与测试，再把“已读源码、未知配置、尚未运行、需要哪份证据”分开。没有实际上下文时，设计一份可审影响图比对整仓贴“质量差/好”标签更诚实；非公开实现或私有用户资料不进入课程。[OpenIM 阅读地图](../../../src/docs/platform_engineering/curriculum/im_reference.md)
+
+## 八、交 R9 影响图与 22 道分层练习
+
+第一遍交“改/验/不动”触点表和 Go 字节长度算式；第二遍交坏/好方案的旧客户端反例、两步行为保持计划、测试/发布/回退门和一份按业务风险排序的技术债清单。题目先预测，再展开反馈。
+
+### 基础 1–8：先守当前行为
+
+<details><summary>1. 当前 S2 正文上限是 6 个汉字吗？</summary>
+
+不是。非空且最多 6 个 UTF-8 字节。</details>
+
+<details><summary>2. Go 的 `len("你好")` 是 2 还是 6？</summary>
+
+6，`len(string)` 计字节；rune 数才是 2。</details>
+
+<details><summary>3. `len(body)` 与 `len([]byte(body))` 对同一 Go string 会一个算字符一个算字节吗？</summary>
+
+不会，二者都计该 string 的字节数。差异在字节数与 rune 数之间。</details>
+
+<details><summary>4. 原始 JSON 请求体 4096 B 与正文 6 B 是同一限额吗？</summary>
+
+不是。前者在解析前约束资源，后者在解码后约束消息规则。</details>
+
+<details><summary>5. 同 ID、同正文重复 POST 当前应返回什么？</summary>
+
+409，旧消息/顺序不覆盖。</details>
+
+<details><summary>6. `u-c` 登录后不是 `c-a` 成员，可见私有历史吗？</summary>
+
+不可。当前隐藏目标合同为 404。</details>
+
+<details><summary>7. S3 `stored_in_teaching_db` 和 R9 9 B 已生效了吗？</summary>
+
+都没有。二者是不同的未部署/待审变更。</details>
+
+<details><summary>8. 维护性可以只用 Go 文件数量衡量吗？</summary>
+
+不能。要看定位、扩散、验证、兼容和回退成本与业务风险。</details>
+
+### 方案与重构 9–16：一个数字的影响
+
+<details><summary>9. 全局 `MaxMessageBytes=6` 同时控制旧 v1 和新路径，直接改 9 会怎样？</summary>
+
+旧 `/v1` 也可能悄悄接纳 9 B，破坏当前合同。</details>
+
+<details><summary>10. 一处用 `len(body)`、一处用 `utf8.RuneCountInString(body)`，为什么会分歧？</summary>
+
+前者数字节，后者数 Unicode code point；`"你好"` 是 6 B/2 rune。</details>
+
+<details><summary>11. 新版本的 9 B 规则可由不可信请求体写 `version=9` 自行启用吗？</summary>
+
+不可。由可信路由/已批准的接口合同选择规则。</details>
+
+<details><summary>12. R9 未批准，现在能改当前 `/v1` 校验吗？</summary>
+
+不能。先做影响评审与行为保持重构，待批准后另加版本化能力。</details>
+
+<details><summary>13. 提取纯字节校验函数时，第一批刻画用例至少有哪些？</summary>
+
+6 B 合法、9 B 当前拒绝、空正文/总请求超限、重复 409、非成员 404、200 内存受理和拒绝状态不变。</details>
+
+<details><summary>14. 只跑 `gofmt/go vet` 可证明 R9 旧客户端回归安全吗？</summary>
+
+不能。它们是格式/可疑构造检查，旧新 HTTP/客户端/事件行为需独立验。</details>
+
+<details><summary>15. 为两个正文限额创建十个空接口就一定更可维护？</summary>
+
+不一定。抽象自身有理解/验证成本，先用明确的版本政策与小纯函数。</details>
+
+<details><summary>16. R9 批准后可以把拟议 S3 的 200 语义顺便并入 v1 吗？</summary>
+
+不能。正文容量与持久提交是两个合同变更，须分别版本化评审。</details>
+
+### 偿债与证据 17–22：把风险排队
+
+<details><summary>17. 假设退群后搜索泄露私有正文，与命名不统一相比谁先处理？</summary>
+
+权限泄露风险优先，按权威授权/索引修复和回归证据处置。</details>
+
+<details><summary>18. 旧 event_v1 仍在 broker/DLQ 可回放，双读分支一定是坏技术债吗？</summary>
+
+不一定。它可能在守存量兼容，待支持/回放窗口闭合后再有证据清理。</details>
+
+<details><summary>19. 功能开关增加时，应同时记录什么避免永久分支？</summary>
+
+owner、启用/停止门、支持窗口、删除期限和回退依赖。</details>
+
+<details><summary>20. 单次变更从 8 个文件降为 3 个，能直接证明维护性提高？</summary>
+
+不能。也可能把复杂性藏起来；还要看审阅、测试、故障与回退成本。</details>
+
+<details><summary>21. 固定 OpenIM 两处源码可证明整仓耦合或 R9 真实影响范围吗？</summary>
+
+不能。需要围绕固定需求继续追实际调用、模块、客户端与测试证据。</details>
+
+<details><summary>22. 一份可复核的维护性评估至少交什么？</summary>
+
+明确合同、改/验/不动影响图、坏/好方案反例、小步行为保持计划、验证/回退成本与按业务风险排序的偿还清单。</details>
+
+## 本章完成标准与后续路径
+
+能不看答案说明 Go string 的 `len` 是字节、为何全局 6→9 会让旧 `/v1` 漂移，画出 R9 的触点与不动项，并用当前 S2 正反例守住行为保持、给技术债按真实业务风险排序，才算完成第十卷。实际代码影响和成本需在学习者固定公开项目检出或隔离实现中另收集，本页没有运行证明。下一阶段按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)进入 11.04–11.07 的负载、容量与可靠性深化。

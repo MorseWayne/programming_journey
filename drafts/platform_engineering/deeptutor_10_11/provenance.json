@@ -29,9 +29,9 @@
   "original_sha256": "0189538f26f46a1df96b8d2bc8a8a23f0a9b30a51d194e9c12d92179b5a182d4",
   "original_characters": 32435,
   "generation_request_sha256": "10d2dcf8bb5a40f9886353abe20a8fbf3b59a6731d0047c71b9af6ab4d989cfe",
-  "reviewed_sha256": "bdd964263d01e9fdca3319d8f8ba534b35eeb44c8a58363901a5ae5688a9e97b",
-  "reviewed_characters": 9968,
-  "reviewed_chinese_characters": 3840,
+  "reviewed_sha256": "94e9e90486726de13fdcc68cf9d0538fc1a4d453ff032af45ea197d728555d66",
+  "reviewed_characters": 10073,
+  "reviewed_chinese_characters": 3845,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/11_technical_writing_collaboration.md",
-  "course_sha256": "29c4502c2fb618e0ee2231852abb565bfe1df0c2efb955ca9c2dded283e600cb"
+  "course_sha256": "b3533b98754274387185d5bca18d6e18a3f037450dde5372e8556ccde488b0e2"
 }

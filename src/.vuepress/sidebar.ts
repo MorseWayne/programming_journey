@@ -320,6 +320,7 @@ export default sidebar({
             "curriculum/10_engineering/09_ci_artifacts",
             "curriculum/10_engineering/10_continuous_delivery_versions",
             "curriculum/10_engineering/11_technical_writing_collaboration",
+            "curriculum/10_engineering/12_maintainability_assessment",
             "curriculum/10_engineering/core"
           ]
         },

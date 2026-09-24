@@ -1,0 +1,74 @@
+{
+  "code": "10.12",
+  "title": "维护性评估：R9为何会牵动这么多地方",
+  "chapter_id": "ch_maintainability_assessment",
+  "summary": "面向Go初学者，用仍待审的IM正文R9需求评估变更影响、规则耦合、重复与抽象成本、行为保持重构、兼容分支和技术债优先级。",
+  "objectives": [
+    "以R9变更定位维护性而非数行数",
+    "画出HTTP/domain/客户端/事件/测试影响图",
+    "识别全局限额常量造成旧接口漂移",
+    "设计行为保持重构和分层证据",
+    "按业务风险/变更频率排序技术债",
+    "限制固定OpenIM两处源码对整体质量的推论"
+  ],
+  "sources": [
+    "https://go.dev/wiki/CodeReviewComments",
+    "https://google.github.io/eng-practices/review/reviewer/standard.html",
+    "https://google.github.io/eng-practices/review/developer/small-cls.html",
+    "https://martinfowler.com/articles/is-quality-worth-cost.html",
+    "https://martinfowler.com/bliki/TechnicalDebtQuadrant.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、维护性用下一次IM需求检验",
+      "words": 2900,
+      "focus": "当前S2/v1正文非空最多6 UTF8B/总请求4096B/200 accepted_in_memory/重复同ID409/非成员404；R9 6→9B待审、S3 SQL stored_in_teaching_db提议。维护性不是行数少或函数多，而是改R9时能定位规则、控制扩散、守旧合同、验证/回退成本可解释。"
+    },
+    {
+      "title": "二、画一次R9变更影响图",
+      "words": 3000,
+      "focus": "纸上触点HTTP DTO/可信身份、领域BodyLimit、客户端提示、WebSocket、proto/event、SQL列、tests/docs/deploy；每个标必须改/只验证/不应改。409/404/200不该随正文上限变化，R9未批准只建评审矩阵。以修改触点/风险/测试时长度量而非真实repo文件数。"
+    },
+    {
+      "title": "三、重复、耦合和过度抽象的反例",
+      "words": 3200,
+      "focus": "坏方案单个全局MaxBodyBytes由v1和未来路径共享，改6→9使旧v1静默放宽；另两处手写len(body)和len([]byte(body))不一致；好方向将合同版本的正文规则集中于可解释策略、原始请求4096与正文6分层。不要为两个版本造插件工厂/十接口，Go小接口由消费者定义。"
+    },
+    {
+      "title": "四、行为保持重构与验证成本",
+      "words": 3200,
+      "focus": "先以当前S2示例/负例锁定你好6B合法/你好呀9B拒绝、重复409、u-c404、200 accepted_in_memory与状态不变；提取字节校验纯函数和依赖边界，小步每步行为保持，go test/fuzz/race/HTTP集成各有限证据；R9获得批准后才增加版本化新规则，S3成功语义另变更。"
+    },
+    {
+      "title": "五、技术债排序看业务风险和变更频率",
+      "words": 3000,
+      "focus": "按权限泄露/重复发送/旧v1限额漂移/一般命名重复排序，考虑发生概率、影响、即将改需求、修复/验证成本、可逆性。把u-c非成员可读高优先于普通formatting；不要把所有重复或老代码称债，Fowler技术债取舍可解释并有偿还计划。"
+    },
+    {
+      "title": "六、兼容分支与删旧代码的时机",
+      "words": 2900,
+      "focus": "如果旧客户端仍活、broker旧event和DLQ/备份可回放，新版本双读分支必要；不能仅因看似重复就删。收缩条件按09.10六格矩阵/10.10支持窗和数据迁移/回退证据。抽象与feature flag自身有维护成本，要求owner/清理截止。"
+    },
+    {
+      "title": "七、证据度量与OpenIM边界",
+      "words": 3000,
+      "focus": "评估变更所需审阅范围、修改前置时间、测试成本、回归失败、定位与回退时间、跨团队交接；全是未来待测，不用单次行数/CI绿夸大。固定OpenIM send.go MsgToMQ后返回与另Mongo BatchInsert仅两处，不能据此评判整体架构可维护性；在固定checkout继续画调用/测试/模块边界。"
+    },
+    {
+      "title": "八、22题与第十卷综合评审",
+      "words": 3100,
+      "focus": "22题基础8/方案比较8/偿债评审6，答案覆盖S2/S3/R9、len bytes、全局const坏处、原始体/正文分层、Go消费侧接口、行为保持、工具范围、权限/重复优先、旧兼容分支、OpenIM证据。交付影响图/两方案/测试回退/技术债排序，静态不运行Go/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《10.12 维护性评估》，面向Go初学者，八节理论丰富、IM业务从浅到深，22题反馈。用待审R9正文6→9 UTF8字节作为下一次需求评估维护性，当前S2/v1非空最多6B/总请求4096B/同ID即使同正文重复409/非成员u-c隐藏404/200 accepted_in_memory仍不变，未来S3/v2 stored_in_teaching_db仍提议且继续6B。维护性是变更可定位、影响有界、验证/回退可解释，不是仅行数少。画HTTP DTO/领域字节校验/客户端/WebSocket/事件schema/SQL/测试文档/部署的触点图，分必须修改/只验证/不应变。坏方案全局MaxBodyBytes从6改9同时放宽旧v1；两处len(body)和len([]byte(body))不一致；好方向按合同版本显式字节规则并分请求总大小与正文，不为简单场景造十个空接口或插件工厂。先刻画当前你好6B合法/你好呀9B拒绝、重复409、u-c404、200内存受理，再小步行为保持提取纯校验；R9获批准后才另版本启用。技术债按权限泄露、重复受理、旧接口漂移优先于命名/格式，考虑变更频率/影响/可逆/证据成本；旧事件回放和客户端支持窗未结束时兼容分支虽重复但必要。固定OpenIM send.go MsgToMQ与另Mongo消费两处不足以评价整体可维护性。静态不运行Go/IM/站点。\n1. 一、维护性用下一次IM需求检验: 当前S2/v1正文非空最多6 UTF8B/总请求4096B/200 accepted_in_memory/重复同ID409/非成员404；R9 6→9B待审、S3 SQL stored_in_teaching_db提议。维护性不是行数少或函数多，而是改R9时能定位规则、控制扩散、守旧合同、验证/回退成本可解释。\n2. 二、画一次R9变更影响图: 纸上触点HTTP DTO/可信身份、领域BodyLimit、客户端提示、WebSocket、proto/event、SQL列、tests/docs/deploy；每个标必须改/只验证/不应改。409/404/200不该随正文上限变化，R9未批准只建评审矩阵。以修改触点/风险/测试时长度量而非真实repo文件数。\n3. 三、重复、耦合和过度抽象的反例: 坏方案单个全局MaxBodyBytes由v1和未来路径共享，改6→9使旧v1静默放宽；另两处手写len(body)和len([]byte(body))不一致；好方向将合同版本的正文规则集中于可解释策略、原始请求4096与正文6分层。不要为两个版本造插件工厂/十接口，Go小接口由消费者定义。\n4. 四、行为保持重构与验证成本: 先以当前S2示例/负例锁定你好6B合法/你好呀9B拒绝、重复409、u-c404、200 accepted_in_memory与状态不变；提取字节校验纯函数和依赖边界，小步每步行为保持，go test/fuzz/race/HTTP集成各有限证据；R9获得批准后才增加版本化新规则，S3成功语义另变更。\n5. 五、技术债排序看业务风险和变更频率: 按权限泄露/重复发送/旧v1限额漂移/一般命名重复排序，考虑发生概率、影响、即将改需求、修复/验证成本、可逆性。把u-c非成员可读高优先于普通formatting；不要把所有重复或老代码称债，Fowler技术债取舍可解释并有偿还计划。\n6. 六、兼容分支与删旧代码的时机: 如果旧客户端仍活、broker旧event和DLQ/备份可回放，新版本双读分支必要；不能仅因看似重复就删。收缩条件按09.10六格矩阵/10.10支持窗和数据迁移/回退证据。抽象与feature flag自身有维护成本，要求owner/清理截止。\n7. 七、证据度量与OpenIM边界: 评估变更所需审阅范围、修改前置时间、测试成本、回归失败、定位与回退时间、跨团队交接；全是未来待测，不用单次行数/CI绿夸大。固定OpenIM send.go MsgToMQ后返回与另Mongo BatchInsert仅两处，不能据此评判整体架构可维护性；在固定checkout继续画调用/测试/模块边界。\n8. 八、22题与第十卷综合评审: 22题基础8/方案比较8/偿债评审6，答案覆盖S2/S3/R9、len bytes、全局const坏处、原始体/正文分层、Go消费侧接口、行为保持、工具范围、权限/重复优先、旧兼容分支、OpenIM证据。交付影响图/两方案/测试回退/技术债排序，静态不运行Go/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_73304c2e81",
+  "page_id": "pg_6c7eea9af6",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/spec",
+      "https://go.dev/blog/strings",
+      "https://go.dev/wiki/CodeReviewComments",
+      "https://martinfowler.com/articles/is-quality-worth-cost.html",
+      "https://martinfowler.com/bliki/TechnicalDebtQuadrant.html",
+      "https://google.github.io/eng-practices/review/reviewer/standard.html",
+      "https://google.github.io/eng-practices/review/developer/small-cls.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "655556b009879a266c81b880f3d9277725f41d42935ca0a2f7bdbc495a3fa161",
+  "original_characters": 31065,
+  "generation_request_sha256": "864b55cc613b372579795658621eb29443200925fd0850bd1a9a4b3507c9baf1",
+  "reviewed_sha256": "d716e8e505ce5bc28d8bf9affa20bc0cbc71b07345f1181e36f76bbf9401705d",
+  "reviewed_characters": 9953,
+  "reviewed_chinese_characters": 3928,
+  "course_file": "src/docs/platform_engineering/curriculum/10_engineering/12_maintainability_assessment.md",
+  "course_sha256": "1a53260849b64fed87799fb2cbca56673d0821a27ac42ff983ea40b1458cbfa7"
+}
