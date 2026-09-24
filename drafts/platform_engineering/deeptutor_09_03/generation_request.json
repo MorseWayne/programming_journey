@@ -1,0 +1,74 @@
+{
+  "code": "09.03",
+  "title": "程序组织：让 handler、业务规则与内存适配器各守边界",
+  "chapter_id": "ch_backend_program_organization",
+  "summary": "承接09.01用例与09.02固定HTTP合同、01.09包设计、10.04测试替身，面向Go初学者设计虚构IM教学服务的cmd/httpapi/app/domain/memorystore职责、单向依赖、输入限制、可信身份边界、结果与错误映射、配置日志和可测试接线。静态教材不实现或运行服务。",
+  "objectives": [
+    "按变化原因拆分启动、handler、应用服务、领域与内存适配器",
+    "解释Go包/import路径/internal与单向依赖",
+    "限定handler对路径、大小、JSON、HTTP响应的职责",
+    "让应用服务维护可信主体、授权与内存受理状态",
+    "用消费方小接口和构造注入替换内存存储",
+    "统一错误身份到HTTP状态/机器码的映射和响应提交",
+    "集中配置与脱敏日志并传播请求context",
+    "按纯规则、服务替身、HTTP边界和内存集成设计未来验证"
+  ],
+  "sources": [
+    "https://pkg.go.dev/net/http#Handler",
+    "https://pkg.go.dev/net/http#MaxBytesReader",
+    "https://pkg.go.dev/net/http#ResponseWriter",
+    "https://pkg.go.dev/log/slog",
+    "https://go.dev/doc/effective_go#interfaces"
+  ],
+  "sections": [
+    {
+      "title": "一、从两条已定的HTTP合同识别变化原因",
+      "words": 2200,
+      "focus": "承接09.02 GET/POST /v1/conversations/c-a/messages，limit20/1..100, POST200 accepted_in_memory, body4096B vs text6B，错误类别；虚构u-a/u-b/c-a/m-a，当前仅本地CLI。解释handler混装flag/JSON/auth/map/log会有什么变更耦合，按变化原因拆分而不是行数/层数过度设计。"
+    },
+    {
+      "title": "二、Go包、internal与依赖方向",
+      "words": 2400,
+      "focus": "示意module example.com/teachingim cmd/teachingim/main.go, internal/httpapi, app, domain, memorystore；cmd接线依赖其他，httpapi→app, app→domain, memorystore→domain; app消费方定义HistoryStore接口，memory实现隐式满足，domain不导入http/os/encoding/json，避免import cycle。internal不是安全隔离。区分真正项目代码尚未创建，静态目录示意。"
+    },
+    {
+      "title": "三、HTTP handler仅守传输边界",
+      "words": 2600,
+      "focus": "net/http Handler/ResponseWriter/request，限量原始body4096B（MaxBytesReader）再解码/字段校验；从路径取c-a、limit/before/sender，获得认证边界principal（S3未实现，隔离测试桩不可公开），传r.Context到app；handler不直接读写map、不信JSON sender_id，统一设置Content-Type/no-store与状态/错误体；Write前决定状态，Write默认200后不能改最终状态。示意代码片段但不运行。"
+    },
+    {
+      "title": "四、应用服务与领域规则",
+      "words": 2500,
+      "focus": "Send(ctx,principal,conv,id,body) and List(ctx,principal,query)的职责：authorization action-specific, domain ValidateMessage kind=server-owned, duplicate under store atomic append, accepted_in_memory; app不依赖http status/URL/JSON，返回业务结果/errors。consumer-owned small interface Append/List, with in-memory adapter, no actual login/DB/delivery。查询分页顺序seq descending+cursor contract from09.02。"
+    },
+    {
+      "title": "五、内存适配器与组合根",
+      "words": 2500,
+      "focus": "memorystore protected map+order+seq with mutex like05.02, methods satisfy app interface, cursor validation bound to conversation/filter, no cross-process consistency; cmd root reads validated config, constructs store, private test authorizer, service, handler/server (only diagram), cannot publicly run fixed-auth stub. Explain one store per process, restart loses state。"
+    },
+    {
+      "title": "六、配置、日志与身份/敏感边界",
+      "words": 2200,
+      "focus": "one Config with listen address, request cap4096, bodymax6, default page20 max100; startup validation, explicit config precedence for new service (not same as IMHISTORY_FILE local CLI), logs op ID/stage/code/duration counts not body/token/full JSON; slog intro standard, logger at boundary not domain; real authentication and TLS later 09.07/04.07. Importance not publicly expose stub."
+    },
+    {
+      "title": "七、错误传播、取消和可验证分层",
+      "words": 2600,
+      "focus": "errors.Is sentinels from domain/store/app mapping 400/401/403/404/409/413/415/406/500 at one HTTP boundary, no string compare; response committed once, if failure after write cannot rewrite status; r.Context cancel from disconnect does not roll back accepted memory, result unknown. Tests future: pure domain, app with fake auth/store, httptest handler, memory integration; no execution this task. OpenIM no new claim; source map only."
+    },
+    {
+      "title": "八、完整请求轨迹与22题反馈",
+      "words": 2900,
+      "focus": "trace valid u-a POST m-a and invalid duplicate, GET limit2 cursor, nonmember, cancellation after commit; each step package/owner/observed result/state. at least22 graded questions basics→mechanism→engineering→business. Static textbook only, no Go/site build/service, references Go official net/http/slog and earlier course; next09.04 middleware request pipeline。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.03 程序组织》。面向Go后端初学者，承接09.01需求、09.02固定HTTP合同及01.09包设计、10.04测试替身；用虚构IM的GET历史和POST m-a贯穿，从Go包与依赖方向、handler、应用服务、领域规则、内存适配、配置/日志，到错误/取消与验证分层。当前项目只有本地CLI，网络服务未实现；静态教材，不运行Go/测试/服务。\n1. 一、从两条已定的HTTP合同识别变化原因：承接09.02 GET/POST /v1/conversations/c-a/messages，limit20/1..100, POST200 accepted_in_memory, body4096B vs text6B，错误类别；虚构u-a/u-b/c-a/m-a，当前仅本地CLI。解释handler混装flag/JSON/auth/map/log会有什么变更耦合，按变化原因拆分而不是行数/层数过度设计。\n2. 二、Go包、internal与依赖方向：示意module example.com/teachingim cmd/teachingim/main.go, internal/httpapi, app, domain, memorystore；cmd接线依赖其他，httpapi→app, app→domain, memorystore→domain; app消费方定义HistoryStore接口，memory实现隐式满足，domain不导入http/os/encoding/json，避免import cycle。internal不是安全隔离。区分真正项目代码尚未创建，静态目录示意。\n3. 三、HTTP handler仅守传输边界：net/http Handler/ResponseWriter/request，限量原始body4096B（MaxBytesReader）再解码/字段校验；从路径取c-a、limit/before/sender，获得认证边界principal（S3未实现，隔离测试桩不可公开），传r.Context到app；handler不直接读写map、不信JSON sender_id，统一设置Content-Type/no-store与状态/错误体；Write前决定状态，Write默认200后不能改最终状态。示意代码片段但不运行。\n4. 四、应用服务与领域规则：Send(ctx,principal,conv,id,body) and List(ctx,principal,query)的职责：authorization action-specific, domain ValidateMessage kind=server-owned, duplicate under store atomic append, accepted_in_memory; app不依赖http status/URL/JSON，返回业务结果/errors。consumer-owned small interface Append/List, with in-memory adapter, no actual login/DB/delivery。查询分页顺序seq descending+cursor contract from09.02。\n5. 五、内存适配器与组合根：memorystore protected map+order+seq with mutex like05.02, methods satisfy app interface, cursor validation bound to conversation/filter, no cross-process consistency; cmd root reads validated config, constructs store, private test authorizer, service, handler/server (only diagram), cannot publicly run fixed-auth stub. Explain one store per process, restart loses state。\n6. 六、配置、日志与身份/敏感边界：one Config with listen address, request cap4096, bodymax6, default page20 max100; startup validation, explicit config precedence for new service (not same as IMHISTORY_FILE local CLI), logs op ID/stage/code/duration counts not body/token/full JSON; slog intro standard, logger at boundary not domain; real authentication and TLS later 09.07/04.07. Importance not publicly expose stub.\n7. 七、错误传播、取消和可验证分层：errors.Is sentinels from domain/store/app mapping 400/401/403/404/409/413/415/406/500 at one HTTP boundary, no string compare; response committed once, if failure after write cannot rewrite status; r.Context cancel from disconnect does not roll back accepted memory, result unknown. Tests future: pure domain, app with fake auth/store, httptest handler, memory integration; no execution this task. OpenIM no new claim; source map only.\n8. 八、完整请求轨迹与22题反馈：trace valid u-a POST m-a and invalid duplicate, GET limit2 cursor, nonmember, cancellation after commit; each step package/owner/observed result/state. at least22 graded questions basics→mechanism→engineering→business. Static textbook only, no Go/site build/service, references Go official net/http/slog and earlier course; next09.04 middleware request pipeline。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

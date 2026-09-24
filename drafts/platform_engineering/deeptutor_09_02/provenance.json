@@ -26,9 +26,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "2603133227820112ae5a79e796758248ebb59d816bd52a59d6468321ef5fb0bc",
-  "reviewed_sha256": "cfdf587890c5076925cc1946dafc582504533b5f9aea0c3ca57758d4dc71a0f9",
-  "reviewed_characters": 10560,
-  "reviewed_chinese_characters": 4636,
+  "reviewed_sha256": "9bd5e0adacea89d809f4c9b5ad22706c2bf14bfe5fd1c7a6eb15fcd559d1ed02",
+  "reviewed_characters": 10663,
+  "reviewed_chinese_characters": 4640,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md",
-  "course_sha256": "8c0247f0556e0977654472f2136054c7a5f8cfb6ae5648246e3d07f727504954"
+  "course_sha256": "81ef2a032e8ccbf9ed0338b250280dbe17af79be1e2e36ef2b703d5bb6e9a868"
 }

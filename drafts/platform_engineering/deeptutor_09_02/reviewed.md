@@ -264,4 +264,4 @@ Cache-Control: no-store
 - [RFC 9457：Problem Details](https://datatracker.ietf.org/doc/html/rfc9457)：若以后采用标准错误表示，必须重新定义类型与媒体合同。
 - [Go `net/http`](https://pkg.go.dev/net/http)、[OWASP 授权指南](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)：后续个人实现和对象级权限负例的资料入口。
 
-下一章 09.03 才把这个接口合同拆为 handler、应用服务、领域规则和适配器；进入前应能给每个失败案例同时标出 HTTP 状态、稳定错误码和内存前后状态。
+下一章[09.03 程序组织](../../../src/docs/platform_engineering/curriculum/09_backend_security/03_program_organization.md)才把这个接口合同拆为 handler、应用服务、领域规则和适配器；进入前应能给每个失败案例同时标出 HTTP 状态、稳定错误码和内存前后状态。

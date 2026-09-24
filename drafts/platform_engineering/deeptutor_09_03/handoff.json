@@ -1,0 +1,12 @@
+{
+  "chapter": "09.03",
+  "stage": "S2",
+  "business_scope": "fictional future teaching IM HTTP GET/POST organized as Go package design; current repository has local CLI only, no running service or durable state",
+  "prerequisites": ["09.01 use cases and trusted principal boundary", "09.02 fixed HTTP method/path/status/limit contract", "01.09 Go package dependencies", "10.04 consumer-owned test seams"],
+  "first_pass": ["change reasons and package layout", "cmd/httpapi/app/domain/memorystore dependency direction", "handler bounded decode and response ownership", "application action-level authorization"],
+  "second_pass": ["consumer-owned HistoryStore Append/Snapshot", "single-process memory invariant and cursor scope", "validated config and redacted logging", "error identity, request cancellation and future test layers"],
+  "not_yet_prerequisites": ["09.04 middleware/request chain and response commit detail", "09.07 real authentication and authorization", "S3 durable storage", "S5 delivery and idempotency"],
+  "next_chapter": "09.04 request processing chain: middleware, context, timeout, panic and response commit",
+  "upstream_inspection": "No new OpenIM implementation fact asserted in this chapter; earlier pinned reading boundary remains.",
+  "shared_integration_pending": []
+}
