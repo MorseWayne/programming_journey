@@ -1,0 +1,31 @@
+{
+  "chapter": "06.09",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced WAL and crash-recovery lesson using fictional m-a commit/response timeline",
+  "prerequisites": [
+    "03.08 file persistence and crash boundaries",
+    "06.04 dirty pages and buffer pool",
+    "06.07 commit outcome unknown",
+    "06.08 MVCC version and transaction boundary"
+  ],
+  "first_pass": [
+    "INSERT versus COMMIT versus future persistent HTTP 200 versus device delivery",
+    "WAL persistent before related data page persistent writeback",
+    "C0–C5 crash points and conditional local recovery"
+  ],
+  "second_pass": [
+    "REDO and generic UNDO concept without claiming PostgreSQL uses a classic undo log",
+    "checkpoint redo start versus backup",
+    "synchronous_commit and fsync/hardware assumptions",
+    "SQLite WAL and MongoDB journaling as separate engines",
+    "RPO/RTO and stable message-id reconciliation"
+  ],
+  "not_yet_prerequisites": [
+    "06.11 replication, migration and reconciliation",
+    "06.12 full storage business case",
+    "real crash recovery exercises by the learner"
+  ],
+  "next_chapter": "06.11 replication, migration and reconciliation",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL, SQLite and MongoDB primary documentation supports only their own logging behavior.",
+  "shared_integration_pending": []
+}

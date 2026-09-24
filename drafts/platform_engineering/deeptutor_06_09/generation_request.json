@@ -1,0 +1,74 @@
+{
+  "code": "06.09",
+  "title": "日志与崩溃恢复：消息提交后还能找回吗",
+  "chapter_id": "ch_logging_recovery",
+  "summary": "面向Go初学者从IM消息提交未知出发，推导WAL顺序、崩溃时间线、REDO、检查点、刷盘配置和备份恢复边界。",
+  "objectives": [
+    "区分INSERT、COMMIT、HTTP响应与设备确认",
+    "解释WAL先于数据页写回的顺序",
+    "手算C0-C5崩溃点",
+    "区分REDO与通用UNDO概念",
+    "说明检查点和恢复起点",
+    "评审同步提交及硬件边界",
+    "区分SQLite/MongoDB日志口径与备份"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/wal-intro.html",
+    "https://www.postgresql.org/docs/current/wal-reliability.html",
+    "https://www.postgresql.org/docs/current/wal-configuration.html",
+    "https://www.postgresql.org/docs/current/runtime-config-wal.html",
+    "https://www.sqlite.org/wal.html",
+    "https://www.mongodb.com/docs/manual/core/journaling/"
+  ],
+  "sections": [
+    {
+      "title": "一、从消息提交与响应丢失建立恢复问题",
+      "words": 2400,
+      "focus": "承接06.07 m-a发送事务提交未知与06.04 dirty页、03.08文件持久；业务区分INSERT返回、COMMIT完成、HTTP200返回、B设备收到；固定PostgreSQL教学路径而不声称OpenIM实现。"
+    },
+    {
+      "title": "二、写前日志的顺序不变量",
+      "words": 2900,
+      "focus": "先记录修改WAL，再允许相关数据页持久化；同步提交需符合配置的WAL持久边界，但不用每笔刷数据页。解释日志记录、数据页dirty、buffer、OS cache与存储flush；WAL写入与flush不同，设备诚实响应假设。PG官方WAL。"
+    },
+    {
+      "title": "三、C0-C5崩溃时间线手算",
+      "words": 3100,
+      "focus": "固定C0 BEGIN前、C1 INSERT执行后未COMMIT、C2 commit日志生成未持久、C3同步WAL已flush且COMMIT成功但数据页未写回、C4数据页写回、C5 HTTP200被A收到。C1/C2不保证提交；C3恢复REDO可得m-a（在sync+fsync可靠存储前提）；C3-C5响应丢失客户端未知可按稳定message_id查；设备交付另计。切勿把WAL record存在=已提交或C4=客户端知道。"
+    },
+    {
+      "title": "四、REDO/UNDO与崩溃恢复边界",
+      "words": 2800,
+      "focus": "PG WAL恢复重做已持久提交且数据页未完成的修改；未提交事务不作为已提交业务结果，PG并非简单的每事务UNDO日志示意，MVCC旧版本/事务状态参与。原理层介绍redo重做和undo撤销的通用概念，不称PG必有传统undo log。页部分写入与full page writes按PG官方资料。"
+    },
+    {
+      "title": "五、检查点、刷页与恢复时间",
+      "words": 2800,
+      "focus": "PG checkpoint把检查点前脏页刷到数据文件，写checkpoint记录，恢复从redo位置开始；更频繁检查点可缩短恢复工作但增IO/WAL；非业务COMMIT、非备份，不等于可抛弃所有WAL（归档/复制槽）。06.04 dirty与06.08长事务回收分开。"
+    },
+    {
+      "title": "六、同步选项与硬件故障边界",
+      "words": 2800,
+      "focus": "PG synchronous_commit=off可在返回成功后保留短暂崩溃丢失窗；fsync=off不保证崩溃一致性；synchronous_commit普通本地与远端同步复制不是同义，具体配置/故障模型必须写。OS缓存/控制器volatile cache可能违背flush假设；不要把设备ACK=客户端200。"
+    },
+    {
+      "title": "七、SQLite WAL与MongoDB日志对照",
+      "words": 2800,
+      "focus": "SQLite WAL写入日志后checkpoint合并回主数据库文件，读写并发与单写者要按官方范围；MongoDB WiredTiger journaling及writeConcern/journal与复制承诺分开，不能把PG C0-C5逐项套两引擎。MongoDB j:true等配置实际版本核对；不宣称OpenIM实际存储保证。"
+    },
+    {
+      "title": "八、业务验收、备份与22题",
+      "words": 2800,
+      "focus": "交付C0-C5表、REDO/检查点流程、稳定m-a查权威状态、RPO允许丢多少和RTO可恢复多久，备份+日志/恢复演练与复制区别；22题分层附答案。所有操作静态不运行SQL/DB/Go/站点，下一06.11复制迁移。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成面向Go初学者的完整中文静态教材《06.09 日志与崩溃恢复》，八节丰富正文和22道分层练习反馈。从06.07的虚构m-a发送与提交未知，结合06.04脏页。固定PostgreSQL教学C0-C5：C0 BEGIN前；C1 INSERT后未COMMIT；C2提交日志产生但未持久；C3同步配置WAL持久且COMMIT成功、数据页尚未刷；C4数据页写回；C5客户端收到HTTP200。C1/C2不能保证提交；在同步、fsync、可靠存储假设下C3后崩溃可REDO恢复，即使客户端响应在C3-C5之间丢失仍未知，须用稳定message_id查。设备交付另计。WAL先持久于相关数据页、REDO与通用UNDO概念，不把PostgreSQL当经典UNDO日志；checkpoint不是每笔提交/备份，频率有IO与恢复权衡。PG同步选项和硬件flush边界，SQLite/Mongo对照不套PG语义。静态不运行Go、SQL、数据库、站点。\n1. 一、从消息提交与响应丢失建立恢复问题: 承接06.07 m-a发送事务提交未知与06.04 dirty页、03.08文件持久；业务区分INSERT返回、COMMIT完成、HTTP200返回、B设备收到；固定PostgreSQL教学路径而不声称OpenIM实现。\n2. 二、写前日志的顺序不变量: 先记录修改WAL，再允许相关数据页持久化；同步提交需符合配置的WAL持久边界，但不用每笔刷数据页。解释日志记录、数据页dirty、buffer、OS cache与存储flush；WAL写入与flush不同，设备诚实响应假设。PG官方WAL。\n3. 三、C0-C5崩溃时间线手算: 固定C0 BEGIN前、C1 INSERT执行后未COMMIT、C2 commit日志生成未持久、C3同步WAL已flush且COMMIT成功但数据页未写回、C4数据页写回、C5 HTTP200被A收到。C1/C2不保证提交；C3恢复REDO可得m-a（在sync+fsync可靠存储前提）；C3-C5响应丢失客户端未知可按稳定message_id查；设备交付另计。切勿把WAL record存在=已提交或C4=客户端知道。\n4. 四、REDO/UNDO与崩溃恢复边界: PG WAL恢复重做已持久提交且数据页未完成的修改；未提交事务不作为已提交业务结果，PG并非简单的每事务UNDO日志示意，MVCC旧版本/事务状态参与。原理层介绍redo重做和undo撤销的通用概念，不称PG必有传统undo log。页部分写入与full page writes按PG官方资料。\n5. 五、检查点、刷页与恢复时间: PG checkpoint把检查点前脏页刷到数据文件，写checkpoint记录，恢复从redo位置开始；更频繁检查点可缩短恢复工作但增IO/WAL；非业务COMMIT、非备份，不等于可抛弃所有WAL（归档/复制槽）。06.04 dirty与06.08长事务回收分开。\n6. 六、同步选项与硬件故障边界: PG synchronous_commit=off可在返回成功后保留短暂崩溃丢失窗；fsync=off不保证崩溃一致性；synchronous_commit普通本地与远端同步复制不是同义，具体配置/故障模型必须写。OS缓存/控制器volatile cache可能违背flush假设；不要把设备ACK=客户端200。\n7. 七、SQLite WAL与MongoDB日志对照: SQLite WAL写入日志后checkpoint合并回主数据库文件，读写并发与单写者要按官方范围；MongoDB WiredTiger journaling及writeConcern/journal与复制承诺分开，不能把PG C0-C5逐项套两引擎。MongoDB j:true等配置实际版本核对；不宣称OpenIM实际存储保证。\n8. 八、业务验收、备份与22题: 交付C0-C5表、REDO/检查点流程、稳定m-a查权威状态、RPO允许丢多少和RTO可恢复多久，备份+日志/恢复演练与复制区别；22题分层附答案。所有操作静态不运行SQL/DB/Go/站点，下一06.11复制迁移。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
