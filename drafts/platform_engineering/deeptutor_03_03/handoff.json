@@ -1,0 +1,12 @@
+{
+  "chapter": "03.03",
+  "stage": "S2",
+  "business_scope": "fictional local imhistory check and read-only Linux process observation; no real process inspection or online IM service",
+  "prerequisites": ["03.02 program/process/syscall/descriptor intuition", "01.12 CLI flag, environment, stdout/stderr and exit contract"],
+  "first_pass": ["PID/PPID and short-lived process identity", "cwd and relative paths", "explicit flag versus IMHISTORY_FILE versus default", "FDs and standard streams"],
+  "second_pass": ["signals and cleanup limits", "ps/procfs observation with privacy and time bounds", "symptom-hypothesis-evidence-correction chain", "permission and IM authorization separation"],
+  "not_yet_prerequisites": ["03.04 CPU/thread scheduling", "03.07 open file descriptions and offsets", "03.09 I/O readiness", "03.12 resource faults", "online IM gateway and delivery"],
+  "next_chapter": "03.04 CPU scheduling, runnable versus blocked threads and connection load intuition",
+  "upstream_inspection": "No OpenIM implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

@@ -1,0 +1,75 @@
+{
+  "code": "03.03",
+  "title": "Linux 进程与资源：从本地 IM 工具的运行现场定位问题",
+  "chapter_id": "ch_linux_process_resources",
+  "summary": "承接03.02程序/进程、系统调用与文件句柄，面向Go初学者用虚构IM本地CLI的路径和权限故障解释PID/PPID、工作目录、环境、信号、描述符、procfs与只读观察。区分进程现场事实和业务结论，静态教材，无Linux命令或Go示例执行。",
+  "objectives": [
+    "从PID/PPID定位一个进程实例及父子关系",
+    "解释相对路径与进程工作目录的关系",
+    "区分命令行选项、环境变量与进程启动条件",
+    "理解标准输入输出错误和打开文件的描述符",
+    "说明信号作为通知与退出/清理的边界",
+    "用ps和procfs的只读视角提出可验证假设",
+    "避免从权限或进程状态直接推断IM业务授权或送达",
+    "设计本地CLI路径或资源故障排查记录"
+  ],
+  "sources": [
+    "https://man7.org/linux/man-pages/man5/proc.5.html",
+    "https://man7.org/linux/man-pages/man1/ps.1.html",
+    "https://man7.org/linux/man-pages/man7/signal.7.html",
+    "https://man7.org/linux/man-pages/man2/getcwd.2.html",
+    "https://man7.org/linux/man-pages/man5/environ.5.html",
+    "https://pkg.go.dev/os#Getenv"
+  ],
+  "sections": [
+    {
+      "title": "一、从一次运行现场识别进程身份",
+      "words": 2100,
+      "focus": "承接03.02程序/进程/线程。虚构imhistory check -file history-c-a.json，解释PID是当时的进程标识、PPID父进程标识、可能复用，不是程序文件或用户ID；shell启动后的父子关系示意，不保证各环境固定。解释进程退出后观察窗口消失，短命CLI用教学长进程/纸上样本，不在本项目启动服务。"
+    },
+    {
+      "title": "二、工作目录与相对路径",
+      "words": 2200,
+      "focus": "`-file history-c-a.json`相对进程current working directory，不是源码目录/可执行文件目录；shell运行位置、cwd、路径规范化、文件不存在与权限错误。Go os.Getwd/Chdir介绍但不运行；不要以全局chdir修业务相对路径，CLI可明确-file绝对路径或记录cwd。Linux /proc/PID/cwd只读链接，进程退出可能消失。"
+    },
+    {
+      "title": "三、环境变量、参数与配置优先级",
+      "words": 2200,
+      "focus": "进程创建时获得环境，os.Getenv(\"IMHISTORY_FILE\")与显式-file优先于环境，环境再优先教学默认，与01.12一致；未设置/空值注意区分需求，环境通常由父进程提供但运行时可能改变，已有进程不会因shell后来export而自动更新；不要打印整个environ或真实凭据。参数错误2，路径打开失败4；环境不是认证机制。"
+    },
+    {
+      "title": "四、文件描述符与标准流",
+      "words": 2400,
+      "focus": "03.02的*os.File和Linux FD整数句柄；0/1/2常见stdin/stdout/stderr约定但可能重定向，资源表进程视角，fd编号可以复用；open成功分配，close释放，泄漏可耗尽配额，文件内容/路径/FD不同对象。/proc/PID/fd只读查看自己样本，不曝光敏感路径；03.07再讲inode/offset，03.09 socket和epoll。stdout与stderr、管道/重定向不会改变CLI错误类别。"
+    },
+    {
+      "title": "五、信号和退出：请求、处理与清理",
+      "words": 2300,
+      "focus": "SIGTERM/SIGINT可请求终止，SIGKILL无法被程序捕获/忽略，不能保证defer执行；Go os/signal可以处理某些信号，但本章只概念，示例以受控个人进程非生产。`os.Exit`同样跳过未执行defer；退出码/被信号终止的shell表示取决环境，不编造固定码。停止网关时接受新连接/在途消息恢复是后续S6，不由本章承诺。"
+    },
+    {
+      "title": "六、ps与procfs的只读观察方法",
+      "words": 2400,
+      "focus": "linux ps -o pid,ppid,stat,comm -p PID、readlink /proc/PID/cwd、ls -l /proc/PID/fd 等仅教学命令；不在本轮执行。procfs伪文件系统，多数只读但某些可写；权限/hidepid/容器namespace会改变可见性；短命进程/竞态/PID复用，观察须记录时刻、PID、命令和环境范围。避免读/打印/proc/PID/environ完整内容，可能含秘密。状态STAT只做初步线索，不推断CPU或阻塞原因。"
+    },
+    {
+      "title": "七、从症状构造因果链而非猜测",
+      "words": 2400,
+      "focus": "案例：file相对路径在不同cwd、显式-file覆盖环境、env指向错误文件、fd数量上升、权限失败、SIGTERM后退出；每个“现象→假设→只读证据→下一验证→仍未知”表。区分Linux文件访问许可、IM会话权限、JSON无效、服务端送达；不能因ps看到进程存活就判断IM健康，不能因fd多直接推断泄漏。后续03.12故障演练。"
+    },
+    {
+      "title": "八、综合排障记录与分层练习",
+      "words": 2800,
+      "focus": "完整c-a/u-a/m-a本地check问题，给预设ps/cwd/env/file参数与FD的静态观察，推演为什么相对路径失败、如何按01.12 0/2/3/4/5分类、如何改用明确路径而不更改业务规则；至少22道起步/原理/工程/业务练习逐题反馈，记录预期与个人真实观察分开。sources official man pages and Go os docs。无执行Go/Linux命令、构建或服务。下一03.04 CPU调度。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《03.03 Linux 进程与资源》。承接03.02，从初学者角度逐层讲PID、PPID、cwd、环境变量、文件描述符、标准流、信号、procfs只读观察，再以虚构IM本地历史CLI的路径/权限问题形成业务排障链。所有身份虚构；只写静态课程，不执行Go/Linux命令或真实服务，也不要展示真实凭据。\n1. 一、从一次运行现场识别进程身份：承接03.02程序/进程/线程。虚构imhistory check -file history-c-a.json，解释PID是当时的进程标识、PPID父进程标识、可能复用，不是程序文件或用户ID；shell启动后的父子关系示意，不保证各环境固定。解释进程退出后观察窗口消失，短命CLI用教学长进程/纸上样本，不在本项目启动服务。\n2. 二、工作目录与相对路径：`-file history-c-a.json`相对进程current working directory，不是源码目录/可执行文件目录；shell运行位置、cwd、路径规范化、文件不存在与权限错误。Go os.Getwd/Chdir介绍但不运行；不要以全局chdir修业务相对路径，CLI可明确-file绝对路径或记录cwd。Linux /proc/PID/cwd只读链接，进程退出可能消失。\n3. 三、环境变量、参数与配置优先级：进程创建时获得环境，os.Getenv(\"IMHISTORY_FILE\")与显式-file优先于环境，环境再优先教学默认，与01.12一致；未设置/空值注意区分需求，环境通常由父进程提供但运行时可能改变，已有进程不会因shell后来export而自动更新；不要打印整个environ或真实凭据。参数错误2，路径打开失败4；环境不是认证机制。\n4. 四、文件描述符与标准流：03.02的*os.File和Linux FD整数句柄；0/1/2常见stdin/stdout/stderr约定但可能重定向，资源表进程视角，fd编号可以复用；open成功分配，close释放，泄漏可耗尽配额，文件内容/路径/FD不同对象。/proc/PID/fd只读查看自己样本，不曝光敏感路径；03.07再讲inode/offset，03.09 socket和epoll。stdout与stderr、管道/重定向不会改变CLI错误类别。\n5. 五、信号和退出：请求、处理与清理：SIGTERM/SIGINT可请求终止，SIGKILL无法被程序捕获/忽略，不能保证defer执行；Go os/signal可以处理某些信号，但本章只概念，示例以受控个人进程非生产。`os.Exit`同样跳过未执行defer；退出码/被信号终止的shell表示取决环境，不编造固定码。停止网关时接受新连接/在途消息恢复是后续S6，不由本章承诺。\n6. 六、ps与procfs的只读观察方法：linux ps -o pid,ppid,stat,comm -p PID、readlink /proc/PID/cwd、ls -l /proc/PID/fd 等仅教学命令；不在本轮执行。procfs伪文件系统，多数只读但某些可写；权限/hidepid/容器namespace会改变可见性；短命进程/竞态/PID复用，观察须记录时刻、PID、命令和环境范围。避免读/打印/proc/PID/environ完整内容，可能含秘密。状态STAT只做初步线索，不推断CPU或阻塞原因。\n7. 七、从症状构造因果链而非猜测：案例：file相对路径在不同cwd、显式-file覆盖环境、env指向错误文件、fd数量上升、权限失败、SIGTERM后退出；每个“现象→假设→只读证据→下一验证→仍未知”表。区分Linux文件访问许可、IM会话权限、JSON无效、服务端送达；不能因ps看到进程存活就判断IM健康，不能因fd多直接推断泄漏。后续03.12故障演练。\n8. 八、综合排障记录与分层练习：完整c-a/u-a/m-a本地check问题，给预设ps/cwd/env/file参数与FD的静态观察，推演为什么相对路径失败、如何按01.12 0/2/3/4/5分类、如何改用明确路径而不更改业务规则；至少22道起步/原理/工程/业务练习逐题反馈，记录预期与个人真实观察分开。sources official man pages and Go os docs。无执行Go/Linux命令、构建或服务。下一03.04 CPU调度。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

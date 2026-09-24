@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_8a06a3805d",
+  "page_id": "pg_43e9313303",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "d28fccce1503b0bf8e4b07effa2b62a096a0c6cfbb137c6830a0acbd9a7437f0",
+  "original_characters": 33573,
+  "code_execution": false,
+  "system_experiments": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://man7.org/linux/man-pages/man5/proc.5.html",
+      "https://man7.org/linux/man-pages/man1/ps.1.html",
+      "https://man7.org/linux/man-pages/man7/signal.7.html",
+      "https://man7.org/linux/man-pages/man2/getcwd.2.html",
+      "https://man7.org/linux/man-pages/man5/environ.5.html",
+      "https://pkg.go.dev/os#Getenv",
+      "https://pkg.go.dev/os#LookupEnv"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "generation_request_sha256": "d9af23e8b739a00fe9b2664190bed263d886654f4734837d39b485cb97fddfd7",
+  "reviewed_sha256": "63d96858cda4d4d992a8f515ff08ef6f90ce779c56b5f47b0a654e901cefcc00",
+  "reviewed_characters": 10580,
+  "reviewed_chinese_characters": 4983,
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/03_linux_process_resources.md",
+  "course_sha256": "26b5aed09d580e7ca4a3bd8fb5e0068443f30392481cf71a4a5ae09aa6dbf3ec"
+}

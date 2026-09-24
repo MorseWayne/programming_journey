@@ -28,9 +28,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "051f3855d7286d7134f147882d2f4cf1652a73788287f0df8b82209adba31d18",
-  "reviewed_sha256": "ced3d03f81c32649965d1520de7c17f0a8ba0cda5b0c4622eb2bcb18457b1413",
-  "reviewed_characters": 12429,
-  "reviewed_chinese_characters": 6318,
+  "reviewed_sha256": "945aee73cc5c578ef94c821c710b7fba70b92816cb585753b1961ab230ebbfee",
+  "reviewed_characters": 12524,
+  "reviewed_chinese_characters": 6321,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/02_process_syscalls.md",
-  "course_sha256": "78cfd1aba26d30677834403ced2b617571b3bd6e5ab7072e070884a241aaeb51"
+  "course_sha256": "d46a93ede08b6cbfa5564a98597d8c994119acf3567c5600479cdab5efd79cc9"
 }

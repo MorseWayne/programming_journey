@@ -320,4 +320,4 @@ if int64(len(data)) > maxBytes {
 - [Linux `syscalls(2)`](https://man7.org/linux/man-pages/man2/syscalls.2.html)、[`open(2)`](https://man7.org/linux/man-pages/man2/open.2.html)和[`proc(5)`](https://man7.org/linux/man-pages/man5/proc.5.html)：核对 Linux 的系统调用、文件打开与进程信息接口。
 - [Go `os.Open`](https://pkg.go.dev/os#Open)与[`os.Exit`](https://pkg.go.dev/os#Exit)：核对 Go 的文件句柄与进程退出语义。
 
-下一章 03.03 将学习在 Linux 上只读观察进程的 PID、工作目录、环境、信号与描述符，再向 03.04 的调度和 04 卷的网络通信推进。阅读本章后，请能沿同一条 `check` 命令说出每一步由谁负责、能证明什么、尚未证明什么。
+下一章[03.03 Linux 进程与资源](../../../src/docs/platform_engineering/curriculum/03_systems/03_linux_process_resources.md)将学习只读观察进程的 PID、工作目录、环境、信号与描述符，再向 03.04 的调度和 04 卷的网络通信推进。阅读本章后，请能沿同一条 `check` 命令说出每一步由谁负责、能证明什么、尚未证明什么。
