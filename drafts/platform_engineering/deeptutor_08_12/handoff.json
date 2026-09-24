@@ -1,0 +1,32 @@
+{
+  "chapter": "08.12",
+  "stage": "S5",
+  "business_scope": "static capstone for one fictional IM architecture with SQL authoritative messages, metadata coordination, outbox, broker, derived services and authorized offline catch-up",
+  "prerequisites": [
+    "07.12 cross-system IM data consistency case",
+    "08.01-08.04 partial failure, time, replication and consistency models",
+    "08.05-08.07 partitioning, Raft majority and stale owner fencing",
+    "08.08-08.09 cross-service workflow and reliable task recovery",
+    "08.10-08.11 member/schema evolution and bounded distributed validation"
+  ],
+  "first_pass": [
+    "choose exactly one teaching authority: proposed S3 SQL messages plus outbox",
+    "assign C0-C9 confirmations to SQL, broker, derived consumers, gateway and device separately",
+    "keep current S2 accepted_in_memory and hidden nonmember 404 unchanged"
+  ],
+  "second_pass": [
+    "recover lost Commit response, duplicate producer publication and poison event with stable identities",
+    "treat Raft/etcd majority as owner metadata only, not SQL message fact",
+    "fence stale G1 and hand off b1 epoch7-to-8 with S0/L0 and versioned events",
+    "authorize B's 25-hour offline catch-up beyond toy 24-hour broker retention",
+    "separate local atomicity, explicitly declared linearizable reads and bounded derived convergence",
+    "leave fixed OpenIM implementation and runtime claims within inspected evidence"
+  ],
+  "not_yet_prerequisites": [
+    "09.09 asynchronous and long-running APIs",
+    "learner's real end-to-end fault and reconciliation evidence"
+  ],
+  "next_chapter": "09.09 asynchronous and long-running APIs",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These files do not establish the teaching SQL, metadata Raft/etcd ownership, N9 task, linearizable read or device receipt semantics.",
+  "shared_integration_pending": []
+}

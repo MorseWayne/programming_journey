@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_ee81cf5f64",
-  "page_id": "pg_4ebc33f95b",
+  "book_id": "bk_ae000ae4fc",
+  "page_id": "pg_cf7c04e8dc",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,22 +16,24 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
+      "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+      "https://raft.github.io/raft.pdf",
+      "https://etcd.io/docs/v3.6/learning/api_guarantees/",
+      "https://kafka.apache.org/intro/",
       "https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf",
-      "https://github.com/anishathalye/porcupine",
-      "https://jepsen.io/consistency/models",
-      "https://go.dev/doc/articles/race_detector",
+      "https://protobuf.dev/programming-guides/proto3/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "df86f71eb2c44ed1ce9ce63ae13ce95841673f0764cbae74b77131adbb922067",
-  "original_characters": 31837,
-  "generation_request_sha256": "106c432276e5eb6f65c05a247f31591483bfc6fdb49b24d724688b21ad61769b",
-  "reviewed_sha256": "8f795113343b3db3c3b10080372109abbbb17258454783851b0deebe6b8af566",
-  "reviewed_characters": 10540,
-  "reviewed_chinese_characters": 4097,
-  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/11_distributed_validation.md",
-  "course_sha256": "8706ca7f35e9ec93b12cc1d942be376a5c7354625ef35ea39aed72da000d5ef1"
+  "original_sha256": "f7dce1265766e3e71859f31433ab5031513d81f97b1b2bb22702ce47129f9511",
+  "original_characters": 34947,
+  "generation_request_sha256": "e862b6a11108833e47ad335538c217ee8446d79be793d7c46e33c47d1aa1a6eb",
+  "reviewed_sha256": "90dba0bef153829217317f079129109873839b5a58f45bec1cb527d605142906",
+  "reviewed_characters": 11886,
+  "reviewed_chinese_characters": 3788,
+  "course_file": "src/docs/platform_engineering/curriculum/08_distributed/12_full_consistency_case.md",
+  "course_sha256": "4f81ee98bf0ffa52d622c59d02ada9c7e38873d531e5db16410884f20524505c"
 }

@@ -1,0 +1,74 @@
+{
+  "code": "08.12",
+  "title": "完整一致性案例：一条IM消息的事实、归属与恢复",
+  "chapter_id": "ch_full_consistency_case",
+  "summary": "面向Go初学者，选定单一虚构IM架构，综合权威SQL、outbox、broker、派生视图、协调元数据、离线补拉、迁移和有界验证。",
+  "objectives": [
+    "画出m-9 C0-C9阶段的权威和证据",
+    "分别恢复提交回应未知、重复发布和毒事件",
+    "说明协调多数只保护owner元数据",
+    "设计b1快照+增量和协议混部的切换门",
+    "让B离线超broker保留后按权限补拉",
+    "交付故障、对账、验证与固定源码边界矩阵"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/tutorial-transactions.html",
+    "https://raft.github.io/raft.pdf",
+    "https://etcd.io/docs/v3.6/learning/api_guarantees/",
+    "https://kafka.apache.org/intro/",
+    "https://www.cs.cmu.edu/~wing/publications/HerlihyWing90.pdf",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、从A发m-9到B离线补拉的完整需求",
+      "words": 2900,
+      "focus": "本章选一套明确纸上架构：当前S2仍accepted_in_memory；未来S3 SQL messages+conversation_counters+outbox E9同Tx提交为权威，broker E9 P0:42，SearchIndex与Notify独立消费，任务N9，G1/G2设备路由由独立复制协调服务管理，B离线25h超过玩具broker24h后授权DB补拉。u-c非成员404。第08卷的独立Raft message-log玩具不与SQL事实源同时部署。"
+    },
+    {
+      "title": "二、状态图和每阶段可承诺什么",
+      "words": 3200,
+      "focus": "C0认证/授权，C1本地SQL commit m9seq9+outbox evt:m-9:v1，C2 A得到提议S3响应或未知，C3 relay broker accepted P0:42，C4 SearchIndex按ID/v应用，C5 Notify生成N9任务，C6 G1或G2按owner代次尝试，C7 B在线回执或离线，C8 B按当前权限seq游标补拉，C9 read receipt。每状态指权威/派生/临时、重试身份、证据，不把broker ack=设备已收。"
+    },
+    {
+      "title": "三、三个故障将事实与进度分开",
+      "words": 3300,
+      "focus": "Commit成功HTTP回应丢→客户端未知按稳定ID查且S2重复409仍不改；broker producer ACK丢→重复evt:m-9:v1 SearchIndex/Notify幂等；E-bad=P0:44毒事件阻E11/45→有限重试、隔离、同键顺序/缺口修复。S3存储不等于Search可搜。"
+    },
+    {
+      "title": "四、连接归属/多数与旧动作",
+      "words": 3000,
+      "focus": "metadata Raft/etcd R1/R2/R3只决定b1 owner epoch/G1-G2注册代次，不保存m9权威正文；少数分区不可任意授予新owner，old G1 lease失效r101→r111后仍可能旧socket推送，目标侧fence/设备dedup且结果未知。协调服务多数提交不等于SQL消息/设备收。"
+    },
+    {
+      "title": "五、b1搬迁与协议混部",
+      "words": 3200,
+      "focus": "b1 N1 epoch7→N3 epoch8，S0/L0快照增量含m9编辑v2与m10seq10、outbox；围栏旧写/relay，broker P0:42/43独立；event_v1/v2 wire compatible非semantic safety，旧consumer不能忽略version/visibility；rollback新epoch和反向增量，不复用epoch7。"
+    },
+    {
+      "title": "六、离线/权限与不可撤销效果",
+      "words": 2900,
+      "focus": "B离线25h大于broker保留24h，按当前成员权限从SQL历史seq>8补m9；u-c已登录非成员隐藏404，通知不携私有正文，撤回/退群影响搜索和补拉。已发推送不可SQL rollback抹去，需新更正/补偿；B收到/已读独立回执。"
+    },
+    {
+      "title": "七、验证矩阵和固定OpenIM源码边界",
+      "words": 3100,
+      "focus": "对权威SQL messages/outbox同snapshot，扩展纸上线性化L需明确指定read端点并记录invoke/return，Hbad/overlap区分；派生Search/Notify按deadline/ID/version/permissions对账；故障注入要证明实际命中，Go-race只本地；报告环境、SHA、seed、原始脱敏history。固定OpenIM send.go MsgToMQ后返回与另一Mongo消费BatchInsertChat2DB只支持局部链路，不证明教学SQL/etcd/Raft/任务/设备保证。"
+    },
+    {
+      "title": "八、22题与第八卷综合验收",
+      "words": 3100,
+      "focus": "22题基础8/故障8/设计评审6带反馈，覆盖S2/S3/其他L合同、C0-C9、E9重复、poison、G1旧代次、metadata quorum、b1迁移、event schema、25h/24h补拉、u-c权限、补偿、验证范围与源码证据。交付架构状态图、故障-责任-证据矩阵、升级/回退门与真实实践待验证。静态不运行Go/DB/broker/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.12 完整一致性案例》，面向Go初学者，八节丰富基础、IM业务串联与22题反馈。统一教学架构只选未来S3 SQL messages/conversation_counters/outbox E9同Tx作m-9/c-a/seq9权威；broker E9 P0:42、SearchIndex/Notify、通知任务N9、G1/G2设备路由由另一个复制协调服务管理，后者多数只守owner元数据，不把08.06独立Raft消息日志模型同时当成已部署权威。当前S2仍200 accepted_in_memory，同ID重复即使同内容409，非成员u-c目标404，6字节；拟议S3 200 stored_in_teaching_db仅本地提交。C0认证授权/C1 SQL commit/C2 A回应或未知/C3 broker接受/C4索引/C5 N9任务/C6 owner网关尝试/C7设备或离线/C8 B25h后授权DB补拉，玩具broker24h/C9已读回执。故障含提交回应丢、producer ACK丢重复evt:m-9:v1、E-bad P0:44和E11/45顺序门、G1旧lease r101与G2 r111、metadata少数分区、b1 N1 epoch7→N3 epoch8快照S0/L0含m9v2编辑/m10seq10/outbox、事件协议v1/v2业务语义、旧v1不可覆盖v2，回退需更高epoch和反向增量；权限撤回/推送已发不可回滚。验证权威消息/outbox同snapshot，额外L线性化读只有声明端点才测，派生追赶deadline+ID/version/permission，故障注入实际生效证据。固定OpenIM send.go MsgToMQ返回和另Mongo BatchInsertChat2DB只支持局部源码结论，不能宣称教学SQL/Raft/etcd/N9/设备已实现。静态不运行Go/DB/broker/IM/站点。\n1. 一、从A发m-9到B离线补拉的完整需求: 本章选一套明确纸上架构：当前S2仍accepted_in_memory；未来S3 SQL messages+conversation_counters+outbox E9同Tx提交为权威，broker E9 P0:42，SearchIndex与Notify独立消费，任务N9，G1/G2设备路由由独立复制协调服务管理，B离线25h超过玩具broker24h后授权DB补拉。u-c非成员404。第08卷的独立Raft message-log玩具不与SQL事实源同时部署。\n2. 二、状态图和每阶段可承诺什么: C0认证/授权，C1本地SQL commit m9seq9+outbox evt:m-9:v1，C2 A得到提议S3响应或未知，C3 relay broker accepted P0:42，C4 SearchIndex按ID/v应用，C5 Notify生成N9任务，C6 G1或G2按owner代次尝试，C7 B在线回执或离线，C8 B按当前权限seq游标补拉，C9 read receipt。每状态指权威/派生/临时、重试身份、证据，不把broker ack=设备已收。\n3. 三、三个故障将事实与进度分开: Commit成功HTTP回应丢→客户端未知按稳定ID查且S2重复409仍不改；broker producer ACK丢→重复evt:m-9:v1 SearchIndex/Notify幂等；E-bad=P0:44毒事件阻E11/45→有限重试、隔离、同键顺序/缺口修复。S3存储不等于Search可搜。\n4. 四、连接归属/多数与旧动作: metadata Raft/etcd R1/R2/R3只决定b1 owner epoch/G1-G2注册代次，不保存m9权威正文；少数分区不可任意授予新owner，old G1 lease失效r101→r111后仍可能旧socket推送，目标侧fence/设备dedup且结果未知。协调服务多数提交不等于SQL消息/设备收。\n5. 五、b1搬迁与协议混部: b1 N1 epoch7→N3 epoch8，S0/L0快照增量含m9编辑v2与m10seq10、outbox；围栏旧写/relay，broker P0:42/43独立；event_v1/v2 wire compatible非semantic safety，旧consumer不能忽略version/visibility；rollback新epoch和反向增量，不复用epoch7。\n6. 六、离线/权限与不可撤销效果: B离线25h大于broker保留24h，按当前成员权限从SQL历史seq>8补m9；u-c已登录非成员隐藏404，通知不携私有正文，撤回/退群影响搜索和补拉。已发推送不可SQL rollback抹去，需新更正/补偿；B收到/已读独立回执。\n7. 七、验证矩阵和固定OpenIM源码边界: 对权威SQL messages/outbox同snapshot，扩展纸上线性化L需明确指定read端点并记录invoke/return，Hbad/overlap区分；派生Search/Notify按deadline/ID/version/permissions对账；故障注入要证明实际命中，Go-race只本地；报告环境、SHA、seed、原始脱敏history。固定OpenIM send.go MsgToMQ后返回与另一Mongo消费BatchInsertChat2DB只支持局部链路，不证明教学SQL/etcd/Raft/任务/设备保证。\n8. 八、22题与第八卷综合验收: 22题基础8/故障8/设计评审6带反馈，覆盖S2/S3/其他L合同、C0-C9、E9重复、poison、G1旧代次、metadata quorum、b1迁移、event schema、25h/24h补拉、u-c权限、补偿、验证范围与源码证据。交付架构状态图、故障-责任-证据矩阵、升级/回退门与真实实践待验证。静态不运行Go/DB/broker/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

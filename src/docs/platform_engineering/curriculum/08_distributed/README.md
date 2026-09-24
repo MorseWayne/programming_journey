@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[08.01 系统模型与部分失败](./01_system_partial_failure.md)沿虚构 m-9 的客户端、网关、权威存储和设备，推导同一超时的不同真实状态、安全性与有条件的活性。[08.02 时间与顺序](./02_time_order.md)从设备时间戳逆序走到发生在前、Lamport/向量钟与会话序号。[08.03 复制的目标与代价](./03_replication_goals_costs.md)用 P/R1/R2 的持久和回放水位推导确认、读旧值与切换取舍。[08.04 一致性模型](./04_consistency_models.md)将同一副本观察翻译成会话、因果、顺序一致与线性化合同。[08.05 分区与再平衡](./05_partition_rebalancing.md)用 c-a/c-b/c-g 的四桶路由和 b1 迁移评审热点、epoch 与在途事件。[08.06 多数与共识](./06_majority_consensus.md)用 R1/R2/R3 的 term4→term5 日志推演多数、选举、提交与业务边界。[08.07 协调与对象归属](./07_coordination_ownership.md)以 B 设备重连 G1/G2 的旧 owner 交错讲 lease、CAS、revision、watch 与目标围栏。[08.08 跨服务事务](./08_cross_service_transactions.md)用 m-9 已保存却通知失败的需求比较 2PC、Saga、outbox 与状态查询。[08.09 可靠任务与调度](./09_reliable_jobs_scheduling.md)以 N9 的 W1/W2 接管、提供方结果未知和修复预算推导任务状态。[08.10 成员变化与演进](./10_membership_evolution.md)用投票配置、b1 路由和事件协议三轴评审快照、混部与回退。[08.11 分布式验证](./11_distributed_validation.md)用 m-9 发送与授权历史读的三条调用历史评审线性化、故障证据和派生追赶。十一章各八节、22 道分层练习已完成；08.12 仍按下方设计展开。
+[08.01 系统模型与部分失败](./01_system_partial_failure.md)沿虚构 m-9 的客户端、网关、权威存储和设备，推导同一超时的不同真实状态、安全性与有条件的活性。[08.02 时间与顺序](./02_time_order.md)从设备时间戳逆序走到发生在前、Lamport/向量钟与会话序号。[08.03 复制的目标与代价](./03_replication_goals_costs.md)用 P/R1/R2 的持久和回放水位推导确认、读旧值与切换取舍。[08.04 一致性模型](./04_consistency_models.md)将同一副本观察翻译成会话、因果、顺序一致与线性化合同。[08.05 分区与再平衡](./05_partition_rebalancing.md)用 c-a/c-b/c-g 的四桶路由和 b1 迁移评审热点、epoch 与在途事件。[08.06 多数与共识](./06_majority_consensus.md)用 R1/R2/R3 的 term4→term5 日志推演多数、选举、提交与业务边界。[08.07 协调与对象归属](./07_coordination_ownership.md)以 B 设备重连 G1/G2 的旧 owner 交错讲 lease、CAS、revision、watch 与目标围栏。[08.08 跨服务事务](./08_cross_service_transactions.md)用 m-9 已保存却通知失败的需求比较 2PC、Saga、outbox 与状态查询。[08.09 可靠任务与调度](./09_reliable_jobs_scheduling.md)以 N9 的 W1/W2 接管、提供方结果未知和修复预算推导任务状态。[08.10 成员变化与演进](./10_membership_evolution.md)用投票配置、b1 路由和事件协议三轴评审快照、混部与回退。[08.11 分布式验证](./11_distributed_validation.md)用 m-9 发送与授权历史读的三条调用历史评审线性化、故障证据和派生追赶。[08.12 完整一致性案例](./12_full_consistency_case.md)以一套 SQL 权威、元数据协调、异步通知和离线补拉架构汇总正常、故障与迁移。十二章各八节、22 道分层练习均已完成。
 
 ## IM 主线中的位置
 
@@ -62,7 +62,7 @@ date: 2026-09-23
 |---|---|---|
 | [08.10 成员变化与演进](./10_membership_evolution.md) | 节点配置、协议兼容、快照安装、数据回填与滚动迁移。 | 分析新旧节点及协议共存时的日志、快照、历史回填与状态解释。 |
 | [08.11 分布式验证](./11_distributed_validation.md) | 可控制故障、历史记录、线性化检查思想、模拟与现实差距。 | 为重复、分区和切换记录有界历史，构造违反承诺的反例并说明模拟限制。 |
-| 08.12 完整一致性案例 | 领取、协作状态、搜索视图或任务编排；恢复与业务解释。 | 交付可靠发送、离线补拉或多端同步的统一设计，覆盖正常、故障、恢复和迁移。 |
+| [08.12 完整一致性案例](./12_full_consistency_case.md) | 领取、协作状态、搜索视图或任务编排；恢复与业务解释。 | 交付可靠发送、离线补拉或多端同步的统一设计，覆盖正常、故障、恢复和迁移。 |
 
 ## 本卷综合任务
 
