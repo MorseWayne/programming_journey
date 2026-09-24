@@ -11,7 +11,7 @@ date: 2026-09-23
 
 14 卷提供完整的语言与计算机知识体系；实际按 S0–S7 跨卷递进。每个阶段依次经历“IM 需求 → 基础理论 → 小模型与练习 → 源码对照 → 失败变式与取舍”。只在相关前置已经讲清时深入上游代码。
 
-当前已完成 31 章：01.01–01.09、01.12、02.01–02.05、03.01–03.04、04.01–04.03、05.01–05.03、10.01–10.06。前两章原案例作为基础补充，其余按 IM 主线展开；正文与设计的区别见[编写与能力验收](./assessment.md)。14 卷全部 168 个单元已有具体 IM 练习与验收目标，长篇继续按先修关系完成。
+当前已完成 32 章：01.01–01.09、01.12、02.01–02.05、03.01–03.04、04.01–04.03、05.01–05.03、09.01、10.01–10.06。前两章原案例作为基础补充，其余按 IM 主线展开；正文与设计的区别见[编写与能力验收](./assessment.md)。14 卷全部 168 个单元已有具体 IM 练习与验收目标，长篇继续按先修关系完成。
 
 | 阶段 | 从 IM 需求出发 | 阶段成果 |
 |---|---|---|
@@ -60,11 +60,12 @@ date: 2026-09-23
 | 29 | [05.01 并发任务与生命周期](./05_runtime/01_concurrent_tasks_lifecycle.md) | 由固定小批量解释启动、等待、结果和资源归属 | 已完成；承接 03.04 和 04.03 |
 | 30 | [05.02 同步原语](./05_runtime/02_sync_primitives.md) | 用一把锁保护会话判重与列表更新，比较读快照、任务等待和条件等待 | 已完成；承接 05.01 |
 | 31 | [05.03 channel 与取消](./05_runtime/03_channels_cancellation.md) | 以容量 2 的发送队列解释关闭、取消、期限和满队列政策 | 已完成；承接 05.01–05.02 |
-| 32 | [A09 测试](../beginner/09_testing.md) → [A10 文件](../beginner/10_files_json.md) | 测试和本地记录的短课复习 | 可作复习，不代替长篇正文 |
+| 32 | [09.01 需求与应用边界](./09_backend_security/01_requirements_boundaries.md) | 定义读历史与发送的可信主体、输入状态和内存受理确认点 | 已完成；承接 04.03、05.03 和 10.01 |
+| 33 | [A09 测试](../beginner/09_testing.md) → [A10 文件](../beginner/10_files_json.md) | 测试和本地记录的短课复习 | 可作复习，不代替长篇正文 |
 
 章稿并行编写，学习仍按这张表及各章前置推进。Git 后半章的分支、恢复与远端可第二遍回访；自动测试要等指针、方法等入口语法讲清后再进入。
 
-02.01 与 03.01 都能在 01.04 后独立进入，不要求彼此先学完。02.02 在 01.05 与 02.01 后进入，02.03–02.05 依次处理搜索、哈希和排序。01.12 形成 S1 本地工具课程项目，10.04–10.06 已补齐可控依赖、重构与合并评审；03.02–03.04 已进入 S2 的进程、Linux 资源与调度，04.01–04.03 从两个用户通信需求讲到分层、地址、HTTP 和 WebSocket，05.01–05.03 再建立任务生命周期、共享状态与取消；下一批继续 09.01 需求与应用边界，再逐步接入 Go 网络库，树和有序索引留到 S4。已有章稿同时维护审阅稿、正式页与来源。
+02.01 与 03.01 都能在 01.04 后独立进入，不要求彼此先学完。02.02 在 01.05 与 02.01 后进入，02.03–02.05 依次处理搜索、哈希和排序。01.12 形成 S1 本地工具课程项目，10.04–10.06 已补齐可控依赖、重构与合并评审；03.02–03.04 已进入 S2 的进程、Linux 资源与调度，04.01–04.03 从两个用户通信需求讲到分层、地址、HTTP 和 WebSocket，05.01–05.03 再建立任务生命周期、共享状态与取消，09.01 固定应用用例和可信身份边界；下一批继续 09.02 HTTP 接口设计，树和有序索引留到 S4。已有章稿同时维护审阅稿、正式页与来源。
 
 ## S0：认识一条消息，写清一条规则
 
@@ -96,7 +97,7 @@ date: 2026-09-23
 
 **入口：** 完成 P1，理解函数、接口、字节、错误与资源关闭。
 
-**学习顺序：** [03.01 数据与存储](./03_systems/01_data_instructions_storage.md) → [03.02 进程与系统调用](./03_systems/02_process_syscalls.md) → [03.03 Linux 进程与资源](./03_systems/03_linux_process_resources.md) → [03.04 CPU 调度](./03_systems/04_cpu_scheduling.md) → [04.01 应用通信与分层](./04_networks/01_application_communication_layers.md) → [04.02 地址、名称与路由入口](./04_networks/02_addresses_names_routes.md) → [04.03 HTTP 与 WebSocket 入门](./04_networks/03_http_websocket_basics.md) → [05.01 并发任务与生命周期](./05_runtime/01_concurrent_tasks_lifecycle.md) → [05.02 同步原语](./05_runtime/02_sync_primitives.md) → [05.03 channel 与取消](./05_runtime/03_channels_cancellation.md) → `net/http` 等网络标准库和 [09 卷](./09_backend_security/README.md)09.01–09.04。
+**学习顺序：** [03.01 数据与存储](./03_systems/01_data_instructions_storage.md) → [03.02 进程与系统调用](./03_systems/02_process_syscalls.md) → [03.03 Linux 进程与资源](./03_systems/03_linux_process_resources.md) → [03.04 CPU 调度](./03_systems/04_cpu_scheduling.md) → [04.01 应用通信与分层](./04_networks/01_application_communication_layers.md) → [04.02 地址、名称与路由入口](./04_networks/02_addresses_names_routes.md) → [04.03 HTTP 与 WebSocket 入门](./04_networks/03_http_websocket_basics.md) → [05.01 并发任务与生命周期](./05_runtime/01_concurrent_tasks_lifecycle.md) → [05.02 同步原语](./05_runtime/02_sync_primitives.md) → [05.03 channel 与取消](./05_runtime/03_channels_cancellation.md) → [09.01 需求与应用边界](./09_backend_security/01_requirements_boundaries.md) → `net/http` 等网络标准库和 09.02–09.04 的接口、程序组织与请求处理。
 
 先做只读历史查询，再做两个测试客户端之间的文本转发。解释 HTTP 请求与持久双向连接、消息边界、读写任务、关闭责任、连接失效和心跳。共享连接表或会话数据之前，必须先学同步和数据归属。
 

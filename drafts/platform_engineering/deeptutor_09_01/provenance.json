@@ -1,0 +1,34 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f19972c5a1",
+  "page_id": "pg_9e7766a0e4",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "original_sha256": "aa9cc72c27f000696cff0134617c0df4a593859d2418848658b55cd4cf6c208a",
+  "original_characters": 34710,
+  "code_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://github.com/OWASP/ASVS",
+      "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "https://pkg.go.dev/net/http",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go"
+    ],
+    "upstream_implementation_claims": "req.MsgData presence and SessionType dispatch only, independently verified at pinned commit"
+  },
+  "generation_request_sha256": "b236dd76c79a48f59112139bbf346334305581b83d12d7f7893d990f064b1d85",
+  "reviewed_sha256": "f256e7009558bc7b933668977031b2e2f3e2308cd0ae758c3f81329639a77f78",
+  "reviewed_characters": 10100,
+  "reviewed_chinese_characters": 5125,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/01_requirements_boundaries.md",
+  "course_sha256": "965c4747c36fbe3123cc046e7d0d54574dea1be98cca69dbfca722792479ba81"
+}

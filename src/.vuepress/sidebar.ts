@@ -231,6 +231,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/09_backend_security/",
+            "curriculum/09_backend_security/01_requirements_boundaries",
             "curriculum/09_backend_security/core"
           ]
         },

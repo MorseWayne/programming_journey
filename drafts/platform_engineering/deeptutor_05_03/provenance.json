@@ -27,9 +27,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "6876b2924e798682b9fb1184afec05f5f7288507124f1ddcc7ece63f3a0e5905",
-  "reviewed_sha256": "acd699c8480545b848957dfef66aaed733a9ff3fd541e12edd44efa20345f8b8",
-  "reviewed_characters": 10108,
-  "reviewed_chinese_characters": 4626,
+  "reviewed_sha256": "84cf6c89997a8300db731dcabbdf7336ba0c4336f8a1f932ef11ca8804b4b9c6",
+  "reviewed_characters": 10222,
+  "reviewed_chinese_characters": 4634,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/03_channels_cancellation.md",
-  "course_sha256": "a536e81f3cccf3f4d1f036be069b5408a4df48e916dc71ca236b4f36306277f6"
+  "course_sha256": "7a5e4c43170c70ee49af105fae5afd34d01cec0ff16f98020dd77a43835b5782"
 }

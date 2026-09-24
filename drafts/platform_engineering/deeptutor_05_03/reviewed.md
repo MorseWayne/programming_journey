@@ -280,4 +280,4 @@ A 断开 → 主管 cancel()
 - [Go `context` 包](https://pkg.go.dev/context)与[官方 Context 介绍](https://go.dev/blog/context)：父子取消、期限和 `CancelFunc` 责任。
 - [Go 官方博客：Pipelines and cancellation](https://go.dev/blog/pipelines)：多任务停止与资源回收的进一步阅读。
 
-完成 S2 这段网络/并发入门后，按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)继续补 09 卷的应用安全与 Go 网络库，再在 04 卷深化可靠传输。进入后续章节前，请能分辨“入队”“通道关闭”“取消请求”“任务实际退出”“B 设备收到”五个状态。
+完成 S2 这段网络/并发入门后，先读[09.01 需求与应用边界](../../../src/docs/platform_engineering/curriculum/09_backend_security/01_requirements_boundaries.md)，再按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)补应用安全与 Go 网络库，后续回到 04 卷深化可靠传输。进入后续章节前，请能分辨“入队”“通道关闭”“取消请求”“任务实际退出”“B 设备收到”五个状态。

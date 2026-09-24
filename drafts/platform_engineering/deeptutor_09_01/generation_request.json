@@ -1,0 +1,74 @@
+{
+  "code": "09.01",
+  "title": "需求与应用边界：谁能给谁发消息、成功到哪一步",
+  "chapter_id": "ch_application_requirements_boundaries",
+  "summary": "承接10.01可验证需求、04.03HTTP/WS与05.01–05.03并发前置，面向Go初学者以虚构IM的只读历史与单聊发送为主线定义用例、可信身份、输入/输出、领域/传输表示、状态转移、错误与证据范围；S2仅内存小模型，S3再身份授权和持久数据。静态教材不实现或运行服务。",
+  "objectives": [
+    "从用户目标写出读历史与单聊发送用例",
+    "区分客户端声称的sender和可信请求主体",
+    "把传输DTO与领域命令/消息状态分开",
+    "定义输入大小、字段、会话权限和重复身份的检查层",
+    "画出拒绝不改变状态与内存受理的状态转移",
+    "区分响应、内存状态、持久化、设备收到与已读",
+    "建立错误类别与独立验收矩阵",
+    "在固定OpenIM源码入口只对照已读控制流而不推断完整保证"
+  ],
+  "sources": [
+    "https://github.com/OWASP/ASVS",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html",
+    "https://datatracker.ietf.org/doc/html/rfc9110",
+    "https://pkg.go.dev/net/http",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go"
+  ],
+  "sections": [
+    {
+      "title": "一、从u-a读取c-a和发送m-a两个任务出发",
+      "words": 2200,
+      "focus": "Go初学者，先修10.01需求表、04.03HTTP/WS、05.03取消；全部虚构。当前只有本地CLI，未来教学HTTP只读历史+内存单聊，不把在线服务称已实现。用例明确actor/preconditions/input/success/failure/state。区分用户目标和API路径/方法，先需求后路由。"
+    },
+    {
+      "title": "二、可信身份与会话权限边界",
+      "words": 2400,
+      "focus": "client sender_id/u-a in JSON不可信，principal由未来认证边界给出，服务端以可信身份检查conversation membership和资源范围；authentication谁、authorization能否对c-a操作不同，09.07深入凭据/群权限。S2纸上固定身份/私有隔离实验，不能公开无鉴权服务；读历史权限与发消息权限可能不同。非法访问拒绝且无状态修改。OWASP ASVS/authorization primary。"
+    },
+    {
+      "title": "三、传输表示、领域命令与状态",
+      "words": 2500,
+      "focus": "HTTP JSON/WebSocket payload是外部DTO，Go domain command包含trusted actor/conversation/body/message ID，由边界解析/校验后构造；本地v1 JSON文件不是网络schema。Go接口示意RequestDTO/SendCommand/MessageState，不拼未定义代码。原始字节大小限制 vs领域UTF8字节上限，unknown field/version，server time不信客户端；输入不是权威历史。"
+    },
+    {
+      "title": "四、一次请求的检查顺序与错误承诺",
+      "words": 2500,
+      "focus": "bounded read, decode, required fields/version, trusted identity, membership, domain rule, duplicate key(c-a,m-a), atomic in-memory change, response; order can vary but must document precedence and prevent sensitive existence disclosure。分类非法参数、未认证、越权、资源不存在/隐藏、重复、依赖失败/超时结果未知；09.02再映射HTTP状态和错误体。失败不改内存状态，勿把返回error等同持久事务。"
+    },
+    {
+      "title": "五、状态机：内存受理不是投递已读",
+      "words": 2600,
+      "focus": "S2教学内存状态 absent→accepted-in-memory under lock，拒绝保持absent，投递尝试/结果单独。response success only current promise，进程退出内存失；后来S3持久写/S5离线恢复。4确认点client accepted,service in-memory accepted,durable,B device,read，不能跨级。重复ID先成功者保留，重试响应丢失未知，S5幂等身份。"
+    },
+    {
+      "title": "六、历史查询与发送的决策表",
+      "words": 2600,
+      "focus": "表至少10案例：valid read/empty, unauthenticated, nonmember, bad limit/oversize, unknown kind/body empty/6-byte boundary, duplicate same conversation, same id different conversation, storage/queue failure, canceled midflight，分别input/initial/want/state证据，不偷换 01.12文件max 1MiB和正文6字节。query result range/order/page not total completeness。测试预期来自需求非实现。"
+    },
+    {
+      "title": "七、领域、传输与公开源码对照",
+      "words": 2300,
+      "focus": "分层cmd/handler→application service→domain/history→adapter；handler只解析/映射，business not depend HTTP；in-memory teaching state. 只引用既有已读固定OpenIM SendMsg源码事实：req.MsgData存在性与SessionType switch分支，不据此声称 auth/DB/投递；OpenIM仍主参照，等S3/S5再追深。对比教学模型与公开项目不得把两者等同。"
+    },
+    {
+      "title": "八、完整业务说明与分层练习",
+      "words": 2800,
+      "focus": "给一页u-a/c-a/m-a的用例合同、状态图、输入到响应时间线、失败前后表，至少22题逐题反馈，基础→机制→工程→业务变式。个人后续隔离环境实现/httptest；本轮静态课程不运行Go、服务或网络。官方OWASP/HTTP/Go/OpenIM固定源码链接，下一09.02HTTP接口设计。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.01 需求与应用边界》。把读者当Go后端初学者，承接10.01可验证需求、04.03 HTTP/WS与05.01–05.03并发前置；以虚构IM的只读历史和单聊m-a为主线，逐层讲身份/权限、传输DTO与领域状态、输入错误、成功确认点，再给业务决策表。当前项目只有本地CLI，网络服务未实现；OpenIM只用固定提交实际已读的SendMsg输入与SessionType分支，不推断其送达。静态教材，不执行Go/网络/服务。\n1. 一、从u-a读取c-a和发送m-a两个任务出发：Go初学者，先修10.01需求表、04.03HTTP/WS、05.03取消；全部虚构。当前只有本地CLI，未来教学HTTP只读历史+内存单聊，不把在线服务称已实现。用例明确actor/preconditions/input/success/failure/state。区分用户目标和API路径/方法，先需求后路由。\n2. 二、可信身份与会话权限边界：client sender_id/u-a in JSON不可信，principal由未来认证边界给出，服务端以可信身份检查conversation membership和资源范围；authentication谁、authorization能否对c-a操作不同，09.07深入凭据/群权限。S2纸上固定身份/私有隔离实验，不能公开无鉴权服务；读历史权限与发消息权限可能不同。非法访问拒绝且无状态修改。OWASP ASVS/authorization primary。\n3. 三、传输表示、领域命令与状态：HTTP JSON/WebSocket payload是外部DTO，Go domain command包含trusted actor/conversation/body/message ID，由边界解析/校验后构造；本地v1 JSON文件不是网络schema。Go接口示意RequestDTO/SendCommand/MessageState，不拼未定义代码。原始字节大小限制 vs领域UTF8字节上限，unknown field/version，server time不信客户端；输入不是权威历史。\n4. 四、一次请求的检查顺序与错误承诺：bounded read, decode, required fields/version, trusted identity, membership, domain rule, duplicate key(c-a,m-a), atomic in-memory change, response; order can vary but must document precedence and prevent sensitive existence disclosure。分类非法参数、未认证、越权、资源不存在/隐藏、重复、依赖失败/超时结果未知；09.02再映射HTTP状态和错误体。失败不改内存状态，勿把返回error等同持久事务。\n5. 五、状态机：内存受理不是投递已读：S2教学内存状态 absent→accepted-in-memory under lock，拒绝保持absent，投递尝试/结果单独。response success only current promise，进程退出内存失；后来S3持久写/S5离线恢复。4确认点client accepted,service in-memory accepted,durable,B device,read，不能跨级。重复ID先成功者保留，重试响应丢失未知，S5幂等身份。\n6. 六、历史查询与发送的决策表：表至少10案例：valid read/empty, unauthenticated, nonmember, bad limit/oversize, unknown kind/body empty/6-byte boundary, duplicate same conversation, same id different conversation, storage/queue failure, canceled midflight，分别input/initial/want/state证据，不偷换 01.12文件max 1MiB和正文6字节。query result range/order/page not total completeness。测试预期来自需求非实现。\n7. 七、领域、传输与公开源码对照：分层cmd/handler→application service→domain/history→adapter；handler只解析/映射，business not depend HTTP；in-memory teaching state. 只引用既有已读固定OpenIM SendMsg源码事实：req.MsgData存在性与SessionType switch分支，不据此声称 auth/DB/投递；OpenIM仍主参照，等S3/S5再追深。对比教学模型与公开项目不得把两者等同。\n8. 八、完整业务说明与分层练习：给一页u-a/c-a/m-a的用例合同、状态图、输入到响应时间线、失败前后表，至少22题逐题反馈，基础→机制→工程→业务变式。个人后续隔离环境实现/httptest；本轮静态课程不运行Go、服务或网络。官方OWASP/HTTP/Go/OpenIM固定源码链接，下一09.02HTTP接口设计。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

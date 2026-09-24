@@ -1,0 +1,12 @@
+{
+  "chapter": "09.01",
+  "stage": "S2",
+  "business_scope": "fictional u-a read c-a history and submit m-a to c-a; isolated in-memory acceptance design, no deployed HTTP/WS service, actual authentication, durable storage or delivery",
+  "prerequisites": ["10.01 independent verifiable requirements", "04.03 HTTP/WS confirmation layers", "05.01–05.03 task ownership, synchronization and cancellation"],
+  "first_pass": ["read-history and send-message use case cards", "trusted principal versus client claimed sender", "transport DTO versus domain command", "bounded input and object-level authorization"],
+  "second_pass": ["rejection before state change", "single-process in-memory accepted state", "response loss and unknown outcome", "decision matrix and pinned OpenIM SendMsg control-flow limit"],
+  "not_yet_prerequisites": ["09.02 HTTP interface status/body contract", "09.07 actual authentication and authorization", "S3 durable storage", "S5 idempotency, device delivery and read state"],
+  "next_chapter": "09.02 HTTP interface design for the teaching history query and message submission use cases",
+  "upstream_inspection": "Pinned OpenIM SendMsg only: req.MsgData presence branch and SessionType dispatch; no authentication, database or delivery claim derived from this snippet.",
+  "shared_integration_pending": []
+}
