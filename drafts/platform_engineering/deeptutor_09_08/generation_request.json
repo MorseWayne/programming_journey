@@ -1,0 +1,77 @@
+{
+  "code": "09.08",
+  "title": "输入与输出防护：IM正文、附件和链接的不同边界",
+  "chapter_id": "ch_input_output_defense",
+  "summary": "面向Go初学者，承接SQL、浏览器、认证授权，以虚构IM m-a 的正文、附件名与可选链接预览为主线，分层讲请求解析和字节限额、SQL参数与标识符白名单、上下文输出编码、文件上传路径与类型、SSRF、日志脱敏及业务权限；静态教材不运行服务。",
+  "objectives": [
+    "画出一条消息输入到SQL/HTML/JSON/文件/日志/URL抓取的使用位置",
+    "区分HTTP体、文本字节与附件大小的上限",
+    "用参数绑定SQL值并白名单选择动态结构",
+    "按HTML/DOM/URL上下文安全展示正文",
+    "限制附件名称、类型、容量、存储与下载权限",
+    "说明服务端链接预览为何可能触发SSRF",
+    "规划结构化脱敏日志和稳定外部错误",
+    "用负例证明各防护不能互相替代"
+  ],
+  "sources": [
+    "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html",
+    "https://go.dev/doc/database/sql-injection",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html",
+    "https://pkg.go.dev/html/template",
+    "https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html",
+    "https://pkg.go.dev/net/http#MaxBytesReader"
+  ],
+  "sections": [
+    {
+      "title": "一、一条m-a正文将流向哪些使用位置",
+      "words": 2400,
+      "focus": "承接09.02三种限额、06.02SQL、09.06HTML/浏览器、09.07身份权限。虚构u-a/c-a/m-a有文本、可选附件、可选URL预览。先画请求输入→解析→业务校验→SQL/文档存储→HTML/JSON/日志/附件下载或服务端抓取，解释不同sink不同防护，静态无服务运行。"
+    },
+    {
+      "title": "二、输入解析、格式和大小边界",
+      "words": 2800,
+      "focus": "Go net/http MaxBytesReader限制整个请求体，Content-Length不能作唯一依据；JSON内容类型/单对象完整解析/字段类型，正文UTF8合法与len bytes<=9教学上限，空白/控制字符业务策略；HTTP body/正文/附件各有不同限额、解压后大小另定。前端校验只是体验，服务端权威；不要清洗一次代替所有下游编码。"
+    },
+    {
+      "title": "三、SQL参数与标识符白名单",
+      "words": 2700,
+      "focus": "u-a读c-a历史，攻击性conversation_id含引号作为普通值，QueryContext(ctx,sql,$1...)绑定，不用fmt.Sprintf；表名、ORDER BY方向不能当值参数需枚举白名单，不直接拼输入。SQL注入防护与成员授权分开：即使参数安全u-c仍不能读c-a。Mongo查询结构对象也要固定，不把用户JSON反序列化成任意过滤器。"
+    },
+    {
+      "title": "四、HTML/JSON输出与XSS上下文",
+      "words": 2900,
+      "focus": "聊天正文保存为原文本，展示时Go html/template按上下文转义，DOM textContent优于innerHTML，不把不可信正文标template.HTML；链接href需要URL scheme校验与合适属性编码，脚本/样式/事件处理器危险，不靠通用sanitize_once；若支持富文本需专门净化器和受控规则。JSON响应Content-Type application/json，客户端渲染仍需安全sink。"
+    },
+    {
+      "title": "五、附件名称、类型与存储边界",
+      "words": 2800,
+      "focus": "文件名是用户输入，../会导致路径穿越；服务器生成对象key并把原名只作展示文本，存储隔离Web root，不执行上传文件；扩展名/Content-Type可伪造，结合允许类型和内容签名，大小/数量/解压限额与授权下载；下载Content-Disposition和响应类型策略，异步扫描可选不宣称运行。"
+    },
+    {
+      "title": "六、消息链接预览与SSRF入门",
+      "words": 2800,
+      "focus": "纯文本URL只展示时无需服务器抓取；如果产品新增服务端预览，用户可指定目标导致服务器访问内网/元数据，SSRF。入口限制scheme host port、解析后地址、重定向每跳重新校验、禁私网/回环/link-local与DNS变化、超时/响应体上限和出口隔离；白名单或不实现优先，避免给出假安全的字符串contains过滤。URL显示的XSS与服务端SSRF区分。"
+    },
+    {
+      "title": "七、日志、错误与防护负例证据",
+      "words": 2600,
+      "focus": "结构化日志只记录route、阶段、有限错误类别、长度和受控request_id，不记token、cookie、原始IM正文/附件、内部路径；控制字符/换行可能污染日志。错误对外稳定码避免SQL/文件路径泄露；用虚构超限、SQL引号、HTML标签、../文件名、内网URL、日志换行负例做静态证据表。"
+    },
+    {
+      "title": "八、分层防护方案与22道练习",
+      "words": 3000,
+      "focus": "交付数据流到sink映射表、三种限额、SQL参数+白名单、HTML文本输出、附件/URL边界、日志最小字段及已知未知，22题从基础单位/来源到SQL/XSS/Path/SSRF/IM授权，附答案。下一09.11应用验证 or 09.09 S5 async? S3 09.11/09.12 after 04.04-07; 09.08后建议09.11测试与完整服务。静态不运行Go/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.08 输入与输出防护》，面向Go初学者，此时SQL、HTML表单、身份和对象授权前置已讲过。以虚构IM正文m-a、附件文件名、可选消息链接预览为业务主线，先画数据流与使用位置，再逐层讲请求大小/解析、SQL参数化、HTML/DOM/URL输出编码、文件路径/类型/存储、SSRF、日志脱敏和负例。八节丰富正文、22题附反馈练习。静态教材无Go/IM/附件服务/站点运行，不宣称OpenIM安全实现。\n1. 一、一条m-a正文将流向哪些使用位置：承接09.02三种限额、06.02SQL、09.06HTML/浏览器、09.07身份权限。虚构u-a/c-a/m-a有文本、可选附件、可选URL预览。先画请求输入→解析→业务校验→SQL/文档存储→HTML/JSON/日志/附件下载或服务端抓取，解释不同sink不同防护，静态无服务运行。\n2. 二、输入解析、格式和大小边界：Go net/http MaxBytesReader限制整个请求体，Content-Length不能作唯一依据；JSON内容类型/单对象完整解析/字段类型，正文UTF8合法与len bytes<=9教学上限，空白/控制字符业务策略；HTTP body/正文/附件各有不同限额、解压后大小另定。前端校验只是体验，服务端权威；不要清洗一次代替所有下游编码。\n3. 三、SQL参数与标识符白名单：u-a读c-a历史，攻击性conversation_id含引号作为普通值，QueryContext(ctx,sql,$1...)绑定，不用fmt.Sprintf；表名、ORDER BY方向不能当值参数需枚举白名单，不直接拼输入。SQL注入防护与成员授权分开：即使参数安全u-c仍不能读c-a。Mongo查询结构对象也要固定，不把用户JSON反序列化成任意过滤器。\n4. 四、HTML/JSON输出与XSS上下文：聊天正文保存为原文本，展示时Go html/template按上下文转义，DOM textContent优于innerHTML，不把不可信正文标template.HTML；链接href需要URL scheme校验与合适属性编码，脚本/样式/事件处理器危险，不靠通用sanitize_once；若支持富文本需专门净化器和受控规则。JSON响应Content-Type application/json，客户端渲染仍需安全sink。\n5. 五、附件名称、类型与存储边界：文件名是用户输入，../会导致路径穿越；服务器生成对象key并把原名只作展示文本，存储隔离Web root，不执行上传文件；扩展名/Content-Type可伪造，结合允许类型和内容签名，大小/数量/解压限额与授权下载；下载Content-Disposition和响应类型策略，异步扫描可选不宣称运行。\n6. 六、消息链接预览与SSRF入门：纯文本URL只展示时无需服务器抓取；如果产品新增服务端预览，用户可指定目标导致服务器访问内网/元数据，SSRF。入口限制scheme host port、解析后地址、重定向每跳重新校验、禁私网/回环/link-local与DNS变化、超时/响应体上限和出口隔离；白名单或不实现优先，避免给出假安全的字符串contains过滤。URL显示的XSS与服务端SSRF区分。\n7. 七、日志、错误与防护负例证据：结构化日志只记录route、阶段、有限错误类别、长度和受控request_id，不记token、cookie、原始IM正文/附件、内部路径；控制字符/换行可能污染日志。错误对外稳定码避免SQL/文件路径泄露；用虚构超限、SQL引号、HTML标签、../文件名、内网URL、日志换行负例做静态证据表。\n8. 八、分层防护方案与22道练习：交付数据流到sink映射表、三种限额、SQL参数+白名单、HTML文本输出、附件/URL边界、日志最小字段及已知未知，22题从基础单位/来源到SQL/XSS/Path/SSRF/IM授权，附答案。下一09.11应用验证 or 09.09 S5 async? S3 09.11/09.12 after 04.04-07; 09.08后建议09.11测试与完整服务。静态不运行Go/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

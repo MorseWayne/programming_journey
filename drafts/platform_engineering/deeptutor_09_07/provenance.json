@@ -30,9 +30,9 @@
   "original_sha256": "498322e9c7a6d0f2dbeb173f9559b713f190382d431cdf7d7d72fbdd650e549a",
   "original_characters": 34184,
   "generation_request_sha256": "69a3da02d70fba9a3c1434177e85cd1d74757f83d59fe301c06f48f1be86b832",
-  "reviewed_sha256": "1e2364deb3dbdd3cc97f04fdc8f3cdba0f3b0722072b51f3a57fc749ceb2f673",
-  "reviewed_characters": 8708,
-  "reviewed_chinese_characters": 4131,
+  "reviewed_sha256": "0bcafaef101512ea322b03bb6bc2c1e3b23d7166c9897463a4d12966317478af",
+  "reviewed_characters": 8814,
+  "reviewed_chinese_characters": 4138,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/07_authentication_authorization.md",
-  "course_sha256": "675b4fa3ca7a56ad72c79124a85e20bb1ab48c0737bcf3c23cbd2c35f3319a8f"
+  "course_sha256": "73329f1904df63ef5fa84b2ac914c3bcaa96d62acffec9f5f37d149db4753b66"
 }

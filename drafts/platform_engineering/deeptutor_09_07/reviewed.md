@@ -194,4 +194,4 @@ JWT 中的角色声明可能比服务端成员状态旧；如果用它独自决�
 - [OWASP：对象级授权失效](https://api-security.owasp.org/editions/2023/en/0xa1-broken-object-level-authorization/)、[JWT 指南](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html)与[Bearer Token 标准](https://www.rfc-editor.org/rfc/rfc6750)：对象 ID、令牌持有与撤销边界。
 - [Go `x/crypto/argon2`](https://pkg.go.dev/golang.org/x/crypto/argon2)：Go 的 Argon2id 底层 API，仅作算法入口，不替代完整口令系统设计。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 09.08 把已学 SQL、浏览器和认证前置连到注入、输出编码、文件与 URL、大小限制和敏感日志；更完整的多设备消息确认留到 S5。离开本章前，应能对任一 IM 请求写出**已认证主体、具体动作、具体资源、当前权限权威来源和撤销边界**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[09.08 输入与输出防护](../../../src/docs/platform_engineering/curriculum/09_backend_security/08_input_output_defense.md)把已学 SQL、浏览器和认证前置连到注入、输出编码、文件与 URL、大小限制和敏感日志；更完整的多设备消息确认留到 S5。离开本章前，应能对任一 IM 请求写出**已认证主体、具体动作、具体资源、当前权限权威来源和撤销边界**。

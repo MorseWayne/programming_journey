@@ -1,0 +1,12 @@
+{
+  "chapter": "09.08",
+  "stage": "S3",
+  "business_scope": "fictional u-a message m-a in c-a with text, optional attachment filename and optional link preview; static per-sink protection design only, no running service, file upload, URL fetch or OpenIM security implementation claim",
+  "prerequisites": ["09.02 API limits and error contract", "06.02 SQL values and structure", "09.05 data access", "09.06 HTML forms and browser contexts", "09.07 trusted subject and object authorization"],
+  "first_pass": ["message data-flow and interpreter/sink inventory", "HTTP body, UTF-8 text and attachment size limits", "SQL value parameters and server-chosen structure", "ordinary text output through html/template and safe DOM sinks"],
+  "second_pass": ["attachment object key, type, storage and download authorization", "optional server-side link-preview SSRF boundary", "structured minimal logs and stable external errors", "negative examples showing each defense cannot replace others"],
+  "not_yet_prerequisites": ["09.11 executable application and security verification", "09.12 combined teaching IM service", "S5 asynchronous attachment/preview processing and delivery guarantees"],
+  "next_chapter": "09.11 application verification and security negative cases for the fictional IM",
+  "upstream_inspection": "No OpenIM input/output security implementation asserted in this chapter.",
+  "shared_integration_pending": []
+}

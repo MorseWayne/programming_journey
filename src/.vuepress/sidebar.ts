@@ -243,6 +243,7 @@ export default sidebar({
             "curriculum/09_backend_security/05_data_access_migration",
             "curriculum/09_backend_security/06_browser_client_boundary",
             "curriculum/09_backend_security/07_authentication_authorization",
+            "curriculum/09_backend_security/08_input_output_defense",
             "curriculum/09_backend_security/core"
           ]
         },
