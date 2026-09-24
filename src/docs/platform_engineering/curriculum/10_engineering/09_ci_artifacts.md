@@ -234,4 +234,4 @@ publish: none
 - [GitHub：安全使用](https://docs.github.com/en/actions/reference/security/secure-use)与[受信边界](https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target)：最小权限与外部评审代码。
 - [Go 模块参考](https://go.dev/ref/mod)与[go 命令](https://pkg.go.dev/cmd/go)：依赖校验、测试与构建命令的语义。
 
-本章完成后，S2 已能把需求、请求链、观测与最小自动验证连起来。下一步按[学习路线](../learning_path.md)补 S3 的数据/存储与可信业务前置；10.07 的并发/属性验证及 10.08 的依赖质量工具在 S4 深化，10.10 的发布管理留到 S6。
+本章完成后，S2 已能把需求、请求链、观测与最小自动验证连起来。下一步按[学习路线](../learning_path.md)进入[06.01 关系模型与业务身份](../06_databases/01_relational_identity.md)，补 S3 的数据/存储与可信业务前置；10.07 的并发/属性验证及 10.08 的依赖质量工具在 S4 深化，10.10 的发布管理留到 S6。

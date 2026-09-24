@@ -1,0 +1,75 @@
+{
+  "code": "06.01",
+  "title": "关系模型与业务身份：从会话和消息画出第一张数据表",
+  "chapter_id": "ch_relational_identity",
+  "summary": "面向Go初学者从虚构IM的会话历史需求进入S3，讲清表/行/列/类型、实体和关系、主键/外键/复合键、约束与NULL，再和MongoDB文档/集合/嵌入/引用对照；所有SQL与数据为静态纸上教学模型，无真实DB或上游实现声明。",
+  "objectives": [
+    "区分内存受理、持久记录与设备送达",
+    "解释表、行、列、类型、模式和记录实例",
+    "为用户、会话、成员、消息选择稳定身份",
+    "用复合主键和外键表达最小关系",
+    "解释NULL与NOT NULL、UNIQUE、CHECK的边界",
+    "纸上检查合法和非法记录及业务授权盲区",
+    "比较关系表与文档嵌入/引用",
+    "交付四表草案和一条历史查询的业务步骤"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/tutorial-concepts.html",
+    "https://www.postgresql.org/docs/current/ddl-constraints.html",
+    "https://www.sqlite.org/foreignkeys.html",
+    "https://www.mongodb.com/docs/manual/data-modeling/",
+    "https://www.mongodb.com/docs/manual/data-modeling/embedding/",
+    "https://www.mongodb.com/docs/manual/data-modeling/referencing/"
+  ],
+  "sections": [
+    {
+      "title": "一、从聊天历史需求认识持久数据",
+      "words": 2300,
+      "focus": "S3入口，承接S2仅内存受理，明确以后消息持久记录与设备交付仍是不同确认点。虚构u-a/u-b/c-a/m-a，需求是按会话查询消息并限制成员可见。区分业务对象、一次请求、进程内存、持久记录、模型与真实数据库；当前没有DB运行。先列四个问句：谁是用户、谁参与会话、哪条消息属于哪会话、失败后状态怎样解释。"
+    },
+    {
+      "title": "二、表、行、列、类型与关系模型的第一步",
+      "words": 2700,
+      "focus": "面向Go初学者从Go结构体/切片/map映射到关系表、行、列和列类型，但说明数据库表不是Go数组或文件行。以users/conversations/members/messages四张教学表，画纸上2用户1会话1消息实例、CREATE TABLE概念，文本/整数/时间类型与字节/编码边界。行顺序无保证，查询排序后置06.02。先理解模式与实例、关系的集合/唯一性边界，别预设SQL。"
+    },
+    {
+      "title": "三、实体、身份和键",
+      "words": 2700,
+      "focus": "主键PK唯一非空，复合键member(conversation_id,user_id)，外键FK保证所指父行存在（数据库启用且声明时），唯一约束与业务ID的区别。消息message_id、会话内seq和用户自报client_msg_id可能不同；业务ID不可用展示名称/时间戳替代，重复/重试与幂等深层后置。纸上插入同用户跨两会话、同会话两成员，计算键冲突例子。历史成员可退出/再加入，简单复合PK只表示当前成员，事件历史需另建模。"
+    },
+    {
+      "title": "四、约束与NULL：规则放在哪层",
+      "words": 2600,
+      "focus": "NOT NULL、UNIQUE、CHECK、FOREIGN KEY的入门，给用户/会话/消息属性设计最小约束。NULL表示未知/不适用/未提供等按字段合同解释，不等于空字符串、0或不存在的行；SQL三值逻辑先给UNKNOWN直觉，IS NULL不能用= NULL。CHECK未知可能通过，因此必要列要NOT NULL。FK不能自动证明当前成员有发送权限，更不能证明设备已收到；数据库约束与应用授权分层。PostgreSQL教学方言静态SQL，不运行。"
+    },
+    {
+      "title": "五、从业务查询反推表关系与纸上记录",
+      "words": 2600,
+      "focus": "逐行做users(u-a,u-b), conversations(c-a), members(c-a,u-a),(c-a,u-b), messages(m-a,c-a,u-a,seq1)的数据填表/合法性检查。读c-a历史需先验证u-a是否成员，再按会话过滤和显式seq排序；不先展开JOIN语法，06.02详讲。反例m-x引用不存在的c-z外键拒绝，m-y由非成员u-z发送但users存在仍可能过外键，说明授权需要额外合同。表之间的1:N和N:M、关系表有意义。"
+    },
+    {
+      "title": "六、文档与集合入门：嵌入和引用",
+      "words": 2400,
+      "focus": "以MongoDB文档模型对照：集合/文档/字段/BSON，users或conversations可以是文档。嵌入少量稳定会话元数据与成员摘要可能使一次读取方便，但无界消息数组增长和独立分页/更新成本，不要把全部历史塞一个conversation文档。引用独立messages按conversation_id、message_id连接，跨文档一致性和应用规则需明确。MongoDB文档灵活不等于无模式/无验证；不说自动有关系DB FK。上游OpenIM实现暂未核对。"
+    },
+    {
+      "title": "七、身份与确认边界的失败变式",
+      "words": 2500,
+      "focus": "重命名u-a显示名不改稳定user_id；删除user/conversation的FK策略不能任意cascade毁历史；成员退群/重入历史不同于当前状态；消息ID重复与client_id重复合同；NULL left_at不是已读/在线。静态模型不能证明事务原子性、崩溃耐久、异步投递，后续06.07/06.09/S5。给表格已知、未知、下一证据，不做真实性能宣称。"
+    },
+    {
+      "title": "八、四张表草案、分层练习与下一课",
+      "words": 2900,
+      "focus": "整合四张教学表字段/主外键/空值/一纸示例及文档对照；22道练习从表行列、类型、主外键、NULL/三值逻辑、1:N/N:M、成员权限到退出再加入/无界历史/内存和持久确认。检查答案与出门成果：纸上schema、三条合法/非法记录、一次历史查询的业务步骤。下一06.02 SQL基本读写，06.03范式迁移，06.10 Go数据访问后置；不用DB/Go/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《06.01 关系模型与业务身份》。把读者当Go技术栈初学者，进入S3前置，先从虚构IM业务需求讲为什么要存历史，再详细讲表/行/列/类型、关系、键、约束和NULL，最后对照MongoDB文档与集合。分八节，由浅入深，实践与理论融合，22道附反馈练习。SQL只作PostgreSQL教学方言静态草案，当前无真实数据库或OpenIM实现核对，不运行Go/DB/站点。\n1. 一、从聊天历史需求认识持久数据：S3入口，承接S2仅内存受理，明确以后消息持久记录与设备交付仍是不同确认点。虚构u-a/u-b/c-a/m-a，需求是按会话查询消息并限制成员可见。区分业务对象、一次请求、进程内存、持久记录、模型与真实数据库；当前没有DB运行。先列四个问句：谁是用户、谁参与会话、哪条消息属于哪会话、失败后状态怎样解释。\n2. 二、表、行、列、类型与关系模型的第一步：面向Go初学者从Go结构体/切片/map映射到关系表、行、列和列类型，但说明数据库表不是Go数组或文件行。以users/conversations/members/messages四张教学表，画纸上2用户1会话1消息实例、CREATE TABLE概念，文本/整数/时间类型与字节/编码边界。行顺序无保证，查询排序后置06.02。先理解模式与实例、关系的集合/唯一性边界，别预设SQL。\n3. 三、实体、身份和键：主键PK唯一非空，复合键member(conversation_id,user_id)，外键FK保证所指父行存在（数据库启用且声明时），唯一约束与业务ID的区别。消息message_id、会话内seq和用户自报client_msg_id可能不同；业务ID不可用展示名称/时间戳替代，重复/重试与幂等深层后置。纸上插入同用户跨两会话、同会话两成员，计算键冲突例子。历史成员可退出/再加入，简单复合PK只表示当前成员，事件历史需另建模。\n4. 四、约束与NULL：规则放在哪层：NOT NULL、UNIQUE、CHECK、FOREIGN KEY的入门，给用户/会话/消息属性设计最小约束。NULL表示未知/不适用/未提供等按字段合同解释，不等于空字符串、0或不存在的行；SQL三值逻辑先给UNKNOWN直觉，IS NULL不能用= NULL。CHECK未知可能通过，因此必要列要NOT NULL。FK不能自动证明当前成员有发送权限，更不能证明设备已收到；数据库约束与应用授权分层。PostgreSQL教学方言静态SQL，不运行。\n5. 五、从业务查询反推表关系与纸上记录：逐行做users(u-a,u-b), conversations(c-a), members(c-a,u-a),(c-a,u-b), messages(m-a,c-a,u-a,seq1)的数据填表/合法性检查。读c-a历史需先验证u-a是否成员，再按会话过滤和显式seq排序；不先展开JOIN语法，06.02详讲。反例m-x引用不存在的c-z外键拒绝，m-y由非成员u-z发送但users存在仍可能过外键，说明授权需要额外合同。表之间的1:N和N:M、关系表有意义。\n6. 六、文档与集合入门：嵌入和引用：以MongoDB文档模型对照：集合/文档/字段/BSON，users或conversations可以是文档。嵌入少量稳定会话元数据与成员摘要可能使一次读取方便，但无界消息数组增长和独立分页/更新成本，不要把全部历史塞一个conversation文档。引用独立messages按conversation_id、message_id连接，跨文档一致性和应用规则需明确。MongoDB文档灵活不等于无模式/无验证；不说自动有关系DB FK。上游OpenIM实现暂未核对。\n7. 七、身份与确认边界的失败变式：重命名u-a显示名不改稳定user_id；删除user/conversation的FK策略不能任意cascade毁历史；成员退群/重入历史不同于当前状态；消息ID重复与client_id重复合同；NULL left_at不是已读/在线。静态模型不能证明事务原子性、崩溃耐久、异步投递，后续06.07/06.09/S5。给表格已知、未知、下一证据，不做真实性能宣称。\n8. 八、四张表草案、分层练习与下一课：整合四张教学表字段/主外键/空值/一纸示例及文档对照；22道练习从表行列、类型、主外键、NULL/三值逻辑、1:N/N:M、成员权限到退出再加入/无界历史/内存和持久确认。检查答案与出门成果：纸上schema、三条合法/非法记录、一次历史查询的业务步骤。下一06.02 SQL基本读写，06.03范式迁移，06.10 Go数据访问后置；不用DB/Go/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

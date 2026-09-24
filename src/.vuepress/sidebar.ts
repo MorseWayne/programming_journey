@@ -207,6 +207,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/06_databases/",
+            "curriculum/06_databases/01_relational_identity",
             "curriculum/06_databases/core"
           ]
         },

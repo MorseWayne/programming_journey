@@ -1,0 +1,12 @@
+{
+  "chapter": "06.01",
+  "stage": "S3",
+  "business_scope": "fictional IM users, conversations, current memberships and messages as a paper relational model plus document-model comparison; no running database, durable confirmation, device delivery or OpenIM implementation claim",
+  "prerequisites": ["01.05 Go maps, structs and identities", "09.01 IM users, conversations and acceptance boundary", "11.01 distinct acceptance, persistence and device confirmation"],
+  "first_pass": ["table, row, column, type, schema and instance", "four fictional IM entities", "primary key, composite key and foreign key", "one-to-many and many-to-many relationships"],
+  "second_pass": ["NOT NULL, UNIQUE, CHECK and SQL NULL", "current membership versus membership history", "foreign key existence versus sender authorization", "bounded document embedding versus separate message references", "data model versus durable runtime evidence"],
+  "not_yet_prerequisites": ["06.02 SQL read/write, joins and ordering", "06.03 normalization and schema evolution", "06.07 transaction semantics", "06.09 crash recovery", "06.10 Go database access", "S5 device delivery and reliable retry"],
+  "next_chapter": "06.02 SQL read and write operations for conversation history",
+  "upstream_inspection": "No OpenIM storage implementation or runtime behavior asserted in this chapter.",
+  "shared_integration_pending": []
+}

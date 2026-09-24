@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_310b896a2b",
+  "page_id": "pg_12b1e72fe1",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.postgresql.org/docs/current/tutorial-concepts.html",
+      "https://www.postgresql.org/docs/current/ddl-constraints.html",
+      "https://www.sqlite.org/foreignkeys.html",
+      "https://www.mongodb.com/docs/manual/data-modeling/",
+      "https://www.mongodb.com/docs/manual/data-modeling/embedding/",
+      "https://www.mongodb.com/docs/manual/data-modeling/referencing/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "2f2940811cbe63b7107bd869c3d1081ffcb81805c11e88ae0611f49bd175afd6",
+  "original_characters": 36257,
+  "generation_request_sha256": "3624c83c26d632213f804a0392069430937d02219576c3ab4c8179ed42959ae8",
+  "reviewed_sha256": "c30a8bd405349fc4d0588a564c76fbbefc4c067d1eaed3cd62dc708bd4d9db07",
+  "reviewed_characters": 10101,
+  "reviewed_chinese_characters": 4244,
+  "course_file": "src/docs/platform_engineering/curriculum/06_databases/01_relational_identity.md",
+  "course_sha256": "86b998bbf83daf242f4db4645ae109e017f68a06d8ea6640845eb889808fed93"
+}
