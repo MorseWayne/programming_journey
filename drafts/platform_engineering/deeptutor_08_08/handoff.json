@@ -1,0 +1,31 @@
+{
+  "chapter": "08.08",
+  "stage": "S5",
+  "business_scope": "static beginner-to-advanced comparison of 2PC, Saga, local outbox and status query using fictional IM m-9 already stored while Notify fails",
+  "prerequisites": [
+    "06.07 local SQL transaction boundary",
+    "07.10 same-database outbox and relay",
+    "07.12 authoritative history, notification and device confirmation",
+    "08.01 partial failure and unknown result",
+    "08.06 consensus versus business effects"
+  ],
+  "first_pass": [
+    "separate current S2 accepted_in_memory from proposed S3 stored_in_teaching_db",
+    "identify messages plus outbox local atomic range versus broker/Notify/device effects",
+    "draw two prepare-capable 2PC participants and the coordinator decision"
+  ],
+  "second_pass": [
+    "work C0-C3 including prepared in-doubt blocking and decision replay",
+    "treat committed message as this case's Saga business pivot",
+    "design per-step publish/search/notify status, stable operation identity and authorized query",
+    "compare replay, current-state rebuild and new external compensation action",
+    "limit fixed OpenIM claims to inspected send and Mongo consumer paths"
+  ],
+  "not_yet_prerequisites": [
+    "08.09 reliable jobs and scheduling",
+    "learner's real transaction-manager and notification fault evidence"
+  ],
+  "next_chapter": "08.09 reliable jobs and scheduling",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response; a separate Mongo consumer path calls BatchInsertChat2DB. These two files do not establish 2PC, Saga or the teaching SQL outbox as actual implementation.",
+  "shared_integration_pending": []
+}

@@ -1,0 +1,74 @@
+{
+  "code": "08.08",
+  "title": "跨服务事务：消息已保存，通知失败怎么办",
+  "chapter_id": "ch_cross_service_transactions",
+  "summary": "面向Go初学者，以虚构IM消息m-9的权威提交与通知失败，比较2PC、Saga、outbox、状态查询和补偿的原子范围与故障责任。",
+  "objectives": [
+    "区分本地SQL事务、2PC参与者与外部推送",
+    "推演prepare、全局决议和协调者故障",
+    "说明已提交消息是业务不可简单回滚的事实",
+    "比较Saga局部步骤与补偿/重试",
+    "用稳定操作ID查询结果未知并对账",
+    "限制固定OpenIM源码的实际证明范围"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/sql-prepare-transaction.html",
+    "https://www.postgresql.org/docs/current/two-phase.html",
+    "https://arxiv.org/abs/cs/0408036",
+    "https://www.cs.princeton.edu/research/techreps/598",
+    "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、先问消息与通知失败的业务结果",
+      "words": 2900,
+      "focus": "虚构u-a在c-a发送m-9 seq9，u-b可能在线/离线；未来教学S3本地DB messages+outbox E9已提交但Notify失败。当前S2成功仅accepted_in_memory，S3 stored_in_teaching_db仍提议。要求历史可恢复、搜索/通知追赶、设备收/读独立，不能在通知失败时悄悄删权威消息。"
+    },
+    {
+      "title": "二、一个本地事务不能自动包含两处服务",
+      "words": 3000,
+      "focus": "教学MessagesDB/DeliveryLedgerDB两个事务参与者与broker/gateway外部效果，分别定义原子范围。先DB再通知有空窗，先通知再DB有孤儿提示；07.10 outbox只在同库把事实+发布意图原子化，relay/consumer仍重试幂等。"
+    },
+    {
+      "title": "三、2PC准备与决定的纸上故障表",
+      "words": 3300,
+      "focus": "2PC协调者C、参与者MessagesDB和DeliveryLedgerDB，prepare/vote YES/NO，再持久化全局commit/abort决议并发COMMIT PREPARED或ROLLBACK PREPARED。若任一NO则abort；两YES后协调者崩溃且无可恢复决议，参与者in-doubt持锁等待，不能各自猜commit或rollback。PostgreSQL PREPARE TRANSACTION只供外部事务管理器且长时间prepared阻碍vacuum/持锁；普通broker/WebSocket不因存在这个命令而成为2PC参与者。"
+    },
+    {
+      "title": "四、Saga局部步骤与补偿的业务边界",
+      "words": 3300,
+      "focus": "Saga是可持久化的局部步骤序列与补偿/重试；教学send:m-9:v1先权限验证，DB Commit是事实pivot，之后outbox发布、SearchIndex、Notify分别重试/修复。若发送前失败可abort；DB提交后Notify失败不把m9物理删除当rollback。已发推送或B已见不能撤销，必要时新撤回/更正动作且审计。编排 vs 事件编舞与状态可追踪。"
+    },
+    {
+      "title": "五、操作ID、状态查询与结果未知",
+      "words": 3000,
+      "focus": "operation_id=send:m-9:v1稳定身份，HTTP超时可能已DB commit/已发事件，查权威messages/outbox与工作流状态；提出未来状态查询API仅设计，不改S2同ID即使同正文409、非成员404、6 UTF8字节。持久记录PENDING/COMMITTED/PUBLISH_PENDING/NOTIFY_ATTEMPTED/FAILED_REPAIR等状态，有责任/最后错误/下一动作，状态不能冒充B收到。"
+    },
+    {
+      "title": "六、故障推演与对账选择",
+      "words": 3100,
+      "focus": "2PC prepare后协调者丢、decision已写但participant回执丢；Saga本地Tx后event丢、Notify重试重复、外部效果结果未知、B离线25h越过broker24h；每点找权威事实/恢复源、是否阻塞/可补偿。用ID/version/permission对账，超过保留从DB重建，旧v1不可覆盖v2。"
+    },
+    {
+      "title": "七、选择矩阵与OpenIM固定证据边界",
+      "words": 2800,
+      "focus": "条件：所有参与者可prepare且强原子需求才考虑2PC，需管理器/阻塞预算；IM消息历史已承诺且通知可异步时教学outbox+工作流/重试+补拉更贴需求；Saga不能保证隔离或让外部动作真rollback。固定OpenIM send.go MsgToMQ后返回、另Mongo consumer BatchInsertChat2DB不证明2PC/Saga/outbox实际存在。"
+    },
+    {
+      "title": "八、22题与设计验收",
+      "words": 3100,
+      "focus": "22题基础8/2PC故障8/Saga业务6，答案覆盖本地/跨系统事务、prepared持锁、全局决议、协调者崩溃阻塞、outbox vs saga、pivot/补偿、状态查询未知、S2/S3与OpenIM证据。交付业务状态图、故障矩阵、对账责任和真实待验证，静态无DB/broker/Go/站点运行。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《08.08 跨服务事务》，面向Go初学者，以虚构u-a向c-a发送m-9/seq9且Notify失败为主线。八节基础理论丰富，由浅入深，22题带反馈。当前S2的200只accepted_in_memory、6 UTF8字节、同ID即使同内容409、非成员目标404，未来S3 200 stored_in_teaching_db仍是教学提议。比较本地SQL messages+outbox E9同Tx与两个服务MessagesDB/DeliveryLedgerDB的2PC：协调者C令两个可prepare参与者准备/vote，持久全局commit/abort决议后通知，prepare后协调者故障且无可恢复决议会阻塞/持锁，不能猜；PostgreSQL PREPARE仅给外部事务管理器且长久prepared妨碍vacuum，不会把broker/WebSocket自动变成参与者。Saga是可持久化局部业务步骤；DB消息事实提交是本题pivot，之后搜索/通知失败应重试、隔离、对账，不物理删除m9假装回滚；推送已到B不可撤销，需新更正/撤回动作。outbox只闭合本地事实+发布意图，Saga处理业务步骤，状态查询处理结果未知，均不能推断B已收。B离线25h越过玩具broker24h时DB授权补拉。固定OpenIM send.go MsgToMQ后返回与另一Mongo消费BatchInsertChat2DB不足以证明其2PC/Saga/outbox。静态无DB/Go/broker/站点运行。\n1. 一、先问消息与通知失败的业务结果: 虚构u-a在c-a发送m-9 seq9，u-b可能在线/离线；未来教学S3本地DB messages+outbox E9已提交但Notify失败。当前S2成功仅accepted_in_memory，S3 stored_in_teaching_db仍提议。要求历史可恢复、搜索/通知追赶、设备收/读独立，不能在通知失败时悄悄删权威消息。\n2. 二、一个本地事务不能自动包含两处服务: 教学MessagesDB/DeliveryLedgerDB两个事务参与者与broker/gateway外部效果，分别定义原子范围。先DB再通知有空窗，先通知再DB有孤儿提示；07.10 outbox只在同库把事实+发布意图原子化，relay/consumer仍重试幂等。\n3. 三、2PC准备与决定的纸上故障表: 2PC协调者C、参与者MessagesDB和DeliveryLedgerDB，prepare/vote YES/NO，再持久化全局commit/abort决议并发COMMIT PREPARED或ROLLBACK PREPARED。若任一NO则abort；两YES后协调者崩溃且无可恢复决议，参与者in-doubt持锁等待，不能各自猜commit或rollback。PostgreSQL PREPARE TRANSACTION只供外部事务管理器且长时间prepared阻碍vacuum/持锁；普通broker/WebSocket不因存在这个命令而成为2PC参与者。\n4. 四、Saga局部步骤与补偿的业务边界: Saga是可持久化的局部步骤序列与补偿/重试；教学send:m-9:v1先权限验证，DB Commit是事实pivot，之后outbox发布、SearchIndex、Notify分别重试/修复。若发送前失败可abort；DB提交后Notify失败不把m9物理删除当rollback。已发推送或B已见不能撤销，必要时新撤回/更正动作且审计。编排 vs 事件编舞与状态可追踪。\n5. 五、操作ID、状态查询与结果未知: operation_id=send:m-9:v1稳定身份，HTTP超时可能已DB commit/已发事件，查权威messages/outbox与工作流状态；提出未来状态查询API仅设计，不改S2同ID即使同正文409、非成员404、6 UTF8字节。持久记录PENDING/COMMITTED/PUBLISH_PENDING/NOTIFY_ATTEMPTED/FAILED_REPAIR等状态，有责任/最后错误/下一动作，状态不能冒充B收到。\n6. 六、故障推演与对账选择: 2PC prepare后协调者丢、decision已写但participant回执丢；Saga本地Tx后event丢、Notify重试重复、外部效果结果未知、B离线25h越过broker24h；每点找权威事实/恢复源、是否阻塞/可补偿。用ID/version/permission对账，超过保留从DB重建，旧v1不可覆盖v2。\n7. 七、选择矩阵与OpenIM固定证据边界: 条件：所有参与者可prepare且强原子需求才考虑2PC，需管理器/阻塞预算；IM消息历史已承诺且通知可异步时教学outbox+工作流/重试+补拉更贴需求；Saga不能保证隔离或让外部动作真rollback。固定OpenIM send.go MsgToMQ后返回、另Mongo consumer BatchInsertChat2DB不证明2PC/Saga/outbox实际存在。\n8. 八、22题与设计验收: 22题基础8/2PC故障8/Saga业务6，答案覆盖本地/跨系统事务、prepared持锁、全局决议、协调者崩溃阻塞、outbox vs saga、pivot/补偿、状态查询未知、S2/S3与OpenIM证据。交付业务状态图、故障矩阵、对账责任和真实待验证，静态无DB/broker/Go/站点运行。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

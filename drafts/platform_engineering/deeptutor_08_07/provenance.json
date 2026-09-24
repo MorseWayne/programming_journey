@@ -28,9 +28,9 @@
   "original_sha256": "ddb8d3d0662e635b6d7c3cab3d607443bb7e755db05ffd3c4a5a01885aaa7295",
   "original_characters": 33871,
   "generation_request_sha256": "d894ed2771cb686a1ac42f771266ef962cbc296bc81e9abffe928f023e117c8d",
-  "reviewed_sha256": "3b5f43861ff3753169481b82550b3a1ea2afa1c965a2fd8c29ff4677e1db87cc",
-  "reviewed_characters": 10397,
-  "reviewed_chinese_characters": 3764,
+  "reviewed_sha256": "1d1c36661f4c0f44e8956144bd563c7223aa6bec0ff2963d1652ead0e7083586",
+  "reviewed_characters": 10504,
+  "reviewed_chinese_characters": 3769,
   "course_file": "src/docs/platform_engineering/curriculum/08_distributed/07_coordination_ownership.md",
-  "course_sha256": "289a7c74e991336ab5b6535bc202496cd8ef6c517a492617f0ed61b80674cda0"
+  "course_sha256": "492035068a578df30d45321d376191b8f1a0f39288b5d28d7db86c69e8b6d427"
 }
