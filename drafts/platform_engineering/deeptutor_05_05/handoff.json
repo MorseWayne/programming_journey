@@ -1,0 +1,30 @@
+{
+  "chapter": "05.05",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go scheduler lesson for a fictional 2000-connection IM gateway and a P=1 paper timeline",
+  "prerequisites": [
+    "03.04 OS runnable and waiting states",
+    "03.09 FD readiness and byte-stream boundaries",
+    "05.01 goroutine lifecycle",
+    "05.04 synchronization versus scheduling"
+  ],
+  "first_pass": [
+    "FD, goroutine G, OS thread M and execution resource P",
+    "runnable, running and network-waiting G",
+    "GOMAXPROCS versus connection and thread counts"
+  ],
+  "second_pass": [
+    "local/global work sources and stealing without business-order guarantee",
+    "P handoff during blocking syscall",
+    "netpoll readiness to runnable transition",
+    "t0–t3 scheduling timeline and resource budget boundary"
+  ],
+  "not_yet_prerequisites": [
+    "05.06 object memory lifecycle",
+    "05.10 actual Go trace and performance evidence",
+    "S5 device delivery and distributed ordering"
+  ],
+  "next_chapter": "05.06 Go object memory lifecycle",
+  "upstream_inspection": "Go runtime HACKING/proc.go/netpoll.go consulted for G/M/P and poller concepts; no OpenIM implementation claim or benchmark result.",
+  "shared_integration_pending": []
+}

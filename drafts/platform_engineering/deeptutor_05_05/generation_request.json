@@ -1,0 +1,74 @@
+{
+  "code": "05.05",
+  "title": "Go 调度模型：从长连接等待到 G/M/P",
+  "chapter_id": "ch_go_scheduler",
+  "summary": "面向Go初学者承接OS调度、网络就绪与goroutine生命周期，以虚构IM空闲连接和P=1时间线讲G/M/P、运行队列、阻塞syscall、netpoll及GOMAXPROCS边界。",
+  "objectives": [
+    "区分连接FD、goroutine、OS线程与P",
+    "解释G的可运行/运行/等待状态",
+    "手算P=1时G/M/P结合",
+    "理解运行队列与工作窃取不保证业务顺序",
+    "推演阻塞syscall的P移交",
+    "说明netpoll唤醒只使G可运行",
+    "区分GOMAXPROCS与线程/连接/用户数"
+  ],
+  "sources": [
+    "https://go.dev/src/runtime/HACKING",
+    "https://go.dev/src/runtime/proc.go",
+    "https://go.dev/src/runtime/netpoll.go",
+    "https://pkg.go.dev/runtime",
+    "https://pkg.go.dev/runtime/metrics",
+    "https://go.dev/ref/mem"
+  ],
+  "sections": [
+    {
+      "title": "一、多连接与Go执行资源不是一一对应",
+      "words": 2200,
+      "focus": "承接03.04可运行/等待、03.09 I/O就绪、05.01任务生命周期、05.04内存可见性；虚构IM网关2000连接大多空闲，先区分连接FD、goroutine、OS线程、CPU执行槽，不凭连接数推断线程数/CPU。"
+    },
+    {
+      "title": "二、G的状态：可运行、运行与等待",
+      "words": 2200,
+      "focus": "G是goroutine，可运行在队列、正执行、等待网络/通道/定时器等；等待不占Go代码执行槽，恢复后先变可运行而非立刻执行；任务取消不自动释放连接或保证业务结束。"
+    },
+    {
+      "title": "三、M与P的组合",
+      "words": 2400,
+      "focus": "M是OS线程，P是执行Go用户代码所需资源/权利，GOMAXPROCS控制P数；toy P=1,M1跑G-a，G-b网络等待，G-c可运行排队；P不是物理核心/线程，M可做syscall，具体状态版本相关。"
+    },
+    {
+      "title": "四、运行队列与调度选择",
+      "words": 2300,
+      "focus": "P本地队列与全局/工作窃取的概念，不能把队列顺序当业务顺序、公平性/确定性；G-a短任务与G-c CPU工作可能交替，preemption/调度时机不承诺精确毫秒；c-a消息序号须业务同步而非G运行次序。"
+    },
+    {
+      "title": "五、阻塞系统调用与P移交",
+      "words": 2500,
+      "focus": "固定时间线P=1: t0 M1+P1运行G-a; G-b网络等待,G-c runnable; t1 G-a进阻塞syscall M1等待，P1可转给M2运行G-c; t2 G-b网络就绪变runnable但还要等P; t3恢复取决于调度。只是可发生机制，不表示每次syscall立刻新线程。"
+    },
+    {
+      "title": "六、netpoll让空闲连接等待事件",
+      "words": 2500,
+      "focus": "Go运行时网络poller可使pollable net.Conn等待goroutine停放，FD就绪后唤醒为runnable，不意味立即完成帧解析或设备确认；epoll/kqueue/IOCP实现差异留给系统层；文件I/O/cgo/阻塞调用路径可不同，不能说所有等待都同样高效。"
+    },
+    {
+      "title": "七、GOMAXPROCS、线程与资源预算",
+      "words": 2400,
+      "focus": "GOMAXPROCS上限是同时执行用户Go代码的P数，非goroutine数、FD数或OS线程总数；2000 conn仍有FD/socket状态、goroutine栈/缓冲/队列，可能CPU低而RSS高。NumGoroutine快照不等于在线用户；诊断需Go trace和系统证据，后05.10实践。"
+    },
+    {
+      "title": "八、纸上调度审阅与22题",
+      "words": 2400,
+      "focus": "交付P=1的t0-t3 G/M/P状态表、G-b netpoll通知路径、阻塞syscall对P的影响、GOMAXPROCS和连接数/线程数边界；22题附反馈。下一05.06内存生命周期，静态不运行Go/trace/网关/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《05.05 Go 调度模型》，面向Go初学者。八节丰富正文、22道带反馈练习。以虚构IM网关2000空闲连接和P=1的t0–t3纸上时间线逐步讲G/M/P、运行队列、阻塞syscall移交P和netpoll。强调P数由GOMAXPROCS控制但不是OS线程数/连接数，网络就绪只使等待G可运行，不保证立即执行/完整消息/业务确认；Go runtime源码概念有版本边界；静态不运行Go/trace/服务/站点。\n1. 一、多连接与Go执行资源不是一一对应：承接03.04可运行/等待、03.09 I/O就绪、05.01任务生命周期、05.04内存可见性；虚构IM网关2000连接大多空闲，先区分连接FD、goroutine、OS线程、CPU执行槽，不凭连接数推断线程数/CPU。\n2. 二、G的状态：可运行、运行与等待：G是goroutine，可运行在队列、正执行、等待网络/通道/定时器等；等待不占Go代码执行槽，恢复后先变可运行而非立刻执行；任务取消不自动释放连接或保证业务结束。\n3. 三、M与P的组合：M是OS线程，P是执行Go用户代码所需资源/权利，GOMAXPROCS控制P数；toy P=1,M1跑G-a，G-b网络等待，G-c可运行排队；P不是物理核心/线程，M可做syscall，具体状态版本相关。\n4. 四、运行队列与调度选择：P本地队列与全局/工作窃取的概念，不能把队列顺序当业务顺序、公平性/确定性；G-a短任务与G-c CPU工作可能交替，preemption/调度时机不承诺精确毫秒；c-a消息序号须业务同步而非G运行次序。\n5. 五、阻塞系统调用与P移交：固定时间线P=1: t0 M1+P1运行G-a; G-b网络等待,G-c runnable; t1 G-a进阻塞syscall M1等待，P1可转给M2运行G-c; t2 G-b网络就绪变runnable但还要等P; t3恢复取决于调度。只是可发生机制，不表示每次syscall立刻新线程。\n6. 六、netpoll让空闲连接等待事件：Go运行时网络poller可使pollable net.Conn等待goroutine停放，FD就绪后唤醒为runnable，不意味立即完成帧解析或设备确认；epoll/kqueue/IOCP实现差异留给系统层；文件I/O/cgo/阻塞调用路径可不同，不能说所有等待都同样高效。\n7. 七、GOMAXPROCS、线程与资源预算：GOMAXPROCS上限是同时执行用户Go代码的P数，非goroutine数、FD数或OS线程总数；2000 conn仍有FD/socket状态、goroutine栈/缓冲/队列，可能CPU低而RSS高。NumGoroutine快照不等于在线用户；诊断需Go trace和系统证据，后05.10实践。\n8. 八、纸上调度审阅与22题：交付P=1的t0-t3 G/M/P状态表、G-b netpoll通知路径、阻塞syscall对P的影响、GOMAXPROCS和连接数/线程数边界；22题附反馈。下一05.06内存生命周期，静态不运行Go/trace/网关/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -213,6 +213,7 @@ export default sidebar({
             "curriculum/05_runtime/02_sync_primitives",
             "curriculum/05_runtime/03_channels_cancellation",
             "curriculum/05_runtime/04_memory_model",
+            "curriculum/05_runtime/05_scheduler_model",
             "curriculum/05_runtime/core"
           ]
         },

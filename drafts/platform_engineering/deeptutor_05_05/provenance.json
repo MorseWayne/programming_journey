@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a7d4d52f9b",
+  "page_id": "pg_0b1122ef18",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/src/runtime/HACKING",
+      "https://go.dev/src/runtime/proc.go",
+      "https://go.dev/src/runtime/netpoll.go",
+      "https://pkg.go.dev/runtime",
+      "https://pkg.go.dev/runtime/metrics",
+      "https://go.dev/ref/mem"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "d9ef0d5d68b26685a4c7628e3b61cdc04bbcb6b6f609bd065bbc711c7fa718bd",
+  "original_characters": 30988,
+  "generation_request_sha256": "e2571e222e00a539d2ba8e1f360a78ffaa3f65661ad83b37cb07da1193df998f",
+  "reviewed_sha256": "8bf32f4d05806f5e5db107f1ddbd6c33045f19a65053e2b0cadfb5ba9fff3957",
+  "reviewed_characters": 7551,
+  "reviewed_chinese_characters": 3454,
+  "course_file": "src/docs/platform_engineering/curriculum/05_runtime/05_scheduler_model.md",
+  "course_sha256": "d85ffd030ac1d66b5885ca67cc125caeb62636ce540a459523a2724f21fcad3f"
+}

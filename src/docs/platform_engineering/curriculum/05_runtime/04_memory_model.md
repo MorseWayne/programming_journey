@@ -232,4 +232,4 @@ Go 的 race detector 能在**实际执行到的路径**上报告数据竞争，�
 - [Go `sync`](https://pkg.go.dev/sync)与[`sync/atomic`](https://pkg.go.dev/sync/atomic)：同步原语、单字段原子操作和 CAS。
 - [Go race detector 文档](https://go.dev/doc/articles/race_detector)：动态检测的使用与覆盖范围；本章没有实际运行检测。
 
-按[学习路线](../learning_path.md)，下一章 05.05 从“可见性”转向 Go 的 G/M/P 调度、系统调用等待与网络轮询职责。离开本章前，应能为每个共享读写指出**同步边**，并说明**无数据竞争、完整业务快照和跨进程提交**分别需要什么保证。
+按[学习路线](../learning_path.md)，下一章[05.05 Go 调度模型](./05_scheduler_model.md)从“可见性”转向 Go 的 G/M/P 调度、系统调用等待与网络轮询职责。离开本章前，应能为每个共享读写指出**同步边**，并说明**无数据竞争、完整业务快照和跨进程提交**分别需要什么保证。

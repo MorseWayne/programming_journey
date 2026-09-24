@@ -26,9 +26,9 @@
   "original_sha256": "cc2094dc6dc1d3732905dad4cd3c291f351abf6a31041c239950ec190287dd4c",
   "original_characters": 34499,
   "generation_request_sha256": "5ca25c4ed0cb17496c480a102ea1c5a0c64321390e29b20e735cd0be306e3a66",
-  "reviewed_sha256": "5cee9d8db0467e2d4341e47d038f72f31f9b3215688f50085318353110952935",
-  "reviewed_characters": 8016,
-  "reviewed_chinese_characters": 3698,
+  "reviewed_sha256": "978ed75f3688758e0720f2a0226b67e6847b6b0bb5eae8f58023d07b141f7e9a",
+  "reviewed_characters": 8108,
+  "reviewed_chinese_characters": 3702,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/04_memory_model.md",
-  "course_sha256": "975b2915557dd12dc2a4bf54626616b8a1fe5ddbd98a3064b8be7451fb05a86e"
+  "course_sha256": "6cd1a8a739e9405e983d38f4a6715946938e5934d43a32b4ec49766095f88cea"
 }
