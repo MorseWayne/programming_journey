@@ -1,0 +1,30 @@
+{
+  "chapter": "02.07",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced lesson on finite IM due-task priority selection and fixed-window Top-K fictional conversation scores",
+  "prerequisites": [
+    "02.01 operation and asymptotic cost",
+    "02.02 FIFO queue and finite capacity",
+    "02.06 tree vocabulary and height"
+  ],
+  "first_pass": [
+    "FIFO versus priority queue operations",
+    "complete binary tree and zero-based slice indices",
+    "min-heap parent-child invariant"
+  ],
+  "second_pass": [
+    "swim and sink state transitions",
+    "Top-K retained-candidate invariant and K boundaries",
+    "due-time gate versus waking and execution",
+    "Go container/heap package-level versus interface operations",
+    "capacity, cancellation, fairness and restart limits"
+  ],
+  "not_yet_prerequisites": [
+    "S5 durable task recovery and retry semantics",
+    "05.04–05.07 runtime and memory depth",
+    "11.04–11.07 performance and capacity evidence"
+  ],
+  "next_chapter": "02.08 graph and dependency traversal",
+  "upstream_inspection": "No OpenIM implementation claim; Princeton, MIT and Go official materials support heap and priority-queue concepts.",
+  "shared_integration_pending": []
+}

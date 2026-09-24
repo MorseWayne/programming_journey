@@ -27,9 +27,9 @@
   "original_sha256": "82c2296af2088bf05fafc8731691eec27ec24009fe1d1f74d89ff14e4ab45c66",
   "original_characters": 28787,
   "generation_request_sha256": "5543c849e67e96b8771180c2b233b09c24fb4e2c79c0e985b8f1e3e0351917ad",
-  "reviewed_sha256": "3f7b98797671dca7d1cb44bd923e0e6b7543b377bb3b6eed6aa11fa4b7d5a34a",
-  "reviewed_characters": 7524,
-  "reviewed_chinese_characters": 3481,
+  "reviewed_sha256": "3e0b6b6d0222166e0c22aab31f330db6bc755a27f5889d16175483e471569e5f",
+  "reviewed_characters": 7627,
+  "reviewed_chinese_characters": 3487,
   "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/06_trees_ordered_index.md",
-  "course_sha256": "dfd1cd0379fbb77805a5cc0e02f841e15b321d700412771617f964fe759ffc3e"
+  "course_sha256": "200fa0f426cd509a17cedf28c144b184ed7f5a15162d29f58236c92b4233c66a"
 }

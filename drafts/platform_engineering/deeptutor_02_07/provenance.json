@@ -1,0 +1,33 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_71f1b53c7a",
+  "page_id": "pg_c44057e0f0",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://algs4.cs.princeton.edu/24pq/",
+      "https://pkg.go.dev/container/heap",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-4-heaps-and-heap-sort/"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "01742468cf11f0aff23e7e2ff644b87deaf6af75635a4cc50e047e064ed35c49",
+  "original_characters": 28847,
+  "generation_request_sha256": "a3ae9fa020909f61d580e30891600a8df6eb6f08ff035af760571069e294f6d4",
+  "reviewed_sha256": "b7d0b19debfa7467e5dac51ee34ed91610dc239a00f7f931172ec319729d8227",
+  "reviewed_characters": 7648,
+  "reviewed_chinese_characters": 3550,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/07_heap_priority_scheduling.md",
+  "course_sha256": "d87cac56e794b03ddee78cba220435eb75d88d8c5ceecc333800fdc27f438933"
+}

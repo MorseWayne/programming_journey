@@ -166,6 +166,7 @@ export default sidebar({
             "curriculum/02_algorithms/04_hash_sets",
             "curriculum/02_algorithms/05_sort_divide",
             "curriculum/02_algorithms/06_trees_ordered_index",
+            "curriculum/02_algorithms/07_heap_priority_scheduling",
             "curriculum/02_algorithms/core"
           ]
         },

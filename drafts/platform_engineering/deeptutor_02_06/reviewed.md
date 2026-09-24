@@ -202,4 +202,4 @@ PostgreSQL 官方文档把其 btree 索引描述为**多路平衡树**，支持�
 - [MIT 6.006 课程](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/)：树和搜索的算法前置。
 - [PostgreSQL：B-tree 索引](https://www.postgresql.org/docs/current/btree.html)与[SQLite：文件页/B-tree 格式](https://www.sqlite.org/fileformat.html)：有序多路树在数据库中的使用；本文玩具页树不代表其具体实现。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 02.07 用堆处理有优先级的有限任务，再以 02.08 的图解释用户关系与处理依赖；06.04/06.05 将把页和数据库索引结构深入展开。离开本章前，应能说明**哪条 IM 查询要点查、哪条要有序范围、索引高度何时退化、结果量为何不能被 O(log n) 抹掉**。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[02.07 堆与优先调度](../../../src/docs/platform_engineering/curriculum/02_algorithms/07_heap_priority_scheduling.md)用堆处理有优先级的有限任务，再以 02.08 的图解释用户关系与处理依赖；06.04/06.05 将把页和数据库索引结构深入展开。离开本章前，应能说明**哪条 IM 查询要点查、哪条要有序范围、索引高度何时退化、结果量为何不能被 O(log n) 抹掉**。
