@@ -1,0 +1,31 @@
+{
+  "chapter": "03.05",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced virtual-memory lesson for fictional IM gateway connection budgets, with toy page translations and no runtime measurements",
+  "prerequisites": [
+    "03.01 bytes, addresses and storage hierarchy",
+    "03.02 process address space and system calls",
+    "03.03 read-only process resource observation",
+    "03.04 runnable versus waiting work"
+  ],
+  "first_pass": [
+    "virtual range versus RAM residency",
+    "4 KiB page and 0x2345 address split",
+    "VPN-to-PFN page-table mapping and permissions"
+  ],
+  "second_pass": [
+    "TLB miss versus page fault",
+    "demand page creation, backing read and invalid access",
+    "VmSize, VmRSS and shared-page limits",
+    "conditional swap and 4096-connection toy budget"
+  ],
+  "not_yet_prerequisites": [
+    "03.06 allocation, mmap and Go heap/RSS reconciliation",
+    "03.10 actual memory diagnosis and sampling",
+    "03.11 cgroup limits and OOM",
+    "05.07 Go garbage-collection lifecycle"
+  ],
+  "next_chapter": "03.06 allocation and mapping",
+  "upstream_inspection": "No OpenIM implementation claim; OSTEP, Linux kernel documentation and Linux man-pages support general virtual-memory concepts and metric definitions.",
+  "shared_integration_pending": []
+}

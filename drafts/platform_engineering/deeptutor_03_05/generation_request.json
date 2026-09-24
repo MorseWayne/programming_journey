@@ -1,0 +1,74 @@
+{
+  "code": "03.05",
+  "title": "虚拟内存：从地址翻译到网关驻留预算",
+  "chapter_id": "ch_virtual_memory",
+  "summary": "面向Go初学者承接字节、地址、进程与CPU调度，以虚构IM连接预算讲页、地址拆分、页表、TLB、缺页、RSS与交换；区分虚拟空间、驻留及Go对象统计。",
+  "objectives": [
+    "区分地址空间、映射与物理驻留",
+    "手算4KiB页地址拆分与映射",
+    "解释页表与权限",
+    "区分TLB miss和page fault",
+    "区分合法首次触碰与非法访问",
+    "理解RSS和虚拟内存统计的边界",
+    "估算有限连接的玩具内存预算"
+  ],
+  "sources": [
+    "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+    "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf",
+    "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf",
+    "https://www.kernel.org/doc/html/v4.19/admin-guide/mm/concepts.html",
+    "https://man7.org/linux/man-pages/man5/proc_pid_status.5.html",
+    "https://man7.org/linux/man-pages/man5/proc_pid_statm.5.html"
+  ],
+  "sections": [
+    {
+      "title": "一、虚拟地址为什么不等于已占RAM",
+      "words": 2200,
+      "focus": "承接03.01字节/地址/RSS、03.02进程地址空间、03.03只读进程观察、03.04等待与调度；虚构IM网关4096连接每条保留8KiB只触碰4KiB，纸上申请32MiB、触碰16MiB，页表/共享/运行时未计；区分虚拟空间、映射、驻留、Go对象。"
+    },
+    {
+      "title": "二、页和页框的地址计算",
+      "words": 2300,
+      "focus": "先补二进制与KiB：4KiB=4096=2^12，虚拟地址分虚拟页号VPN和12位页内偏移；0x2345=VPN2 offset0x345=837，若VPN2映到物理页框PFN7，则物理0x7345，偏移不变；明确这是玩具映射，不宣称Linux/CPU真实页表就如此。"
+    },
+    {
+      "title": "三、页表、映射与权限",
+      "words": 2300,
+      "focus": "页表为进程虚拟页到物理页框的映射及读写执行权限；同一虚拟地址在不同进程可映不同物理页，连续虚拟页不必连续物理；未映射访问与已映射但未驻留/受保护访问分开，PTE和VMA仅入门概念。"
+    },
+    {
+      "title": "四、TLB命中与未命中",
+      "words": 2300,
+      "focus": "TLB缓存近期页地址翻译和权限，缓存命中直接得到页框；未命中需查页表，若有效且驻留可填TLB，未必缺页。用VPN2首次TLB miss但PTE present，第二次hit纸上流程；TLB不是缓存消息正文的CPU数据cache。"
+    },
+    {
+      "title": "五、缺页异常的几种结果",
+      "words": 2400,
+      "focus": "访问有效延迟分配页第一次触碰可触发零填充/次要缺页；文件页或换出页可能需I/O/较大缺页；不在合法地址范围或权限错误会失败，不是自动给内存。TLB miss不等于page fault，page fault不一定磁盘I/O；Go初学者理解故障原因分类。"
+    },
+    {
+      "title": "六、驻留、RSS与交换",
+      "words": 2400,
+      "focus": "纸上3页保留12KiB只触碰2页理想驻留8KiB；实际VmSize和VmRSS/RssAnon/RssFile/RssShmem口径、共享页重复计算、统计不精确；swap仅在启用且策略允许时参与，不能假设所有页都可交换；资源限制和OOM另章节。"
+    },
+    {
+      "title": "七、IM连接预算和诊断问题",
+      "words": 2400,
+      "focus": "4096连接×每条保留8KiB=32MiB虚拟，对应触碰4KiB=16MiB理想新增RSS，不含对象头、页表、stack、缓冲、文件映射、共享；连接数与RSS关系需观测；区分进程泄漏、Go堆保留、页缓存，03.06才深入分配/mmap。"
+    },
+    {
+      "title": "八、纸上地址与指标练习",
+      "words": 2300,
+      "focus": "交付0x2345地址拆分与映射、TLB miss无缺页、合法首次触碰与非法访问对比、3页和4096连接预算；22道分层练习和反例反馈。静态不运行Go/Linux内存实验/站点；下一03.06分配与映射。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.05 虚拟内存》，面向Go初学者。八节渐进，固定4KiB页/0x2345→VPN2+offset0x345/PFN7→0x7345的玩具计算，并用4096连接内存预算、TLB miss与缺页的区别解释IM网关现象。至少22道练习附反馈，不把保留地址空间、RSS、Go对象和内存泄漏等同；不运行Go/Linux/站点。\n1. 一、虚拟地址为什么不等于已占RAM：承接03.01字节/地址/RSS、03.02进程地址空间、03.03只读进程观察、03.04等待与调度；虚构IM网关4096连接每条保留8KiB只触碰4KiB，纸上申请32MiB、触碰16MiB，页表/共享/运行时未计；区分虚拟空间、映射、驻留、Go对象。\n2. 二、页和页框的地址计算：先补二进制与KiB：4KiB=4096=2^12，虚拟地址分虚拟页号VPN和12位页内偏移；0x2345=VPN2 offset0x345=837，若VPN2映到物理页框PFN7，则物理0x7345，偏移不变；明确这是玩具映射，不宣称Linux/CPU真实页表就如此。\n3. 三、页表、映射与权限：页表为进程虚拟页到物理页框的映射及读写执行权限；同一虚拟地址在不同进程可映不同物理页，连续虚拟页不必连续物理；未映射访问与已映射但未驻留/受保护访问分开，PTE和VMA仅入门概念。\n4. 四、TLB命中与未命中：TLB缓存近期页地址翻译和权限，缓存命中直接得到页框；未命中需查页表，若有效且驻留可填TLB，未必缺页。用VPN2首次TLB miss但PTE present，第二次hit纸上流程；TLB不是缓存消息正文的CPU数据cache。\n5. 五、缺页异常的几种结果：访问有效延迟分配页第一次触碰可触发零填充/次要缺页；文件页或换出页可能需I/O/较大缺页；不在合法地址范围或权限错误会失败，不是自动给内存。TLB miss不等于page fault，page fault不一定磁盘I/O；Go初学者理解故障原因分类。\n6. 六、驻留、RSS与交换：纸上3页保留12KiB只触碰2页理想驻留8KiB；实际VmSize和VmRSS/RssAnon/RssFile/RssShmem口径、共享页重复计算、统计不精确；swap仅在启用且策略允许时参与，不能假设所有页都可交换；资源限制和OOM另章节。\n7. 七、IM连接预算和诊断问题：4096连接×每条保留8KiB=32MiB虚拟，对应触碰4KiB=16MiB理想新增RSS，不含对象头、页表、stack、缓冲、文件映射、共享；连接数与RSS关系需观测；区分进程泄漏、Go堆保留、页缓存，03.06才深入分配/mmap。\n8. 八、纸上地址与指标练习：交付0x2345地址拆分与映射、TLB miss无缺页、合法首次触碰与非法访问对比、3页和4096连接预算；22道分层练习和反例反馈。静态不运行Go/Linux内存实验/站点；下一03.06分配与映射。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

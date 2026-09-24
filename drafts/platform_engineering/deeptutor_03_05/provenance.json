@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_af0cb34ee4",
+  "page_id": "pg_5a01e6463b",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf",
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf",
+      "https://www.kernel.org/doc/html/v4.19/admin-guide/mm/concepts.html",
+      "https://man7.org/linux/man-pages/man5/proc_pid_status.5.html",
+      "https://man7.org/linux/man-pages/man5/proc_pid_statm.5.html"
+    ],
+    "upstream_implementation_claims": false
+  },
+  "original_sha256": "ee4da9df964cf711c7af54152e5b5d9749936ed3604506a69fb440b790f336f9",
+  "original_characters": 30310,
+  "generation_request_sha256": "0172acd8437fd7626f58bdca8e0c4e94f2f837fd088472a95b90fe6ad156f4a9",
+  "reviewed_sha256": "64ce0d5d2161df15333bcab290ecc7922925dc6b0dd24f55710d39f02a77f2e6",
+  "reviewed_characters": 7339,
+  "reviewed_chinese_characters": 3456,
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/05_virtual_memory.md",
+  "course_sha256": "9221bdcee090e4a2e8d5699eacc0cadc2d9d250dd9dbf09c56d880a94ffdabb4"
+}

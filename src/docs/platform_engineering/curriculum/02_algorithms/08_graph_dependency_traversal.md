@@ -202,4 +202,4 @@ B→D→E→B，因此没有拓扑顺序。</details>
 - [Princeton《Algorithms》有向图](https://algs4.cs.princeton.edu/42digraph/)：有向环、DAG 与拓扑顺序。
 - [MIT 6.006 BFS 课程](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/lecture-13-breadth-first-search-bfs/)及[课程讲义](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/pages/lecture-notes/)：图表示、BFS、DFS 与拓扑的课程前置。
 
-按[学习路线](../learning_path.md)，S4 主线下一章是 03.05 的虚拟内存；需要比较带权路径时再回到 02.09，区分最少跳数与最低代价。离开本章前，应能独立说出**什么是边、何时标记、BFS/DFS 各保证什么、何种环阻止拓扑顺序，以及图结果不能替代哪项 IM 业务检查**。
+按[学习路线](../learning_path.md)，S4 主线下一章是[03.05 虚拟内存](../03_systems/05_virtual_memory.md)；需要比较带权路径时再回到 02.09，区分最少跳数与最低代价。离开本章前，应能独立说出**什么是边、何时标记、BFS/DFS 各保证什么、何种环阻止拓扑顺序，以及图结果不能替代哪项 IM 业务检查**。
