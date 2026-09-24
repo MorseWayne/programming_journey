@@ -1,0 +1,74 @@
+{
+  "code": "06.12",
+  "title": "数据库业务案例：消息保存、历史与热点",
+  "chapter_id": "ch_database_business_case",
+  "summary": "面向Go初学者，综合数据库卷与现有IM HTTP教学合同，评审消息保存、唯一序号、重复请求、历史查询、热点与故障迁移。",
+  "objectives": [
+    "区分S2内存受理与S3提议的数据库提交",
+    "设计同事务成员资格/序号/消息写入",
+    "保持409重复拒绝合同并处理提交未知",
+    "手算历史游标结果",
+    "区分权威消息与派生摘要/设备通知",
+    "识别热点计数器的序列化代价",
+    "交付故障与迁移证据矩阵"
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/sql-insert.html",
+    "https://www.postgresql.org/docs/current/sql-createindex.html",
+    "https://www.postgresql.org/docs/current/transaction-iso.html",
+    "https://go.dev/doc/database/execute-transactions",
+    "https://www.mongodb.com/docs/manual/core/write-operations-atomicity/",
+    "https://www.postgresql.org/docs/current/wal-intro.html"
+  ],
+  "sections": [
+    {
+      "title": "一、把数据库业务案例绑定到既有接口合同",
+      "words": 2600,
+      "focus": "承接06.01–06.11与09.02/09.12。S2 v1 POST 200 accepted_in_memory，S3 v2仅纸上提出200 stored_in_teaching_db；两者都是6 UTF-8字节正文、4096B请求上限，R9到9B仍待审。虚构c-a已有seq1..8，u-a/u-b成员、u-c非成员，下一条m-9 body你好(6B)；身份来自可信登录。"
+    },
+    {
+      "title": "二、表、唯一约束与历史读取",
+      "words": 2900,
+      "focus": "06.01四表messages.message_id PK、UNIQUE(conversation_id,seq)、body 1..6 bytes；members.left_at IS NULL。未来v2 GET c-a最新limit3在m-9提交后应得9,8,7，cursor seq<7下一页6,5,4；非成员u-c隐藏404，权限每次核验，不把索引/游标当授权。"
+    },
+    {
+      "title": "三、消息写入与会话序号的事务",
+      "words": 3300,
+      "focus": "提出教学扩展conversation_counters(conversation_id,next_seq)初始c-a next_seq=9；同一SQL Tx先有界校验及u-a身份，SELECT members... FOR UPDATE，锁counter行取9并更新10，插messages(m-9,c-a,u-a,seq9,body你好)，commit。退群更新同成员行冲突，其他发送不同成员仍竞争counter。若回滚counter更新同Tx回滚，区别PostgreSQL sequence对象不保证无间隙；UNIQUE作最终护栏。Go所有操作同Tx。"
+    },
+    {
+      "title": "四、重复请求与提交未知",
+      "words": 2900,
+      "focus": "现有S2同ID无论正文相同均409且不修改原值；v2纸上保持此判定直到接口另审。m-9网络超时后不能断言未提交、也不换ID；经授权向权威数据源查m-9并比会话/发送者/正文或请求意图，若仍未知保留未知；再次409只证明ID占用不证明同一请求成功。S3 stored仅已知commit，不含设备已读。"
+    },
+    {
+      "title": "五、派生摘要、在线通知与批量",
+      "words": 2900,
+      "focus": "如果conversation preview/unread为可重建派生状态，可异步更新并给修复对账；若合同要求必须同步则纳入同Tx。提交后尝试WebSocket，失败不回滚消息，离线补拉后续。批量历史/批量通知限制规模和游标、每条权限/唯一约束，不凭一个大事务保证设备交付。"
+    },
+    {
+      "title": "六、热点会话与容量取舍",
+      "words": 3000,
+      "focus": "c-g高消息率使单会话counter行热点，按顺序语义需串行化序号；候选分段/预留范围/分片改变连续性和故障处理，未经评审不可直接切。通过等待时间、锁、吞吐、写入P95、seq冲突、队列、回表/索引维护证据评估；热点消息正文、附件和派生状态分开。不要编造性能收益。"
+    },
+    {
+      "title": "七、故障、复制迁移与证据矩阵",
+      "words": 3000,
+      "focus": "从非法9B、u-c非成员、退群交错、同ID409、事务回滚、COMMIT结果未知、通知失败、主副本滞后、A/B迁移缺7多9逐行给已知/未知/查证；C3本机WAL前提与RPO/RTO；对账按稳定ID同水位，S2/S3合同不暗改。"
+    },
+    {
+      "title": "八、业务验收与22题",
+      "words": 2900,
+      "focus": "交付静态方案：输入/输出、四表+counter扩展、Tx时间线、seq9/10双发送、cursor分页、失败矩阵、热点测量门、迁移回滚。22题先词汇后纸上数据再业务评审附反馈。全静态不运行Go/SQL/数据库/服务/站点，下一07卷缓存和消息中间件。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《06.12 数据库业务案例》，八节理论与实践相融且22道分层练习反馈，面向Go初学者。必须严格继承本项目合同：S2 v1当前POST 200 accepted_in_memory；S3 v2仅提议的POST 200 stored_in_teaching_db；两者正文非空最多6 UTF-8字节、HTTP正文最多4096B；R9升至9B待审；同会话重复message_id一律409且原记录不变，不自动变成功幂等响应。虚构c-a已有seq1..8，u-a/u-b成员、u-c非成员；m-9 body你好为6B；教学新增conversation_counters next_seq=9，在同一事务锁members和counter、分配seq9更新next_seq10、插message并COMMIT，序号最终由UNIQUE(conversation_id,seq)保护。它是教学扩展，不是06.01现有表字段。已知提交后最新3条9,8,7，cursor seq<7得6,5,4；u-c隐藏404。网络超时提交未知要按稳定m-9授权查权威数据；再次409只说明ID冲突不证明同一意图。提交后通知失败不回滚，热点counter序列化需测量，复制迁移按06.11同水位。禁止声称实际OpenIM实现。静态不运行Go/SQL/数据库/服务/站点。\n1. 一、把数据库业务案例绑定到既有接口合同: 承接06.01–06.11与09.02/09.12。S2 v1 POST 200 accepted_in_memory，S3 v2仅纸上提出200 stored_in_teaching_db；两者都是6 UTF-8字节正文、4096B请求上限，R9到9B仍待审。虚构c-a已有seq1..8，u-a/u-b成员、u-c非成员，下一条m-9 body你好(6B)；身份来自可信登录。\n2. 二、表、唯一约束与历史读取: 06.01四表messages.message_id PK、UNIQUE(conversation_id,seq)、body 1..6 bytes；members.left_at IS NULL。未来v2 GET c-a最新limit3在m-9提交后应得9,8,7，cursor seq<7下一页6,5,4；非成员u-c隐藏404，权限每次核验，不把索引/游标当授权。\n3. 三、消息写入与会话序号的事务: 提出教学扩展conversation_counters(conversation_id,next_seq)初始c-a next_seq=9；同一SQL Tx先有界校验及u-a身份，SELECT members... FOR UPDATE，锁counter行取9并更新10，插messages(m-9,c-a,u-a,seq9,body你好)，commit。退群更新同成员行冲突，其他发送不同成员仍竞争counter。若回滚counter更新同Tx回滚，区别PostgreSQL sequence对象不保证无间隙；UNIQUE作最终护栏。Go所有操作同Tx。\n4. 四、重复请求与提交未知: 现有S2同ID无论正文相同均409且不修改原值；v2纸上保持此判定直到接口另审。m-9网络超时后不能断言未提交、也不换ID；经授权向权威数据源查m-9并比会话/发送者/正文或请求意图，若仍未知保留未知；再次409只证明ID占用不证明同一请求成功。S3 stored仅已知commit，不含设备已读。\n5. 五、派生摘要、在线通知与批量: 如果conversation preview/unread为可重建派生状态，可异步更新并给修复对账；若合同要求必须同步则纳入同Tx。提交后尝试WebSocket，失败不回滚消息，离线补拉后续。批量历史/批量通知限制规模和游标、每条权限/唯一约束，不凭一个大事务保证设备交付。\n6. 六、热点会话与容量取舍: c-g高消息率使单会话counter行热点，按顺序语义需串行化序号；候选分段/预留范围/分片改变连续性和故障处理，未经评审不可直接切。通过等待时间、锁、吞吐、写入P95、seq冲突、队列、回表/索引维护证据评估；热点消息正文、附件和派生状态分开。不要编造性能收益。\n7. 七、故障、复制迁移与证据矩阵: 从非法9B、u-c非成员、退群交错、同ID409、事务回滚、COMMIT结果未知、通知失败、主副本滞后、A/B迁移缺7多9逐行给已知/未知/查证；C3本机WAL前提与RPO/RTO；对账按稳定ID同水位，S2/S3合同不暗改。\n8. 八、业务验收与22题: 交付静态方案：输入/输出、四表+counter扩展、Tx时间线、seq9/10双发送、cursor分页、失败矩阵、热点测量门、迁移回滚。22题先词汇后纸上数据再业务评审附反馈。全静态不运行Go/SQL/数据库/服务/站点，下一07卷缓存和消息中间件。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

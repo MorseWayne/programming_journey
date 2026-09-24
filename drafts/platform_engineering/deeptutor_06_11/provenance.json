@@ -30,9 +30,9 @@
   "original_sha256": "042e27e093f16fd85113356e00d86efa6a13de271dc49cdebc2f5ac56f94c08c",
   "original_characters": 30948,
   "generation_request_sha256": "3ee228b0da5c9a54f63861ea50ff0b965f26213b3c2ecca5796f4fa5122d1f89",
-  "reviewed_sha256": "3bc7d723b14fd5af14dd3e888f6604b0ebef954165ce913f4d8e22edd777cc43",
-  "reviewed_characters": 9161,
-  "reviewed_chinese_characters": 4390,
+  "reviewed_sha256": "f228775f42ac309d7365dabe73f21ad2ffb5e4a04313e489f7e6dc39017fb3f5",
+  "reviewed_characters": 9262,
+  "reviewed_chinese_characters": 4397,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/11_replication_migration_reconciliation.md",
-  "course_sha256": "98311015747d4176b86b069f436f3c8e105f529384f8356ac8dc05110a299c5f"
+  "course_sha256": "f8aa62d37274ee5c71c7cbf6df8c50ef4d180f7347ce7a2f5683d480ab8bb7f4"
 }

@@ -1,0 +1,31 @@
+{
+  "chapter": "06.12",
+  "stage": "S5",
+  "business_scope": "static full database business case for fictional IM c-a message m-9 and history",
+  "prerequisites": [
+    "06.01–06.11 database model, SQL, indexes, transactions, recovery and migration",
+    "09.02 existing S2 HTTP contract",
+    "09.12 proposed S3 v2 teaching contract",
+    "11.01–11.03 measurement and evidence boundaries"
+  ],
+  "first_pass": [
+    "S2 accepted_in_memory versus proposed S3 stored_in_teaching_db and pending R9",
+    "four tables plus explicit teaching conversation_counters extension",
+    "same-Tx member and counter lock, seq9 assignment and m-9 insert",
+    "history pages 9,8,7 then 6,5,4"
+  ],
+  "second_pass": [
+    "duplicate message ID returns 409 without changing old record",
+    "commit unknown requires authorized authority lookup, not a new ID",
+    "derived preview, notification, batching and hot conversation costs",
+    "failure matrix, replica lag and same-watermark migration reconciliation"
+  ],
+  "not_yet_prerequisites": [
+    "07 cache and messaging details",
+    "08 distributed coordination and consistency details",
+    "real service and database verification by the learner"
+  ],
+  "next_chapter": "07 cache and messaging volume",
+  "upstream_inspection": "No OpenIM implementation claim; PostgreSQL, Go and MongoDB primary documentation supports only the stated general API/storage mechanisms.",
+  "shared_integration_pending": []
+}

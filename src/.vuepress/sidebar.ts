@@ -240,6 +240,7 @@ export default sidebar({
             "curriculum/06_databases/09_logging_recovery",
             "curriculum/06_databases/10_go_data_access",
             "curriculum/06_databases/11_replication_migration_reconciliation",
+            "curriculum/06_databases/12_database_business_case",
             "curriculum/06_databases/core"
           ]
         },
