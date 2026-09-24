@@ -191,4 +191,4 @@ MongoDB Go 驱动的 `WithTransaction` 便于组织事务，但回调在某些�
 - [PostgreSQL：事务教程](https://www.postgresql.org/docs/current/tutorial-transactions.html)与[隔离级别](https://www.postgresql.org/docs/current/transaction-iso.html)：读已提交、稳定快照、可串行化与重试。
 - [MongoDB：单文档原子性](https://www.mongodb.com/docs/manual/core/write-operations-atomicity/)、[Go 驱动事务](https://www.mongodb.com/docs/drivers/go/current/crud/transactions/)与[应用中的提交重试](https://www.mongodb.com/docs/manual/core/transactions-in-applications/)：单/多文档边界和未知提交结果。
 
-下一步 06.08 深入锁与 MVCC，06.09 再讨论日志和崩溃恢复；索引及执行计划在 S4 配合历史查询深化。离开本章前，应能用**时间线与业务顺序**解释一条消息为何可写、为何可能被拒绝，以及提交后还有哪些结果未知。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一步进入[09.05 数据访问与迁移](../../../src/docs/platform_engineering/curriculum/09_backend_security/05_data_access_migration.md)，把事务判断接回应用用例；06.08 的锁与 MVCC、06.09 的日志与崩溃恢复以及索引执行计划在 S4 深化。离开本章前，应能用**时间线与业务顺序**解释一条消息为何可写、为何可能被拒绝，以及提交后还有哪些结果未知。

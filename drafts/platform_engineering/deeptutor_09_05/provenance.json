@@ -1,0 +1,43 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_3cd8d5f321",
+  "page_id": "pg_248c5e14e3",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/database/",
+      "https://go.dev/doc/database/querying",
+      "https://go.dev/doc/database/execute-transactions",
+      "https://go.dev/doc/database/sql-injection",
+      "https://www.postgresql.org/docs/current/ddl-alter.html",
+      "https://www.mongodb.com/docs/drivers/go/current/crud/query/cursor/",
+      "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f",
+    "inspected_files": [
+      "internal/rpc/msg/send.go",
+      "internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ]
+  },
+  "original_sha256": "15e2cd0f25f56213777405d64aa054215b04f6b7fbfb8ce6755aa55c20f0b2b9",
+  "original_characters": 32939,
+  "generation_request_sha256": "101febc0e8bae6a65229c83a7fd9c9dab1bef807101909e823be83a59f7b567a",
+  "reviewed_sha256": "9be6576a61e8b265a847814112642ccc1368d706754b3d1efcbecb9a1f78b80a",
+  "reviewed_characters": 9748,
+  "reviewed_chinese_characters": 4195,
+  "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/05_data_access_migration.md",
+  "course_sha256": "0001a1879d803d8c722c140945098a7771238769ecab64fbfd409fe15aa01e5e"
+}

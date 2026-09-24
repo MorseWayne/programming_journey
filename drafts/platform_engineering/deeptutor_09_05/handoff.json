@@ -1,0 +1,12 @@
+{
+  "chapter": "09.05",
+  "stage": "S3",
+  "business_scope": "fictional IM send and history-read use cases with a PostgreSQL teaching design; bounded contrast to fixed OpenIM MsgToMQ send and separate MongoDB consumer calls, no runtime measurement or uninspected queue guarantee",
+  "prerequisites": ["09.01–09.04 request and application boundaries", "06.01–06.03 relational model, SQL and migration", "06.10 Go data access and resource lifecycle", "06.07 transactions and concurrent membership"],
+  "first_pass": ["three result checkpoints and two application use cases", "handler/application/data access responsibilities", "trusted subject, bounded history pagination and error categories", "teaching SQL transaction and commit uncertainty"],
+  "second_pass": ["nullable historical display-name migration", "layered verification evidence", "fixed OpenIM send.go MsgToMQ versus separate Mongo consumer BatchInsertChat2DB", "unverified MQ acknowledgements and device delivery"],
+  "not_yet_prerequisites": ["09.06 browser and client boundary", "09.07 authentication and authorization deepening", "09.08 full input/output defenses", "S5 asynchronous delivery and retry guarantees"],
+  "next_chapter": "09.06 browser and client boundary for the fictional IM UI",
+  "upstream_inspection": "Inspected fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f internal/rpc/msg/send.go group and isSend single branches, and internal/msgtransfer/online_msg_to_mongo_handler.go consumer call; no queue ack, retry, DB write-concern or device-delivery claim.",
+  "shared_integration_pending": []
+}

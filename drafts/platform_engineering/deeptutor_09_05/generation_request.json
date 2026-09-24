@@ -1,0 +1,77 @@
+{
+  "code": "09.05",
+  "title": "数据访问与迁移：让IM历史查询和消息提交有清楚边界",
+  "chapter_id": "ch_backend_data_access_migration",
+  "summary": "面向Go初学者承接应用用例、关系模型、SQL、Go数据访问和事务，以虚构IM发送/历史查询讲应用与数据访问职责、权限、参数、资源、提交未知、模式迁移和分层验证；仅用固定OpenIM源码已查看的MsgToMQ与Mongo消费者调用说明上游异步边界，不将教学SQL事务说成上游实现。",
+  "objectives": [
+    "给发送与历史查询定义业务合同和确认点",
+    "区分handler、应用用例和数据访问层职责",
+    "用受信主体和参数读取有界历史页",
+    "为发送写入定义同一事务和并发冲突条件",
+    "分类冲突、无权限、无行与提交未知",
+    "设计可兼容的昵称快照迁移",
+    "按证据层次审查虚构测试数据和CI记录",
+    "对照固定OpenIM发送入队与Mongo消费源码的有限事实"
+  ],
+  "sources": [
+    "https://go.dev/doc/database/",
+    "https://go.dev/doc/database/querying",
+    "https://go.dev/doc/database/execute-transactions",
+    "https://go.dev/doc/database/sql-injection",
+    "https://www.postgresql.org/docs/current/ddl-alter.html",
+    "https://www.mongodb.com/docs/drivers/go/current/crud/query/cursor/",
+    "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://raw.githubusercontent.com/openimsdk/open-im-server/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、从P2内存受理升级到S3持久历史",
+      "words": 2400,
+      "focus": "承接09.01–09.04双用例、06.01–06.03关系模型/SQL/模式演进、06.10Go访问、06.07事务。虚构u-a/c-a/m-a，需求：授权后发送和按会话历史查询，明确教学SQL事务提交点、A收到响应、B设备送达三个边界；静态课程不运行服务。"
+    },
+    {
+      "title": "二、应用用例与数据访问接口的职责",
+      "words": 2600,
+      "focus": "handler只解析验证参数/受信身份、应用服务定义权限和结果、数据访问层封装查询/驱动/错误；接口按用例能力设计不按表每张抽一层。读取可定义ReadVisibleHistory或成员授权+查询同一一致性边界，不能检查权限后产生TOCTOU而谎称强保证；写入事务边界靠接口合同清楚表达。Go小接口伪代码。"
+    },
+    {
+      "title": "三、历史查询：参数、游标、可见范围和资源",
+      "words": 2700,
+      "focus": "沿u-a读c-a上一页seq=2，PostgreSQL参数$1/$2/$3，服务端受信subject不可来自请求体；成员当前快照规则与历史资格策略区别；ORDER BY seq DESC LIMIT，Rows.Close/Err和NULL快照处理，返回字段最小化，SQL模型仅教学。MongoDB文档路径以Client/Collection/Cursor对照，有界Filter/Sort/Limit并关闭；引用不自动FK。"
+    },
+    {
+      "title": "四、发送写入：事务、约束和结果未知",
+      "words": 2700,
+      "focus": "u-a发m-a，字段校验UTF8字节与消息身份，成员检查、seq分配、消息写入、会话摘要同一SQL Tx且对退群建立并发受控顺序；错误分类 duplicate key/foreign key/invalid/auth/db unavailable; Commit附近断网可能未知，不能盲目换ID重试。教学确认是Tx commit if known，设备送达另行。上游实际异步路径不照搬SQL。"
+    },
+    {
+      "title": "五、模式迁移与旧新版本共存",
+      "words": 2500,
+      "focus": "06.03发送时昵称快照新可空列，旧行未知，扩展→新写入→兼容读→可信来源回填→核对→按条件收紧/清理；API输出明确当前名/历史快照来源，失败不能把当前名伪作发送时名。迁移批次、覆盖率、回退窗口、测试数据虚构；不运行DDL。"
+    },
+    {
+      "title": "六、测试数据和证据分层",
+      "words": 2400,
+      "focus": "用虚构u-a/u-b/c-a/m-a, 非成员u-c、重复m-a、10字节正文、成员退出并发、数据库断联、commit结果未知，列单元/接口/隔离DB集成/端到端证据，静态案例说明而非声称运行；CI10.09记录提交、命令、结果；不记录真实正文/令牌。"
+    },
+    {
+      "title": "七、对照固定OpenIM发送与Mongo消费源码",
+      "words": 2600,
+      "focus": "固定openimsdk/open-im-server commit f6411a8a1a31d3df36f4c2b3ad28481a94141e1f。已实际查看 internal/rpc/msg/send.go lines46-70 and 140-175: group/single path calls MsgDatabase.MsgToMQ then returns response with IDs/time; internal/msgtransfer/online_msg_to_mongo_handler.go lines43-69: consumer unmarshal then BatchInsertChat2DB, reports success/failure metric. 只据此说RPC发送返回不是这段Mongo写入完成证据；不推断队列ack/持久保证、事务边界或设备送达。教学SQL方案与上游异步实现并排，两条路径确认点/故障不同。"
+    },
+    {
+      "title": "八、完整用例纸上审阅与22道练习",
+      "words": 2900,
+      "focus": "交付两条调用图、权限/事务/迁移检查表、OpenIM固定源码事实vs教学模型表、已知/未知/下一证据；22题从边界和参数/资源到冲突、迁移、源码判断。下一09.06浏览器/客户端边界与09.07认证授权，Mongo索引深层S4，S5异步保证。无Go/DB/IM/站点运行。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文教材《09.05 数据访问与迁移》，面向Go初学者，承接09.01–09.04应用层与06.01–06.03/06.10/06.07数据库基础。以虚构IM发送和历史读取两个用例，讲分层职责、受信身份、SQL参数/资源、事务/结果未知、兼容迁移、验证证据。对照已实际阅读的固定OpenIM源码：send.go调用MsgToMQ后返回，online_msg_to_mongo_handler.go消费者另行调用BatchInsertChat2DB；只讲这两处能证明的异步边界，不推断队列/设备保证。八节丰富正文、22道附反馈练习，静态不运行Go/数据库/IM/站点。\n1. 一、从P2内存受理升级到S3持久历史：承接09.01–09.04双用例、06.01–06.03关系模型/SQL/模式演进、06.10Go访问、06.07事务。虚构u-a/c-a/m-a，需求：授权后发送和按会话历史查询，明确教学SQL事务提交点、A收到响应、B设备送达三个边界；静态课程不运行服务。\n2. 二、应用用例与数据访问接口的职责：handler只解析验证参数/受信身份、应用服务定义权限和结果、数据访问层封装查询/驱动/错误；接口按用例能力设计不按表每张抽一层。读取可定义ReadVisibleHistory或成员授权+查询同一一致性边界，不能检查权限后产生TOCTOU而谎称强保证；写入事务边界靠接口合同清楚表达。Go小接口伪代码。\n3. 三、历史查询：参数、游标、可见范围和资源：沿u-a读c-a上一页seq=2，PostgreSQL参数$1/$2/$3，服务端受信subject不可来自请求体；成员当前快照规则与历史资格策略区别；ORDER BY seq DESC LIMIT，Rows.Close/Err和NULL快照处理，返回字段最小化，SQL模型仅教学。MongoDB文档路径以Client/Collection/Cursor对照，有界Filter/Sort/Limit并关闭；引用不自动FK。\n4. 四、发送写入：事务、约束和结果未知：u-a发m-a，字段校验UTF8字节与消息身份，成员检查、seq分配、消息写入、会话摘要同一SQL Tx且对退群建立并发受控顺序；错误分类 duplicate key/foreign key/invalid/auth/db unavailable; Commit附近断网可能未知，不能盲目换ID重试。教学确认是Tx commit if known，设备送达另行。上游实际异步路径不照搬SQL。\n5. 五、模式迁移与旧新版本共存：06.03发送时昵称快照新可空列，旧行未知，扩展→新写入→兼容读→可信来源回填→核对→按条件收紧/清理；API输出明确当前名/历史快照来源，失败不能把当前名伪作发送时名。迁移批次、覆盖率、回退窗口、测试数据虚构；不运行DDL。\n6. 六、测试数据和证据分层：用虚构u-a/u-b/c-a/m-a, 非成员u-c、重复m-a、10字节正文、成员退出并发、数据库断联、commit结果未知，列单元/接口/隔离DB集成/端到端证据，静态案例说明而非声称运行；CI10.09记录提交、命令、结果；不记录真实正文/令牌。\n7. 七、对照固定OpenIM发送与Mongo消费源码：固定openimsdk/open-im-server commit f6411a8a1a31d3df36f4c2b3ad28481a94141e1f。已实际查看 internal/rpc/msg/send.go lines46-70 and 140-175: group/single path calls MsgDatabase.MsgToMQ then returns response with IDs/time; internal/msgtransfer/online_msg_to_mongo_handler.go lines43-69: consumer unmarshal then BatchInsertChat2DB, reports success/failure metric. 只据此说RPC发送返回不是这段Mongo写入完成证据；不推断队列ack/持久保证、事务边界或设备送达。教学SQL方案与上游异步实现并排，两条路径确认点/故障不同。\n8. 八、完整用例纸上审阅与22道练习：交付两条调用图、权限/事务/迁移检查表、OpenIM固定源码事实vs教学模型表、已知/未知/下一证据；22题从边界和参数/资源到冲突、迁移、源码判断。下一09.06浏览器/客户端边界与09.07认证授权，Mongo索引深层S4，S5异步保证。无Go/DB/IM/站点运行。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

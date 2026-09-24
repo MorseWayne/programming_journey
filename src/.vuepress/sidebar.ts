@@ -240,6 +240,7 @@ export default sidebar({
             "curriculum/09_backend_security/02_http_api_contract",
             "curriculum/09_backend_security/03_program_organization",
             "curriculum/09_backend_security/04_request_pipeline",
+            "curriculum/09_backend_security/05_data_access_migration",
             "curriculum/09_backend_security/core"
           ]
         },
