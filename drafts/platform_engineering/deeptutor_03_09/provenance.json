@@ -29,9 +29,9 @@
   "original_sha256": "8349c78cfce3295f0804cc40852f929f95924e830797ba50152d521cce77c5c7",
   "original_characters": 30849,
   "generation_request_sha256": "b55edea7b8e65547f994ae61eed79173099bb080e755f09030a6a87243edd6d5",
-  "reviewed_sha256": "095cea998ad45eb10e5fa5ba59e9f1951c70fb971d56e05ffde43111eb23d568",
-  "reviewed_characters": 7764,
-  "reviewed_chinese_characters": 3697,
+  "reviewed_sha256": "357b58265a0f4b9734aeb2a9b73071c5dc44a957672523173eee04703abaee05",
+  "reviewed_characters": 7856,
+  "reviewed_chinese_characters": 3701,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/09_io_event_notification.md",
-  "course_sha256": "24584396c257d92560b5a8e2c81a8315f3041b27353e075195556964f0c3a764"
+  "course_sha256": "738ec3f70026982481f0844d54d89fef6c4a633a7d2acb1faf324fc971cab1a2"
 }

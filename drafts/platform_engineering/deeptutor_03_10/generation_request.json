@@ -1,0 +1,74 @@
+{
+  "code": "03.10",
+  "title": "系统诊断：从 IM 消息时延到资源证据链",
+  "chapter_id": "ch_system_diagnostics",
+  "summary": "面向Go初学者，承接进程、CPU、虚拟内存、持久化和网络I/O，以虚构IM历史查询时延升高为线索，建立症状→假设→只读证据→反例的诊断方法；解释ps/proc、vmstat、iostat、ss的单位与边界。",
+  "objectives": [
+    "定义业务症状和时间窗",
+    "建立资源利用率/饱和/错误检查表",
+    "读懂vmstat r,b,wa,si/so并跳过开机累计误读",
+    "区分进程RSS与Go对象/FD",
+    "解释iostat await与并行设备%util限制",
+    "区分ss队列与IM业务队列/确认",
+    "以合成数据给出竞争假设和下一观察"
+  ],
+  "sources": [
+    "https://www.brendangregg.com/usemethod.html",
+    "https://man7.org/linux/man-pages/man1/ps.1.html",
+    "https://man7.org/linux/man-pages/man5/proc_pid_status.5.html",
+    "https://man7.org/linux/man-pages/man8/vmstat.8.html",
+    "https://man7.org/linux/man-pages/man1/iostat.1.html",
+    "https://man7.org/linux/man-pages/man8/ss.8.html"
+  ],
+  "sections": [
+    {
+      "title": "一、消息慢先定义哪个结果慢",
+      "words": 2200,
+      "focus": "承接03.03进程、03.04 CPU、03.05-06内存、03.07-08文件、03.09I/O与11.01-03测量；虚构c-a历史查询p95由60ms到240ms，窗口5min，约100rps，确认服务版本/实例和用户可见端点；症状不等于某个资源原因。"
+    },
+    {
+      "title": "二、诊断证据表和观察范围",
+      "words": 2300,
+      "focus": "先列假设CPU、内存、磁盘、socket/下游，再映射只读工具ps/proc status, vmstat, iostat, ss；每条记录时间窗/单位/PID/主机-容器作用域/采样频率/安全脱敏。USE利用率饱和错误是检查表而非自动结论。"
+    },
+    {
+      "title": "三、进程与CPU：ps和vmstat怎样读",
+      "words": 2400,
+      "focus": "ps PID/STAT/cwd/fd作为快照；vmstat r runnable,b blocked IO,us/sy/id/wa CPU占比、si/so交换；第一行开机以来汇总而process/memory即时，间隔样本更适合事故窗口。高wa非单条磁盘查询延迟，低CPU非资源充裕。"
+    },
+    {
+      "title": "四、内存与FD：RSS不能直接定位泄漏",
+      "words": 2400,
+      "focus": "/proc/PID/status VmSize/VmRSS/RssAnon/RssFile/RssShmem, fd数与其他映射；RSS 200→220MiB只说明进程驻留变，结合Go HeapAlloc/HeapReleased/连接数/GC/si/so；高FD可能正常增长或泄漏，不能只凭计数定因，隐藏敏感路径。"
+    },
+    {
+      "title": "五、磁盘：iostat单位与设备范围",
+      "words": 2600,
+      "focus": "iostat -x -y interval的await ms包括排队和服务、aqu-sz平均队列、%util并行SSD不等同饱和；首行开机累计需跳过或用-y。合成await4→38ms、vmstat b0→4 wa2→22与历史p95升，须先确认应用实际读的是这台机器/设备，远端DB需远端证据。"
+    },
+    {
+      "title": "六、socket和慢设备：ss可见什么",
+      "words": 2300,
+      "focus": "ss -s与特定TCP状态/队列纸上视角，Established计数≈2000不等于在线用户或活跃消息，Send-Q有字节不等于应用未发送队列，Recv-Q等不等于完整帧；连接/地址脱敏，结合03.09半帧/队列与04.06流控，避免把本机与远端信息混同。"
+    },
+    {
+      "title": "七、合成案例的假设竞争与下一步",
+      "words": 2700,
+      "focus": "基线/事故纸上表：history p95 60→240ms, r2→2,b0→4,wa2→22%,iostat await4→38ms, RSS200→220MiB, socket queues near zero; local I/O可能候选但未证明业务读路径，CPU和慢接收方未被完全排除。给每假设支持/反例/下一只读观测及影响，需端到端Trace与DB指标对照。"
+    },
+    {
+      "title": "八、证据报告与22道练习",
+      "words": 2400,
+      "focus": "交付症状定义、作用域、两时间窗表、USE候选矩阵、先后排查和证据限制；22题从字段/单位/首行/作用域到IM慢查询、错因和报告。静态不运行ps/proc/vmstat/iostat/ss/服务，下一05.04 Go内存模型，03.11容器限制后置S6。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.10 系统诊断》，面向Go初学者。八节渐进、22道带反馈练习，以虚构IM c-a历史查询p95 60→240ms的纸上事件串联ps/proc、vmstat、iostat、ss。所有观察表需标明合成、时间窗、单位、主机/容器/进程作用域。不能从高wa、await或RSS单项直接断言根因，iostat %util对并行SSD不能直接说饱和，vmstat/iostat第一行开机累计须区别。只读/脱敏，不运行主机命令、服务或站点。\n1. 一、消息慢先定义哪个结果慢：承接03.03进程、03.04 CPU、03.05-06内存、03.07-08文件、03.09I/O与11.01-03测量；虚构c-a历史查询p95由60ms到240ms，窗口5min，约100rps，确认服务版本/实例和用户可见端点；症状不等于某个资源原因。\n2. 二、诊断证据表和观察范围：先列假设CPU、内存、磁盘、socket/下游，再映射只读工具ps/proc status, vmstat, iostat, ss；每条记录时间窗/单位/PID/主机-容器作用域/采样频率/安全脱敏。USE利用率饱和错误是检查表而非自动结论。\n3. 三、进程与CPU：ps和vmstat怎样读：ps PID/STAT/cwd/fd作为快照；vmstat r runnable,b blocked IO,us/sy/id/wa CPU占比、si/so交换；第一行开机以来汇总而process/memory即时，间隔样本更适合事故窗口。高wa非单条磁盘查询延迟，低CPU非资源充裕。\n4. 四、内存与FD：RSS不能直接定位泄漏：/proc/PID/status VmSize/VmRSS/RssAnon/RssFile/RssShmem, fd数与其他映射；RSS 200→220MiB只说明进程驻留变，结合Go HeapAlloc/HeapReleased/连接数/GC/si/so；高FD可能正常增长或泄漏，不能只凭计数定因，隐藏敏感路径。\n5. 五、磁盘：iostat单位与设备范围：iostat -x -y interval的await ms包括排队和服务、aqu-sz平均队列、%util并行SSD不等同饱和；首行开机累计需跳过或用-y。合成await4→38ms、vmstat b0→4 wa2→22与历史p95升，须先确认应用实际读的是这台机器/设备，远端DB需远端证据。\n6. 六、socket和慢设备：ss可见什么：ss -s与特定TCP状态/队列纸上视角，Established计数≈2000不等于在线用户或活跃消息，Send-Q有字节不等于应用未发送队列，Recv-Q等不等于完整帧；连接/地址脱敏，结合03.09半帧/队列与04.06流控，避免把本机与远端信息混同。\n7. 七、合成案例的假设竞争与下一步：基线/事故纸上表：history p95 60→240ms, r2→2,b0→4,wa2→22%,iostat await4→38ms, RSS200→220MiB, socket queues near zero; local I/O可能候选但未证明业务读路径，CPU和慢接收方未被完全排除。给每假设支持/反例/下一只读观测及影响，需端到端Trace与DB指标对照。\n8. 八、证据报告与22道练习：交付症状定义、作用域、两时间窗表、USE候选矩阵、先后排查和证据限制；22题从字段/单位/首行/作用域到IM慢查询、错因和报告。静态不运行ps/proc/vmstat/iostat/ss/服务，下一05.04 Go内存模型，03.11容器限制后置S6。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

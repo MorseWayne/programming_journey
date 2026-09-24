@@ -187,4 +187,4 @@ Go 初学者使用 `net.Conn` 时，可让调用方看到阻塞式风格的 `Rea
 - [Linux `write(2)`](https://man7.org/linux/man-pages/man2/write.2.html)与[TCP RFC 9293](https://www.rfc-editor.org/rfc/rfc9293.html)：实际写入字节数与可靠字节流背景。
 - [Go `net.Conn`](https://pkg.go.dev/net#Conn)和[`io.ReadFull`](https://pkg.go.dev/io#ReadFull)：Go 的连接、期限和固定长度读取 API；业务解析仍需独立完成。
 
-按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章 03.10 把进程、内存、磁盘和 socket 的只读观测放进同一条 IM 故障证据链。离开本章前，应能说出**可读事件、实际 n 字节、完整帧和业务确认之间每一道边界**，并手算慢设备输出偏移与 LT/ET 的剩余数据反例。
+按[学习路线](../../../src/docs/platform_engineering/curriculum/learning_path.md)，下一章[03.10 系统诊断](../../../src/docs/platform_engineering/curriculum/03_systems/10_system_diagnostics.md)把进程、内存、磁盘和 socket 的只读观测放进同一条 IM 故障证据链。离开本章前，应能说出**可读事件、实际 n 字节、完整帧和业务确认之间每一道边界**，并手算慢设备输出偏移与 LT/ET 的剩余数据反例。

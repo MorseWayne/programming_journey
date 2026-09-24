@@ -1,0 +1,31 @@
+{
+  "chapter": "03.10",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced diagnostic lesson for a fictional c-a IM history-query latency increase using synthetic host/process/device/socket evidence",
+  "prerequisites": [
+    "03.03 process and FD identity",
+    "03.04 CPU runnable and wait states",
+    "03.05–03.06 virtual and resident memory",
+    "03.07–03.09 files, crash consistency and I/O readiness",
+    "11.01–11.03 business outcomes, distributions and telemetry"
+  ],
+  "first_pass": [
+    "business symptom and matched observation windows",
+    "host, container, process, device and socket scopes",
+    "ps/proc and vmstat fields and first-report boundary"
+  ],
+  "second_pass": [
+    "Go heap versus VmRSS and FD evidence",
+    "iostat await, aqu-sz and parallel-device percent-util caveat",
+    "ss connection and queue scope",
+    "USE candidate matrix and falsifiable next observations"
+  ],
+  "not_yet_prerequisites": [
+    "05.04 Go memory model as next S4 chapter",
+    "11.04–11.07 load, profiling and capacity evidence",
+    "03.11–03.12 isolation and fault-case depth in S6"
+  ],
+  "next_chapter": "05.04 Go memory model",
+  "upstream_inspection": "No OpenIM implementation claim; Brendan Gregg's USE article and Linux command/proc man-pages support diagnostic terms and metric boundaries.",
+  "shared_integration_pending": []
+}

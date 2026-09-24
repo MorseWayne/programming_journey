@@ -185,6 +185,7 @@ export default sidebar({
             "curriculum/03_systems/07_files_directories",
             "curriculum/03_systems/08_persistence_mechanisms",
             "curriculum/03_systems/09_io_event_notification",
+            "curriculum/03_systems/10_system_diagnostics",
             "curriculum/03_systems/core"
           ]
         },
