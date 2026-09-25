@@ -1,0 +1,33 @@
+{
+  "chapter": "13.06",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM quality attribute tradeoff lesson using fictional send, DB failure, long-offline, unauthorized and hot-group scenarios",
+  "prerequisites": [
+    "13.01–13.05 problem, domain, modules, architecture and capacity",
+    "08.04 consistency models",
+    "09.07 application authorization",
+    "11.08 SLO and alerting boundaries",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "turn vague fast, reliable and secure adjectives into user-observable scenarios",
+    "keep current 6-byte, 409, 404 and accepted_in_memory contract as hard gates",
+    "separate future authoritative uniqueness, availability, latency and device acknowledgment",
+    "explain DB and membership-source failure responses without silent contract downgrades"
+  ],
+  "second_pass": [
+    "limit A P95 200 ms and B 120 seconds to unapproved paper targets with explicit measurement bounds",
+    "weigh 25-hour history recovery against authorization, retention and deletion costs",
+    "use hot-group fanout and missing sequence to test throughput-versus-ordering proposals",
+    "separate RPO, RTO, queue drain and authorized history recovery",
+    "record ATAM-inspired sensitivity points, risks, evidence and decision owners",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.07 design review and decision record",
+    "actual user goals, reliability targets, workload and failure evidence"
+  ],
+  "next_chapter": "13.07 design review and decision record",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish real quality objectives, P95, authoritative transactions, authorization history, retention or device acknowledgments.",
+  "shared_integration_pending": []
+}
