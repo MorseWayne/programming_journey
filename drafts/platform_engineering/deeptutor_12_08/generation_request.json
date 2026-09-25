@@ -1,0 +1,74 @@
+{
+  "code": "12.08",
+  "title": "启动、探针与退出：长连接网关如何安全摘流",
+  "chapter_id": "ch_startup_probes_exit",
+  "summary": "面向Go初学者，用未来IM网关Pod滚动退出区分startup/readiness/liveness、EndpointSlice、终止预算、HTTP/WebSocket排空与业务恢复。",
+  "objectives": [
+    "解释三类探针的不同控制效果",
+    "区分Ready与业务消息确认",
+    "按grace与preStop预算安排摘流",
+    "理解terminating/ready/serving endpoint",
+    "分开Go普通HTTP和WebSocket关停",
+    "核对当前S2与未来权威/设备结果"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+    "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+    "https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks",
+    "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+    "https://pkg.go.dev/net/http",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、Pod Running不等于能收IM消息",
+      "words": 3000,
+      "focus": "Go初学者用虚构未来gateway滚动摘流，当前S2/v1静态6 UTF8B正文/原始HTTP体4096B/同ID409/非成员404/200内存受理不变，S3提议仍6B、R9待审。区分启动、就绪、存活、业务确认与长连接状态。"
+    },
+    {
+      "title": "二、startup/readiness/liveness分别问什么",
+      "words": 3200,
+      "focus": "startup给慢初始化窗口成功前阻止liveness/readiness；readiness失败从常规Service新流量端点移出不杀容器；liveness失败达到阈值可重启容器，过度依赖DB探测会引发级联。探针通过只覆盖其检查，不证明B设备ACK或权威DB提交。"
+    },
+    {
+      "title": "三、终止时间与EndpointSlice状态",
+      "words": 3100,
+      "focus": "纸上terminationGracePeriodSeconds=40s，preStop至多5s、应用排空计划30s、留5s余量；grace计时从终止流程开始包含preStop，preStop后TERM信号，超过期限SIGKILL；EndpointSlice terminating时ready通常false、serving可表达仍服务，传播与信号异步不能保证精确先后，应用也停止新接入。"
+    },
+    {
+      "title": "四、Go普通HTTP与WebSocket排空",
+      "words": 3100,
+      "focus": "Go http.Server.Shutdown停止listener/等普通HTTP idle，不等待hijacked WebSocket；应用自己的连接注册表/关闭通知/在途任务/期限。A发m-a时响应丢失结果未知，S2本地内存不跨Pod，重复409在新Pod不自动成立；未来S3权威与B设备ACK另验。"
+    },
+    {
+      "title": "五、读写路径和依赖故障反例",
+      "words": 3200,
+      "focus": "liveness错误地依赖DB导致所有网关反复重启；readiness始终true导致旧Pod接新请求；preStop sleep满40s后无时间排空；只等Shutdown导致WebSocket被直接切断。每项写因果和用户结果。"
+    },
+    {
+      "title": "六、T0-T4纸上滚动时间线",
+      "words": 3100,
+      "focus": "t0 P1开始Terminating/端点更新，t1 preStop与旧连接摘流，t2应用获TERM/停止新消息，t3普通HTTP与WebSocket分别限时排空，t4退出或强杀、P4 Ready；不声称固定顺序或零丢包；同ID与B补拉核对。"
+    },
+    {
+      "title": "七、验收与回退门",
+      "words": 3100,
+      "focus": "记录镜像digest、探针具体定义、EndpointSlice ready/serving/terminating、在途数/连接数/强杀、A当前6B/409/404/200及未来S3/B分层；若增加拒绝/队列或未补缺口停止发布。固定OpenIM两段源码不能证明探针/排空配置。"
+    },
+    {
+      "title": "八、22题与退出卡",
+      "words": 3000,
+      "focus": "基础8/推导8/决策6，答案含探针区别、40=5+30+5纸上预算、preStop计时、terminating endpoint、Shutdown/WebSocket、错误liveness级联、S2跨Pod状态与设备补拉。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.08 启动、探针与退出》，Go初学者八节理论丰富，IM业务由浅入深、22题答案。当前S2/v1静态合同正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。用未来网关Pod P1滚动摘流纸上：startup probe成功前抑制liveness/readiness，readiness失败使Pod通常不作常规Service新流量后端但不杀容器，liveness失败到阈值可重启；探针只证明自身检测，不能证明B设备ACK或m-9权威。错误liveness依赖DB可让所有网关反复重启形成级联。纸上terminationGracePeriodSeconds=40秒，preStop最多5秒、应用HTTP/WebSocket排空计划30秒、留5秒余量；实际grace从终止流程开始含preStop，preStop后通常发送TERM，过期SIGKILL，端点terminating/ready=false通常并行传播，serving可表旧连接继续服务，不能保证严格同步顺序或零新请求；应用自身仍停止新工作。Go http.Server.Shutdown停止监听并等普通HTTP请求变idle，不等待已hijack的WebSocket；应用需连接注册/通知/有界等待。P1 S2内存m-a与WebSocket退出不自动转移P4，A响应丢失结果未知，同ID重复409跨Pod需统一裁决；未来S3权威DB/B设备ACK另证。四反例：liveness过度依赖DB、readiness始终绿、preStop睡满宽限、只等Shutdown漏WebSocket。验收镜像digest/探针定义/EndpointSlice状态/在途和断连/当前S2合同/未来B补拉，停止/回退门。固定OpenIM两源码不证明真实探针或平台配置。静态不运行Go/IM/K8s/kubectl/部署/站点。\n1. 一、Pod Running不等于能收IM消息: Go初学者用虚构未来gateway滚动摘流，当前S2/v1静态6 UTF8B正文/原始HTTP体4096B/同ID409/非成员404/200内存受理不变，S3提议仍6B、R9待审。区分启动、就绪、存活、业务确认与长连接状态。\n2. 二、startup/readiness/liveness分别问什么: startup给慢初始化窗口成功前阻止liveness/readiness；readiness失败从常规Service新流量端点移出不杀容器；liveness失败达到阈值可重启容器，过度依赖DB探测会引发级联。探针通过只覆盖其检查，不证明B设备ACK或权威DB提交。\n3. 三、终止时间与EndpointSlice状态: 纸上terminationGracePeriodSeconds=40s，preStop至多5s、应用排空计划30s、留5s余量；grace计时从终止流程开始包含preStop，preStop后TERM信号，超过期限SIGKILL；EndpointSlice terminating时ready通常false、serving可表达仍服务，传播与信号异步不能保证精确先后，应用也停止新接入。\n4. 四、Go普通HTTP与WebSocket排空: Go http.Server.Shutdown停止listener/等普通HTTP idle，不等待hijacked WebSocket；应用自己的连接注册表/关闭通知/在途任务/期限。A发m-a时响应丢失结果未知，S2本地内存不跨Pod，重复409在新Pod不自动成立；未来S3权威与B设备ACK另验。\n5. 五、读写路径和依赖故障反例: liveness错误地依赖DB导致所有网关反复重启；readiness始终true导致旧Pod接新请求；preStop sleep满40s后无时间排空；只等Shutdown导致WebSocket被直接切断。每项写因果和用户结果。\n6. 六、T0-T4纸上滚动时间线: t0 P1开始Terminating/端点更新，t1 preStop与旧连接摘流，t2应用获TERM/停止新消息，t3普通HTTP与WebSocket分别限时排空，t4退出或强杀、P4 Ready；不声称固定顺序或零丢包；同ID与B补拉核对。\n7. 七、验收与回退门: 记录镜像digest、探针具体定义、EndpointSlice ready/serving/terminating、在途数/连接数/强杀、A当前6B/409/404/200及未来S3/B分层；若增加拒绝/队列或未补缺口停止发布。固定OpenIM两段源码不能证明探针/排空配置。\n8. 八、22题与退出卡: 基础8/推导8/决策6，答案含探针区别、40=5+30+5纸上预算、preStop计时、terminating endpoint、Shutdown/WebSocket、错误liveness级联、S2跨Pod状态与设备补拉。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

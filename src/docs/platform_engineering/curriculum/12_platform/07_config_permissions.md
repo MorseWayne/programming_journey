@@ -195,4 +195,4 @@ Kubernetes API 资源和动词的许可，不直接管 DB 行/IM 会话成员。
 
 ## 本章完成标准与后续路径
 
-能把 ConfigMap、Secret、ServiceAccount/RBAC、NetworkPolicy 与 IM 成员授权的责任逐一说清，指出 base64/Pod 创建权/双向网络/配置传播四个反例，并用 `u-c` 非成员 404 和同 ID 409 守住现行合同，才算完成第一轮。本章未创建任何权限或秘密对象。下一章 12.08 将让网关把启动、就绪、存活与有界退出和长连接摘流分开。
+能把 ConfigMap、Secret、ServiceAccount/RBAC、NetworkPolicy 与 IM 成员授权的责任逐一说清，指出 base64/Pod 创建权/双向网络/配置传播四个反例，并用 `u-c` 非成员 404 和同 ID 409 守住现行合同，才算完成第一轮。本章未创建任何权限或秘密对象。下一章[12.08 启动、探针与退出](./08_startup_probes_exit.md)将让网关把启动、就绪、存活与有界退出和长连接摘流分开。

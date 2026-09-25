@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f94b9e8dbc",
+  "page_id": "pg_193fa3a820",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+      "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+      "https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks",
+      "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+      "https://pkg.go.dev/net/http",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "dcbbe25714de7e78a8ed1b9a707f609d8e9534025a7167034a90b6c29416144f",
+  "original_characters": 31368,
+  "generation_request_sha256": "e909e3dbe33c230ef941587562c62178ef15d43138b397a4bd33a7ae74a36350",
+  "reviewed_sha256": "cbb88730f1167a31079cfa862fc6d3f9ef31a73cef023f781dbc0e0cbe252926",
+  "reviewed_characters": 10453,
+  "reviewed_chinese_characters": 3243,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/08_startup_probes_exit.md",
+  "course_sha256": "e622fa87dd3654ccc6ccfb124b8e69b90b9bb0eb4fdc8f0115d375d6bde6a49f"
+}

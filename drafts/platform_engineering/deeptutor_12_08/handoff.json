@@ -1,0 +1,32 @@
+{
+  "chapter": "12.08",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Kubernetes probe and termination lesson for fictional IM gateway P1 to P4 draining",
+  "prerequisites": [
+    "04.05 long TCP and WebSocket lifecycle",
+    "12.02 container PID 1 and Go HTTP shutdown boundaries",
+    "12.05 Service and EndpointSlice discovery",
+    "12.07 config and permission effects on readiness",
+    "10.10 release and rollback gates"
+  ],
+  "first_pass": [
+    "distinguish startup, readiness and liveness probe outcomes",
+    "calculate 40-second total grace as 5-second preStop, 30-second drain and 5-second margin",
+    "interpret terminating, ready and serving endpoint conditions",
+    "keep current S2 acceptance separate from proposed S3 and device receipt"
+  ],
+  "second_pass": [
+    "reject strict ordering assumptions across endpoint propagation and local signal delivery",
+    "design separate bounded HTTP and hijacked WebSocket draining",
+    "identify liveness-dependency cascade, always-ready and full-grace preStop counterexamples",
+    "validate P1 local state loss, cross-Pod duplicate 409 and B catch-up after P4 readiness",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.09 release and rollback",
+    "learner's actual authorized probe and shutdown observations"
+  ],
+  "next_chapter": "12.09 release and rollback",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish probe, EndpointSlice, termination grace or websocket drainage configuration.",
+  "shared_integration_pending": []
+}
