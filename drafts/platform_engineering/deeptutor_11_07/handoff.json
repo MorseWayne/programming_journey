@@ -1,0 +1,32 @@
+{
+  "chapter": "11.07",
+  "stage": "S4–S6",
+  "business_scope": "static beginner-to-advanced IM load-testing and capacity lesson using fictional connections, fanout and N-1 targets",
+  "prerequisites": [
+    "11.01 business confirmation points and denominators",
+    "11.02 latency distributions and missing samples",
+    "11.04–11.06 workload diagnosis, CPU, I/O and network bottlenecks",
+    "08.05 partition and rebalancing prerequisites",
+    "10.09 versioned CI and artifact identity"
+  ],
+  "first_pass": [
+    "translate 10000 connections, active fraction and message rate into distinct workload units",
+    "keep current S2 acceptance separate from proposed S3 persistence and future device ACK",
+    "compare closed-loop feedback with open-loop scheduled arrivals",
+    "record planned, started, dropped, completed, timeout and in-flight counts"
+  ],
+  "second_pass": [
+    "design smoke, baseline, step, burst, soak and recovery phases with stop gates",
+    "explain coordinated omission and model-based correction limits",
+    "calculate 3-instance versus 2-instance N-1 arithmetic and test hotspot/dependency caveats",
+    "deliver a reproducible experiment plan without inventing actual results",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.08 SLI, SLO and actionable alerting",
+    "learner's controlled load generation and measured capacity evidence"
+  ],
+  "next_chapter": "11.08 SLO and alerting",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish measured throughput, percentiles, fanout, replicas or N-1 capacity.",
+  "shared_integration_pending": []
+}

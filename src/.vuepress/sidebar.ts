@@ -335,6 +335,7 @@ export default sidebar({
             "curriculum/11_reliability/04_diagnostic_method",
             "curriculum/11_reliability/05_cpu_memory_performance",
             "curriculum/11_reliability/06_io_network_performance",
+            "curriculum/11_reliability/07_load_testing_capacity",
             "curriculum/11_reliability/core"
           ]
         },

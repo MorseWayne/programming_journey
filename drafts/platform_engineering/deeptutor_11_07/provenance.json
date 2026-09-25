@@ -1,0 +1,39 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_71e300d319",
+  "page_id": "pg_3d54e66b57",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/",
+      "https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/arrival-rate-vu-allocation/",
+      "https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/dropped-iterations/",
+      "https://github.com/HdrHistogram/HdrHistogram",
+      "https://sre.google/sre-book/introduction/",
+      "https://sre.google/sre-book/addressing-cascading-failures/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "1dd8b8fdf2b31e6cc315e39dd12d9400e642b50155c8a371295ac65a83eb48dc",
+  "original_characters": 28991,
+  "generation_request_sha256": "2a5ee15bce15e6aa4e5c7d611994f3153ab073196888215866f385bc57a93721",
+  "reviewed_sha256": "4801777d3d5d7476b48e64181c6ddd2857257b96079c8f867130f30e8bf3ca61",
+  "reviewed_characters": 10207,
+  "reviewed_chinese_characters": 4299,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/07_load_testing_capacity.md",
+  "course_sha256": "d47de437ff3bfc28dd5325e2c6661df34a2f541b74877adcfc8d24bf3c9cb354"
+}

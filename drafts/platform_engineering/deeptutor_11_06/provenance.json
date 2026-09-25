@@ -31,9 +31,9 @@
   "original_sha256": "65f7f7764c92fdb2b47f7a16826386353570dc3fdadeb5f01d196cb50b636371",
   "original_characters": 31355,
   "generation_request_sha256": "b1e481ed64ad7561622a19864176e2300f6423257d64f0691524d7a93bed18bf",
-  "reviewed_sha256": "aba3d14e0e45f749cf44476ea97c73f08556f41720b1bb71923e156c377c2d4c",
-  "reviewed_characters": 10316,
-  "reviewed_chinese_characters": 4055,
+  "reviewed_sha256": "901346c9c6f4130fcee5284d3c228421e67b58fe03b2165d0e82ac227d16c0ec",
+  "reviewed_characters": 10416,
+  "reviewed_chinese_characters": 4060,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/06_io_network_performance.md",
-  "course_sha256": "cb1d84d49a5b43637c6822cd851ab99276e70e8d48069bcb889808741c88642c"
+  "course_sha256": "dcd59b98b58d6973f11a722a18e12db6aec0c24a7d5cef80097888903cc1ccd2"
 }
