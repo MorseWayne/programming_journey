@@ -1,0 +1,32 @@
+{
+  "chapter": "12.03",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Compose networking and readiness lesson using fictional future IM gateway, db and events services",
+  "prerequisites": [
+    "12.01 image digest, config and external data identity",
+    "12.02 container network, mounts, process and volume lifetime",
+    "04.02 addressing, DNS and routing",
+    "09.03 Go backend configuration and startup",
+    "09.02 current S2 HTTP contract"
+  ],
+  "first_pass": [
+    "distinguish gateway-local localhost from Compose service-name DNS",
+    "map host 15432 to db container 5432 without using host port between services",
+    "separate started, healthcheck-green and business-ready states",
+    "keep current S2 separate from proposed S3 and future device result"
+  ],
+  "second_pass": [
+    "diagnose wrong localhost, early startup, stale IP and incomplete schema as separate failures",
+    "trace interpolation inputs versus effective container environment without exposing secrets",
+    "record volume identity and authorized DB transaction separately from container health",
+    "produce a paper environment card with contract examples and unknowns",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.04 cluster control model",
+    "learner's actual personal Compose and business readiness observations"
+  ],
+  "next_chapter": "12.04 cluster control model",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish any course Compose topology, database kind, ports, healthcheck or device receipt.",
+  "shared_integration_pending": []
+}

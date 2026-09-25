@@ -353,6 +353,7 @@ export default sidebar({
             "curriculum/12_platform/",
             "curriculum/12_platform/01_runtime_artifacts",
             "curriculum/12_platform/02_container_mechanisms",
+            "curriculum/12_platform/03_local_multi_service",
             "curriculum/12_platform/core"
           ]
         },

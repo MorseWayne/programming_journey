@@ -1,0 +1,76 @@
+{
+  "code": "12.03",
+  "title": "本地多服务环境：服务名、端口、就绪与配置",
+  "chapter_id": "ch_local_multi_service",
+  "summary": "面向Go初学者，以未来教学IM gateway/db/broker纸上Compose环境区分网络名称、端口、启动/健康/业务就绪及配置来源。",
+  "objectives": [
+    "区分宿主端口与容器端口和localhost视角",
+    "使用Compose服务名而非变化IP定位依赖",
+    "解释depends_on启动顺序和service_healthy门",
+    "区分健康检查与数据库业务就绪",
+    "追踪配置插值与生效环境而不泄密",
+    "分层验证卷、日志与当前/未来IM业务结果"
+  ],
+  "sources": [
+    "https://docs.docker.com/compose/how-tos/networking/",
+    "https://docs.docker.com/compose/how-tos/startup-order/",
+    "https://docs.docker.com/reference/compose-file/services/",
+    "https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/",
+    "https://docs.docker.com/compose/how-tos/environment-variables/envvars-precedence/",
+    "https://docs.docker.com/reference/cli/docker/compose/logs/",
+    "https://docs.docker.com/engine/storage/volumes/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、三个服务为何互相看不见",
+      "words": 3000,
+      "focus": "Go初学者先固定当前S2/v1静态HTTP合同6 UTF8B正文/4096B原始请求体/重复409/非成员404/200仅内存受理；未来S3/v2 DB提议仍6B，R9待审。Compose gateway/db/broker只是未来隔离纸上环境，不是本仓库已部署IM。"
+    },
+    {
+      "title": "二、服务名DNS与两种端口",
+      "words": 3200,
+      "focus": "同Compose网络服务名db可解析，gateway连db:5432；纸上宿主映射15432:5432时主机用127.0.0.1:15432，gateway内localhost指自己不等于DB；服务容器重建IP变但名称稳定，旧连接需重连。"
+    },
+    {
+      "title": "三、启动顺序与业务就绪",
+      "words": 3100,
+      "focus": "depends_on默认只保证依赖started不等DB接SQL；condition: service_healthy等healthcheck通过，但健康探测本身若只端口开放不能证明schema/权限/事务就绪；service_completed_successfully可用于明确一次性迁移，但迁移需要单独合同。"
+    },
+    {
+      "title": "四、配置插值与容器环境",
+      "words": 3100,
+      "focus": "shell/.env用于Compose模型插值与environment/env_file设置容器变量不同；Docker Compose有优先级，需记录生效配置版本，不能把密钥输出在config/log；当前v1 6B不能由本地配置悄悄放宽。"
+    },
+    {
+      "title": "五、日志、健康与依赖故障分流",
+      "words": 3200,
+      "focus": "docker compose logs看服务输出但不等应用交付；四种纸上错误：gateway用localhost:15432、DB started未ready、DB重建IP变、health绿但schema未迁；按名称/端口/配置/health/权限/SQL/业务结果逐站反证。"
+    },
+    {
+      "title": "六、数据卷与服务替换",
+      "words": 3000,
+      "focus": "named volume负责DB文件生命周期，compose服务重建不自动删除但down -v等可删；有卷不等持久事务或备份，未来S3 m-9/seq9+outbox权威/权限需另证，B离线25h>broker24h有权DB历史补。"
+    },
+    {
+      "title": "七、本地环境验收与边界",
+      "words": 3100,
+      "focus": "纸上清单镜像digest/项目名/网络服务名/端口/生效配置/health/日志与秘密引用/卷/正反业务样本；先静态设计后由学习者隔离执行，不能把Compose up绿色当S2 200或S3已存或B设备ACK；固定OpenIM两源码不证明拓扑。"
+    },
+    {
+      "title": "八、22题与故障表",
+      "words": 3000,
+      "focus": "基础8/定位8/验收6，答案含localhost、db:5432与宿主15432、DNS与IP更新、depends_on vs service_healthy、health probe局限、env插值、logs/secret、volume与合同、S2/S3/B确认。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.03 本地多服务环境》，Go初学者八节理论丰富、IM业务由浅入深，22题答案。当前S2/v1仅静态教学合同：消息正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db为提议仍6B，R9待审。Compose gateway/db/broker是未来纸上隔离环境，不创建服务、不运行。三服务同网络时gateway应按服务名db:5432访问DB，假设宿主端口映射15432:5432，宿主通过127.0.0.1:15432访问；gateway内localhost指自身network namespace，不应连localhost:15432。Compose服务名DNS稳定，容器替换IP可变，已建连接会断，应用重查名称/重连。depends_on顺序默认只等容器started不等数据库可查询；service_healthy等自定义healthcheck绿，但仅端口开不证明schema/权限/事务；明确迁移job可考虑service_completed_successfully但这不代表S3已部署。Compose .env/shell用于模型插值，与environment/env_file生成容器环境不同，优先级须按官方文档记录，不能输出真实秘密或用配置改变现行v1 6B。纸上四故障：错localhost、DB started未ready、旧IP过期、health绿但schema未完成，按网络/名称/端口/日志/配置/权限/业务正反例反证。named volume可跨容器但管理操作可能删除；存在卷不等数据库权威m-9/seq9与outbox提交。B离线25h超过教学broker24h依有权权威DB历史补。docker compose logs只能看服务输出不证明B应用ACK。当前仓库未部署IM，OpenIM固定send.go MsgToMQ与另一Mongo BatchInsert不证明本纸上Compose拓扑。静态不运行Go/IM/Compose/DB/容器/站点。\n1. 一、三个服务为何互相看不见: Go初学者先固定当前S2/v1静态HTTP合同6 UTF8B正文/4096B原始请求体/重复409/非成员404/200仅内存受理；未来S3/v2 DB提议仍6B，R9待审。Compose gateway/db/broker只是未来隔离纸上环境，不是本仓库已部署IM。\n2. 二、服务名DNS与两种端口: 同Compose网络服务名db可解析，gateway连db:5432；纸上宿主映射15432:5432时主机用127.0.0.1:15432，gateway内localhost指自己不等于DB；服务容器重建IP变但名称稳定，旧连接需重连。\n3. 三、启动顺序与业务就绪: depends_on默认只保证依赖started不等DB接SQL；condition: service_healthy等healthcheck通过，但健康探测本身若只端口开放不能证明schema/权限/事务就绪；service_completed_successfully可用于明确一次性迁移，但迁移需要单独合同。\n4. 四、配置插值与容器环境: shell/.env用于Compose模型插值与environment/env_file设置容器变量不同；Docker Compose有优先级，需记录生效配置版本，不能把密钥输出在config/log；当前v1 6B不能由本地配置悄悄放宽。\n5. 五、日志、健康与依赖故障分流: docker compose logs看服务输出但不等应用交付；四种纸上错误：gateway用localhost:15432、DB started未ready、DB重建IP变、health绿但schema未迁；按名称/端口/配置/health/权限/SQL/业务结果逐站反证。\n6. 六、数据卷与服务替换: named volume负责DB文件生命周期，compose服务重建不自动删除但down -v等可删；有卷不等持久事务或备份，未来S3 m-9/seq9+outbox权威/权限需另证，B离线25h>broker24h有权DB历史补。\n7. 七、本地环境验收与边界: 纸上清单镜像digest/项目名/网络服务名/端口/生效配置/health/日志与秘密引用/卷/正反业务样本；先静态设计后由学习者隔离执行，不能把Compose up绿色当S2 200或S3已存或B设备ACK；固定OpenIM两源码不证明拓扑。\n8. 八、22题与故障表: 基础8/定位8/验收6，答案含localhost、db:5432与宿主15432、DNS与IP更新、depends_on vs service_healthy、health probe局限、env插值、logs/secret、volume与合同、S2/S3/B确认。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
