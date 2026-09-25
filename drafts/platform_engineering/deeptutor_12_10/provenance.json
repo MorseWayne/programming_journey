@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_963bcfcd6c",
+  "page_id": "pg_161a45bbfd",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+      "https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/",
+      "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+      "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+      "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "71096595f2ffb44747bcd7883f106601d0f67044ec2b5300dd41ecf66c748db5",
+  "original_characters": 30462,
+  "generation_request_sha256": "53de48bf61650f1d7d0447f1a97658c8a4cb72704529ff2d76396df423d06817",
+  "reviewed_sha256": "f860ac1c52f0dbbd61efa9b8f2941b06c5a5cdbcf65dee10269f46edd9555a3b",
+  "reviewed_characters": 10163,
+  "reviewed_chinese_characters": 2848,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/10_autoscaling_fault_domains.md",
+  "course_sha256": "977e644491fe1f0da5298fbf57926f82211098af2875a20f9572a2453a3636be"
+}

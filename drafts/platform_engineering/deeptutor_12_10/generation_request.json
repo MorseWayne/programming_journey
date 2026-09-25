@@ -1,0 +1,74 @@
+{
+  "code": "12.10",
+  "title": "扩缩容与故障域：一个Node倒下为何三副本网关仍不够",
+  "chapter_id": "ch_autoscaling_fault_domains",
+  "summary": "面向Go初学者，以虚构三副本网关解释HPA/Node扩容滞后、连接/群负载、拓扑分布、PDB和不同N-1故障边界。",
+  "objectives": [
+    "区分连接、活跃、群扇出与资源负载",
+    "手算HPA CPU相对request的简化期望副本",
+    "区分Pod和Node供给过程",
+    "比较失Pod与失Node后的吞吐",
+    "解释拓扑分散和PDB适用范围",
+    "按S2/S3/B分层验证恢复"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+    "https://kubernetes.io/docs/concepts/cluster-administration/node-autoscaling/",
+    "https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/",
+    "https://kubernetes.io/docs/tasks/run-application/configure-pdb/",
+    "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、在线连接数不是唯一扩容信号",
+      "words": 3000,
+      "focus": "Go初学者虚构未来IM网关：当前S2/v1静态合同正文6 UTF8B/原始HTTP请求体4096B/重复409/非成员404/200仅内存受理，S3未来提议，R9待审。10k连接2%活跃20入站/s但50人*2设备2000任务/s，指标区分CPU/内存/FD/连接/群热点/设备确认。"
+    },
+    {
+      "title": "二、HPA的间歇控制与指标分母",
+      "words": 3200,
+      "focus": "Kubernetes HPA间歇观察，CPU利用率相对request而非limit；纸上3副本每个request500m，实际0.4核=80%，目标50%，简化ceil(3*80/50)=5副本，但缺失指标/冷却/就绪另审；新增Pod需要Node资源和启动时间，不瞬时承接旧WebSocket。"
+    },
+    {
+      "title": "三、Pod扩容与Node扩容不同",
+      "words": 3100,
+      "focus": "HPA目标5但现Node只能放3，新增2 Pod Pending；Node autoscaler能否增Node受配额/云容量/配置/启动时间约束。垂直加limit/requests会影响调度与费用，不能只看HPA desired。"
+    },
+    {
+      "title": "四、N-1 Pod与N-1 Node/zone故障域",
+      "words": 3200,
+      "focus": "纸上3 Pod各能稳100入站/s，峰值150，失1Pod剩200名义余50；若Node N1放2 Pod，一Node故障只剩100<150；若三Pod分别三Node，失一剩200但需共享DB/重连验证。topologySpread/anti-affinity可约束放置，硬规则可能Pending。"
+    },
+    {
+      "title": "五、PDB与自愿中断",
+      "words": 3000,
+      "focus": "PDB minAvailable2可约束Eviction/Node drain等自愿中断，但Node突然宕机不受它保障，不能把PDB或副本数当全时可用性。滚动更新maxUnavailable和PDB面向不同路径。"
+    },
+    {
+      "title": "六、重连风暴与慢信号",
+      "words": 3200,
+      "focus": "1000设备同刻重连，理想抖动分10s平均100/s但峰值未知；HPA采样/调度/拉镜像/Ready滞后，热群CPU与长闲连接内存各不同；需预留备用容量、客户端指数退避/有权历史补拉和权威消息。"
+    },
+    {
+      "title": "七、容量决策与停止门",
+      "words": 3100,
+      "focus": "纸上能力要按相同群/设备/连接/消息负载，记录HPA desired/current/Ready/Pending、Node分布/zone、PDB、实际用户受理/设备ACK/积压；新副本Ready不迁旧WebSocket/S2内存；固定OpenIM两源码不证明真实扩容。"
+    },
+    {
+      "title": "八、22题与情景矩阵",
+      "words": 3000,
+      "focus": "基础8/计算8/决策6，答案含80%和ceil4.8=5、HPA vs Node、N-1 200/100、PDB voluntary vs involuntary、hard spread Pending、1000/10=100平均与峰、S2/S3/B边界。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.10 扩缩容与故障域》，Go初学者八节丰富理论、IM业务由浅入深、22题答案。当前S2/v1静态合同正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。容量纸上基线1万连接、2%活跃、每活跃0.1消息/s=20入站/s，未来每条恰好50目标成员*2设备无过滤重试=2000设备任务/s，不是当前S2已运行负载。HPA是间歇控制，CPU利用率相对request：3个Pod各request500m，实际各0.4CPU则80%；目标50%，简化ceil(3*80/50)=5副本，真实有缺失指标/容忍区间/启动就绪滞后，不能以算式保证精确结果。HPA目标5若Node资源只能放3，另2 Pod Pending；Node autoscaler供给也有配置/配额/容量/启动延迟。纸上每网关同一负载下可稳100入站/s、目标峰150，失1 Pod剩200名义余量50；若Node N1放2 Pod，失Node只剩100<150。若分别三Node失一剩200但共享DB/重连仍另验。topologySpread/anti-affinity可约束分布，硬约束可能让Pod Pending；PDB minAvailable2主要约束自愿Eviction，不防突然Node失效，maxUnavailable是滚动预算。1000设备同刻重连，若理想均匀分10s平均100/s但实际峰未知，HPA新Pod无法迁旧WebSocket，客户端退避和有权补拉/预留余量仍要。验收desired/current/Ready/Pending、Node/zone、PDB、实际A受理和未来B设备/权威分层。固定OpenIM两源码不证明真实扩缩容。静态不运行Go/IM/Kubernetes/kubectl/压测/站点。\n1. 一、在线连接数不是唯一扩容信号: Go初学者虚构未来IM网关：当前S2/v1静态合同正文6 UTF8B/原始HTTP请求体4096B/重复409/非成员404/200仅内存受理，S3未来提议，R9待审。10k连接2%活跃20入站/s但50人*2设备2000任务/s，指标区分CPU/内存/FD/连接/群热点/设备确认。\n2. 二、HPA的间歇控制与指标分母: Kubernetes HPA间歇观察，CPU利用率相对request而非limit；纸上3副本每个request500m，实际0.4核=80%，目标50%，简化ceil(3*80/50)=5副本，但缺失指标/冷却/就绪另审；新增Pod需要Node资源和启动时间，不瞬时承接旧WebSocket。\n3. 三、Pod扩容与Node扩容不同: HPA目标5但现Node只能放3，新增2 Pod Pending；Node autoscaler能否增Node受配额/云容量/配置/启动时间约束。垂直加limit/requests会影响调度与费用，不能只看HPA desired。\n4. 四、N-1 Pod与N-1 Node/zone故障域: 纸上3 Pod各能稳100入站/s，峰值150，失1Pod剩200名义余50；若Node N1放2 Pod，一Node故障只剩100<150；若三Pod分别三Node，失一剩200但需共享DB/重连验证。topologySpread/anti-affinity可约束放置，硬规则可能Pending。\n5. 五、PDB与自愿中断: PDB minAvailable2可约束Eviction/Node drain等自愿中断，但Node突然宕机不受它保障，不能把PDB或副本数当全时可用性。滚动更新maxUnavailable和PDB面向不同路径。\n6. 六、重连风暴与慢信号: 1000设备同刻重连，理想抖动分10s平均100/s但峰值未知；HPA采样/调度/拉镜像/Ready滞后，热群CPU与长闲连接内存各不同；需预留备用容量、客户端指数退避/有权历史补拉和权威消息。\n7. 七、容量决策与停止门: 纸上能力要按相同群/设备/连接/消息负载，记录HPA desired/current/Ready/Pending、Node分布/zone、PDB、实际用户受理/设备ACK/积压；新副本Ready不迁旧WebSocket/S2内存；固定OpenIM两源码不证明真实扩容。\n8. 八、22题与情景矩阵: 基础8/计算8/决策6，答案含80%和ceil4.8=5、HPA vs Node、N-1 200/100、PDB voluntary vs involuntary、hard spread Pending、1000/10=100平均与峰、S2/S3/B边界。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
