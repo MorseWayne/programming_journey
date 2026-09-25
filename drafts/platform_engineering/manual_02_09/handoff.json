@@ -1,0 +1,27 @@
+{
+  "chapter": "02.09",
+  "stage": "S4+ algorithms second pass",
+  "business_scope": "static weighted-path and state-space lesson using a synthetic IM delivery graph",
+  "prerequisites": [
+    "02.01 cost units and asymptotic work",
+    "02.02 FIFO queues",
+    "02.07 heaps and priority scheduling",
+    "02.08 directed graph, BFS/DFS and reachability",
+    "09.02 current S2 acceptance boundary"
+  ],
+  "first_pass": [
+    "define additive weights and separate hop count from total cost",
+    "use one graph to hand-calculate all A-to-E routes",
+    "trace dist, parent, relaxations and heap order under nonnegative weights",
+    "preserve unreachable F distinctly from zero cost"
+  ],
+  "second_pass": [
+    "state the exact settle-once Dijkstra invariant and negative-edge counterexample",
+    "compare Bellman-Ford and DAG routes with their prerequisites",
+    "expand a limited-broker path into vertex-plus-budget state",
+    "guard map missing values, stale heap entries, arithmetic overflow and IM business claims"
+  ],
+  "next_chapter": "02.10 dynamic programming and greedy algorithms",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

@@ -1,0 +1,30 @@
+{
+  "chapter": "02.09",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against primary algorithm sources and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "d75d814f8e370872a879c333e82a6a6153d3759e9160db4d4d9a104a5b9f7bd5",
+  "primary_sources": [
+    "https://algs4.cs.princeton.edu/44sp/",
+    "https://algs4.cs.princeton.edu/44sp/DijkstraSP.java.html",
+    "https://algs4.cs.princeton.edu/44sp/BellmanFordSP.java.html",
+    "https://pkg.go.dev/container/heap",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/"
+  ],
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "reviewed_sha256": "eccb91c08231c66bb9ad8b75bc3fef811d398e502dd9477e9ab252b548c5235a",
+  "reviewed_characters": 9227,
+  "reviewed_chinese_characters": 3300,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/09_weighted_paths_state_space.md",
+  "course_sha256": "0f8b1a2cd910a163b6461642dd8bc5393da33829a19869268589dab024c329d4"
+}

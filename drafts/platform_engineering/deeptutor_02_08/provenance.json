@@ -26,9 +26,9 @@
   "original_sha256": "71bcbd9e37637e65876dd85e4865e0577e0b7cdb4649f2b48b20da011bd8be37",
   "original_characters": 29290,
   "generation_request_sha256": "b673b8d7b5760387778af89632c7de5e7dad908408391da3d9518aadb10d093c",
-  "reviewed_sha256": "29e272003294a61c3b9f326a06b42bcb1322edcd143a57e92bb8eb895beab7db",
-  "reviewed_characters": 7654,
-  "reviewed_chinese_characters": 3255,
+  "reviewed_sha256": "ebb63bcabd011775c69a151b20cb975a236993bc7d53693415eb2f855fe67631",
+  "reviewed_characters": 7763,
+  "reviewed_chinese_characters": 3264,
   "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/08_graph_dependency_traversal.md",
-  "course_sha256": "b55ef49a7a62e2bdd1deff551a3c282979c4b7f200c5de47cd5402fc086387ea"
+  "course_sha256": "ea33e9054a4e43c572dbb95daa29b086b0c8aaae702b25ee7a9efc09780fefce"
 }
