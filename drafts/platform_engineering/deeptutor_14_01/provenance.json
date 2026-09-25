@@ -1,0 +1,39 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_1657974b98",
+  "page_id": "pg_31c5be5794",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://docs.python.org/3/tutorial/index.html",
+      "https://docs.python.org/3/tutorial/datastructures.html",
+      "https://docs.python.org/3/tutorial/errors.html",
+      "https://docs.python.org/3/library/json.html",
+      "https://docs.python.org/3/library/pathlib.html",
+      "https://docs.python.org/3/library/venv.html",
+      "https://docs.python.org/3/library/typing.html",
+      "https://docs.python.org/3/library/hashlib.html"
+    ],
+    "upstream_implementation_claims": false,
+    "upstream_commit": null
+  },
+  "original_sha256": "57d0b926ccdcb4632e89f5b861922847cdccca3e8a0e68b4e127f00bde463134",
+  "original_characters": 38772,
+  "generation_request_sha256": "68b22e1fb3781b8e65df3e81ead19d10630b29dc731a6c6729bb694a3b0cf840",
+  "reviewed_sha256": "e605f5aaf1669a169d1867bba04a39e20ec22badd2466b999e5d175fd35359ae",
+  "reviewed_characters": 10916,
+  "reviewed_chinese_characters": 3558,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/01_python_data_work.md",
+  "course_sha256": "8cd541e8d05e2e34c4cacbd473531b82e2eba81018939f4de95b8b13f7c37381"
+}

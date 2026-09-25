@@ -1,0 +1,75 @@
+{
+  "code": "14.01",
+  "title": "Python与数据工作：Go学习者怎样整理一份虚构IM样本",
+  "chapter_id": "ch_python_data_work",
+  "summary": "面向Go技术栈初学者，以虚构IM消息JSONL说明Python对象/集合、函数、异常、文件、UTF-8校验、环境隔离和可复现数据记录。",
+  "objectives": [
+    "说明Python在AI数据支线与Go服务主线的分工",
+    "辨别对象绑定、可变集合与类型提示边界",
+    "逐行解析并校验虚构JSONL",
+    "区分正文UTF-8字节与HTTP原始请求体",
+    "隔离错误/拒绝和访问范围",
+    "记录Python环境、输入哈希和可复现清洗结果"
+  ],
+  "sources": [
+    "https://docs.python.org/3/tutorial/index.html",
+    "https://docs.python.org/3/tutorial/datastructures.html",
+    "https://docs.python.org/3/tutorial/errors.html",
+    "https://docs.python.org/3/library/json.html",
+    "https://docs.python.org/3/library/pathlib.html",
+    "https://docs.python.org/3/library/venv.html",
+    "https://docs.python.org/3/library/typing.html",
+    "https://docs.python.org/3/library/hashlib.html"
+  ],
+  "sections": [
+    {
+      "title": "一、Go初学者为何在AI方向补Python",
+      "words": 3300,
+      "focus": "本卷AI支线从Python数据工作起步，不放弃Go/IM系统基础。用完全虚构u-a/u-b、c-a、m-a消息和资料助手文档说明数据来源；当前S2/v1正文非空最多6 UTF-8B、原始HTTP体4096B、同ID重复409、非成员404、200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。静态样例不是从当前S2导出的权威历史，更不引入真实公司消息。"
+    },
+    {
+      "title": "二、名字、对象与可变集合",
+      "words": 3400,
+      "focus": "比较Go静态变量/切片/map与Python名字绑定对象、str/int/list/dict/None；list/dict可变及别名共享，str不可变；==值与is同一对象；类型注解不由Python运行时自动执行。以两条虚构消息记录示例，避免把消息ID与JSONL行号混同。"
+    },
+    {
+      "title": "三、函数、类型提示与异常",
+      "words": 3400,
+      "focus": "Python def、参数/返回值、缩进与返回、类型提示只辅助工具，实际字段必须显式isinstance/值范围验证；Go err返回 vs Python raise/try except。分别处理JSONDecodeError、ValueError/TypeError、文件OSError与意外异常，不裸except吞错；错误携行号但不打印私密正文。"
+    },
+    {
+      "title": "四、虚构JSONL与UTF-8字节",
+      "words": 3400,
+      "focus": "用pathlib Path.open(encoding=utf-8)逐行、json.loads一行一JSON对象；字段message_id/conversation_id/sender_id/body，body=“你好”len字符2而UTF8 6字节；若代表当前/v1消息需非空且len(body.encode(utf-8))<=6。原始HTTP请求体4096B不能从导出JSONL中的body推回；同ID重复行不等于线上409，也不能静默去重改变证据。"
+    },
+    {
+      "title": "五、校验、拒绝与数据访问边界",
+      "words": 3400,
+      "focus": "逐行标接受/拒绝及原因：缺字段、错类型、空正文、超6B、重复message_id、错误conversation_id、坏JSON；原始与清洗数据分开、拒绝行记录不含正文。虚构数据不代替用户成员权限，资料助手语料还需owner/scope/version和授权，不能把私聊全部当公开检索文本。"
+    },
+    {
+      "title": "六、环境与可复现记录",
+      "words": 3400,
+      "focus": "python -m venv创建隔离环境、固定Python版本/依赖、不要提交.venv；原始输入SHA256、schema版本、程序版本/参数、接受拒绝数、输出排序与随机种子若使用，记录manifest。Path.read_bytes/hashlib.sha256，不把哈希当保密/权限证明。输出采用固定顺序和显式UTF-8，避免依赖目录遍历顺序。"
+    },
+    {
+      "title": "七、纸上最小数据管线与后续14.09",
+      "words": 3300,
+      "focus": "输入虚构messages.jsonl与docs.jsonl→逐行解析→验证→合格集+拒绝统计→生成固定问题q-01/q-02及证据引用草案，不先调用模型；14.09再讨论代表性/标注/数据泄漏和基线。代码示意静态未运行；Go学习者可写对应Go读取器比较语义，但不把语言差异误读为业务合同变化。"
+    },
+    {
+      "title": "八、22道分层练习",
+      "words": 3200,
+      "focus": "基础8/推演8/决策6附答案：Python名字/对象/可变别名、type hint运行时、try except、JSONL单行、你好2字符6B、7B超限、缺字段/重复ID与线上409区别、4096B原始HTTP与body、venv、SHA256、权限/脱敏和manifest。只静态不运行Python/Go/IM/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.01 Python与数据工作》，以Go技术栈初学者为读者，八节丰富前置理论、虚构IM业务由浅入深、22题答案。AI支线用Python整理完全虚构u-a/u-b、c-a、m-a以及资料文档，Go仍是服务主线；不引入公司真实消息/私有数据。当前S2/v1合同必须固定：正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。虚构JSONL样例不能说成从当前S2导出的权威历史。比较Go var/切片/map/error与Python名字绑定对象、str/int/list/dict/None、list/dict可变和别名、==与is、函数def/缩进/返回、类型提示不被运行时自动强制。用pathlib Path.open(encoding=utf-8)逐行读消息JSONL、json.loads一行一对象，明确JSONDecodeError/字段类型/空值/超限/文件OSError等错误路径，拒绝行保留行号和原因但不输出私密正文，不用裸except吞错误。body=“你好”是2个字符、len(body.encode(utf-8))=6B；若纸上记录声称代表当前/v1，正文必须非空最多6B，7B拒绝；原始HTTP请求体4096B不能仅从JSONL body推回。重复message_id行需保留原始证据并标冲突，不等于线上同ID重复409的请求响应，更不能静默删。资料文档需要owner/access_scope/version和权限，不能将私聊全量进公开检索语料。Python -m venv隔离依赖，不提交.venv；记录Python版本、依赖/程序版本、schema版本、原始输入SHA256、清洗规则、接受/拒绝数、固定输出顺序和随机种子（若用），SHA256不是保密/授权证明。生成固定虚构问题q-01/q-02和证据草案，14.09再讲标注、代表性、泄漏和基线；不调用模型。只写静态教材及代码示意，不运行Python/Go/IM/数据库/站点。\n1. 一、Go初学者为何在AI方向补Python: 本卷AI支线从Python数据工作起步，不放弃Go/IM系统基础。用完全虚构u-a/u-b、c-a、m-a消息和资料助手文档说明数据来源；当前S2/v1正文非空最多6 UTF-8B、原始HTTP体4096B、同ID重复409、非成员404、200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。静态样例不是从当前S2导出的权威历史，更不引入真实公司消息。\n2. 二、名字、对象与可变集合: 比较Go静态变量/切片/map与Python名字绑定对象、str/int/list/dict/None；list/dict可变及别名共享，str不可变；==值与is同一对象；类型注解不由Python运行时自动执行。以两条虚构消息记录示例，避免把消息ID与JSONL行号混同。\n3. 三、函数、类型提示与异常: Python def、参数/返回值、缩进与返回、类型提示只辅助工具，实际字段必须显式isinstance/值范围验证；Go err返回 vs Python raise/try except。分别处理JSONDecodeError、ValueError/TypeError、文件OSError与意外异常，不裸except吞错；错误携行号但不打印私密正文。\n4. 四、虚构JSONL与UTF-8字节: 用pathlib Path.open(encoding=utf-8)逐行、json.loads一行一JSON对象；字段message_id/conversation_id/sender_id/body，body=“你好”len字符2而UTF8 6字节；若代表当前/v1消息需非空且len(body.encode(utf-8))<=6。原始HTTP请求体4096B不能从导出JSONL中的body推回；同ID重复行不等于线上409，也不能静默去重改变证据。\n5. 五、校验、拒绝与数据访问边界: 逐行标接受/拒绝及原因：缺字段、错类型、空正文、超6B、重复message_id、错误conversation_id、坏JSON；原始与清洗数据分开、拒绝行记录不含正文。虚构数据不代替用户成员权限，资料助手语料还需owner/scope/version和授权，不能把私聊全部当公开检索文本。\n6. 六、环境与可复现记录: python -m venv创建隔离环境、固定Python版本/依赖、不要提交.venv；原始输入SHA256、schema版本、程序版本/参数、接受拒绝数、输出排序与随机种子若使用，记录manifest。Path.read_bytes/hashlib.sha256，不把哈希当保密/权限证明。输出采用固定顺序和显式UTF-8，避免依赖目录遍历顺序。\n7. 七、纸上最小数据管线与后续14.09: 输入虚构messages.jsonl与docs.jsonl→逐行解析→验证→合格集+拒绝统计→生成固定问题q-01/q-02及证据引用草案，不先调用模型；14.09再讨论代表性/标注/数据泄漏和基线。代码示意静态未运行；Go学习者可写对应Go读取器比较语义，但不把语言差异误读为业务合同变化。\n8. 八、22道分层练习: 基础8/推演8/决策6附答案：Python名字/对象/可变别名、type hint运行时、try except、JSONL单行、你好2字符6B、7B超限、缺字段/重复ID与线上409区别、4096B原始HTTP与body、venv、SHA256、权限/脱敏和manifest。只静态不运行Python/Go/IM/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

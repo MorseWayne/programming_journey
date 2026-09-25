@@ -1,0 +1,32 @@
+{
+  "chapter": "14.01",
+  "stage": "S3+ optional AI branch",
+  "business_scope": "static beginner Python and synthetic IM data preparation lesson bridging the Go service curriculum to AI evaluation",
+  "prerequisites": [
+    "01.04 Go collections and text",
+    "09.02 current S2 HTTP byte contract",
+    "09.07 application authorization",
+    "13.02 request, message and sequence identities"
+  ],
+  "first_pass": [
+    "compare Go variables, slices, maps and errors with Python object binding, mutable containers and exceptions",
+    "explain that type hints do not automatically validate runtime JSON input",
+    "read one JSON object per UTF-8 JSONL line and preserve row-numbered rejection categories",
+    "calculate the six UTF-8 bytes in the two-character synthetic body 你好"
+  ],
+  "second_pass": [
+    "keep current S2 in-memory acceptance separate from synthetic offline samples",
+    "separate body bytes from 4096-byte raw HTTP request body evidence",
+    "do not infer online HTTP 409 from duplicate JSONL rows",
+    "require owner/access_scope/version for future assistant documents",
+    "record environment, schema, input hash, output order and accepted/rejected counts without treating hashes as authorization"
+  ],
+  "not_yet_prerequisites": [
+    "14.02 mathematics and machine-learning intuition",
+    "14.09 representative labeled dataset and baseline",
+    "learner's own Python execution and validated synthetic data artifact"
+  ],
+  "next_chapter": "14.02 mathematics and machine-learning intuition",
+  "upstream_inspection": "No OpenIM implementation claim is needed for this chapter; all sample rows are fabricated. Current S2 HTTP behavior is referenced only from the course contract, not inferred from JSONL.",
+  "shared_integration_pending": []
+}

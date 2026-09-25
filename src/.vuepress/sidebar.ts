@@ -391,6 +391,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/14_ai/",
+            "curriculum/14_ai/01_python_data_work",
             "curriculum/14_ai/core"
           ]
         }
