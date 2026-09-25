@@ -1,0 +1,29 @@
+{
+  "chapter": "01.11",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against current Go documentation and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "93da4ddc7b7b8fc2e33ab348d3d779ae222030294d94959e995bdf0989fd5d89",
+  "reviewed_sha256": "f1a8fe9815cedc092dfed16b076835e62e06fff69f1946ffccaf088fe94be0c5",
+  "reviewed_characters": 10284,
+  "reviewed_chinese_characters": 2946,
+  "course_file": "src/docs/platform_engineering/curriculum/01_go/11_reflection_unsafe_boundaries.md",
+  "course_sha256": "9bd9c9291375ee85d1e44199561f65545a592a413fea14da0de75d4aff0bd46f",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://go.dev/blog/laws-of-reflection",
+    "https://pkg.go.dev/reflect",
+    "https://pkg.go.dev/encoding/json",
+    "https://pkg.go.dev/unsafe"
+  ]
+}

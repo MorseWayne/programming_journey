@@ -234,4 +234,4 @@ Go 标准库已有泛型 `slices.IndexFunc`、`slices.Clone`、`maps.Clone` 等�
 
 ## 本章完成标准与后续路径
 
-能先写具体消息查找，再解释 `First[T any]` 的类型推断、零值与约束；能区分 `~string`、`comparable`、泛型类型和接口，指出队列的内存/并发边界，以及 Go 1.27 泛型方法的版本条件，才算完成本章。下一章 01.11 将从 `reflect.Type/Value`、可设置性和结构标签解释编码器为何要做运行期检查；01.12 CLI 基础版依然可在本章之前学习。[第一卷路线](./README.md)
+能先写具体消息查找，再解释 `First[T any]` 的类型推断、零值与约束；能区分 `~string`、`comparable`、泛型类型和接口，指出队列的内存/并发边界，以及 Go 1.27 泛型方法的版本条件，才算完成本章。下一章[01.11 反射与底层边界](./11_reflection_unsafe_boundaries.md)将从 `reflect.Type/Value`、可设置性和结构标签解释编码器为何要做运行期检查；01.12 CLI 基础版依然可在本章之前学习。[第一卷路线](./README.md)

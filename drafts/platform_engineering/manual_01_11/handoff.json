@@ -1,0 +1,27 @@
+{
+  "chapter": "01.11",
+  "stage": "S4+ Go language second pass",
+  "business_scope": "static beginner Go reflection and unsafe boundaries lesson for synthetic IM message encoding",
+  "prerequisites": [
+    "01.05 structs and pointers",
+    "01.06 methods, interfaces and typed nil",
+    "01.07 error and panic boundaries",
+    "01.08 encoding/json and I/O",
+    "01.10 generic and static abstraction contrast"
+  ],
+  "first_pass": [
+    "distinguish interface static/dynamic types, reflect.Type and Kind",
+    "guard nil and invalid reflect.Value operations",
+    "compare ValueOf(value) with ValueOf(pointer).Elem and CanSet",
+    "read struct tags and exported-field constraints"
+  ],
+  "second_pass": [
+    "separate JSON parse, field presence, byte limits, duplicate IDs and authorization",
+    "explain a generic encoder's dynamic checks without reimplementing JSON",
+    "distinguish unsafe.Sizeof memory representation from serialized/UTF-8 bytes",
+    "require actual profiling before lower-level performance claims"
+  ],
+  "next_chapter": "02.09 weighted paths and algorithmic deepening",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}
