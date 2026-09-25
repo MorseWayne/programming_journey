@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_f94b9e8dbc",
-  "page_id": "pg_193fa3a820",
+  "book_id": "bk_8ec70849b2",
+  "page_id": "pg_715e61ae8c",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,23 +16,23 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://kubernetes.io/docs/concepts/workloads/pods/probes/",
+      "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+      "https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/",
+      "https://kubernetes.io/docs/concepts/configuration/configmap/",
       "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
-      "https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks",
-      "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
-      "https://pkg.go.dev/net/http",
+      "https://sre.google/workbook/canarying-releases/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "dcbbe25714de7e78a8ed1b9a707f609d8e9534025a7167034a90b6c29416144f",
-  "original_characters": 31368,
-  "generation_request_sha256": "e909e3dbe33c230ef941587562c62178ef15d43138b397a4bd33a7ae74a36350",
-  "reviewed_sha256": "cf3d827cad05746f62da9f6cf2ef9954576c2c0ce478ac65ab37ee1615051ddc",
-  "reviewed_characters": 10545,
-  "reviewed_chinese_characters": 3248,
-  "course_file": "src/docs/platform_engineering/curriculum/12_platform/08_startup_probes_exit.md",
-  "course_sha256": "ccb14bb42681c418c5c9ed6e84e68367a7fa46cdac049094bf9f43cf8b10d252"
+  "original_sha256": "0cb26accb5bd1b6525004d04c7001649bee4dfa1697261d207ba0d08196bcc70",
+  "original_characters": 31105,
+  "generation_request_sha256": "0ee190453ef52faacd00666d8ac58287d1412250454fd9db77c75f073184a5fc",
+  "reviewed_sha256": "a9d5e578c7abcbdb1e39d6f2b42b4f9ed6a99d9acb7f602cf077c13019b03282",
+  "reviewed_characters": 10514,
+  "reviewed_chinese_characters": 3563,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/09_release_rollback.md",
+  "course_sha256": "dc83661a462d6115300d5e30dbc75d4bd57698c2345f848334a65afe3d50468c"
 }

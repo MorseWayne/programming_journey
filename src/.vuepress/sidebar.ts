@@ -359,6 +359,7 @@ export default sidebar({
             "curriculum/12_platform/06_resources_persistent_storage",
             "curriculum/12_platform/07_config_permissions",
             "curriculum/12_platform/08_startup_probes_exit",
+            "curriculum/12_platform/09_release_rollback",
             "curriculum/12_platform/core"
           ]
         },

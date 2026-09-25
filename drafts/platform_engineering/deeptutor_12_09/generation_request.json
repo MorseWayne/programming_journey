@@ -1,0 +1,74 @@
+{
+  "code": "12.09",
+  "title": "发布与回滚：三副本网关如何分阶段换制品",
+  "chapter_id": "ch_release_rollback",
+  "summary": "面向Go初学者，用虚构D1→D2网关发布解释滚动预算、金丝雀曝光、蓝绿、配置/数据/事件兼容与回滚边界。",
+  "objectives": [
+    "区分镜像、配置、数据库、事件和客户端版本轴",
+    "手算maxSurge/maxUnavailable预算",
+    "解释金丝雀请求/连接/用户曝光差异",
+    "用当前S2正反例设发布停门",
+    "说明rollout undo只回Pod模板",
+    "交付含数据/旧客户端兼容的回退卡"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/",
+    "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+    "https://sre.google/workbook/canarying-releases/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、发布的是哪一轴",
+      "words": 3000,
+      "focus": "Go初学者用虚构IM gateway镜像D1→D2，仅日志/可观测性改进，当前S2/v1合同正文6 UTF8B/请求体4096B/重复409/非成员404/200内存受理保持；未来S3/v2 DB提议仍6B、R9待审、event版本与客户端版本各独立，不能顺带启用。"
+    },
+    {
+      "title": "二、Deployment滚动预算手算",
+      "words": 3100,
+      "focus": "纸上replicas3,maxSurge1,maxUnavailable0：控制中非终止Pod目标可至4、可用目标至少3，需额外Node requests空间；终止中Pod可能使实际总对象超过4，Ready未必业务达标，P4 Pending会卡发布；不能只看rollout绿色。"
+    },
+    {
+      "title": "三、蓝绿与金丝雀的真实流量单位",
+      "words": 3200,
+      "focus": "蓝绿保留两组入口/Pod并切换，成本与WebSocket旧连接待排；金丝雀是部分有限时间D2 vs D1对照，1%请求、1%连接、1%用户不同，一Pod/三Pod不等精确1%，需路由与实际曝光记录。"
+    },
+    {
+      "title": "四、四轴兼容与旧新混部",
+      "words": 3200,
+      "focus": "镜像D1/D2、配置K1/K2、权威DB schema/data、event_v1/v2与旧客户端分别兼容。当前v1 6B不能被R9 9B环境变量放宽；S3 DB提交成功点不能挪到v1；旧客户端/历史事件可回放窗口下双读与扩展迁移收缩。"
+    },
+    {
+      "title": "五、分阶段观察与停止门",
+      "words": 3100,
+      "focus": "发布前制品digest/配置/业务正反例，阶段10%/50%/100%纸上仅计划，记录实际用户/请求/连接曝光、409/404/200/6B和超时、长连接重连、B设备/未来权威另表；阈值根据待批准目标，不伪造结果。"
+    },
+    {
+      "title": "六、回滚矩阵：undo只回Pod模板",
+      "words": 3100,
+      "focus": "kubectl rollout undo只回Deployment Pod template revision，不能自动回ConfigMap当前值、DB模式数据、outbox/event、客户端。配置env变更需新Pod、ConfigMap对象变更未必Deployment revision；回退D1需读K2和新数据，可能必须前滚修复。"
+    },
+    {
+      "title": "七、一次纸上D1到D2再暂停",
+      "words": 3100,
+      "focus": "T0 D1三Ready，T1准备D2/k2/正反例，T2 P4 surge但Pending因资源，暂停不强删旧Pod，T3扩容可行P4 Ready、P1摘流，T4可见重复409在跨Pod失败则立即停止；此处只是假设反例，不当真实生产测试；恢复按消息身份/数据确认。"
+    },
+    {
+      "title": "八、22题与发布决策卡",
+      "words": 3000,
+      "focus": "基础8/推导8/决策6，答案含surge预算/terminating例外、canary流量口径、bluegreen旧连接、rollout undo只模板、ConfigMap env、S2/S3/R9/event多轴、停门与有权数据恢复。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.09 发布与回滚》，Go初学者八节理论丰富、IM业务由浅入深、22题反馈。当前S2/v1静态合同正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。纸上网关发布D1→D2仅日志/可观测性改进，不趁机启用R9或S3。Deployment replicas3,maxSurge1,maxUnavailable0，受控滚动非终止Pod可到4、正常可用目标至少3，但终止中Pod可能让实际总数超过4、Node无多余request时P4 Pending，不能盲删旧Pod；readiness绿不等业务通过。蓝绿两组并行有容量成本/旧WebSocket未迁移；金丝雀有限时间D2与D1对照，1%请求、1%新连接、1%用户不同，1 Pod/3 Pod不能自动等1%曝光，要路由支持和实际观察。版本轴镜像D、配置K、DB schema/data、event_v1/v2、旧客户端相互兼容；旧v1最多6B/重复409/非成员404/内存200，不因环境变量变成R9 9B；拟议S3存储确认不并入v1。发布前与10%/50%/100%阶段均仅纸上计划，验镜像digest、正反例、业务错误/时延、重连、未来权威/B设备分栏。Kubernetes rollout undo只回Deployment Pod template修订，不自动回ConfigMap源值、数据库模式/数据、事件或客户端；ConfigMap env更新需Pod替换，旧D1要能读K2与已写新数据，否则可能需前滚修复。纸上T0 D1三Ready、T2 D2新P4 Pending因资源则暂停、T3可行且Ready后P1摘流、T4如果跨Pod重复409失败应停扩并核对权威，都是假设非实测。固定OpenIM send.go MsgToMQ与Mongo BatchInsert两段不证明真实发布。静态不运行Go/IM/kubectl/K8s/部署/站点。\n1. 一、发布的是哪一轴: Go初学者用虚构IM gateway镜像D1→D2，仅日志/可观测性改进，当前S2/v1合同正文6 UTF8B/请求体4096B/重复409/非成员404/200内存受理保持；未来S3/v2 DB提议仍6B、R9待审、event版本与客户端版本各独立，不能顺带启用。\n2. 二、Deployment滚动预算手算: 纸上replicas3,maxSurge1,maxUnavailable0：控制中非终止Pod目标可至4、可用目标至少3，需额外Node requests空间；终止中Pod可能使实际总对象超过4，Ready未必业务达标，P4 Pending会卡发布；不能只看rollout绿色。\n3. 三、蓝绿与金丝雀的真实流量单位: 蓝绿保留两组入口/Pod并切换，成本与WebSocket旧连接待排；金丝雀是部分有限时间D2 vs D1对照，1%请求、1%连接、1%用户不同，一Pod/三Pod不等精确1%，需路由与实际曝光记录。\n4. 四、四轴兼容与旧新混部: 镜像D1/D2、配置K1/K2、权威DB schema/data、event_v1/v2与旧客户端分别兼容。当前v1 6B不能被R9 9B环境变量放宽；S3 DB提交成功点不能挪到v1；旧客户端/历史事件可回放窗口下双读与扩展迁移收缩。\n5. 五、分阶段观察与停止门: 发布前制品digest/配置/业务正反例，阶段10%/50%/100%纸上仅计划，记录实际用户/请求/连接曝光、409/404/200/6B和超时、长连接重连、B设备/未来权威另表；阈值根据待批准目标，不伪造结果。\n6. 六、回滚矩阵：undo只回Pod模板: kubectl rollout undo只回Deployment Pod template revision，不能自动回ConfigMap当前值、DB模式数据、outbox/event、客户端。配置env变更需新Pod、ConfigMap对象变更未必Deployment revision；回退D1需读K2和新数据，可能必须前滚修复。\n7. 七、一次纸上D1到D2再暂停: T0 D1三Ready，T1准备D2/k2/正反例，T2 P4 surge但Pending因资源，暂停不强删旧Pod，T3扩容可行P4 Ready、P1摘流，T4可见重复409在跨Pod失败则立即停止；此处只是假设反例，不当真实生产测试；恢复按消息身份/数据确认。\n8. 八、22题与发布决策卡: 基础8/推导8/决策6，答案含surge预算/terminating例外、canary流量口径、bluegreen旧连接、rollout undo只模板、ConfigMap env、S2/S3/R9/event多轴、停门与有权数据恢复。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

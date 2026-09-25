@@ -1,0 +1,32 @@
+{
+  "chapter": "12.09",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced IM gateway release and rollback lesson using fictional D1-to-D2 observability-only rollout",
+  "prerequisites": [
+    "12.01 image digest and effective config identity",
+    "12.06 resource requests and scheduling capacity",
+    "12.08 readiness, EndpointSlice and WebSocket draining",
+    "10.10 code, data, event and client rollback gates",
+    "09.10 protocol and old-client compatibility"
+  ],
+  "first_pass": [
+    "fix the sole approved D1-to-D2 change as logging/observability",
+    "calculate three-replica maxSurge one and maxUnavailable zero rollout budget",
+    "distinguish request, new-connection and user canary exposure",
+    "keep current S2/v1 contract separate from proposed S3 and pending R9"
+  ],
+  "second_pass": [
+    "compare rolling, blue-green and canary long-connection effects",
+    "audit image, config, DB data, events and client compatibility axes",
+    "show rollout undo affects Pod template but not external data or ConfigMap contents",
+    "stop expansion on current 6-byte, 409, 404 or 200 semantic drift",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.10 autoscaling and fault domains",
+    "learner's actual approved rollout gates and runtime observations"
+  ],
+  "next_chapter": "12.10 autoscaling and fault domains",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish a course or upstream rollout, canary fraction, schema or rollback behavior.",
+  "shared_integration_pending": []
+}

@@ -181,4 +181,4 @@ Kubernetes 负责探针与端点状态、Pod 终止预算、替代 Pod；Go HTTP
 
 ## 本章完成标准与后续路径
 
-能解释 startup/readiness/liveness 的不同效果，手算宽限期包含 preStop 的预算，说明端点传播与信号并行、`Shutdown` 不等 WebSocket，并为 P1→P4 的旧消息和客户端补拉写出停止/恢复门，才算完成第一轮。本章没有运行 Pod 或执行发布。下一章 12.09 将把这些门接入滚动、金丝雀、配置灰度与回滚决策。
+能解释 startup/readiness/liveness 的不同效果，手算宽限期包含 preStop 的预算，说明端点传播与信号并行、`Shutdown` 不等 WebSocket，并为 P1→P4 的旧消息和客户端补拉写出停止/恢复门，才算完成第一轮。本章没有运行 Pod 或执行发布。下一章[12.09 发布与回滚](../../../src/docs/platform_engineering/curriculum/12_platform/09_release_rollback.md)将把这些门接入滚动、金丝雀、配置灰度与回滚决策。
