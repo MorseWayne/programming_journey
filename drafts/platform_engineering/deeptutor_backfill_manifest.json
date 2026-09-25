@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "purpose": "Track DeepTutor source drafts still needed for already reviewed static course chapters.",
+  "completion_rule": "Generate an actual DeepTutor original, preserve the existing manual review, compare and correct the official page, verify source hashes, then remove that chapter from this queue.",
+  "chapters": [
+    {
+      "chapter": "01.10",
+      "course_file": "src/docs/platform_engineering/curriculum/01_go/10_generics_reusable_algorithms.md",
+      "archive": "drafts/platform_engineering/manual_01_10",
+      "generation_request_file": "drafts/platform_engineering/manual_01_10/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "01.11",
+      "course_file": "src/docs/platform_engineering/curriculum/01_go/11_reflection_unsafe_boundaries.md",
+      "archive": "drafts/platform_engineering/manual_01_11",
+      "generation_request_file": "drafts/platform_engineering/manual_01_11/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "02.09",
+      "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/09_weighted_paths_state_space.md",
+      "archive": "drafts/platform_engineering/manual_02_09",
+      "generation_request_file": "drafts/platform_engineering/manual_02_09/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "02.10",
+      "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/10_dynamic_programming_greedy.md",
+      "archive": "drafts/platform_engineering/manual_02_10",
+      "generation_request_file": "drafts/platform_engineering/manual_02_10/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "02.11",
+      "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/11_specialized_structures_approximation.md",
+      "archive": "drafts/platform_engineering/manual_02_11",
+      "generation_request_file": "drafts/platform_engineering/manual_02_11/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "02.12",
+      "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/12_business_algorithm_review.md",
+      "archive": "drafts/platform_engineering/manual_02_12",
+      "generation_request_file": "drafts/platform_engineering/manual_02_12/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "04.08",
+      "course_file": "src/docs/platform_engineering/curriculum/04_networks/08_go_network_io.md",
+      "archive": "drafts/platform_engineering/manual_04_08",
+      "generation_request_file": "drafts/platform_engineering/manual_04_08/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "04.09",
+      "course_file": "src/docs/platform_engineering/curriculum/04_networks/09_proxies_load_balancing.md",
+      "archive": "drafts/platform_engineering/manual_04_09",
+      "generation_request_file": "drafts/platform_engineering/manual_04_09/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "04.10",
+      "course_file": "src/docs/platform_engineering/curriculum/04_networks/10_http_versions_rpc.md",
+      "archive": "drafts/platform_engineering/manual_04_10",
+      "generation_request_file": "drafts/platform_engineering/manual_04_10/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "04.11",
+      "course_file": "src/docs/platform_engineering/curriculum/04_networks/11_network_link_layers.md",
+      "archive": "drafts/platform_engineering/manual_04_11",
+      "generation_request_file": "drafts/platform_engineering/manual_04_11/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "04.12",
+      "course_file": "src/docs/platform_engineering/curriculum/04_networks/12_network_diagnostics_evolution.md",
+      "archive": "drafts/platform_engineering/manual_04_12",
+      "generation_request_file": "drafts/platform_engineering/manual_04_12/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "14.05",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/05_prompt_structured_output.md",
+      "archive": "drafts/platform_engineering/manual_14_05",
+      "generation_request_file": "drafts/platform_engineering/manual_14_05/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: HTTP 502 after 9 retries"
+    },
+    {
+      "chapter": "14.06",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/06_retrieval_indexing.md",
+      "archive": "drafts/platform_engineering/manual_14_06",
+      "generation_request_file": "drafts/platform_engineering/manual_14_06/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "14.07",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/07_rag_pipeline.md",
+      "archive": "drafts/platform_engineering/manual_14_07",
+      "generation_request_file": "drafts/platform_engineering/manual_14_07/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "14.08",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/08_tools_workflows_agents.md",
+      "archive": "drafts/platform_engineering/manual_14_08",
+      "generation_request_file": "drafts/platform_engineering/manual_14_08/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "14.10",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md",
+      "archive": "drafts/platform_engineering/manual_14_10",
+      "generation_request_file": "drafts/platform_engineering/manual_14_10/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
+    },
+    {
+      "chapter": "14.11",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/11_finetuning_multimodal.md",
+      "archive": "drafts/platform_engineering/manual_14_11",
+      "generation_request_file": "drafts/platform_engineering/manual_14_11/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 4 HTTP 502 responses observed, stopped after 90 seconds"
+    },
+    {
+      "chapter": "14.12",
+      "course_file": "src/docs/platform_engineering/curriculum/14_ai/12_sustainable_delivery.md",
+      "archive": "drafts/platform_engineering/manual_14_12",
+      "generation_request_file": "drafts/platform_engineering/manual_14_12/generation_request.json",
+      "state": "awaiting_deeptutor_original",
+      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses observed, stopped after 90 seconds"
+    }
+  ]
+}
