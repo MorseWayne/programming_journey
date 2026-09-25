@@ -1,0 +1,31 @@
+{
+  "chapter": "13.12",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM engineering responsibility lesson using a fictional future incident, handoff and mentoring sequence",
+  "prerequisites": [
+    "13.01–13.11 full architecture and delivery arc",
+    "11.10–11.11 incident response and postmortem",
+    "10.11 technical writing and collaboration",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "define senior capability through verifiable user results, decisions and handoffs",
+    "separate current S2 from a future paper DB-stored/event-not-sent incident",
+    "trace incident evidence from A acceptance through authority, E9 and B device recovery",
+    "keep proposed ADR and unapproved retention/R9 decisions visible"
+  ],
+  "second_pass": [
+    "mentor Go beginners through Go data, HTTP, DB, event, runtime and architecture prerequisites",
+    "give a version, authority, permission, stop and rollback handoff card",
+    "turn blameless postmortem insights into owned and verifiable actions",
+    "separate explanation, personal implementation, failure variants and business tradeoffs",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "14.01 Python and data work as the next optional AI branch",
+    "learner's own Go implementation, experiments and actual on-call/mentoring evidence"
+  ],
+  "next_chapter": "14.01 Python and data work",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish complete acknowledgments, real capacity, incidents, technical debt or this volume's future design.",
+  "shared_integration_pending": []
+}

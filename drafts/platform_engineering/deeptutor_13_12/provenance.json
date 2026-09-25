@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_59cdd43398",
-  "page_id": "pg_5911714cb7",
+  "book_id": "bk_4320a81650",
+  "page_id": "pg_5b9e5b2a86",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,22 +16,23 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://sre.google/workbook/non-abstract-design/",
+      "https://sre.google/workbook/postmortem-culture/",
+      "https://sre.google/workbook/engagement-model/",
+      "https://sre.google/workbook/simplicity/",
+      "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
       "https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/",
-      "https://sre.google/sre-book/handling-overload/",
-      "https://sre.google/sre-book/data-integrity/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "5e951398d7108f54d4f0d938ca27ae9b2bd022a0c66c754d899fd80b3575789a",
-  "original_characters": 31870,
-  "generation_request_sha256": "82a294dcfb62fbf8a75915c533a31accd0cbe9196e97646d91ee86ac94129fcf",
-  "reviewed_sha256": "dc0a868614307c29b69ed0609e93224f59c81f5a93afc020de9b7e7296b1c7f9",
-  "reviewed_characters": 10609,
-  "reviewed_chinese_characters": 3603,
-  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/11_complex_im_defense.md",
-  "course_sha256": "05a810c9f1e1d0a9b592f2604f3bb1f1c8063e12104b6da5f74acd30c17a0eae"
+  "original_sha256": "7e2ca14e55ab7b7ea5098dd8798593b2eb5a1400710870c6aca23e853cd0601f",
+  "original_characters": 31227,
+  "generation_request_sha256": "fdaa0aa35372fe60b51669191ad5f9869eaac616ebf967a1d4b5212a0d4f50c4",
+  "reviewed_sha256": "7b7aa8ab7245228e40a60a5bc3578c93b558c022b473d00141b57f359593228a",
+  "reviewed_characters": 10110,
+  "reviewed_chinese_characters": 3849,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/12_engineer_long_term_responsibility.md",
+  "course_sha256": "3603317b88fd466cf72f117cc412e192dd5fadc54d93ec81677e87619078f23f"
 }
