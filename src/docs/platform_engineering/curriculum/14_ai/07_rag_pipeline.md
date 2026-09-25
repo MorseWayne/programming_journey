@@ -187,4 +187,4 @@ current `doc-current`，当前 `/v1` 正文最多 6 UTF-8 B。</details>
 
 ## 本章完成标准与后续路径
 
-能给六题分别写出入口权限、必需证据、合法 `answer/refuse/undecided` 结果，并对一条多主张回答逐句核引用；能指出撤权、R9 状态更新、注入或截断时该停在哪一层，才算完成本章。此时回访[14.09 评测与数据工程](./09_evaluation_data_engineering.md)的第五至七节，按同一问题和金标签拆检索、引用与端到端结果，再进入 14.08 的工具工作流。
+能给六题分别写出入口权限、必需证据、合法 `answer/refuse/undecided` 结果，并对一条多主张回答逐句核引用；能指出撤权、R9 状态更新、注入或截断时该停在哪一层，才算完成本章。此时回访[14.09 评测与数据工程](./09_evaluation_data_engineering.md)的第五至七节，按同一问题和金标签拆检索、引用与端到端结果，再进入[14.08 工具、工作流与 Agent](./08_tools_workflows_agents.md)。

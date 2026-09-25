@@ -1,0 +1,71 @@
+{
+  "code": "14.08",
+  "title": "工具、工作流与Agent：让IM动作可控可恢复",
+  "chapter_id": "ch_tools_workflows_agents",
+  "summary": "面向Go初学者，以虚构IM受控发送解释工具契约、状态机、批准、预算、checkpoint、未知结果与幂等边界。",
+  "objectives": [
+    "区分资料回答、固定工作流和动态Agent",
+    "定义读/写工具的输入、权限、结果和副作用",
+    "画出草稿校验批准执行与未知结果状态",
+    "解释当前S2重复409和响应丢失为何不能自动重试",
+    "设计预算、撤权、注入及轨迹评测"
+  ],
+  "sources": [
+    "https://www.anthropic.com/engineering/building-effective-agents",
+    "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+    "https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html",
+    "https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph",
+    "https://www.rfc-editor.org/rfc/rfc9110.html"
+  ],
+  "sections": [
+    {
+      "title": "一、回答、固定工作流和 Agent 是三种不同职责",
+      "words": 3300,
+      "focus": "14.07 的 RAG 资料助手可以根据有权证据**回答**“当前正文上限是 6 UTF-8 B”。若用户说“向 `c-a` 发一条消息”，系统可能真的改动 IM 状态，这叫**有副作用的工具动作**。工具调用不是回答中的动词：模型写“已发送”不表示 send 接口被调用，更不表示 B 设备收到。更高风险的动作还可能是改成员范围、删历史或批量通知；本章只以虚构频道中一次**受控发送**作纸上例子。[14.07 回答与证据](./07_rag_pipeline.md) **固定工作流**由程序预定步骤和分支，如“起草 → 校验 → 人工批准 → 发送 → 记录结果”；模型可以帮起草，却不能自由跳过门。**Agent** 通常指让模型在限定工具与目标下动态选择下一步、观察结果再继续。自由度更多也带来更多状态、失败和评测组合。用户只是要查 6 B 合同时，RAG/确定性回答足够；当业务目标需要跨步骤读取、准备和执行动作，才考虑工作流或 Agent。具体选型应先看业务失败成本和可验收性。[Anthropic：Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) 第三行 `公告` 的两个汉字各占 3 个 UTF-8 B，纸上正好 **6 B**；它不是“6 个字符”或“6 个 token”。真实请求还要核整个原始 HTTP body 是否最多 4096 B、成员"
+    },
+    {
+      "title": "二、把工具当有类型的业务接口，而非自然语言命令",
+      "words": 3300,
+      "focus": "一个工具契约至少写清**名字、输入字段/类型、调用者身份、资源范围、前置校验、可见结果、错误与副作用**。只读的 `lookup_current_rule` 可返回现行合同及文档 ID；写入的 `send_to_conversation` 需要 actor、`conversation_id`、`message_id`、正文和明确批准。模型可提出调用建议，应用验证每个字段、权限和状态后才决定是否执行；工具描述、用户问题或检索片段都不能授予超出调用者的权限。[OWASP：Agent per-tool scope](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) 只读 lookup_current_rule(actor, question) → {document_id, status, rule} 写入 send_to_conversation(actor, conversation_id, message_id, body, approval_id) 前置：actor 有权向 conversation_id 发言；body 非空且 UTF-8 B<=6； 原始 HTTP body<=4096 B；message_id 不与既有请求冲突； approval_id 对这次 actor+会话+正文+动作仍有效。 已知结果：200 accepted_in_memory、40"
+    },
+    {
+      "title": "三、用有限状态机画出批准与执行的停点",
+      "words": 3300,
+      "focus": "自由文本“下一步就发”容易漏掉批准、重试和未知结果。先列离散**状态**与允许转移： draft → validated → awaiting_approval → approved → executing ↘ rejected       ↘ expired        ↘ accepted_in_memory ↘ result_unknown / failed `draft` 是候选正文；`validated` 已通过字节、成员、资源范围和当前合同的纸上检查；`awaiting_approval` 停在用户/授权审批；`approved` 只对**特定 actor、会话、正文散列、动作与有效期**生效；`executing` 才可能调用写工具。若正文或目标会话改了，旧批准应失效、回到待审批。批准属于可信应用/人，不是模型说“我已获批”就算。[LangGraph：状态与人工中断概念](https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph) · [OWASP：高风险动作审批](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) `accepted_in_memory` 是**当前 S2 最强的成功观察**，只表示本进程受理；它不等于落库、broker 持久、B 设备送达。`"
+    },
+    {
+      "title": "四、预算、循环停止和人工批准都要由应用执行",
+      "words": 3300,
+      "focus": "Agent 若能反复查资料、改草稿、调用工具，必须有**最大步数、模型/token 预算、工具次数、时间界限与作用域**。纸上例子可设最多 5 次决策、3 次只读查询、1 次写动作、30 秒等待批准；这些数字只是教学生看懂预算，不是生产建议。预算耗尽时进入 `paused/failed` 并报告已完成与未完成事项，不能悄悄越过批准或把“未执行”写成“已发”。[Anthropic：stopping conditions](https://www.anthropic.com/engineering/building-effective-agents) 人工批准要展示**具体动作和后果**：actor `u-a`、会话 `c-a`、正文 `公告`、6 UTF-8 B、当前消息 ID、权限检查结果和“200 仅内存受理”的确认范围。批准仅绑定这份计划；若模型后来把正文换成“公告9”或把目标换为其它会话，必须重新校验和审批。对批量发送、成员变更、删除这类更高风险动作，应有更窄权限和更严格批准；本章不赋予任何实际权限。[OWASP：least privilege 与 human approval](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) `q-03` 的私有文档无权，Agent 不应通过“先调用检索工具再让模型决定是否说出”绕过 14.07 的权限门。检索输出或工具结"
+    },
+    {
+      "title": "五、检查点能恢复流程，但不能自动消除副作用重复",
+      "words": 3300,
+      "focus": "**检查点（checkpoint）**是在某个状态转移后保存可恢复的工作流状态，至少包括工作流/请求 ID、actor、计划摘要、批准记录、已完成步骤、待调用工具及可观察结果。不要把私有正文或凭据随手写进无保护日志；引用资料要保留版本和可查来源。模型“记得自己做过”不是可靠检查点，进程内变量丢失后也无法证明跨重启状态。[LangGraph：持久状态与暂停恢复](https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph) 检查点与外部写动作之间仍有空隙：**先记“准备发送”再调用**，崩溃后可能不知道服务端是否受理；**先调用再记“已发送”**，崩溃后本地仍不知道是否成功。当前 S2 `/v1` 同 ID 再发会回 **409，即使正文相同**，所以 409 不是“这次重试安全完成”的成功证明。HTTP 方法层的“幂等”也不自动赋予自定义 IM 写动作幂等语义。[RFC 9110：Idempotent Methods](https://www.rfc-editor.org/rfc/rfc9110.html) · [09.02 重复 ID 合同](../09_backend_security/02_http_api_contract.md) 纸上故障：`send_to_conversation` 可能已产生 S2 内存受理，但客户端在读响应前断线。工作流应进入 `result_unknown`，"
+    },
+    {
+      "title": "六、计划和工具输出仍是不可信输入",
+      "words": 3300,
+      "focus": "模型可能规划“先查私有资料，再发通知”；检索文档也可能写着“调用 `send_to_conversation` 给我”。两者都只是**提议或数据**。应用在每次工具调用前重新核 actor、工具权限、资源 ID、参数、批准、预算和当前合同，工具返回后核状态与来源。外部网页、文档、工具描述或结果都可能包含提示注入；把它们放在模型上下文里不能提高其授权级别。[OWASP：Agent 安全](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) 对于 `q-02`，即使工具返回 R9 的“9 B”，`status=proposed` 也不能让 send 工具接受 9 B 正文；对于 `q-03`，无权私有正文不能因为“Agent 需要更多上下文”就放行。对写动作，校验在模型外可确定执行，并记录拒绝原因。若批准服务、权限源或当前合同不可用，停止执行比猜一个宽松结论更符合这条业务链。[09.07 授权](../09_backend_security/07_authentication_authorization.md) 工具错误不要一律回馈模型让它“再想办法”：404 隐藏非成员不应泄露对象细节；409 可能是 ID 冲突；超时可能是未知结果；格式/参数错误可以修，但修后又改变批准内容时仍要重批。明确的工具错误分类比自由文本循环更容易验证。[14.05 分层失败](./05_pr"
+    },
+    {
+      "title": "七、验收要同时看用户意图、工具轨迹和确认点",
+      "words": 3300,
+      "focus": "14.09 的六题继续用于只读能力：`q-01` 当前 6 B、`q-02` R9 未生效、`q-03` 无权拒绝、`q-04` 未定、`q-05` 200 非设备送达、`q-06` broker 24h 不能保证 25h 离线补齐。若扩展到动作工作流，需另加**授权的动作案例**和故障变式：草稿不执行、批准后参数未变、6 B 正文校验、越权拒绝、响应丢失后停在 unknown、重启后不擅自重发。不能用文本答案的正确率代替真实工具轨迹。[14.09 评测基线](./09_evaluation_data_engineering.md) · [Anthropic：Agent evals](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) 真正运行时还要记录每次决策的时间、工具与参数**摘要**、授权/批准决定、费用/步数、错误、检查点、人工介入和最终确认点。六题及这张表只是教学用例，不能估生产成功率；生产阈值需从业务失败成本和实际数据制定。本章只做纸上验证设计。[OWASP：Agent 监测与评估](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html)"
+    },
+    {
+      "title": "八、22 道分层练习：让每次动作都有停点和证据",
+      "words": 3300,
+      "focus": "1–8 分概念与合同，9–16 推演状态与重试，17–22 做权限和业务决策。答案仅针对虚构 IM 流程。 不等于；要看可信工具轨迹及其实际结果。</details> 前者由程序预定步骤/分支；后者允许模型在限定范围内动态选择下一步和工具。</details> 不需要；有权资料回答或固定检索链通常足够。</details> 各 3 B，共 **6 B**，恰到当前正文上限；仍需其它请求/权限校验。</details> 不是。本章把它作为未来工作流应用侧的批准门设计。</details> 只证明本进程内存受理，不证明落库、broker 持久或 B 设备收到。</details> 具体 actor、会话/资源、动作、正文/参数摘要和有效期；变化后须重新校验与批准。</details> 不等于；检查点是应用保存、可恢复、带版本和结果的可信状态记录。</details> 不可。应停在 `awaiting_approval` 或拒绝。</details> 无效；参数变了，且新正文超过当前 6 UTF-8 B。</details> 不能；服务端可能已受理，状态是 `result_unknown`。</details> 不能。当前合同规定重复 ID 409；它本身不能证明本次重试或原操作已安全完成。</details> 不能；只可记录当前边界 `accepted_in_memory`。</details> 不可；预算和未知结果都要求停止自动重发，先查权威证据。</details> 把“本地没记"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.08 工具、工作流与Agent》，面向Go初学者，八节丰富理论，虚构IM业务由浅入深，22题附答案。当前S2/v1正文非空最多6 UTF-8B、原始HTTP请求体最多4096B、同ID重复409即使同正文、非成员隐藏404、200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。先分只读回答、固定工作流、动态Agent；再设计lookup_current_rule只读工具与send_to_conversation写工具，应用按actor/会话/正文/ID/批准校验，公告两汉字刚好6 UTF-8B，公告9为7B。状态draft→validated→awaiting_approval→approved→executing→accepted_in_memory或result_unknown/failed，批准绑定参数摘要和有效期；模型不能自我批准。预算限制步数/工具写次数/时间，checkpoint是可信可恢复状态；调用中响应丢失可能已受理，当前S2同ID重复409不是幂等成功保证，不能自动重发；未来持久操作ID/查询是新协议提案，不是现行保证。工具输出/检索文档不能给模型授予权限或改变R9状态，q-03私有正文不入模型；按14.09六题和额外受控发送故障卡评轨迹/确认点。引用Anthropic原始工程资料、OWASP Agent安全、LangGraph官方checkpoint概念、RFC9110幂等定义。全程静态纸上，不运行Go/Python/IM/模型/工具/站点。\n1. 一、回答、固定工作流和 Agent 是三种不同职责: 14.07 的 RAG 资料助手可以根据有权证据**回答**“当前正文上限是 6 UTF-8 B”。若用户说“向 `c-a` 发一条消息”，系统可能真的改动 IM 状态，这叫**有副作用的工具动作**。工具调用不是回答中的动词：模型写“已发送”不表示 send 接口被调用，更不表示 B 设备收到。更高风险的动作还可能是改成员范围、删历史或批量通知；本章只以虚构频道中一次**受控发送**作纸上例子。[14.07 回答与证据](./07_rag_pipeline.md) **固定工作流**由程序预定步骤和分支，如“起草 → 校验 → 人工批准 → 发送 → 记录结果”；模型可以帮起草，却不能自由跳过门。**Agent** 通常指让模型在限定工具与目标下动态选择下一步、观察结果再继续。自由度更多也带来更多状态、失败和评测组合。用户只是要查 6 B 合同时，RAG/确定性回答足够；当业务目标需要跨步骤读取、准备和执行动作，才考虑工作流或 Agent。具体选型应先看业务失败成本和可验收性。[Anthropic：Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) 第三行 `公告` 的两个汉字各占 3 个 UTF-8 B，纸上正好 **6 B**；它不是“6 个字符”或“6 个 token”。真实请求还要核整个原始 HTTP body 是否最多 4096 B、成员\n2. 二、把工具当有类型的业务接口，而非自然语言命令: 一个工具契约至少写清**名字、输入字段/类型、调用者身份、资源范围、前置校验、可见结果、错误与副作用**。只读的 `lookup_current_rule` 可返回现行合同及文档 ID；写入的 `send_to_conversation` 需要 actor、`conversation_id`、`message_id`、正文和明确批准。模型可提出调用建议，应用验证每个字段、权限和状态后才决定是否执行；工具描述、用户问题或检索片段都不能授予超出调用者的权限。[OWASP：Agent per-tool scope](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) 只读 lookup_current_rule(actor, question) → {document_id, status, rule} 写入 send_to_conversation(actor, conversation_id, message_id, body, approval_id) 前置：actor 有权向 conversation_id 发言；body 非空且 UTF-8 B<=6； 原始 HTTP body<=4096 B；message_id 不与既有请求冲突； approval_id 对这次 actor+会话+正文+动作仍有效。 已知结果：200 accepted_in_memory、40\n3. 三、用有限状态机画出批准与执行的停点: 自由文本“下一步就发”容易漏掉批准、重试和未知结果。先列离散**状态**与允许转移： draft → validated → awaiting_approval → approved → executing ↘ rejected       ↘ expired        ↘ accepted_in_memory ↘ result_unknown / failed `draft` 是候选正文；`validated` 已通过字节、成员、资源范围和当前合同的纸上检查；`awaiting_approval` 停在用户/授权审批；`approved` 只对**特定 actor、会话、正文散列、动作与有效期**生效；`executing` 才可能调用写工具。若正文或目标会话改了，旧批准应失效、回到待审批。批准属于可信应用/人，不是模型说“我已获批”就算。[LangGraph：状态与人工中断概念](https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph) · [OWASP：高风险动作审批](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) `accepted_in_memory` 是**当前 S2 最强的成功观察**，只表示本进程受理；它不等于落库、broker 持久、B 设备送达。`\n4. 四、预算、循环停止和人工批准都要由应用执行: Agent 若能反复查资料、改草稿、调用工具，必须有**最大步数、模型/token 预算、工具次数、时间界限与作用域**。纸上例子可设最多 5 次决策、3 次只读查询、1 次写动作、30 秒等待批准；这些数字只是教学生看懂预算，不是生产建议。预算耗尽时进入 `paused/failed` 并报告已完成与未完成事项，不能悄悄越过批准或把“未执行”写成“已发”。[Anthropic：stopping conditions](https://www.anthropic.com/engineering/building-effective-agents) 人工批准要展示**具体动作和后果**：actor `u-a`、会话 `c-a`、正文 `公告`、6 UTF-8 B、当前消息 ID、权限检查结果和“200 仅内存受理”的确认范围。批准仅绑定这份计划；若模型后来把正文换成“公告9”或把目标换为其它会话，必须重新校验和审批。对批量发送、成员变更、删除这类更高风险动作，应有更窄权限和更严格批准；本章不赋予任何实际权限。[OWASP：least privilege 与 human approval](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) `q-03` 的私有文档无权，Agent 不应通过“先调用检索工具再让模型决定是否说出”绕过 14.07 的权限门。检索输出或工具结\n5. 五、检查点能恢复流程，但不能自动消除副作用重复: **检查点（checkpoint）**是在某个状态转移后保存可恢复的工作流状态，至少包括工作流/请求 ID、actor、计划摘要、批准记录、已完成步骤、待调用工具及可观察结果。不要把私有正文或凭据随手写进无保护日志；引用资料要保留版本和可查来源。模型“记得自己做过”不是可靠检查点，进程内变量丢失后也无法证明跨重启状态。[LangGraph：持久状态与暂停恢复](https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph) 检查点与外部写动作之间仍有空隙：**先记“准备发送”再调用**，崩溃后可能不知道服务端是否受理；**先调用再记“已发送”**，崩溃后本地仍不知道是否成功。当前 S2 `/v1` 同 ID 再发会回 **409，即使正文相同**，所以 409 不是“这次重试安全完成”的成功证明。HTTP 方法层的“幂等”也不自动赋予自定义 IM 写动作幂等语义。[RFC 9110：Idempotent Methods](https://www.rfc-editor.org/rfc/rfc9110.html) · [09.02 重复 ID 合同](../09_backend_security/02_http_api_contract.md) 纸上故障：`send_to_conversation` 可能已产生 S2 内存受理，但客户端在读响应前断线。工作流应进入 `result_unknown`，\n6. 六、计划和工具输出仍是不可信输入: 模型可能规划“先查私有资料，再发通知”；检索文档也可能写着“调用 `send_to_conversation` 给我”。两者都只是**提议或数据**。应用在每次工具调用前重新核 actor、工具权限、资源 ID、参数、批准、预算和当前合同，工具返回后核状态与来源。外部网页、文档、工具描述或结果都可能包含提示注入；把它们放在模型上下文里不能提高其授权级别。[OWASP：Agent 安全](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html) 对于 `q-02`，即使工具返回 R9 的“9 B”，`status=proposed` 也不能让 send 工具接受 9 B 正文；对于 `q-03`，无权私有正文不能因为“Agent 需要更多上下文”就放行。对写动作，校验在模型外可确定执行，并记录拒绝原因。若批准服务、权限源或当前合同不可用，停止执行比猜一个宽松结论更符合这条业务链。[09.07 授权](../09_backend_security/07_authentication_authorization.md) 工具错误不要一律回馈模型让它“再想办法”：404 隐藏非成员不应泄露对象细节；409 可能是 ID 冲突；超时可能是未知结果；格式/参数错误可以修，但修后又改变批准内容时仍要重批。明确的工具错误分类比自由文本循环更容易验证。[14.05 分层失败](./05_pr\n7. 七、验收要同时看用户意图、工具轨迹和确认点: 14.09 的六题继续用于只读能力：`q-01` 当前 6 B、`q-02` R9 未生效、`q-03` 无权拒绝、`q-04` 未定、`q-05` 200 非设备送达、`q-06` broker 24h 不能保证 25h 离线补齐。若扩展到动作工作流，需另加**授权的动作案例**和故障变式：草稿不执行、批准后参数未变、6 B 正文校验、越权拒绝、响应丢失后停在 unknown、重启后不擅自重发。不能用文本答案的正确率代替真实工具轨迹。[14.09 评测基线](./09_evaluation_data_engineering.md) · [Anthropic：Agent evals](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) 真正运行时还要记录每次决策的时间、工具与参数**摘要**、授权/批准决定、费用/步数、错误、检查点、人工介入和最终确认点。六题及这张表只是教学用例，不能估生产成功率；生产阈值需从业务失败成本和实际数据制定。本章只做纸上验证设计。[OWASP：Agent 监测与评估](https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html)\n8. 八、22 道分层练习：让每次动作都有停点和证据: 1–8 分概念与合同，9–16 推演状态与重试，17–22 做权限和业务决策。答案仅针对虚构 IM 流程。 不等于；要看可信工具轨迹及其实际结果。</details> 前者由程序预定步骤/分支；后者允许模型在限定范围内动态选择下一步和工具。</details> 不需要；有权资料回答或固定检索链通常足够。</details> 各 3 B，共 **6 B**，恰到当前正文上限；仍需其它请求/权限校验。</details> 不是。本章把它作为未来工作流应用侧的批准门设计。</details> 只证明本进程内存受理，不证明落库、broker 持久或 B 设备收到。</details> 具体 actor、会话/资源、动作、正文/参数摘要和有效期；变化后须重新校验与批准。</details> 不等于；检查点是应用保存、可恢复、带版本和结果的可信状态记录。</details> 不可。应停在 `awaiting_approval` 或拒绝。</details> 无效；参数变了，且新正文超过当前 6 UTF-8 B。</details> 不能；服务端可能已受理，状态是 `result_unknown`。</details> 不能。当前合同规定重复 ID 409；它本身不能证明本次重试或原操作已安全完成。</details> 不能；只可记录当前边界 `accepted_in_memory`。</details> 不可；预算和未知结果都要求停止自动重发，先查权威证据。</details> 把“本地没记",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

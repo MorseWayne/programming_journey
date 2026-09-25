@@ -1,5 +1,5 @@
 {
-  "chapter": "14.07",
+  "chapter": "14.08",
   "generator": "manual course authoring; DeepTutor BookEngine attempted",
   "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
   "book_id": null,
@@ -8,12 +8,12 @@
   "original_status": "not generated; no original.md is claimed",
   "review_status": "manually reviewed against listed primary sources and course business contracts",
   "generation_request_file": "generation_request.json",
-  "generation_request_sha256": "ca03c1e3e6ba4ba397ddc8115235194a001d4fc995e4f4d041d4bae2e1571208",
-  "reviewed_sha256": "e9d648c20b44510a51d64b3466c564119a07429762f4ae648d0889202b79c44d",
-  "reviewed_characters": 10225,
-  "reviewed_chinese_characters": 3669,
-  "course_file": "src/docs/platform_engineering/curriculum/14_ai/07_rag_pipeline.md",
-  "course_sha256": "6c79cc11790cf70c06c8bfb6e2d2f7866cfbf27832d4473f4967009789ce4f01",
+  "generation_request_sha256": "962fe2655b38a1baa2bd97e642285884d763fda43aa87d24fac6769d0f4efd7b",
+  "reviewed_sha256": "16b161d0424a38c1ef9bd4346152a24ff3ee1a57979526dc4b17c3c604cb9e6b",
+  "reviewed_characters": 10684,
+  "reviewed_chinese_characters": 3951,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/08_tools_workflows_agents.md",
+  "course_sha256": "d7d133e9eac1357b71fbe9360548d5b4758c61f234085a1c0a921a9bd711d764",
   "model_request_attempted": true,
   "model_output_received": false,
   "course_model_run": false,
@@ -21,9 +21,10 @@
   "site_build": false,
   "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
   "primary_sources": [
-    "https://arxiv.org/abs/2005.11401",
-    "https://arxiv.org/abs/2311.09476",
-    "https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html",
-    "https://cloud.google.com/generative-ai-app-builder/docs/check-grounding?hl=en"
+    "https://www.anthropic.com/engineering/building-effective-agents",
+    "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
+    "https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html",
+    "https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph",
+    "https://www.rfc-editor.org/rfc/rfc9110.html"
   ]
 }
