@@ -1,0 +1,27 @@
+{
+  "chapter": "14.05",
+  "stage": "S3+ optional AI branch",
+  "business_scope": "static beginner prompt design and structured answer validation using synthetic IM document questions",
+  "prerequisites": [
+    "14.01 JSON objects and arrays",
+    "14.03 tokens, generated text and evidence",
+    "14.04 inference path and context boundary",
+    "14.09 first-pass fixed questions, document scope and labels",
+    "09.02 current S2 contract and 09.07 authorization"
+  ],
+  "first_pass": [
+    "decide actor, readable evidence, document state and expected action before writing prompts",
+    "separate task instructions, user question, authorized evidence and output contract",
+    "explain zero-shot and few-shot with development examples distinct from evaluation questions",
+    "define JSON syntax, schema fields and status semantics in that order"
+  ],
+  "second_pass": [
+    "classify failures at parser, schema, state, citation, business contract and authorization layers",
+    "version prompts, answer schema, documents and IM API independently",
+    "treat retrieved instruction text as untrusted data and retain the pre-model permission gate",
+    "compare on q-01 to q-06 without presenting the six teaching labels as held-out model results"
+  ],
+  "next_chapter": "14.06 retrieval and indexing",
+  "generation_status": "DeepTutor ideation HTTP 502 after 9 retries; no book or original draft created",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

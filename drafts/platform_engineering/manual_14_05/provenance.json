@@ -1,0 +1,30 @@
+{
+  "chapter": "14.05",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: HTTP 502 after 9 retries",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against listed primary sources and chapter 14.09 business labels",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "6031520b9f43b0298c40295d27696f6a6df958440bd50e6d38a8a01cf4db04b4",
+  "reviewed_sha256": "f07590d3cf51d35039824616b889d2e3afde2662d851d49913234239372ce6e1",
+  "reviewed_characters": 11762,
+  "reviewed_chinese_characters": 4052,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/05_prompt_structured_output.md",
+  "course_sha256": "24c50064115f5326eb6461159d7cf3343fb68f1913a1bd89b09796443142d45e",
+  "primary_sources": [
+    "https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-design-strategies",
+    "https://json-schema.org/understanding-json-schema/reference/object",
+    "https://json-schema.org/understanding-json-schema/reference/enum",
+    "https://www.rfc-editor.org/rfc/rfc8259",
+    "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html"
+  ],
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_model_run": false
+}

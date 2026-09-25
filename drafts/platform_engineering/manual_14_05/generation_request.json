@@ -1,0 +1,71 @@
+{
+  "code": "14.05",
+  "title": "提示与结构化输出：从问题到有权可检的答案",
+  "chapter_id": "ch_prompt_structured_output",
+  "summary": "用虚构IM资料问答逐层解释任务指令、少示例、JSON响应契约、分层校验与提示注入边界。",
+  "objectives": [
+    "把业务期望动作和资料权限写在提示之前",
+    "解释零示例、少示例与数据泄漏",
+    "定义JSON字段、状态和引用的结构与语义规则",
+    "区分解析、schema、引用和合同失败",
+    "按固定六题对照提示版本并保留安全回退"
+  ],
+  "sources": [
+    "https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-design-strategies",
+    "https://json-schema.org/understanding-json-schema/reference/object",
+    "https://json-schema.org/understanding-json-schema/reference/enum",
+    "https://www.rfc-editor.org/rfc/rfc8259",
+    "https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html"
+  ],
+  "sections": [
+    {
+      "title": "一、业务问题先于提示词",
+      "words": 3200,
+      "focus": "承接14.01–14.04与14.09的六道虚构问题q-01…q-06。先定义用户身份、问题、current/proposed资料和期望动作answer/refuse/undecided。当前S2/v1正文非空<=6 UTF-8 B、原始HTTP体<=4096B、重复ID 409、非成员404、200 accepted_in_memory仅本进程。未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。模型回答不是IM请求/送达确认。"
+    },
+    {
+      "title": "二、提示的组成与信任边界",
+      "words": 3400,
+      "focus": "初学者先学任务指令、输入问题、经授权证据、输出要求的基本结构；分清应用策略、用户输入、检索文档三种来源及其信任级别，不依赖一个自然语言提示代替确定性权限或业务合同。q-03 u-b无权doc-private正文在模型前过滤，q-02可见doc-r9但须标proposed。提示模板字段/分隔符/注入点清晰，不在例子中假设系统已能防注入。"
+    },
+    {
+      "title": "三、零示例、少示例与固定对照",
+      "words": 3500,
+      "focus": "零示例先写清任务和拒答条件；少示例给输入输出样本以帮助格式/行为，但示例不是训练权重更不是授权。用q-01、q-02、q-03、q-04纸上演示：当前6B、R9待审、无权拒答、规则未定。开发示例不能包含最终未见题标签/近重复，避免14.09测试泄漏。比较同一问题/资料/模型/解码策略/窗口，仅提示版本变化，课程不伪造模型成绩。"
+    },
+    {
+      "title": "四、从文字答案到结构化输出契约",
+      "words": 3600,
+      "focus": "解释JSON对象、字段、字符串、数组和枚举，给固定响应status=answer|refuse|undecided、answer、citations数组、contract_version=v1纸上样例。列明各状态字段规则：answer必须非空有权且引用支持关键主张；refuse不泄私有详情且citations为空；undecided说明待定/证据不足而非编造。JSON语法正确、JSON Schema通过、语义与业务合同通过三层不可混同；required/enum/additionalProperties和版本字段由应用验证。"
+    },
+    {
+      "title": "五、格式失败、语义失败与安全回退",
+      "words": 3600,
+      "focus": "处理非JSON、缺字段、错枚举、额外字段、引用不存在或无权、正确格式却答9B、含doc-private内容。解析异常→schema验证→状态和引用语义→合同/授权，分层失败码。有限重试需固定版本/边界、不可重新加入无权证据；失败后安全拒答/人工复核，不将无效结构默认为成功。只给静态伪代码或纸上表，不运行模型或服务。"
+    },
+    {
+      "title": "六、提示版本和可复核实验",
+      "words": 3400,
+      "focus": "提示模板有版本、变更说明、示例/证据清单、模型/tokenizer/解码参数、schema/资料版本、输出及人工审阅。用q-01…q-06和14.09关键词基线做同条件纸上检查，分格式通过、引用支撑、拒答、权限硬门；样本6题不能估生产准确率。不要因模型流畅就宣布改进；诊断最早坏边界。"
+    },
+    {
+      "title": "七、注入、长上下文和业务验收",
+      "words": 3400,
+      "focus": "检索文档和用户问题可以包含试图改写指令的文本；明确数据而非授权来源，使用有界输入、权限和版本过滤、输出验证，分隔符/提示声明只是辅助手段，不保证安全。doc-r9片段若截掉proposed会误答；doc-private绝不因提示保证不泄而进上下文。q-01答6B、q-03拒私有、q-04未定、q-05不把S2 200称送达，最终按业务验收。"
+    },
+    {
+      "title": "八、22道分层练习",
+      "words": 3200,
+      "focus": "基础8/推演8/决策6附答案：分指令/问题/证据/输出，零示例vs少示例，q-01/02/03/04的期望状态，手辨JSON和schema/语义失败，引用权限、R9版本、提示注入、固定对照与泄漏。面向Go初学者，先给必要字段解释；全是虚构纸上材料，不运行Python/Go/IM/模型/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.05 提示与结构化输出》，面向Go初学者，八节丰富理论，虚构IM资料助手由浅入深，22题附答案。全程沿14.09 q-01…q-06、doc-current/doc-r9(proposed)/doc-private(u-a-only)/doc-history。S2/v1正文非空最多6 UTF-8B、原始HTTP体最多4096B、重复ID 409、非成员隐藏404、200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。先业务标签与应用权限，再提示模板。零示例/少示例应公平比较，固定资料和模型，避免把最终未见题标签放进示例。输出契约JSON status=answer|refuse|undecided、answer、citations文档ID数组、contract_version=v1；解释JSON语法、required/enum/additionalProperties、状态语义、引用支撑、授权和当前合同逐层校验，结构合法不等于内容正确。q-01须答6 UTF-8B，q-02须明确R9未生效，q-03 u-b先拒绝doc-private且私有正文不送模型，q-04历史规则未定要undecided，q-05不把200当设备ACK，q-06不能仅靠24h broker补25h离线。错误分层处理、有限重试/安全回退、提示版本与评测，提示注入与截断不能靠一句“忽略”保证安全。引用Google Cloud、JSON Schema、RFC 8259和OWASP原始文档。全程静态纸上示例，不运行Go/Python/IM/模型/站点。\n1. 一、业务问题先于提示词: 承接14.01–14.04与14.09的六道虚构问题q-01…q-06。先定义用户身份、问题、current/proposed资料和期望动作answer/refuse/undecided。当前S2/v1正文非空<=6 UTF-8 B、原始HTTP体<=4096B、重复ID 409、非成员404、200 accepted_in_memory仅本进程。未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。模型回答不是IM请求/送达确认。\n2. 二、提示的组成与信任边界: 初学者先学任务指令、输入问题、经授权证据、输出要求的基本结构；分清应用策略、用户输入、检索文档三种来源及其信任级别，不依赖一个自然语言提示代替确定性权限或业务合同。q-03 u-b无权doc-private正文在模型前过滤，q-02可见doc-r9但须标proposed。提示模板字段/分隔符/注入点清晰，不在例子中假设系统已能防注入。\n3. 三、零示例、少示例与固定对照: 零示例先写清任务和拒答条件；少示例给输入输出样本以帮助格式/行为，但示例不是训练权重更不是授权。用q-01、q-02、q-03、q-04纸上演示：当前6B、R9待审、无权拒答、规则未定。开发示例不能包含最终未见题标签/近重复，避免14.09测试泄漏。比较同一问题/资料/模型/解码策略/窗口，仅提示版本变化，课程不伪造模型成绩。\n4. 四、从文字答案到结构化输出契约: 解释JSON对象、字段、字符串、数组和枚举，给固定响应status=answer|refuse|undecided、answer、citations数组、contract_version=v1纸上样例。列明各状态字段规则：answer必须非空有权且引用支持关键主张；refuse不泄私有详情且citations为空；undecided说明待定/证据不足而非编造。JSON语法正确、JSON Schema通过、语义与业务合同通过三层不可混同；required/enum/additionalProperties和版本字段由应用验证。\n5. 五、格式失败、语义失败与安全回退: 处理非JSON、缺字段、错枚举、额外字段、引用不存在或无权、正确格式却答9B、含doc-private内容。解析异常→schema验证→状态和引用语义→合同/授权，分层失败码。有限重试需固定版本/边界、不可重新加入无权证据；失败后安全拒答/人工复核，不将无效结构默认为成功。只给静态伪代码或纸上表，不运行模型或服务。\n6. 六、提示版本和可复核实验: 提示模板有版本、变更说明、示例/证据清单、模型/tokenizer/解码参数、schema/资料版本、输出及人工审阅。用q-01…q-06和14.09关键词基线做同条件纸上检查，分格式通过、引用支撑、拒答、权限硬门；样本6题不能估生产准确率。不要因模型流畅就宣布改进；诊断最早坏边界。\n7. 七、注入、长上下文和业务验收: 检索文档和用户问题可以包含试图改写指令的文本；明确数据而非授权来源，使用有界输入、权限和版本过滤、输出验证，分隔符/提示声明只是辅助手段，不保证安全。doc-r9片段若截掉proposed会误答；doc-private绝不因提示保证不泄而进上下文。q-01答6B、q-03拒私有、q-04未定、q-05不把S2 200称送达，最终按业务验收。\n8. 八、22道分层练习: 基础8/推演8/决策6附答案：分指令/问题/证据/输出，零示例vs少示例，q-01/02/03/04的期望状态，手辨JSON和schema/语义失败，引用权限、R9版本、提示注入、固定对照与泄漏。面向Go初学者，先给必要字段解释；全是虚构纸上材料，不运行Python/Go/IM/模型/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

@@ -30,9 +30,9 @@
   "original_sha256": "4cf955f9dce59dfc7e044573aa85fb190b89ba3798b3679964ad8bdff75512df",
   "original_characters": 29710,
   "generation_request_sha256": "37d201050f4e277e56e609a3d6ad341e4699c400935f326aeff6205b3f11547f",
-  "reviewed_sha256": "d8e71f5ce8940b32cb1a8d159c0689043b4c6285247c5ed4c53fd8e95f7c7fcd",
-  "reviewed_characters": 9906,
-  "reviewed_chinese_characters": 3443,
+  "reviewed_sha256": "06fd544f7a765b57f46904eaf48be96f669141bb5a0a9b486c8d9f0b07d93aaa",
+  "reviewed_characters": 10003,
+  "reviewed_chinese_characters": 3451,
   "course_file": "src/docs/platform_engineering/curriculum/14_ai/04_transformer_inference_path.md",
-  "course_sha256": "2af1bc248fd0eb62b457c63a399ec5c84a4a81a887e6431e834b3887656d89b3"
+  "course_sha256": "52baca7b2a1cfafe564d604f867afd2b4e2b552405d0f6e0765f91c47b0f034f"
 }

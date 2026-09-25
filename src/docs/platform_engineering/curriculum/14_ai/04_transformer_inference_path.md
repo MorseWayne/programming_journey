@@ -193,4 +193,4 @@ prefill 处理给定输入并建后续状态；decode 随输出逐 token 继续�
 
 ## 本章完成标准与后续路径
 
-能用两份 Value 算出纸上聚合 `(0.25,1.5)`，说明它与真实 scaled-dot-product/softmax 的区别；能区分位置、因果遮罩、prefill、decode、KV cache 和业务权限，手算 2 KiB toy 缓存而不冒充实测，才算完成第一轮。下一章 14.05 将把指令、示例、上下文和结构化输出接到固定的 `q-01…q-06` 问题集。
+能用两份 Value 算出纸上聚合 `(0.25,1.5)`，说明它与真实 scaled-dot-product/softmax 的区别；能区分位置、因果遮罩、prefill、decode、KV cache 和业务权限，手算 2 KiB toy 缓存而不冒充实测，才算完成第一轮。下一章[14.05 提示与结构化输出](./05_prompt_structured_output.md)将把指令、示例、上下文和结构化输出接到固定的 `q-01…q-06` 问题集。
