@@ -401,6 +401,7 @@ export default sidebar({
             "curriculum/14_ai/07_rag_pipeline",
             "curriculum/14_ai/08_tools_workflows_agents",
             "curriculum/14_ai/10_optimization_deployment",
+            "curriculum/14_ai/11_finetuning_multimodal",
             "curriculum/14_ai/core"
           ]
         }

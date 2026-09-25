@@ -1,0 +1,172 @@
+# 14.11 微调与多模态选修：何时值得改变模型
+
+> 本章是可第二遍阅读的**选修**静态课程，面向已学 14.01–14.10 的 Go 初学者。这里只用纸上矩阵、合成 IM 文档与虚构图片任务解释训练、LoRA、量化和图文输入；**没有收集真实聊天/公司数据，也没有训练、量化、加载模型或运行图像服务**。当前 S2 `/v1` 正文非空且最多 **6 UTF-8 B**、原始 HTTP 请求正文最多 **4096 B**、同 ID 重复 **409**、非成员隐藏 **404**、成功 `200 accepted_in_memory` 只到本进程内存受理；未来 S3 `/v2` `stored_in_teaching_db` 是提议且仍为 6 B，R9 6→9 B 待审。[09.02 当前合同](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)
+
+## 一、先看缺口属于资料、指令、能力还是输入模态
+
+14.09 的六题是选择方案的诊断卡。`q-01` 若答 9 B 而 `doc-r9` 被误标 current，先修**资料状态/检索**；`q-03` 若 `u-b` 私有正文进模型，先修**应用授权**；`q-04` 若历史规则尚未批准，任何模型都不能替产品/安全制定事实。更换或微调模型不应成为这些失误的快捷解释。[14.09 第一个坏边界](../../../src/docs/platform_engineering/curriculum/14_ai/09_evaluation_data_engineering.md)
+
+| 主要缺口 | 先试哪类手段 | 不应期待它解决 |
+|---|---|---|
+| 指令/JSON 格式不稳 | 14.05 提示、示例、结构校验 | 文档访问授权 |
+| 现行资料没召回/版本错 | 14.06–14.07 检索、元数据、引用 | 靠训练记住每天变动的合同 |
+| 固定任务模式仍反复出错，且有足够合规标注 | 评估微调/适配器候选 | 自动生成不存在的业务规则 |
+| 用户给的是截图/语音，文本链根本看不到 | 先评估图文/音频解析入口 | 图片本身成为权威合同 |
+
+本章的决策顺序是**先定义失败与金标签 → 修确定性边界 → 对照轻量方案 → 才评训练/新模态的增益与代价**。Google 的 LLM 教程将提示、微调等列为不同适配方式；究竟哪个合适，仍要由本课程的 IM 任务、数据许可和未见评测决定。[Google ML Crash Course：LLM tuning](https://developers.google.com/machine-learning/crash-course/llm/tuning) · [14.10 成功任务](../../../src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md)
+
+## 二、微调先要有可用数据、标签与未见检验
+
+**预训练模型**已有一般语言能力；**推理**只用现有权重算输出；**微调**在训练阶段用任务样本和损失函数更新部分或全部可训练参数。可以把损失直观理解为“候选输出与期望行为差多少”的学习信号，优化器据此多轮调整参数。微调不是把一份新文档塞进临时提示，也不会让模型理解谁被授权读哪个私有会话。[14.03 训练与推理](../../../src/docs/platform_engineering/curriculum/14_ai/03_language_model_foundations.md) · [Google LLM tuning](https://developers.google.com/machine-learning/crash-course/llm/tuning)
+
+先写一条合法训练样本的**结构**：任务类型、输入（经授权且脱敏）、期望输出、适用资料/规则版本、标注来源和争议处理。若目标是改善“回答 JSON 格式”，样本应覆盖 `answer/refuse/undecided` 的正确语义；若目标是识别拟议状态，需含 current/proposed 对照、困难反例和随版本变化的停止门。`q-01…q-06` 这六题是**公开教学集**，不能一边放进训练/开发，一边用它们声称未见能力提升；真正测试要按来源文档、会话或时间隔离，并审相似改写泄漏。[14.09 划分与泄漏](../../../src/docs/platform_engineering/curriculum/14_ai/09_evaluation_data_engineering.md)
+
+真实私聊、成员身份、图片或语音包含权限与隐私问题，不能因为“训练需要数据”就直接汇入样本库。需先明确数据来源/许可、最小化、脱敏、保留/删除、授权范围和标注质量；可先用完全虚构案例练设计。若样本少、标签争议大、业务规则常变或无法做独立评测，微调提案就缺关键前提。[14.01 虚构资料与 manifest](../../../src/docs/platform_engineering/curriculum/14_ai/01_python_data_work.md) · [Google ML：生产数据监测](https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring)
+
+## 三、全量微调与 LoRA：改多少参数不是改什么权限
+
+**全量微调**让许多原模型权重可训练，训练状态和计算开销可能很高；**参数高效微调（PEFT）**只训练少量新增或选定参数。LoRA（Low-Rank Adaptation）的一种基本想法是冻结原权重矩阵 `W`，把学习到的更新写成两个较小矩阵的乘积 `ΔW≈A×B`。学习者只需先看懂“**大矩阵更新被限制在较低秩的可训练子空间**”，不用在本章实现优化器。[LoRA 原论文](https://arxiv.org/abs/2106.09685) · [Hugging Face：PEFT/LoRA](https://huggingface.co/docs/peft/en/package_reference/lora)
+
+纸上维度例子：原 `W` 为 `4×4`，有 **16** 个数；若取秩 `r=1`，`A` 为 `4×1`、`B` 为 `1×4`，新增可训练数为 `4+4=8`，乘积仍为 `4×4` 更新。这个小例子只解释**矩阵形状**，没有算偏置、多个层、训练状态、激活或真实模型总内存，也不能声称实际参数量总是减半。真实收益随层、目标模块、秩和实现变化。[LoRA 原论文](https://arxiv.org/abs/2106.09685)
+
+适配器应记录基础模型版本、训练数据/标签版本、目标模块、秩、训练配置和评测结果；换基础模型或权限规则后不能只保留“同名 LoRA”就当兼容。LoRA 改变模型行为倾向，**不替代**检索 current 资料、应用成员授权、JSON 语义校验或工具批准。即使微调样本里写“`u-b` 不得读私有资料”，也不允许把 `doc-private` 正文先送进模型。[14.05 输出与权限门](../../../src/docs/platform_engineering/curriculum/14_ai/05_prompt_structured_output.md)
+
+## 四、量化省表示空间，QLoRA 仍不是免成本训练
+
+**量化**用更少比特表示权重或中间值，通常借助缩放/零点或其它编码把连续数近似映射到较少的离散值；误差和支持的硬件/运算会影响质量和速度。纸上只看原始权重位宽：从每值 16 bit 改为 4 bit，权重数据项的理论位数变为四分之一；**整套推理/训练内存不会必然变为四分之一**，因为还有量化参数、未量化层、KV、激活、优化器及运行缓冲。[Hugging Face：Quantization concepts](https://huggingface.co/docs/transformers/quantization/concept_guide)
+
+**LoRA**描述训练哪些低秩更新；**量化**描述数值表示；**QLoRA**是把量化的冻结基础模型与可训练低秩适配器结合的一类训练方法。三个名称不能互相替换。原论文报告特定实验的内存/性能，但不能把那些数字照搬成课程 IM 助手的容量报价；需要在指定模型、数据、硬件、输入长度和题集上验证质量、时延与成本。[QLoRA 原论文](https://arxiv.org/abs/2305.14314) · [14.10 资源测量](../../../src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md)
+
+更低位宽可能改变 `q-01/q-02` 的事实输出、`q-03` 的拒答和引用格式；即使显存下降，也要按 14.09 同一身份/资料/标签复查。量化不提供文档权限隔离，也不会使 R9 提议生效。
+
+## 五、图文输入先处理媒体权限和证据身份
+
+文字助手无法直接读图片/语音内容；**多模态模型**可接收图像、音频、视频等与文本组合的输入，但不同模型有各自的处理器、尺寸、采样与上下文成本。Hugging Face 官方资料用多模态消息的内容项和 processor 解释这些输入如何进模型；本章只讲业务边界，不选具体实现。[Hugging Face：Multimodal chat templates](https://huggingface.co/docs/transformers/v4.57.0/chat_templating_multimodal)
+
+纸上场景：用户发来一张**人为绘制**的 IM 规则截图，上面写“R9：9 B”，却没有“尚待审”字样。模型识别出文字“9 B”最多说明图片里**看起来**有该字样；截图可能过时、被裁剪或伪造，也未必来自当前权威文档。应用先核上传者是否有权使用图片、媒体来源/版本和可见范围，再把识别结果视为**待核线索**，回到 `doc-current` 与 `doc-r9(status=proposed)` 查现行合同。OCR 或视觉输出不是新业务审批。[14.07 来源与逐句引用](../../../src/docs/platform_engineering/curriculum/14_ai/07_rag_pipeline.md)
+
+图片还可能含私有会话、头像或隐藏的提示注入文字；音频转写可把姓名、号码或指令带入上下文。图文输入前要做权限/最小化，输出前仍要核证和拒答；不能靠“模型会忽略图片里的恶意命令”代替边界。媒体字节大小、图像分辨率和模型内部 token 消耗与当前 IM **消息正文 6 UTF-8 B**不是一个量，不能把“图片输入支持”误说成当前 `/v1` 可发送大图。[OWASP：多模态提示注入](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html) · [14.03 字节/token](../../../src/docs/platform_engineering/curriculum/14_ai/03_language_model_foundations.md)
+
+## 六、训练/媒体清单与版本边界需要先于实验
+
+若未来真做微调或多模态试验，先冻结**数据 manifest**：每个样本/媒体的合成或合法来源、授权范围、去标识处理、资料/规则状态、标注者、目标答案和许可；记录训练/开发/最终集划分及哈希。模型/适配器、量化配置、processor、提示、检索索引和输出契约都要带版本。任何资料撤权和删除请求还要能追到相关缓存、训练素材与结果清单；是否能删除已训练权重里的影响是另一个需明确评估的问题，不能承诺一次删文件就完成遗忘。[14.01 manifest](../../../src/docs/platform_engineering/curriculum/14_ai/01_python_data_work.md) · [14.09 评测集](../../../src/docs/platform_engineering/curriculum/14_ai/09_evaluation_data_engineering.md)
+
+除了六题文本问题，图文候选还需独立造**合成媒体任务**：完整/裁剪的 proposed 截图、无权私有截图、同一规则不同版本、OCR 漏掉“待审”、图文冲突。按媒体来源与场景分桶，人工审是否误把截图当权威、是否泄私有、是否正确拒答。训练集、提示示例和最终图像不能互相近重复，不能因为模型“看懂图片”就删文本/权限基线。[Google ML：数据切片与未见质量](https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring)
+
+本章没有真实授权媒体或训练数据，也没有模型指标；纸上设计的价值是明确**何时根本不该启动训练或图文接入**。
+
+## 七、用同一业务门决定是否采用进阶方案
+
+把候选方案与 14.09 关键词基线、14.05 提示、14.07 RAG 在**相同文本题、actor、资料状态与未见集**上比较。若目标是图文任务，再增加合成媒体子集，不能拿不同题集的分数作横向胜负。比较输出格式、证据/事实、正确拒答、权限硬门、尾时延、训练/推理资源、人工标注和更新成本；R9 一旦状态变化，测试标签也必须按新版本建立，不能偷偷回改旧实验。[14.09 组件与端到端](../../../src/docs/platform_engineering/curriculum/14_ai/09_evaluation_data_engineering.md)
+
+| 候选 | 适合先验证的缺口 | 采用前的硬门 |
+|---|---|---|
+| 提示/结构化输出 | 固定任务格式和示例行为 | 不泄资料、不把 JSON 合法当事实正确 |
+| 检索/RAG | 权威资料新旧、出处与引用 | current/proposed、权限、逐主张支撑 |
+| LoRA/微调 | 有大量合规标注且稳定的行为模式 | 独立未见集、训练来源、版本回退 |
+| 量化 | 指定部署资源压力 | 质量/延迟/内存实测、同题业务门 |
+| 多模态 | 用户任务确需图文/音频内容 | 媒体权限、来源、注入与合成媒体评测 |
+
+如果当前问题由权限错误、资料过期或规则未决造成，模型训练不能成为通过门槛的理由。若进阶候选确有增益，也要记录它改善了哪一桶、失败了哪一桶和单位成功任务的代价。课程不为未测方案贴“高级一定更好”的标签。[14.10 成本与成功分母](../../../src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md)
+
+## 八、22 道分层练习：从矩阵形状到方案取舍
+
+1–8 补训练词汇，9–16 算 LoRA/量化纸上账并审图文证据，17–22 决定数据与验收。答案均为虚构条件。
+
+### 基础 1–8：训练、资料与模态
+
+<details><summary>1. `q-01` 答 9 B 且 r9 被误标 current，先微调吗？</summary>
+
+不。先修资料状态/检索，恢复 `doc-current` 的现行 6 B 依据。</details>
+
+<details><summary>2. 微调与推理的区别是什么？</summary>
+
+微调用训练样本更新可训练参数；推理用现有权重产生输出。</details>
+
+<details><summary>3. 微调样本只要问题/答案两列就够吗？</summary>
+
+不够；还需来源/许可、授权、资料版本、标注理由、划分等。</details>
+
+<details><summary>4. LoRA 中基础模型权重通常怎样处理？</summary>
+
+冻结基础权重，训练新增的低秩适配矩阵。</details>
+
+<details><summary>5. 量化与 LoRA 是同一件事吗？</summary>
+
+不是；量化改数值表示，LoRA 改可训练更新的结构。</details>
+
+<details><summary>6. QLoRA 可以先理解成哪两项结合？</summary>
+
+量化的冻结基础模型与可训练低秩适配器。</details>
+
+<details><summary>7. 多模态输入可能包括哪些？</summary>
+
+文本加图像、音频或视频等；不同模型需相应处理器和输入约定。</details>
+
+<details><summary>8. 截图写“9 B”就是现行合同吗？</summary>
+
+不是；要核媒体来源，再查 current/proposed 权威资料，R9 仍待审。</details>
+
+### 推演 9–16：参数、位宽和证据
+
+<details><summary>9. 纸上 `W` 为 4×4，有多少数？</summary>
+
+`4×4=16` 个。</details>
+
+<details><summary>10. LoRA 秩 1 的 4×1 与 1×4 新增多少可训练数？</summary>
+
+`4+4=8`，乘积维度仍是 4×4；这不等于真实模型总内存减半。</details>
+
+<details><summary>11. 16 bit 原始权重改 4 bit，理论权重位数变为多少？</summary>
+
+同样参数数目下为四分之一；整套系统内存不会必然四分之一。</details>
+
+<details><summary>12. 量化后 `q-03` 仍要测什么？</summary>
+
+无权正文不进模型、正确拒答/无泄露；省内存不替代权限。</details>
+
+<details><summary>13. 六题被放入训练后还可称“未见六题评测”吗？</summary>
+
+不能；标签已泄漏，需独立按来源/会话/时间划分的未见集。</details>
+
+<details><summary>14. 截图裁掉“尚待审”但保留“9 B”，能答当前 9 B 吗？</summary>
+
+不能；媒体证据不完整，须查权威 current 与 proposed。</details>
+
+<details><summary>15. 图片文件字节、图像 token 和 IM 正文 6 B 是同一量吗？</summary>
+
+不是；各自属于媒体/模型输入/当前 IM 消息正文的不同边界。</details>
+
+<details><summary>16. 训练集删一张已撤权图片，就能保证模型遗忘吗？</summary>
+
+不能直接保证；需追踪版本和影响，权重遗忘须单独评估。</details>
+
+### 决策 17–22：投入、授权与评测
+
+<details><summary>17. `q-04` 规则未定，微调能给出批准的退群天数吗？</summary>
+
+不能；业务规则需正式决定，模型不能创造权威事实。</details>
+
+<details><summary>18. 没有合规数据许可但有大量真实私聊，可直接训练吗？</summary>
+
+不能；先解决来源、授权、最小化、删除与标注前提。</details>
+
+<details><summary>19. 图文模型识别出私有截图内容，`u-b` 就能看吗？</summary>
+
+不能；媒体授权与输出权限仍由应用判断。</details>
+
+<details><summary>20. LoRA 的实验只看训练集分数足够吗？</summary>
+
+不足；要独立未见集、业务桶、拒答/权限硬门和成本/版本记录。</details>
+
+<details><summary>21. 量化后模型更省内存但 q-02 误说 R9 生效，能采用吗？</summary>
+
+不能按当前业务门采用；先查质量回归并在同题集验证。</details>
+
+<details><summary>22. 何时可暂不做微调/多模态？</summary>
+
+当现有缺口由资料、权限、提示或检索解决，或缺合规数据/未见评测/真实图文需求时。</details>
+
+## 本章完成标准与后续路径
+
+能先按六题找资料/权限/指令/模型能力的第一个坏边界，手算 LoRA 矩阵形状和量化原始位宽的限制，说明截图与识别文字为何仍需来源授权和 current/proposed 核证，再给出是否值得训练/接入媒体的同题评测条件，才算完成本选修。下一章 14.12 将把资料、模型、提示和适配器版本连到灰度、回滚与故障响应。[第十四卷路线](../../../src/docs/platform_engineering/curriculum/14_ai/README.md)
