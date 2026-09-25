@@ -1,0 +1,27 @@
+{
+  "chapter": "01.10",
+  "stage": "S4+ Go language second pass",
+  "business_scope": "static beginner Go generics lesson for synthetic IM local message lookup, set and queue",
+  "prerequisites": [
+    "01.01-01.05 basic Go types, functions, slices and maps",
+    "01.06 methods and interfaces",
+    "01.09 package and API boundaries",
+    "02.06-02.08 search, priority queues and graph use cases",
+    "05.08 bounded concurrency for optional second pass"
+  ],
+  "first_pass": [
+    "begin with concrete Message lookup before generic First[T any]",
+    "explain declaration, call-site type inference and zero/bool not-found result",
+    "use comparable, ~string and union constraints only after basic any",
+    "compare concrete function, interface and generic reuse"
+  ],
+  "second_pass": [
+    "review generic Set and Queue resource/concurrency boundaries",
+    "keep duplicate message ID and UTF-8 byte contracts outside generic helpers",
+    "prefer existing slices/maps functions where contracts fit",
+    "treat Go 1.27 concrete generic methods as version-specific and distinct from generic receiver parameters"
+  ],
+  "next_chapter": "01.11 reflection and low-level boundaries",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

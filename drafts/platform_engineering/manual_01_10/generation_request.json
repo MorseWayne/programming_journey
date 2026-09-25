@@ -1,0 +1,75 @@
+{
+  "code": "01.10",
+  "title": "泛型与可复用算法：什么时候为IM代码加类型参数",
+  "chapter_id": "ch_go_generics_reusable_algorithms",
+  "summary": "面向Go初学者，从具体消息查找进入类型参数、约束、类型集合、comparable、泛型容器、接口取舍和Go1.27方法版本边界。",
+  "objectives": [
+    "从重复的具体算法推导泛型动机",
+    "解释类型参数声明、调用、推断和零值返回",
+    "区分any、comparable、~、类型并集及可用操作",
+    "设计泛型Set/Queue并保留资源和业务边界",
+    "比较具体函数、接口、泛型和标准库",
+    "明确Go1.27具体泛型方法新能力与旧代码的区别"
+  ],
+  "sources": [
+    "https://go.dev/doc/tutorial/generics",
+    "https://go.dev/ref/spec",
+    "https://go.dev/blog/intro-generics",
+    "https://go.dev/blog/comparable",
+    "https://go.dev/blog/when-generics",
+    "https://go.dev/doc/go1.27",
+    "https://pkg.go.dev/slices",
+    "https://pkg.go.dev/maps"
+  ],
+  "sections": [
+    {
+      "title": "一、先问重复在哪：一个具体消息查询比抽象先清楚",
+      "words": 3300,
+      "focus": "虚构本地 IM 工具保存 `[]Message`，要按 ID 找第一条消息。学过 01.03 的函数和 01.04 的切片后，最易懂的入口是 `FindMessage(messages []Message, id string) (Message, bool)`：遍历、匹配、找到返回，找不到返回零值和 `false`。若又有 `[]Conversation` 要按条件找第一项，两段**遍历控制流程完全一样**，变化的只是元素类型和匹配条件，才出现可复用的理由。若只有一种元素，普通函数通常更直接。[Go 官方：什么时候用泛型](https://go.dev/blog/when-generics) · [01.03 函数](./03_control_functions.md) 泛型是给**一族具体类型**写同一种算法，让调用时仍保留元素类型。例如 `First` 查 `[]Message` 得到 `Message`，查 `[]Conversation` 得到 `Conversation`；调用者不必把所有元素装进 `[]any`，再用运行时断言取回。类型参数不是“任何东西都能做”：函数体能使用哪些操作取决于**约束**。开始前先分清三类方括号：`[]Message` 是切片类型；`[T any]` 在声明处引入类型参数；`First[Message]` 在使用处给类型实参。[Go 官方泛型教程](https://go.dev/doc/tutorial/generics) 本章数据均为"
+    },
+    {
+      "title": "二、读懂一个完整泛型函数：声明、推断、零值",
+      "words": 3300,
+      "focus": "下面是**完整、独立**的 Go 1.18+ 示例，只用学过的切片、结构体、函数值和 `bool`： package main import \"fmt\" type Message struct{ ID string } func First[T any](items []T, match func(T) bool) (T, bool) { for _, item := range items { if match(item) { return item, true } } var zero T return zero, false } func main() { messages := []Message{{ID: \"m-1\"}, {ID: \"m-2\"}} got, ok := First(messages, func(m Message) bool { return m.ID == \"m-2\" }) fmt.Println(got.ID, ok) // m-2 true } `T` 是**类型参数**，`any` 是允许任意类型实参的约束；一次具体调用里 `T` 仍是一个确定的类型。编译器可从 `messages` 的 `[]Message` 推断 `T=Message`，所以通常不必写 `First[Message](...)`。`match` 接受当前 `T` 并返回布尔值，把“怎样算匹配”交给调用者。没找到时 `var zero T` 给出那个类型的零值，再用 `fals"
+    },
+    {
+      "title": "三、约束是可用操作的边界：`any`、`comparable` 与 `~`",
+      "words": 3300,
+      "focus": "**约束**写在类型参数后面，规定哪些类型可代入及函数体可做的操作。`any` 适合只保存/搬运值；若要用 `==` 或作 map 键，常需 `comparable`；若要用 `<` 排序，则需要所有允许类型都支持相同的有序比较。`[]byte` 不能作为 map 键，不满足普通的 `comparable` 用途；字符串和以字符串为底层类型的定义类型可以。[Go 语言规范：comparable 与类型集合](https://go.dev/ref/spec) type MessageID string type StringID interface{ ~string } func SameID[T StringID](a, b T) bool { return a == b } type Set[K comparable] map[K]struct{} func (s Set[K]) Add(k K) { s[k] = struct{}{} } `type MessageID string` **定义了新类型**，不是把名字简单替换为 `string`。`~string` 的“波浪号”表示**底层类型为 string 的类型集合**，所以 `string`、`MessageID` 都能满足 `StringID`；只有 `string` 这个精确类型项则不会包含 `MessageID`。`SameID(MessageID(\"m-1\"), MessageID(\"m-1\"))` 可推断出"
+    },
+    {
+      "title": "四、类型集合先看交/并，再决定比较或排序",
+      "words": 3300,
+      "focus": "约束接口可以用 `|` 表示**类型项并集**，用多个嵌入条件形成交集；编译器只允许对约束内**每种可能类型**都成立的操作。下面用虚构的时间序号或消息 ID 排序直觉说明： type OrderedKey interface { ~int64 | ~string } func Before[K OrderedKey](a, b K) bool { return a < b } `int64` 和 `string` 都有 `<`，所以 `Before` 的操作对集合内类型成立；调用一次时 `K` 仍只能是其中**一个具体类型**，不会把一个 `int64` 与一个 `string` 混在同次比较中。若把 `~[]byte` 加入约束，`<` 对切片无定义，函数体就不合法。`~` 使以这些类型为底层类型的自定义键也能使用同一逻辑，但是否把序号和文本 ID 放进同一抽象仍须看业务语义：字典序不是消息时间顺序。[Go 语言规范：类型集合与操作](https://go.dev/ref/spec) 约束**不是运行时 if/else 类型开关**。若一个算法对 `MessageID` 和 `ConversationID` 处理完全不同，写一个 `T` 加大量类型断言未必优于两个清楚函数。还要记得泛型不能弥补错误的比较目标：把 IM 消息文本按字典序排序，不等于按发送时间和业务序号排序。[Go 官方：什么时候用泛型](https://go.dev/blog/when-generics)"
+    },
+    {
+      "title": "五、泛型类型用于同一容器规则，仍保留所有权和并发边界",
+      "words": 3300,
+      "focus": "S4 的任务队列若分别保存 `Message` 与 `Conversation`，可以考虑 `Queue[T any]`，内部用 `[]T` 保存元素，`Push(T)` 与 `Pop() (T,bool)` 复用相同队列规则。它的零值、空队列返回、容量上限、弹出后是否清理引用都要明确；泛型化只是让**元素类型**变化，不能自动解决切片共享、内存滞留或并发安全。若队列只服务消息，具体 `MessageQueue` 可能更容易审业务约束。[05.08 有界工作队列](../05_runtime/08_concurrency_composition.md) · [01.04 切片共享](./04_collections_text.md) type Queue[T any] struct{ items []T } func (q *Queue[T]) Push(v T) { q.items = append(q.items, v) } func (q *Queue[T]) Pop() (T, bool) { if len(q.items) == 0 { var zero T return zero, false } v := q.items[0] var zero T q.items[0] = zero // 清掉底层数组仍持有的旧引用 q.items = q.items[1:] return v, true } 这是**片段**，需要放进合适包并由调用者创建变量；它没有锁、没有容量限"
+    },
+    {
+      "title": "六、泛型、接口与现成标准库各有合适位置",
+      "words": 3300,
+      "focus": "接口已在 01.06 学过：它以**方法行为**让不同实现可替换，比如不同历史读取器都实现 `Read`。泛型常在**同一算法跨元素类型**时合适，比如 `First[T]`、`Set[K]`、有序搜索。二者可一起使用，例如泛型函数的参数约束要求某个方法；但无需为一个包内唯一的 `Message` 类型制造复杂约束。[01.06 方法与接口](./06_methods_interfaces.md) · [Go 官方：When To Use Generics](https://go.dev/blog/when-generics) Go 标准库已有泛型 `slices.IndexFunc`、`slices.Clone`、`maps.Clone` 等；`slices`、`maps` 包随 Go 1.21 进入标准库，**使用前核目标 Go 版本**。例如 `slices.IndexFunc(messages, predicate)` 返回下标（未找到为 `-1`），与本章 `First` 返回元素和 `bool` 的合同不同；`Clone` 是**浅复制**，元素里若有指针或切片，嵌套数据仍可能共享。先用标准库和具体函数，再判断自己的抽象是否真的减少重复。[Go 标准库：slices](https://pkg.go.dev/slices) · [maps](https://pkg.go.dev/maps)"
+    },
+    {
+      "title": "七、推断与版本边界：不把新语法强塞给基础版",
+      "words": 3300,
+      "focus": "类型实参可被推断时，`First(messages, ...)` 比显式 `First[Message](messages, ...)` 简洁；但推断有前提。若 `T` **只在返回值**中出现，如 `func NewZero[T any]() T`，调用 `NewZero()` 无从根据普通参数确定 `T`，需写 `NewZero[Message]()`。类型推断失败是编译期问题，不能期待运行时猜一个类型。[Go 官方：类型推断](https://go.dev/blog/intro-generics) **版本第二遍：**Go 1.27 开始允许**具体类型的方法自己声明类型参数**，此前需要写包级泛型函数；接口方法仍不能声明类型参数，具体泛型方法也不能据此实现一个非泛型接口方法。本章前面的 `func (s Set[K]) Add(k K)` 和 `func (q *Queue[T]) Pop() (T,bool)` 只是沿用**接收者泛型类型**的参数 `K/T`，Go 1.18 起就可写；它们与 Go 1.27 新增的“方法声明自己的新参数”不是同一语法。S1 CLI 基础版完全不要求学这项新能力。[Go 1.27 发布说明](https://go.dev/doc/go1.27) · [Go 官方：Generic Methods](https://go.dev/blog/generic-methods) 任何抽象改动都要回到本项目的业务边界：重复 ID 当前是 409，不"
+    },
+    {
+      "title": "八、22 道分层练习：从具体函数走到抽象取舍",
+      "words": 3300,
+      "focus": "1–8 认语法与推断，9–16 推演约束、集合和队列，17–22 决定是否值得抽象。答案针对纸上代码，不代表已运行程序。 不同。前者是切片类型，后者在声明处引入类型参数及约束。</details> 从 `messages` 的 `[]Message` 参数推断 `T=Message`。</details> 决定当前元素是否符合业务匹配条件，遍历算法本身不写死 `Message.ID`。</details> 零值可能也是合法元素；`false` 才表示没找到。</details> 不可；并非每种允许的 T 都有 ID 字段。</details> 不是，是底层类型为 string 的新定义类型。</details> 允许底层类型为 string 的定义类型，如 `MessageID`。</details> 不能；先 `make(Set[MessageID])` 或初始化 map。</details> 切片不可比较，不能作为 map 键，不满足本约束。</details> 集合内所有允许的类型都支持 `<`；一次调用 K 仍是同一具体类型。</details> 不可；切片没有 `<` 操作。</details> `Message` 零值和 `false`，调用方应看 bool。</details> 没有；类型参数只解决元素类型的复用，锁/容量另设计。</details> 不能；它是浅复制，内嵌切片的底层数据仍可能共享。</details> 不能从普通参数推断；应显式写如 `NewZer"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《01.10 Go泛型与可复用算法》，面向Go技术栈初学者，八节丰富理论，虚构IM本地消息工具由浅入深，22题附答案。承接01.01-01.09、S4队列/索引知识。先具体FindMessage，再泛型First[T any](items []T,match func(T) bool)(T,bool)，找不到返回zero,false；类型推断从[]Message，T只在返回值时需显式类型实参。讲定义类型MessageID string、~string包含底层string、Set[K comparable] map键、[]byte不可比较、any动态不可比较值可能panic；类型集合~int64|~string共享<，加入[]byte不合法；Queue[T]切片仍需容量/并发/保留引用分析；与接口和标准库slices/maps比较。明确Go1.27新增具体方法自己声明类型参数，但接口方法仍不可声明；旧的泛型类型接收者沿用参数自Go1.18即有。当前S2/v1正文最多6 UTF-8B、同ID重复409、非成员404、200 accepted_in_memory仅本进程不因泛型改变。只用Go官方规范/教程/博客与标准库文档，不运行Go/IM/站点。\n1. 一、先问重复在哪：一个具体消息查询比抽象先清楚: 虚构本地 IM 工具保存 `[]Message`，要按 ID 找第一条消息。学过 01.03 的函数和 01.04 的切片后，最易懂的入口是 `FindMessage(messages []Message, id string) (Message, bool)`：遍历、匹配、找到返回，找不到返回零值和 `false`。若又有 `[]Conversation` 要按条件找第一项，两段**遍历控制流程完全一样**，变化的只是元素类型和匹配条件，才出现可复用的理由。若只有一种元素，普通函数通常更直接。[Go 官方：什么时候用泛型](https://go.dev/blog/when-generics) · [01.03 函数](./03_control_functions.md) 泛型是给**一族具体类型**写同一种算法，让调用时仍保留元素类型。例如 `First` 查 `[]Message` 得到 `Message`，查 `[]Conversation` 得到 `Conversation`；调用者不必把所有元素装进 `[]any`，再用运行时断言取回。类型参数不是“任何东西都能做”：函数体能使用哪些操作取决于**约束**。开始前先分清三类方括号：`[]Message` 是切片类型；`[T any]` 在声明处引入类型参数；`First[Message]` 在使用处给类型实参。[Go 官方泛型教程](https://go.dev/doc/tutorial/generics) 本章数据均为\n2. 二、读懂一个完整泛型函数：声明、推断、零值: 下面是**完整、独立**的 Go 1.18+ 示例，只用学过的切片、结构体、函数值和 `bool`： package main import \"fmt\" type Message struct{ ID string } func First[T any](items []T, match func(T) bool) (T, bool) { for _, item := range items { if match(item) { return item, true } } var zero T return zero, false } func main() { messages := []Message{{ID: \"m-1\"}, {ID: \"m-2\"}} got, ok := First(messages, func(m Message) bool { return m.ID == \"m-2\" }) fmt.Println(got.ID, ok) // m-2 true } `T` 是**类型参数**，`any` 是允许任意类型实参的约束；一次具体调用里 `T` 仍是一个确定的类型。编译器可从 `messages` 的 `[]Message` 推断 `T=Message`，所以通常不必写 `First[Message](...)`。`match` 接受当前 `T` 并返回布尔值，把“怎样算匹配”交给调用者。没找到时 `var zero T` 给出那个类型的零值，再用 `fals\n3. 三、约束是可用操作的边界：`any`、`comparable` 与 `~`: **约束**写在类型参数后面，规定哪些类型可代入及函数体可做的操作。`any` 适合只保存/搬运值；若要用 `==` 或作 map 键，常需 `comparable`；若要用 `<` 排序，则需要所有允许类型都支持相同的有序比较。`[]byte` 不能作为 map 键，不满足普通的 `comparable` 用途；字符串和以字符串为底层类型的定义类型可以。[Go 语言规范：comparable 与类型集合](https://go.dev/ref/spec) type MessageID string type StringID interface{ ~string } func SameID[T StringID](a, b T) bool { return a == b } type Set[K comparable] map[K]struct{} func (s Set[K]) Add(k K) { s[k] = struct{}{} } `type MessageID string` **定义了新类型**，不是把名字简单替换为 `string`。`~string` 的“波浪号”表示**底层类型为 string 的类型集合**，所以 `string`、`MessageID` 都能满足 `StringID`；只有 `string` 这个精确类型项则不会包含 `MessageID`。`SameID(MessageID(\"m-1\"), MessageID(\"m-1\"))` 可推断出\n4. 四、类型集合先看交/并，再决定比较或排序: 约束接口可以用 `|` 表示**类型项并集**，用多个嵌入条件形成交集；编译器只允许对约束内**每种可能类型**都成立的操作。下面用虚构的时间序号或消息 ID 排序直觉说明： type OrderedKey interface { ~int64 | ~string } func Before[K OrderedKey](a, b K) bool { return a < b } `int64` 和 `string` 都有 `<`，所以 `Before` 的操作对集合内类型成立；调用一次时 `K` 仍只能是其中**一个具体类型**，不会把一个 `int64` 与一个 `string` 混在同次比较中。若把 `~[]byte` 加入约束，`<` 对切片无定义，函数体就不合法。`~` 使以这些类型为底层类型的自定义键也能使用同一逻辑，但是否把序号和文本 ID 放进同一抽象仍须看业务语义：字典序不是消息时间顺序。[Go 语言规范：类型集合与操作](https://go.dev/ref/spec) 约束**不是运行时 if/else 类型开关**。若一个算法对 `MessageID` 和 `ConversationID` 处理完全不同，写一个 `T` 加大量类型断言未必优于两个清楚函数。还要记得泛型不能弥补错误的比较目标：把 IM 消息文本按字典序排序，不等于按发送时间和业务序号排序。[Go 官方：什么时候用泛型](https://go.dev/blog/when-generics)\n5. 五、泛型类型用于同一容器规则，仍保留所有权和并发边界: S4 的任务队列若分别保存 `Message` 与 `Conversation`，可以考虑 `Queue[T any]`，内部用 `[]T` 保存元素，`Push(T)` 与 `Pop() (T,bool)` 复用相同队列规则。它的零值、空队列返回、容量上限、弹出后是否清理引用都要明确；泛型化只是让**元素类型**变化，不能自动解决切片共享、内存滞留或并发安全。若队列只服务消息，具体 `MessageQueue` 可能更容易审业务约束。[05.08 有界工作队列](../05_runtime/08_concurrency_composition.md) · [01.04 切片共享](./04_collections_text.md) type Queue[T any] struct{ items []T } func (q *Queue[T]) Push(v T) { q.items = append(q.items, v) } func (q *Queue[T]) Pop() (T, bool) { if len(q.items) == 0 { var zero T return zero, false } v := q.items[0] var zero T q.items[0] = zero // 清掉底层数组仍持有的旧引用 q.items = q.items[1:] return v, true } 这是**片段**，需要放进合适包并由调用者创建变量；它没有锁、没有容量限\n6. 六、泛型、接口与现成标准库各有合适位置: 接口已在 01.06 学过：它以**方法行为**让不同实现可替换，比如不同历史读取器都实现 `Read`。泛型常在**同一算法跨元素类型**时合适，比如 `First[T]`、`Set[K]`、有序搜索。二者可一起使用，例如泛型函数的参数约束要求某个方法；但无需为一个包内唯一的 `Message` 类型制造复杂约束。[01.06 方法与接口](./06_methods_interfaces.md) · [Go 官方：When To Use Generics](https://go.dev/blog/when-generics) Go 标准库已有泛型 `slices.IndexFunc`、`slices.Clone`、`maps.Clone` 等；`slices`、`maps` 包随 Go 1.21 进入标准库，**使用前核目标 Go 版本**。例如 `slices.IndexFunc(messages, predicate)` 返回下标（未找到为 `-1`），与本章 `First` 返回元素和 `bool` 的合同不同；`Clone` 是**浅复制**，元素里若有指针或切片，嵌套数据仍可能共享。先用标准库和具体函数，再判断自己的抽象是否真的减少重复。[Go 标准库：slices](https://pkg.go.dev/slices) · [maps](https://pkg.go.dev/maps)\n7. 七、推断与版本边界：不把新语法强塞给基础版: 类型实参可被推断时，`First(messages, ...)` 比显式 `First[Message](messages, ...)` 简洁；但推断有前提。若 `T` **只在返回值**中出现，如 `func NewZero[T any]() T`，调用 `NewZero()` 无从根据普通参数确定 `T`，需写 `NewZero[Message]()`。类型推断失败是编译期问题，不能期待运行时猜一个类型。[Go 官方：类型推断](https://go.dev/blog/intro-generics) **版本第二遍：**Go 1.27 开始允许**具体类型的方法自己声明类型参数**，此前需要写包级泛型函数；接口方法仍不能声明类型参数，具体泛型方法也不能据此实现一个非泛型接口方法。本章前面的 `func (s Set[K]) Add(k K)` 和 `func (q *Queue[T]) Pop() (T,bool)` 只是沿用**接收者泛型类型**的参数 `K/T`，Go 1.18 起就可写；它们与 Go 1.27 新增的“方法声明自己的新参数”不是同一语法。S1 CLI 基础版完全不要求学这项新能力。[Go 1.27 发布说明](https://go.dev/doc/go1.27) · [Go 官方：Generic Methods](https://go.dev/blog/generic-methods) 任何抽象改动都要回到本项目的业务边界：重复 ID 当前是 409，不\n8. 八、22 道分层练习：从具体函数走到抽象取舍: 1–8 认语法与推断，9–16 推演约束、集合和队列，17–22 决定是否值得抽象。答案针对纸上代码，不代表已运行程序。 不同。前者是切片类型，后者在声明处引入类型参数及约束。</details> 从 `messages` 的 `[]Message` 参数推断 `T=Message`。</details> 决定当前元素是否符合业务匹配条件，遍历算法本身不写死 `Message.ID`。</details> 零值可能也是合法元素；`false` 才表示没找到。</details> 不可；并非每种允许的 T 都有 ID 字段。</details> 不是，是底层类型为 string 的新定义类型。</details> 允许底层类型为 string 的定义类型，如 `MessageID`。</details> 不能；先 `make(Set[MessageID])` 或初始化 map。</details> 切片不可比较，不能作为 map 键，不满足本约束。</details> 集合内所有允许的类型都支持 `<`；一次调用 K 仍是同一具体类型。</details> 不可；切片没有 `<` 操作。</details> `Message` 零值和 `false`，调用方应看 bool。</details> 没有；类型参数只解决元素类型的复用，锁/容量另设计。</details> 不能；它是浅复制，内嵌切片的底层数据仍可能共享。</details> 不能从普通参数推断；应显式写如 `NewZer",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

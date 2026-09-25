@@ -151,6 +151,7 @@ export default sidebar({
             "curriculum/01_go/07_errors_resources",
             "curriculum/01_go/08_standard_library",
             "curriculum/01_go/09_packages_evolution",
+            "curriculum/01_go/10_generics_reusable_algorithms",
             "curriculum/01_go/12_cli_capstone",
             "curriculum/01_go/core"
           ]
