@@ -1,0 +1,26 @@
+{
+  "chapter": "04.10",
+  "stage": "S2+ network protocol second pass",
+  "business_scope": "static HTTP-version and internal RPC comparison for a synthetic IM request path",
+  "prerequisites": [
+    "04.03 HTTP and WebSocket basics",
+    "04.04-04.06 TCP ordered stream and flow control",
+    "04.09 proxy-by-hop connection and timeout boundaries",
+    "09.02 current S2 application contract"
+  ],
+  "first_pass": [
+    "separate application /v1 or /v2 from HTTP/1.1 or HTTP/2 protocol versions",
+    "compare HTTP/1.1 connection use, HTTP/2 multiplexing and TCP head-of-line",
+    "explain HTTP/3 QUIC independent streams without promising business delivery",
+    "define gRPC methods and protobuf schema only as optional internal design"
+  ],
+  "second_pass": [
+    "separate HTTP :status, numeric grpc-status and IM business status",
+    "preserve field-number compatibility and external 404/409/200 mapping",
+    "treat deadlines, cancellation, streaming writes and retries as separate from side-effect completion",
+    "review client/proxy/server support, flow-control budgets and rollback"
+  ],
+  "next_chapter": "04.11 network and link layer boundaries",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

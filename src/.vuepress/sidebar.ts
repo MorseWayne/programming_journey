@@ -211,6 +211,7 @@ export default sidebar({
             "curriculum/04_networks/07_tls_identity",
             "curriculum/04_networks/08_go_network_io",
             "curriculum/04_networks/09_proxies_load_balancing",
+            "curriculum/04_networks/10_http_versions_rpc",
             "curriculum/04_networks/core"
           ]
         },

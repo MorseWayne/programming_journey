@@ -169,4 +169,4 @@ A 客户端 --TLS/HTTP 或 WebSocket--> P 代理 --受保护的上游连接--> N
 
 ## 本章完成标准与后续路径
 
-能画 A→P→N1/N2 的两段连接与 TLS/头部信任边界，解释健康探测和粘性为什么不改变 S2 内存语义，并在 1000 ms 纸上预算里识别代理 504 后的未知结果与同 ID 409 重试风险，才算完成本章。下一章 04.10 将比较 HTTP 版本、流控和内部 RPC 的错误分层。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)
+能画 A→P→N1/N2 的两段连接与 TLS/头部信任边界，解释健康探测和粘性为什么不改变 S2 内存语义，并在 1000 ms 纸上预算里识别代理 504 后的未知结果与同 ID 409 重试风险，才算完成本章。下一章[04.10 HTTP 版本与 RPC](../../../src/docs/platform_engineering/curriculum/04_networks/10_http_versions_rpc.md)将比较 HTTP 版本、流控和内部 RPC 的错误分层。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)
