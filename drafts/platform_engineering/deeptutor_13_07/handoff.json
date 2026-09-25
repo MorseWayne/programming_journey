@@ -1,0 +1,31 @@
+{
+  "chapter": "13.07",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM design documentation and review lesson using fictional long-offline recovery candidates",
+  "prerequisites": [
+    "13.01–13.06 problem, domain, architecture, capacity and quality tradeoffs",
+    "10.11 technical writing and collaboration",
+    "12.09 release and multi-axis rollback",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "distinguish design document, ADR, implementation task and runtime evidence",
+    "keep current S2 contract and future S3/R9 states visible in the context",
+    "compare current-boundary, authoritative-DB and broker-only candidates against one user goal",
+    "trace message authority, event and device states across failure arrows"
+  ],
+  "second_pass": [
+    "reuse the 13.05 paper capacity and backlog calculations with assumptions",
+    "map contract, DB, E9, B history and hot-group risks to validation and stop gates",
+    "assign product, client, Go, data, safety and on-call review roles",
+    "write a proposed ADR with context, decision, status and positive/negative consequences",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.08 migration and compatibility",
+    "product-approved historical visibility, retention, target and real experiment evidence"
+  ],
+  "next_chapter": "13.08 migration and compatibility",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish this proposal's SQL transaction, outbox, client acknowledgments, authorization or deployment topology.",
+  "shared_integration_pending": []
+}

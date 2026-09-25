@@ -1,0 +1,203 @@
+# 13.07 设计说明与评审：把 IM 方案写成可反驳的决定
+
+> DeepTutor 八节初稿经技术与教学审阅后的静态课程。设计、评审、决定与验收均为**虚构纸上材料**；没有运行 Go、IM、数据库、压测、部署或站点。当前 S2 `/v1` 正文非空且最多 **6 UTF-8 B**、原始 HTTP 请求正文最多 **4096 B**、同 ID 重复 **409**、非成员隐藏 **404**、成功 `200 accepted_in_memory` 只表示本进程内存受理。未来 S3 `/v2` 的 `stored_in_teaching_db` 尚是提议且仍为 6 B，R9 6→9 B 待审。下文 `m-9/seq9/E9` 是未来候选，不代表已部署。[09.02 当前合同](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)
+
+## 一、设计说明的目的：让不在会议里的人找到反证
+
+13.01–13.06 分别给出用户问题、状态、不变量、模块、架构候选、容量和质量冲突。设计说明要把这些材料连成**一条可质疑的推理链**：“为谁解决什么 → 哪些是现状和硬约束 → 比较过哪些方案 → 为什么暂倾向某方案 → 哪些风险仍无证据 → 怎样验证、停止与回退”。文档能让下一位 Go 工程师、客户端、安全和值班同学独立检查判断，不是“画完系统图便获准上线”。[Google SRE：设计与简洁性](https://sre.google/workbook/simplicity/) · [SEI：ATAM 场景和风险](https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/)
+
+先分四类产物，避免“文档完成”变成“功能完成”：
+
+| 产物 | 主要回答 | 本章纸上状态 |
+|---|---|---|
+| 问题简报/设计说明 | 用户目标、候选比较、数据/失败路径与验收计划 | **草案**，可被挑战 |
+| ADR 决策记录 | 一项重要决定在什么背景下提出/接受，有何后果 | 下面的 ADR 仅 **proposed** |
+| 实现与迁移任务 | 谁在何时写代码、扩数据、联客户端及配置 | 尚未授权实施 |
+| 验证/运行记录 | 测试、压测、灰度、故障与真实用户观察 | 本章没有运行证据 |
+
+Michael Nygard 的 ADR 原文强调记录背景、决定、状态与后果，并保留被后续决定替代的历史。它不能代替较完整的方案比较或测试记录；一页 ADR 的“accepted”也不表示系统已在生产验证。[Nygard：Documenting Architecture Decisions](https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
+
+## 二、先摆现状、目标和证据强度，再画方案
+
+沿 13.01 的虚构需求：“A 显示发送成功，B 离线 **25h** 后仍希望按权限找回 `m-9`。”现状是 S2 `/v1` 只承诺 `accepted_in_memory`；教学 broker 只留 **24h** 的纸上条件说明未来不能**只靠 broker**覆盖这类离线窗口，但既没有已批准的权威历史留存合同，也没有成员退出后旧历史可见规则。把这些写在设计首页，读者才不会把下一页的 `/v2` 流程图误认成现网。[13.01 问题简报](../../../src/docs/platform_engineering/curriculum/13_architecture/01_problem_stakeholders.md) · [07.12 24/25h 反例](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/12_cross_system_consistency_case.md)
+
+| 类别 | 本例纸上内容 | 证据/决定状态 |
+|---|---|---|
+| 当前事实 | `/v1` 6 B/409/404/200 进程内存受理 | 现行教学合同，硬门 |
+| 待审用户目标 | 合资格 B 25h 后有权补到 `seq9`；A 知道成功到哪一层 | 产品/客户端/安全尚需确认 |
+| 非目标 | 不把“已入库”写成“B 已收到/已阅读”；不借机放开 9 B | 提议中的范围约束 |
+| 待定规则 | 退群/撤销后可见的历史范围、实际保留期 | 产品和安全决定，工程不代拍板 |
+| 待验证假设 | 离线分布、记录大小、群负载、DB 查询/恢复能力 | 需取样与隔离实验 |
+| 候选度量 | A P95 200 ms、B 重连后 120 秒取得 `seq9` | 仅纸上目标，未批准、未实测 |
+
+所有图和表应能追到这张账：若后来发现 B 25h 离线很罕见，或历史可见规则不同，就能指出哪个方案前提失效；若 R9 获批，那是**另一项**长度合同评审，不能顺便混进持久化方案。[13.06 当前硬约束](../../../src/docs/platform_engineering/curriculum/13_architecture/06_quality_attribute_tradeoffs.md)
+
+## 三、候选方案按同一问题比较，不以喜欢的技术作标题
+
+至少列一个维持现状的选项和两个有不同失败代价的选项。下表是纸上比较，**没有任何方案被选定或部署**：
+
+| 候选 | A 的确认点与 B 的 25h 结果 | 可能的收益 | 主要缺口/代价 |
+|---|---|---|---|
+| A：维持 S2，并明确客户端文案 | `/v1` 仍只内存受理；不能承诺长期补拉 | 不引入未准备好的数据迁移/DB 故障依赖 | 无法满足待审的 B 长离线目标 |
+| B：未来 `/v2` 以教学 DB 形成 `m-9/seq9`，再派生 E9 | 只有 DB 写入证据才说 `stored_in_teaching_db`；B 需**确实保留**的有权历史 | 建立可查询的权威消息与更清楚的 A 回执 | 唯一/序号、DB 故障、权限、事件缺口、保留/备份和迁移均待设计 |
+| C：延长 broker 事件保留或增加网关副本 | 可能减轻某窗口/资源压力；**仍不自动**建立权威历史、成员授权和强确认 | 对局部瓶颈可能较小改动 | 超过新窗口的离线、进程内存、重放顺序与权限仍悬而未决 |
+
+方案 B 可再评估“同 DB 事务写消息与待发布 E9 记录”的 outbox 模式，但那只是**候选机制**，尚没有实现/故障验证。比较时不要写“C 更便宜”“B 必然达 B 的 120 秒”之类没有价格或负载证据的结论；写出怎样证伪。例如若 B 在同连接/群负载下补拉 P95 超过待审门，究竟是权限查询、DB 索引、队列还是客户端导致？[13.04 outbox 候选](../../../src/docs/platform_engineering/curriculum/13_architecture/04_architecture_styles_boundaries.md) · [13.05 数据容量](../../../src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md)
+
+## 四、每条箭头标权威、时间和失败后谁来补
+
+一张有用的数据流不只写组件名，应标**同步/异步、输入身份、输出确认、重试键、权威来源与故障观察**。当前与未来要分图或分色描述：当前 `/v1` 是 A→校验/成员→本进程内存受理；未来 B 候选为 A→校验/成员→权威 DB `m-9/seq9`→派生 E9→各设备或有权历史补拉。`P0 offset42` 不能顶替 `(c-a,seq9)` 作为客户端游标。[13.02 身份与状态轴](../../../src/docs/platform_engineering/curriculum/13_architecture/02_domain_state_modeling.md)
+
+| 故障/反例 | 模型应能说明的状态 | 若设计说明答不出，则缺什么 |
+|---|---|---|
+| DB 已有 `m-9/seq9`，E9 尚未发 | A 的未来 DB 存储确认与事件待恢复可共存 | 事件恢复/对账与观察点 |
+| E9 发出后中继崩溃、再发 E9 | 一条权威消息，事件可能重投 | 稳定事件 ID 与消费去重规则 |
+| A 超时后不知道 DB 是否提交 | “结果未知”，不能断言未写/再造新意图 | 稳定消息 ID、未来查证/重试合同 |
+| B 先见 9、缺 8 | 若此前连续到 7，游标仍为 7 | 连续确认与补缺协议 |
+| 非成员想读 `c-a` 历史 | 未来历史可见规则需决定并按权限拒绝 | 产品/安全决定与验证数据 |
+| 旧 `/v1` 客户端发 7 B | 当前必须仍拒绝；R9 待审 | 版本隔离和兼容测试 |
+
+固定 `openimsdk/open-im-server` 提交 `f6411a8a1a31d3df36f4c2b3ad28481a94141e1f` 的 [`send.go` 选定路径](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go#L46-L70)调用 `MsgToMQ` 后返回；[另一 Mongo 消费路径](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go#L43-L69)调用 `BatchInsertChat2DB`。这只能给设计审阅一个**真实源码中的异步边界观察点**，不能把本课程 B 候选的 SQL 事务、outbox、设备 ACK 或权限规则归给 OpenIM。[OpenIM 阅读地图](../../../src/docs/platform_engineering/curriculum/im_reference.md)
+
+## 五、容量、验证与回退要对应每条承诺
+
+容量引用 13.05 的**同一组虚构假设**：10,000 设备连接、2% 活跃、20 入站/s；未来每条 50 成员×2 设备才是 2,000 设备任务/s。假设未来每条权威记录含元数据 **1 KiB**、另批准 **30 天**且全天同速率，逻辑原始量约 **49.44 GiB**；每条消息一个 **512 B** E9、broker 留 **24h**，原始事件约 **0.824 GiB**。消费者停 10 分钟在 20/s 入站下积 **12,000**，恢复能力 30/s、净清 10/s，理想还需 **20 分钟**。这些都不是当前性能测量或价格。[13.05 四本账](../../../src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md)
+
+| 设计承诺/风险 | 未来需要哪种验证 | 未过门时如何停 |
+|---|---|---|
+| 旧 `/v1` 不变 | 6 B/409/404/`accepted_in_memory` 正反例、旧客户端兼容 | 停止将新路径暴露给旧端 |
+| 未来 `/v2` DB 权威 | 同意图唯一、`seq` 有序、超时结果查证、DB 故障/恢复对账 | 未证实 stored 就不返回 stored |
+| E9 派生与重投 | DB 已存事件未发、重复 E9、积压年龄/清空与告警 | 停止扩大发布范围，保全待发证据 |
+| B 25h 补拉 | 历史**实际保留**、成员历史规则、游标缺 8、共同负载时延 | 不承诺未验证的 120 秒和“已送达” |
+| 热群与故障域 | 500 成员×2 设备、单会话热点、N−1、重连/DB 读写争用 | 用户结果或共享瓶颈越门则撤回候选 |
+
+发布和回退不能只写“回到 D1”。镜像 `D1/D2`、配置 `K1/K2`、数据模式/回填与客户端理解是**不同轴**；未来方案一旦产生新的权威历史，简单回滚二进制不能删除或忽略这些已确认消息。设计说明至少列阶段、权威写入者、读路径、旧端可见性、停止门和谁执行回退；具体迁移在 13.08 深化。[12.09 多轴回退](../../../src/docs/platform_engineering/curriculum/12_platform/09_release_rollback.md) · [13.08 分章设计](../../../src/docs/platform_engineering/curriculum/13_architecture/README.md)
+
+## 六、评审要让不同职责提出不同反例，并关闭阻断项
+
+评审不是让每个人对同一张图说“LGTM”。产品看用户文案、25h 是否真正要承诺；客户端看旧 `/v1` 和多设备游标；Go 后端看稳定 ID、权限、事务确认；数据团队看保留、索引、恢复/备份；安全看成员历史与日志；平台/值班看故障域、积压、告警和回退。SEI ATAM 正式方法通过多方场景、风险和敏感点讨论架构，本章只提供**小范围课程评审法**。[SEI：ATAM Collection](https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/)
+
+| 评审问题 | 负责人/证据 | 关闭条件 |
+|---|---|---|
+| 退群后 B 能看哪段历史？ | 产品与安全的规则决定 | 规则文字、例子和拒绝用例一致 |
+| `/v2` 超时后 A 用同 ID 重试返回什么？ | 客户端与 Go 服务的协议评审 | 不改旧 409，未来结果可查/可解释 |
+| DB 写后 E9 失败怎样补？ | 数据/后端/值班的故障设计 | 恢复路径、重复处理、积压观测可验证 |
+| 25h 历史保留与 120 秒候选可行吗？ | 产品/数据/安全/值班共同审 | 留存批准与同负载隔离实验，不把纸上值当结果 |
+
+问题状态至少分**阻断、待验证、后续优化**；每项记录提出者、决定人、所需证据、截止点、影响的方案与未关闭时的动作。涉及当前授权合同或未来存储确认的空白不能以“上线后再看”转后续。评审完成是**某一版设计推理被接受**；实现、灰度和真实业务结果还需各自的证据。[10.11 技术写作与协作](../../../src/docs/platform_engineering/curriculum/10_engineering/11_technical_writing_collaboration.md)
+
+## 七、短 ADR 记录一项决定及其后果，状态不可冒充批准
+
+Nygard 的 ADR 模板可用**标题、背景、决定、状态、后果**五栏；被替代的记录保留并指向新决定。此处给一个**教学用拟议记录**，不表示用户或项目已批准未来 S3：[Nygard：ADR 原文](https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
+
+| ADR-P1 栏位 | 纸上填写示例 |
+|---|---|
+| 标题 | “提议未来 `/v2` 的消息权威写入边界” |
+| 背景 | 当前 `/v1` 仅内存受理；B 25h 需求待确认；broker24h 不覆盖全窗口；成员历史规则未定 |
+| 决定（**拟议**） | 若目标/权限/留存获批且验证门通过，提议由教学 DB 确认 `m-9/seq9` 后才返回 `stored_in_teaching_db`，E9 后续派生；`/v1` 不变 |
+| 状态 | **proposed**：未接受、未部署；R9 是独立待审项 |
+| 后果 | 可提供更清楚的未来存储确认；增加 DB 可用/时延、权威数据/备份、事件补偿、旧端迁移和值班成本 |
+
+若后来决定改用不同权威机制，应以新 ADR 解释变化并将旧记录标为被替代，而不是删掉当年的理由。**ADR-P1 不能写成 accepted**，因为 B 历史可见、保留、共同负载和故障恢复等关键证据仍缺；更不能把 proposed 决定写成“`/v2` 已经上线”。设计说明维护当前事实与候选状态，ADR 留单项重大决定的上下文，测试和运行记录证明实际行为。[Nygard：状态与后果](https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
+
+## 八、22 道分层练习：评审一份未来 IM 设计草案
+
+先核事实与状态，再反驳方案和故障表，最后写决定门。答案均以本章虚构材料为准。
+
+### 基础 1–8：文档与合同
+
+<details><summary>1. 设计说明与 ADR 主要差别是什么？</summary>
+
+设计说明比较完整方案和验证路径；ADR 留一项重大决定的背景、状态与后果。</details>
+
+<details><summary>2. proposed ADR 表示未来方案已部署吗？</summary>
+
+不表示，甚至尚未被决定人接受。</details>
+
+<details><summary>3. 当前 `/v1` 的 200 到哪一层？</summary>
+
+只到本进程内存受理，不能写成 DB 已存或 B 已收到。</details>
+
+<details><summary>4. R9 能随 S3 一起默认为已批准吗？</summary>
+
+不能。R9 6→9 B 与 `/v2` 持久确认是不同待审变更。</details>
+
+<details><summary>5. B 离线 25h、broker 留 24h，能只靠 broker 吗？</summary>
+
+不能保证全窗口，未来需确实保留且有权的权威历史或另审不同目标。</details>
+
+<details><summary>6. “消息已入 DB”可直接写“B 已读”吗？</summary>
+
+不能。存储、事件、设备 ACK 与用户阅读是不同确认点。</details>
+
+<details><summary>7. 当前非成员发送返回什么？</summary>
+
+按 `/v1` 合同隐藏为 404；未来历史可见规则仍需另定。</details>
+
+<details><summary>8. 13.07 的纸上 49.44 GiB 能直接当磁盘申请吗？</summary>
+
+不能。它是待批 30 天、1 KiB/记录下的逻辑原始量，未计物理放大。</details>
+
+### 分析 9–16：方案、状态和反例
+
+<details><summary>9. 候选 A 维持 S2 的好处与缺口各是什么？</summary>
+
+避免未准备好的持久迁移；仍无法承诺 B 25h 有权补拉。</details>
+
+<details><summary>10. 候选 C 延长 broker 保留就有权威历史了吗？</summary>
+
+没有。保留窗口可改变，但权威来源、权限、游标和更长离线仍需解决。</details>
+
+<details><summary>11. DB 已有 `m-9/seq9`、E9 尚未发，A 的状态怎样写？</summary>
+
+未来若 DB 确认合同成立，可说权威已存，事件仍待恢复；不得说 B 已收到。</details>
+
+<details><summary>12. E9 重投时可造第二条权威消息吗？</summary>
+
+不应。事件可重复，稳定消息意图和权威唯一性要独立守住。</details>
+
+<details><summary>13. B 先见 9 缺 8、此前连续到 7，游标是多少？</summary>
+
+仍为 7；不能用“最大已见 9”跳过缺口。</details>
+
+<details><summary>14. A 超时后直接换新消息 ID 重发有何风险？</summary>
+
+未来 DB 可能已提交，换 ID 可能制造第二条意图；需稳定 ID 和查证/重试合同。</details>
+
+<details><summary>15. 10 分钟停 E9 消费、入 20/s，积压多少？</summary>
+
+`20×600=12,000`；纸上速率条件，不是实测。</details>
+
+<details><summary>16. 消费 30/s、仍入 20/s，理想多久清旧债？</summary>
+
+净清 10/s，`12,000/10=1,200 秒=20 分钟`，还未计热点/重投。</details>
+
+### 决策 17–22：审阅与 ADR
+
+<details><summary>17. 成员历史规则未定，可以让工程师在方案图中先写“全可见”吗？</summary>
+
+不能。需产品/安全决定，未定时是阻断或明确的待决项。</details>
+
+<details><summary>18. 测试通过 6 B/409/404 就能把 ADR-P1 标 accepted 吗？</summary>
+
+不能。还缺未来权限、留存、DB 权威、事件/故障和决定人批准。</details>
+
+<details><summary>19. 回滚只写“切回 D1”漏了哪些轴？</summary>
+
+配置 K、数据模式/回填、权威读写者、事件与旧客户端语义及已有已确认消息。</details>
+
+<details><summary>20. 评审问题怎样才算真正关闭？</summary>
+
+有决定人、证据、可验证结论与剩余风险/后续动作，不是评论被标 resolved。</details>
+
+<details><summary>21. OpenIM 两处固定源码能证明候选 B 使用了 outbox 吗？</summary>
+
+不能。只支持所读发送到 MQ 与另一 Mongo 消费的异步边界。</details>
+
+<details><summary>22. 可审设计说明至少连起哪条推理链？</summary>
+
+用户目标→当前事实/硬约束→候选及代价→权威/失败状态→容量/验证→发布回退→未决项和决定人。</details>
+
+## 本章完成标准与后续路径
+
+能把未来 S3 的用户目标、当前 S2 合同、候选方案、数据/故障流、容量假设、验证门和决定状态写成让别人可反驳的文档，并解释 proposed ADR 为何不能冒充已实现，才算完成第一轮。下一章 13.08 将进入权威数据、旧客户端与读写路径的分阶段迁移和兼容。

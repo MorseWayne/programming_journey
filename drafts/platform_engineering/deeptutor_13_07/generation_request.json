@@ -1,0 +1,74 @@
+{
+  "code": "13.07",
+  "title": "设计说明与评审：把IM方案写成可反驳的决定",
+  "chapter_id": "ch_design_review_adr",
+  "summary": "面向Go初学者，围绕虚构IM长离线恢复需求讲设计说明、候选比较、数据流、失败/容量验证、评审角色和ADR状态。",
+  "objectives": [
+    "把用户需求与当前合同写成可审设计上下文",
+    "比较候选方案而非先选技术",
+    "用状态和故障矩阵检验消息链路",
+    "把容量/验证/回退与证据对应",
+    "组织多角色评审并关闭阻断项",
+    "写拟议ADR且保持决策状态可追溯"
+  ],
+  "sources": [
+    "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+    "https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/",
+    "https://sre.google/workbook/simplicity/",
+    "https://sre.google/workbook/non-abstract-design/",
+    "https://sre.google/sre-book/data-integrity/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、设计说明要让未参加会议的人能反驳",
+      "words": 3300,
+      "focus": "Go初学者承接13.01-13.06虚构IM案例，把A发送、B25h离线补拉问题、当前合同、候选方案和证据放进可审设计文档。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db仍提议6B，R9 6→9B待审。区分设计说明、实现任务、ADR和运行记录，状态draft/proposed/accepted不混。"
+    },
+    {
+      "title": "二、上下文和不可变合同",
+      "words": 3400,
+      "focus": "设计说明含业务旅程/利益相关者/现状证据、目标/非目标/约束/假设、成功点、质量场景。写现行S2与未来S3/R9边界，B25h/broker24h不意味着已有保留合同；成员历史可见待产品安全定，120s B目标和A P95 200ms仅待审纸上目标。引用13.01问题简报。"
+    },
+    {
+      "title": "三、候选方案和可反驳的比较",
+      "words": 3400,
+      "focus": "A维持S2并明确能力界限；B未来教学DB权威写m-9 seq9、随后E9派生/有权历史补拉，outbox只是候选；C延长broker保留或只加网关副本只能缓解部分问题，不自动权威/权限。按用户目标、确认点、失败、容量、成本、迁移、旧端与运行责任比较，拒绝无证据的唯一推荐。"
+    },
+    {
+      "title": "四、数据流、状态、失败和逆向追踪",
+      "words": 3400,
+      "focus": "画纸上A请求→校验/成员→当前内存受理或未来DB权威m-9 seq9→E9→B设备ACK/历史补拉，箭头标同步/异步、数据权威、重试键。故障矩阵含DB已存E9未发、E9重投、A超时结果未知、B缺seq8先见9、非成员补拉、旧端7B。固定OpenIM两源码仅证异步边界。"
+    },
+    {
+      "title": "五、容量、验证与发布回退门",
+      "words": 3400,
+      "focus": "引用13.05同一纸上基线10k连接20入站/s、未来2000任务/s、30天假设49.44GiB逻辑历史、E9 24h 0.824GiB、10min停消费需理想20min清空；不是实测。列静态合同测试/隔离实验/故障演练的证据与负责人，版本D1/K1/数据版本/客户端兼容、S2停止门与未来S3灰度回退，未批准R9单列。"
+    },
+    {
+      "title": "六、评审角色与问题闭合",
+      "words": 3300,
+      "focus": "产品/客户端/Go后端/DB/安全/平台值班分别审用户承诺、兼容、事务唯一/seq、授权历史、RTO/积压/成本；问题标阻断/待验证/后续，记录决定人/期限/证据链接。轻量借SEI ATAM场景/风险而非伪称正式评估；无答案的约束不得用假设当接受。"
+    },
+    {
+      "title": "七、短ADR保留上下文、决定、状态、后果",
+      "words": 3300,
+      "focus": "引用Michael Nygard原始ADR格式Title/Context/Decision/Status/Consequences。示意ADR-P1 proposed: 如果通过权限/DB持久/补拉/迁移证据，提议S3/v2以教学DB存储为权威并异步派生E9；现仍未批准、不能改变/v1。后果含更强存储确认、DB依赖/时延/成本、事件补偿、旧端/回退；审阅记录与实施验收分离，替代决策标superseded不删历史。"
+    },
+    {
+      "title": "八、22题分层练习与简报模板",
+      "words": 3200,
+      "focus": "基础8/分析8/决策6附答案，覆盖现状/目标/方案/ADR状态、S2/S3/R9、D1/K1/数据版本、故障矩阵、权限/旧端、数字单位、20min drain、OpenIM证据边界、阻断问题与回退。静态不运行Go/IM/DB/压测/部署/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《13.07 设计说明与评审》，Go初学者八节丰富理论、虚构IM业务由浅入深、22题含答案。承接13.01-13.06的问题定义、领域状态、模块、架构、容量和质量取舍。当前S2/v1正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db仍是提议且仍6B，R9 6→9B待审。设计文档必须把背景、A发/B离线25h用户旅程、目标/非目标、不可破合同、待验证假设、候选方案、数据权威/状态流、故障反例、容量、验证、发布/回退与决定人写清。候选A保持S2并明示边界，B未来教学DB形成m-9/seq9后异步派生E9并有权历史补拉（outbox只是候选），C延长broker24h或只增网关副本不能自动得到权威与权限；B的历史必须真实保留且成员规则允许。A当前200不等于DB存储或B设备ACK；未来/v2经审批才有stored。故障矩阵：DB已存E9未发、E9重投、A超时结果未知、B先见9缺8游标仍7、非成员历史请求、旧端7B。纸上负载沿13.05：1万连接/20入站/s/未来2000设备任务/s、若另批准30天未来权威逻辑原始约49.44GiB、E9 24h约0.824GiB、消费者停10min积12000且恢复后净清10/s理想20min；非实测。R9独立评审，D1镜像/K1配置/数据和客户端版本分别回退。引用SEI ATAM的场景风险方法和Google SRE设计/简洁文档，Michael Nygard原始ADR Title/Context/Decision/Status/Consequences；给一则proposed而非accepted的教学ADR，包含正负后果和替代/撤销规则。评审产品/客户端/Go/DB/安全/平台值班不同问题，阻断项需决定人/证据/截止，不把“文档批准”当实现已验收。固定OpenIM send.go选定分支MsgToMQ后返回及Mongo消费BatchInsertChat2DB只证所读异步边界，不证明完整事务/ACK/架构。全部静态，不运行Go/IM/DB/压测/部署/站点。\n1. 一、设计说明要让未参加会议的人能反驳: Go初学者承接13.01-13.06虚构IM案例，把A发送、B25h离线补拉问题、当前合同、候选方案和证据放进可审设计文档。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db仍提议6B，R9 6→9B待审。区分设计说明、实现任务、ADR和运行记录，状态draft/proposed/accepted不混。\n2. 二、上下文和不可变合同: 设计说明含业务旅程/利益相关者/现状证据、目标/非目标/约束/假设、成功点、质量场景。写现行S2与未来S3/R9边界，B25h/broker24h不意味着已有保留合同；成员历史可见待产品安全定，120s B目标和A P95 200ms仅待审纸上目标。引用13.01问题简报。\n3. 三、候选方案和可反驳的比较: A维持S2并明确能力界限；B未来教学DB权威写m-9 seq9、随后E9派生/有权历史补拉，outbox只是候选；C延长broker保留或只加网关副本只能缓解部分问题，不自动权威/权限。按用户目标、确认点、失败、容量、成本、迁移、旧端与运行责任比较，拒绝无证据的唯一推荐。\n4. 四、数据流、状态、失败和逆向追踪: 画纸上A请求→校验/成员→当前内存受理或未来DB权威m-9 seq9→E9→B设备ACK/历史补拉，箭头标同步/异步、数据权威、重试键。故障矩阵含DB已存E9未发、E9重投、A超时结果未知、B缺seq8先见9、非成员补拉、旧端7B。固定OpenIM两源码仅证异步边界。\n5. 五、容量、验证与发布回退门: 引用13.05同一纸上基线10k连接20入站/s、未来2000任务/s、30天假设49.44GiB逻辑历史、E9 24h 0.824GiB、10min停消费需理想20min清空；不是实测。列静态合同测试/隔离实验/故障演练的证据与负责人，版本D1/K1/数据版本/客户端兼容、S2停止门与未来S3灰度回退，未批准R9单列。\n6. 六、评审角色与问题闭合: 产品/客户端/Go后端/DB/安全/平台值班分别审用户承诺、兼容、事务唯一/seq、授权历史、RTO/积压/成本；问题标阻断/待验证/后续，记录决定人/期限/证据链接。轻量借SEI ATAM场景/风险而非伪称正式评估；无答案的约束不得用假设当接受。\n7. 七、短ADR保留上下文、决定、状态、后果: 引用Michael Nygard原始ADR格式Title/Context/Decision/Status/Consequences。示意ADR-P1 proposed: 如果通过权限/DB持久/补拉/迁移证据，提议S3/v2以教学DB存储为权威并异步派生E9；现仍未批准、不能改变/v1。后果含更强存储确认、DB依赖/时延/成本、事件补偿、旧端/回退；审阅记录与实施验收分离，替代决策标superseded不删历史。\n8. 八、22题分层练习与简报模板: 基础8/分析8/决策6附答案，覆盖现状/目标/方案/ADR状态、S2/S3/R9、D1/K1/数据版本、故障矩阵、权限/旧端、数字单位、20min drain、OpenIM证据边界、阻断问题与回退。静态不运行Go/IM/DB/压测/部署/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

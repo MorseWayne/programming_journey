@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_47295bdc34",
-  "page_id": "pg_d4b779dedc",
+  "book_id": "bk_12a040adf7",
+  "page_id": "pg_689240d6e5",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,10 +16,10 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://insights.sei.cmu.edu/library/steps-in-an-architecture-tradeoff-analysis-method-quality-attribute-models-and-analysis/",
+      "https://www.cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
       "https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/",
-      "https://sre.google/sre-book/embracing-risk/",
-      "https://sre.google/workbook/implementing-slos/",
+      "https://sre.google/workbook/simplicity/",
+      "https://sre.google/workbook/non-abstract-design/",
       "https://sre.google/sre-book/data-integrity/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
@@ -27,12 +27,12 @@
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "6d537334ccb087eb09108d180f36a8bc0cf32364adb4e22ae718305df2492318",
-  "original_characters": 30534,
-  "generation_request_sha256": "946fdfe146b2967b27d69de510337d0135288ce6d4385672ddf1cccb15d84d44",
-  "reviewed_sha256": "31b32b880c1cd6fdd64d1c9bb3a484a02aaf75c0642336ec1c1cc269ece79f2d",
-  "reviewed_characters": 10821,
-  "reviewed_chinese_characters": 4238,
-  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/06_quality_attribute_tradeoffs.md",
-  "course_sha256": "4a9c8651982c979f98169ee8d64d49ed917c1d0c481cd1f0c4991d199a0fc110"
+  "original_sha256": "8cbf88abe1e12c6cc82a142c33cb7b072b941d5eef0eaa15016514de8579de8e",
+  "original_characters": 32675,
+  "generation_request_sha256": "22093a1d76c75f709cc7816ea2ec22d14cb24fc6c4097c568358de026a91e750",
+  "reviewed_sha256": "d7f5c9ecb31e4e586839b3675930583624ac1c37fec0228f777b5bda269d321d",
+  "reviewed_characters": 9884,
+  "reviewed_chinese_characters": 3794,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/07_design_review_adr.md",
+  "course_sha256": "e38ac4d1f6e8f3ef9f5e65fd16dded9bd0f2739aaac8db1bc58c20cedf5c941a"
 }
