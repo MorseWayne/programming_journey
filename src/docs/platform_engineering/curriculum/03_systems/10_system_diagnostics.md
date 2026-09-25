@@ -205,4 +205,4 @@ r 是可运行任务数；b 是等待 I/O 完成的阻塞任务数。</details>
 - [Linux `ps(1)`](https://man7.org/linux/man-pages/man1/ps.1.html)、[`/proc/<pid>/status`](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)与[`vmstat(8)`](https://man7.org/linux/man-pages/man8/vmstat.8.html)：进程、内存、可运行/阻塞、交换和 CPU 时间字段。
 - [Linux `iostat(1)`](https://man7.org/linux/man-pages/man1/iostat.1.html)与[`ss(8)`](https://man7.org/linux/man-pages/man8/ss.8.html)：设备请求均值/队列与 socket 观察范围。
 
-按[学习路线](../learning_path.md)，S4 主线下一章[05.04 Go 内存模型](../05_runtime/04_memory_model.md)解释并发可见性；03.11–03.12 的容器隔离与资源故障案例在 S6 回访。离开本章前，应能把**业务症状、资源指标、作用域、竞争假设和下一项证据**写在同一张纸上，而不从单个高值直接宣布根因。
+按[学习路线](../learning_path.md)，S4 主线下一章[05.04 Go 内存模型](../05_runtime/04_memory_model.md)解释并发可见性；S6 再回访[03.11 隔离与限制](./11_isolation_limits.md)和 03.12 资源故障案例。离开本章前，应能把**业务症状、资源指标、作用域、竞争假设和下一项证据**写在同一张纸上，而不从单个高值直接宣布根因。

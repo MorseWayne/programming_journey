@@ -1,0 +1,33 @@
+{
+  "chapter": "03.11",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Linux namespace and cgroup resource lesson for fictional IM gateway throttling and OOM",
+  "prerequisites": [
+    "03.01–03.04 process, resources and CPU scheduling",
+    "03.05–03.06 virtual memory, RSS and mappings",
+    "03.10 evidence-driven system diagnosis",
+    "05.05–05.07 Go scheduler, allocation and GC",
+    "11.04–11.05 workload and resource evidence"
+  ],
+  "first_pass": [
+    "distinguish host, cgroup, process and namespace observation scopes",
+    "explain PID, mount, network, user and UTS namespace views",
+    "calculate 0.5-core cpu.max quota and 96 percent same-window usage",
+    "keep current S2 in-memory acceptance distinct from future S3 persistence"
+  ],
+  "second_pass": [
+    "compare memory.current, memory.max, memory.events, Go heap, RSS and GOMEMLIMIT",
+    "interpret oom_kill as a scoped event without inventing the exact killer cause",
+    "separate pids task limits, RLIMIT_NOFILE descriptors and socket counts",
+    "design read-only diagnosis, reversible change and business recovery gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "03.12 resource failure case",
+    "12.01–12.12 container and platform operating model",
+    "learner's actual authorized cgroup, namespace and runtime evidence"
+  ],
+  "next_chapter": "03.12 resource failure case",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish deployment namespaces, cgroup quotas, OOM behavior or device recovery.",
+  "shared_integration_pending": []
+}

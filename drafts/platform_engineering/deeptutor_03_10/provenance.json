@@ -28,9 +28,9 @@
   "original_sha256": "f0bb09e57a7182b710dd6280e4bf3334df6929d901773a42c0a22952674bf864",
   "original_characters": 32908,
   "generation_request_sha256": "c4b44a3b2e47cb023caf4bc5387251d86bccccf02a02325d587e3676916b7d41",
-  "reviewed_sha256": "b6e8eee77fc3ee4216cca14f79127def659c25cb72337b089a4e9a9deeb43809",
-  "reviewed_characters": 8332,
+  "reviewed_sha256": "1efc5d55cf090fc219cd30eb098bdc0c38b1398c3de01478c5f2f32ddd76a50b",
+  "reviewed_characters": 8419,
   "reviewed_chinese_characters": 3799,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/10_system_diagnostics.md",
-  "course_sha256": "806a9fae805054a6b8dd6dfe3227835c2c50dbc2791877eefe59899fa69f4e85"
+  "course_sha256": "9e4247be00db8108d25d9fde0b22d5d7f1fc9ba9ed3fe45d30645f9078e94df5"
 }

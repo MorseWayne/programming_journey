@@ -1,0 +1,73 @@
+{
+  "code": "03.11",
+  "title": "隔离与限制：主机空闲为何IM网关容器仍超时",
+  "chapter_id": "ch_isolation_limits",
+  "summary": "面向Go初学者，区分namespace视图、cgroup CPU/内存/pids限制与Go运行时软限额，以虚构网关超时/OOM解释业务恢复。",
+  "objectives": [
+    "区别主机、容器和进程观察范围",
+    "解释PID/mount/net/user namespace的视图",
+    "手算cpu.max限额与同窗使用率",
+    "区分memory.current、Go heap、RSS与OOM事件",
+    "认识pids.max、描述符和连接数差别",
+    "以S2内存受理合同评审容器重启恢复"
+  ],
+  "sources": [
+    "https://man7.org/linux/man-pages/man7/namespaces.7.html",
+    "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+    "https://go.dev/doc/gc-guide",
+    "https://www.man7.org/linux/man-pages/man7/pid_namespaces.7.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、主机空闲但网关超时的纸上病例",
+      "words": 3000,
+      "focus": "Go初学者先理解进程/主机/容器观察作用域；当前S2/v1静态合同正文6 UTF8B、原始HTTP请求正文4096B、同ID409/非成员404/200 accepted_in_memory仅内存受理，未来S3提议。宿主8核总CPU10%、网关cgroup限0.5核，1秒使用0.48核秒约额度96%，节流上升，A回应慢；不把例子说成实际运行。"
+    },
+    {
+      "title": "二、namespace隔离了哪张视图",
+      "words": 3200,
+      "focus": "PID/mount/net/user/UTS namespace由宿主内核提供不同观察视图：容器PID1非宿主PID1、容器127.0.0.1属自身netns、mount目录视图与主机可不同、user namespace的映射不等于无条件主机root。namespace不是CPU/内存额度或完整安全边界。"
+    },
+    {
+      "title": "三、cgroup v2如何控制资源",
+      "words": 3100,
+      "focus": "cpu.max 50000 100000表示每100ms最多50ms CPU带宽约0.5核，cpu.stat usage_usec/节流增量；资源作用域cgroup及祖先、与宿主CPU百分比不同。GOMAXPROCS不是cgroup quota。"
+    },
+    {
+      "title": "四、内存限制与OOM证据",
+      "words": 3200,
+      "focus": "memory.max=512MiB，memory.current=500MiB含本cgroup及后代的匿名内存、页缓存/内核等，非Go heap/RSS；memory.events max/oom/oom_kill的差别，oom_kill增1证明该范围进程因OOM被杀而非每次达到max必杀。Go GOMEMLIMIT软限制只对Go运行时管理内存，不等于cgroup hard或RSS。"
+    },
+    {
+      "title": "五、pids/fd/网络边界与宿主视角",
+      "words": 3100,
+      "focus": "pids.max约束内核task/TID创建，不是10k连接数上限；进程RLIMIT_NOFILE/FD另查，网络namespace与端口映射需区分；主机ss/进程socket/容器路径信息不同作用域，最小权限只读调查。"
+    },
+    {
+      "title": "六、从容器资源事件到IM用户结果",
+      "words": 3000,
+      "focus": "纸上配额节流可能让A当前S2 200变慢，OOM重启会丢进程内存受理状态且断开连接；未来S3 DB存储与设备确认不得靠S2 200推断。区分限额、调度、依赖和监控缺失，给反证。"
+    },
+    {
+      "title": "七、恢复与平台前置",
+      "words": 3100,
+      "focus": "先记录资源范围/版本/负载与事件增量，再经有权限流程调整限制或减少负载，核对A成功/409/404及连接重连、旧消息状态；不建议盲改GOMEMLIMIT/增CPU或重启。链接12.01镜像容器环境的后续。固定OpenIM两处源码不证明容器配置。"
+    },
+    {
+      "title": "八、22题与纸上诊断单",
+      "words": 3000,
+      "focus": "基础8/算式8/决策6，答案含namespace与cgroup、0.5核算式/96%、memory.current与RSS、memory.events oom_kill、GOMEMLIMIT、pids不是连接、容器localhost、S2内存受理恢复、证据与回退。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.11 隔离与限制》，Go初学者八节理论丰富由浅入深、22题答案。当前S2/v1静态合同正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。纸上未来网关容器症状：宿主8核总CPU10%，同一网关cgroup v2 cpu.max=50000 100000给每100ms 50ms CPU带宽约0.5核；1秒进程/组使用0.48核秒，约96%额度，并有cpu.stat节流增量，A客户端回应P95变慢。宿主10%包括别的进程，不与本组96%矛盾；相关不等于已证根因。初学者先学进程与主机、PID/mount/net/user/UTS namespace只隔离视图：容器PID1非宿主PID1、容器127.0.0.1属自身netns、user映射不自动获得主机root；namespace不控制CPU/内存额度。cgroup v2 cpu.max/cpu.stat与祖先范围；GOMAXPROCS不是CPU配额。memory.max假设512MiB、memory.current500MiB含cgroup及后代多类内存不是Go堆或单进程RSS，memory.events max/oom/oom_kill区分，oom_kill增1才是该范围进程被OOM杀证据；达到max不必然杀。Go GOMEMLIMIT是运行时管理内存软限制，不等于cgroup硬限或RSS。pids.max限制内核任务数非连接数，FD另有RLIMIT_NOFILE。用只读、有权限、同窗视角查证，S2网关进程OOM后内存受理事实可能失去且连接断开，未来S3持久/设备确认另论；不能用重启或调GOMEMLIMIT直接宣布恢复。固定OpenIM两处源码不证明真实容器配置或限额。所有值纸上，未运行Go/IM/容器实验/部署/站点。\n1. 一、主机空闲但网关超时的纸上病例: Go初学者先理解进程/主机/容器观察作用域；当前S2/v1静态合同正文6 UTF8B、原始HTTP请求正文4096B、同ID409/非成员404/200 accepted_in_memory仅内存受理，未来S3提议。宿主8核总CPU10%、网关cgroup限0.5核，1秒使用0.48核秒约额度96%，节流上升，A回应慢；不把例子说成实际运行。\n2. 二、namespace隔离了哪张视图: PID/mount/net/user/UTS namespace由宿主内核提供不同观察视图：容器PID1非宿主PID1、容器127.0.0.1属自身netns、mount目录视图与主机可不同、user namespace的映射不等于无条件主机root。namespace不是CPU/内存额度或完整安全边界。\n3. 三、cgroup v2如何控制资源: cpu.max 50000 100000表示每100ms最多50ms CPU带宽约0.5核，cpu.stat usage_usec/节流增量；资源作用域cgroup及祖先、与宿主CPU百分比不同。GOMAXPROCS不是cgroup quota。\n4. 四、内存限制与OOM证据: memory.max=512MiB，memory.current=500MiB含本cgroup及后代的匿名内存、页缓存/内核等，非Go heap/RSS；memory.events max/oom/oom_kill的差别，oom_kill增1证明该范围进程因OOM被杀而非每次达到max必杀。Go GOMEMLIMIT软限制只对Go运行时管理内存，不等于cgroup hard或RSS。\n5. 五、pids/fd/网络边界与宿主视角: pids.max约束内核task/TID创建，不是10k连接数上限；进程RLIMIT_NOFILE/FD另查，网络namespace与端口映射需区分；主机ss/进程socket/容器路径信息不同作用域，最小权限只读调查。\n6. 六、从容器资源事件到IM用户结果: 纸上配额节流可能让A当前S2 200变慢，OOM重启会丢进程内存受理状态且断开连接；未来S3 DB存储与设备确认不得靠S2 200推断。区分限额、调度、依赖和监控缺失，给反证。\n7. 七、恢复与平台前置: 先记录资源范围/版本/负载与事件增量，再经有权限流程调整限制或减少负载，核对A成功/409/404及连接重连、旧消息状态；不建议盲改GOMEMLIMIT/增CPU或重启。链接12.01镜像容器环境的后续。固定OpenIM两处源码不证明容器配置。\n8. 八、22题与纸上诊断单: 基础8/算式8/决策6，答案含namespace与cgroup、0.5核算式/96%、memory.current与RSS、memory.events oom_kill、GOMEMLIMIT、pids不是连接、容器localhost、S2内存受理恢复、证据与回退。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
