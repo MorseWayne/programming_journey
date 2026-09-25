@@ -1,0 +1,184 @@
+# 13.11 复杂案例答辩：热群、长离线和旧客户端一起变时怎么选
+
+> DeepTutor 八节初稿经技术与教学审阅后的静态课程。人数、速率、容量、故障和方案全是**虚构纸上条件**；没有运行 Go、IM、数据库、压测、部署或站点。当前 S2 `/v1` 正文非空且最多 **6 UTF-8 B**、原始 HTTP 请求正文最多 **4096 B**、同 ID 重复 **409**、非成员隐藏 **404**、成功 `200 accepted_in_memory` 只表示本进程内存受理。未来 S3 `/v2` 的 `stored_in_teaching_db` 尚是提议且仍为 6 B；R9 的 6→9 B 待审。`m-9/seq9/E9`、B 设备 ACK 与历史补拉属未来模型。[09.02 当前合同](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)
+
+## 一、考官改变条件时，先重述承诺，再改技术方案
+
+本卷已有一条线：A 发消息，B 可能离线，团队讨论未来权威 DB、E9、设备游标、服务边界和迁移。答辩突然加入三个条件：**群从 50 目标成员变 500**；**B 离线 25h，而教学 broker 只留 24h**；**旧 `/v1` 客户端仍在使用**。优秀答案不会立即说“再加 Kafka/十个 Pod”，而会先问“这三个条件对应哪个版本、哪种确认、哪项业务目标已批准、哪些数字只有纸上依据”。[Google SRE：Non-Abstract Large System Design](https://sre.google/workbook/non-abstract-design/) · [SEI：ATAM 场景评审](https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/)
+
+| 已知/待审 | 本题边界 | 不能偷换成 |
+|---|---|---|
+| 当前 `/v1` | 6 B/4096 B/409/404/200 只内存受理 | DB 已存、B 已收或可补 25h |
+| 未来 `/v2` | 教学 DB stored 提议，仍 6 B | 已上线或 R9 已放宽 |
+| B 25h | 13.01 的待审用户目标；成员历史规则/留存需决定 | broker24h 之外仍必可从任意缓存找回 |
+| 500 人群/容量 | 13.05 的虚构工作量变化 | 已测真实吞吐或单群分区安全 |
+| 旧客户端 | 旧响应/游标能力需核查 | 自动理解 `seq9`、stored 与设备 ACK |
+
+如果某项前置未决定，答辩可给出**条件方案和阻断项**，而非假装它已有确定答案。下面的计算训练估量级，后续表训练把结果交给产品、安全、数据、客户端和值班各自验证。[13.09 交付依赖](../../../src/docs/platform_engineering/curriculum/13_architecture/09_cross_team_delivery.md)
+
+## 二、重算三种负载，不把单变量情景拼成“实测峰值”
+
+沿 13.05 同一纸上基线：**10,000 条设备连接**，**2% 活跃**，每活跃连接平均 **0.1 入站消息/s**，得 `10,000×0.02×0.1=20 条入站/s`。若未来每条恰好面向 **50 人×2 设备**、无过滤重试，`20×50×2=2,000 设备任务/s`。这些都不是当前 S2 运行能力。[13.05 同一单位账](../../../src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md)
+
+现在**只改群大小**为 500 目标成员，入站仍 20/s，则条件任务 `20×500×2=20,000/s`。另看一个不同的**热群分布**：单会话 `c-g` 占其中 **10 入站/s**、每条面向 500×2 设备，该会话独自产生 `10×500×2=10,000 任务/s`。即使集群整体可处理 20,000 项，若 `c-g` 的顺序处理被固定到同一分区/消费者，其他空闲分区也未必帮得上。不要把“全部消息都 500 人”与“其中一半来自单热群”再相乘；它们是两个观察角度。[08.05 热键](../../../src/docs/platform_engineering/curriculum/08_distributed/05_partition_rebalancing.md)
+
+连接还有另一账：假设每连接进程驻留分量 **32 KiB**，`10,000×32/1024=312.5 MiB`；当前正文最多 6 B 不决定 TLS、Go 堆、内核缓冲或设备任务的内存。若未来另批准 30 天权威历史、每条含元数据 1 KiB、20/s 全天持续，逻辑原始量约 **49.44 GiB**，物理副本/索引/备份另计。答辩应把这些作为待实测/待批准的输入写在表边，不用它们报采购量。[11.12 容量与成本](../../../src/docs/platform_engineering/curriculum/11_reliability/12_capacity_cost_decision.md)
+
+## 三、三种扇出候选，必须保持一条权威消息与有序补缺
+
+在**未来权威 `m-9/seq9` 已建立**的前提下，群消息可以有不同**派生工作安排**。这些只是设计候选，不能由固定 OpenIM 两处源码推出它实际选了哪种。关键是不论任务生成时点如何，权威消息仍是一条，E9 重投不能造第二条；每设备缺 `seq8` 时不能因为先见 9 就把连续游标从 7 改成 9。[13.02 身份与连续游标](../../../src/docs/platform_engineering/curriculum/13_architecture/02_domain_state_modeling.md)
+
+| 候选派生方式 | 可能适合 | 主要代价与失败反例 |
+|---|---|---|
+| 写时派生每设备任务 | 在线推送需要较快启动、目标设备集合已定义 | 500×2 放大写/队列，热群 10,000 任务/s；成员变化和重投去重需审 |
+| 读时从权威历史查询/补拉 | 长离线设备、无需为每个离线设备预留完整任务 | 重连/补拉读放大、权限与分页、首次看到消息的时延 |
+| 按群规模/在线状态混合 | 在满足用户目标时分散写与读压力 | 阈值/切换一致性复杂；同消息跨策略仍须稳定 ID、`seq` 与对账 |
+
+写时派生不等于 1,000 台设备都成功收到；读时补拉也不能不经成员权限把所有历史扫给客户端。混合方式看似灵活，阈值却需要实际群规模分布、在线比例、热点持续时间、DB 读/写能力和故障恢复实验支撑。若考官把群从 50 改 500，合理动作是**重算任务、查热点放置、识别权威与设备确认不变量，再调整候选和实验**，不是先改一个 magic number。[Google SRE：同 QPS 成本不同](https://sre.google/sre-book/handling-overload/) · [13.05 访问模式](../../../src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md)
+
+## 四、B 的长离线与旧 `/v1` 是两道不同的兼容门
+
+B 离线 **25h>24h** 教学 broker 保留，未来若产品确实批准“B 可找回”，必须有**真实留存到那时、且成员规则允许读取**的权威历史，按 `(c-a,seq)` 补缺。当前 S2 没有这项能力，不能以扩网关或延长一部分事件保留就宣称完成。即使未来 DB 保留了 `m-9/seq9`，B 的历史可见、退群/重入边界仍待产品与安全决定；读时派生不能绕过这些规则。[07.12 长离线](../../../src/docs/platform_engineering/curriculum/07_cache_messaging/12_cross_system_consistency_case.md) · [13.08 单一权威](../../../src/docs/platform_engineering/curriculum/13_architecture/08_migration_compatibility.md)
+
+旧 `/v1` 仍须按 **6 B/409/404/`accepted_in_memory`** 工作。未来 `/v2` 即使获批仍是 **6 B**，只有获得教学 DB 权威提交证据才可返回 `stored_in_teaching_db`；R9 6→9 B 是另一项待审变更。因此旧端发 **7 B** 正文必须拒绝，不可因新群需求放行。若旧端不懂 `seq` 游标或设备 ACK，也不能把“已存”文案或未来历史完整性隐式赋给它；按客户端/会话能力隔离候选路径，混合同一会话前先定统一权威和转换规则。[09.10 旧端兼容](../../../src/docs/platform_engineering/curriculum/09_backend_security/10_protocol_compatibility_rpc.md)
+
+更难的追问是回退：若限定 `/v2` 会话已向 A 返回 stored，DB 有 `m-9/seq9`，不能仅切回旧 S2 内存代码、关闭新 DB 读，就说“回滚成功”。已确认的历史必须保留可读/可恢复路径，或做经审阅的前进修复。镜像 D、配置 K、数据模式、E9 和客户端协议是不同轴。[13.08 已确认数据回退](../../../src/docs/platform_engineering/curriculum/13_architecture/08_migration_compatibility.md)
+
+## 五、故障追问要写“谁还能做什么”，不是只写 N−1
+
+另给一个**不同于 20/s 基线**的峰值题：纸上未来隔离实验若证明每 gateway Pod 在同一连接/群/依赖组合下长期稳 **100 入站/s**，目标峰 **150/s**。三 Pod 失去一个，名义余 `2×100=200/s`；但若 Node N1 放两个 Pod，整个 N1 丢失后只剩一个 Pod **100<150/s**。两种 N−1 的故障对象不同。共享 DB、热群分区、重连握手和 B 补拉还可能进一步打破线性算式。[12.10 故障域](../../../src/docs/platform_engineering/curriculum/12_platform/10_autoscaling_fault_domains.md)
+
+| 考官追加的故障 | 首先定位确认/权威 | 下一步观察与停止门 |
+|---|---|---|
+| DB 已有 `m-9/seq9`、E9 未发 | 权威消息已存在，设备尚未据此确认 | 保全待发/对账证据，恢复派生，不冒报 B 已收 |
+| E9 重投 | 同一稳定事件可多次传输 | 消费幂等/任务去重，不能形成第二条权威消息 |
+| A 超时结果未知 | 不能断言 DB 未写或已写 | 未来按稳定 ID 查证/重试，旧 `/v1` 409 不改义 |
+| 成员来源不可判断 | 权限结果未知，不猜为“有权” | 不越权放行，记录谁决定暂不可用/用户提示 |
+| 消费停 10 分钟 | 若一入站一 E9 且仍入 20/s，积 12,000 条 | 恢复处理 30/s、净清 10/s 时理想 **20 分钟**；观察热群/重试偏差 |
+
+最后一行的 20 分钟是**无重投/资源争用的纸上清空时间**，不是 B 重连后 120 秒候选目标，也不是 RTO 或 RPO。若设备重连同时占用 DB，实际历史补拉可能更慢。故障题正确答法先指出受影响的用户承诺，再给测量与停止门，不把一个服务组件恢复当全用户恢复。[13.05 恢复算式](../../../src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md) · [13.06 质量属性](../../../src/docs/platform_engineering/curriculum/13_architecture/06_quality_attribute_tradeoffs.md)
+
+## 六、比较方案时把证据等级写在结论旁
+
+本题可评估三类方案：**A 维持 S2 并诚实说明限度**；**B 未来模块化单体以教学 DB 确认 `m-9/seq9`，再派生 E9 与有权历史**；**C 未来把 Send/Transfer 分成粗粒度可独立扩缩的服务**。B/C 都未批准/未实现。方案 C 可能便于对 10,000 任务/s 的热群转发单独扩容，但跨服务超时、事件恢复、版本和值班成本更高；若共享 DB 或单分区仍卡住，也未必改善用户结果。[13.04 架构候选](../../../src/docs/platform_engineering/curriculum/13_architecture/04_architecture_styles_boundaries.md)
+
+| 评审点 | A：当前 S2 | B：未来 DB 权威候选 | C：未来粗粒服务候选 |
+|---|---|---|---|
+| A 回执 | 当前 200 内存受理 | 经批准且 DB commit 后才可 stored | 同 B，不因 RPC/队列存在而升级 |
+| B25h 恢复 | **不承诺** | 需历史保留、权限和补拉 | 同 B，还要跨服务故障对账 |
+| 热群 10,000 任务/s | 当前无该运行能力 | 内部扇出隔离待测 | 独立扩缩可能有益，热点/共享依赖仍待测 |
+| 旧端/回退 | 旧 6 B/409/404/200 | `/v2` cohort 与已存消息保全 | 需更多版本/值班/故障域协调 |
+
+证据可分四栏：**现行合同**（09.02 的行为）；**固定源码观察**（OpenIM 两处选定调用）；**纸上算式**（本章 20/2,000/10,000、N−1、积压）；**尚需决定或实验**（历史权限/留存、单 Pod 能力、热点分区、客户端能力）。任何方案的“可行”都只能带着相应条件说；纸上式和源码片段不能冒充真实压测或上线证据。[Google SRE：NALSD 的假设与资源](https://sre.google/workbook/non-abstract-design/) · [SEI：多属性风险](https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/)
+
+固定 `openimsdk/open-im-server` 提交 `f6411a8a1a31d3df36f4c2b3ad28481a94141e1f` 的 [`send.go` 选定路径](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go#L46-L70)调用 `MsgToMQ` 后返回；[另一 Mongo 消费路径](https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go#L43-L69)调用 `BatchInsertChat2DB`。这只说明所读异步边界，**不证明** OpenIM 的写时/读时扇出策略、容量、完整 ACK、历史保留或本章候选实现。[OpenIM 阅读地图](../../../src/docs/platform_engineering/curriculum/im_reference.md)
+
+## 七、答辩模板：每次反证都能改变一个明确假设
+
+纸上口头答辩可按七步陈述：**场景和用户结果 → 当前合同/待审目标 → 候选及权威/确认点 → 单位算式 → 失败/权限/旧端反例 → 验证和停止门 → 未决项与决定人**。被问到“群从 50 变 500”，先换任务放大参数并定位热键；被问到“B 25h”，先核 DB 留存/权限和 24h broker 缺口；被问到“Node N1 丢两个 Pod”，重算故障余量；被问到“旧客户端发 7 B”，先守当前拒绝。[13.01 用户目标](../../../src/docs/platform_engineering/curriculum/13_architecture/01_problem_stakeholders.md) · [13.07 可审设计](../../../src/docs/platform_engineering/curriculum/13_architecture/07_design_review_adr.md)
+
+答辩者可以说“这个规则未知，所以候选 B/C 不能过门”，但应继续给出**谁决定、能并行验证什么、如何证伪方案**。例如成员历史可见未定时，不可开放 B 的有权补拉；仍可准备 DB 访问模式草案、旧 `/v1` 合同反例和隔离热点压测设计。若考官指出原先以 20/s 算出的总任务并未覆盖某单群 10/s 的热点，应承认并追加会话维度，而非维护原结论。[13.09 依赖与决定权](../../../src/docs/platform_engineering/curriculum/13_architecture/09_cross_team_delivery.md)
+
+评分重**条件和边界是否可复核**：解释身份和确认点、手算单位、故障/安全反例、候选取舍、迁移/回退及谁有决定权。写完本章只是静态答辩准备；学习者日后若真的实现、压测或运营，需要把预测和观察分开保存，不凭课程示例认定自己的系统达标。[13.05 验证门](../../../src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md)
+
+## 八、22 道分层答辩练习：考官每次改一个条件
+
+先说现状，再算条件，最后给有证据的方案修改。答案均仅依本章虚构模型。
+
+### 基础 1–8：合同与单位
+
+<details><summary>1. 当前 S2 `/v1` 200 到哪层？</summary>
+
+只到本进程内存受理，不证明 DB 已存或 B 设备收到。</details>
+
+<details><summary>2. 未来 `/v2` 提议的正文上限是多少？</summary>
+
+仍为 6 UTF-8 B，R9 6→9 B 待独立评审。</details>
+
+<details><summary>3. 当前同 ID 重复与非成员发送各怎样？</summary>
+
+同 ID 重复 409，非成员目标隐藏为 404。</details>
+
+<details><summary>4. 一万设备连接、2% 活跃，活跃连接多少？</summary>
+
+200，不能无映射证据说成 200 个独立用户。</details>
+
+<details><summary>5. 每活跃连接平均 0.1 入站/s，合计多少？</summary>
+
+`200×0.1=20 入站消息/s`，纸上条件值。</details>
+
+<details><summary>6. 50 成员×2 设备，未来 20 入站/s 的任务多少？</summary>
+
+`20×50×2=2,000 设备任务/s`，不是设备 ACK。</details>
+
+<details><summary>7. B 离线 25h、broker 留 24h，仅凭 broker 可补齐吗？</summary>
+
+不能保证。未来需确实保留、按权限可读的权威历史；当前 S2 无此承诺。</details>
+
+<details><summary>8. 旧 `/v1` 客户端发 7 B 能因未来大群需求被接纳吗？</summary>
+
+不能。当前仍为 6 UTF-8 B，R9 未批。</details>
+
+### 计算 9–16：群、内存、故障与恢复
+
+<details><summary>9. 仅群从 50 变 500、20 入站/s 不变，任务多少？</summary>
+
+`20×500×2=20,000 任务/s`，是单变量情景。</details>
+
+<details><summary>10. 热群占 10 入站/s，500 人×2 设备，单群多少任务/s？</summary>
+
+`10×500×2=10,000 任务/s`，可能集中单顺序链。</details>
+
+<details><summary>11. 10,000 连接×32 KiB，进程连接分量多少？</summary>
+
+`312.5 MiB`，不是网关总内存。</details>
+
+<details><summary>12. 假设未来 20/s 全天、1 KiB 记录、另批 30 天，逻辑原始历史约多少？</summary>
+
+约 49.44 GiB，不含索引/WAL/副本/备份，不是已批留存。</details>
+
+<details><summary>13. 三 Pod 各稳100/s、峰150，失一 Pod 名义剩多少？</summary>
+
+`2×100=200/s`，前提同负载和依赖仍成立。</details>
+
+<details><summary>14. N1 放两 Pod、N2 一 Pod，失 N1 后呢？</summary>
+
+只剩一 Pod 100/s，小于峰 150/s，Node N−1 名义不通过。</details>
+
+<details><summary>15. E9 消费停 10 分钟、仍入20/s，积多少？</summary>
+
+`20×600=12,000 条`，假设一入站一事件且未拒绝。</details>
+
+<details><summary>16. 恢复处理30/s、仍入20/s，理想多久清空？</summary>
+
+净清10/s，`12,000/10=1,200 秒=20 分钟`，不是 B 120秒目标。</details>
+
+### 答辩 17–22：选项与反证
+
+<details><summary>17. 写时派生与读时补拉各把压力放哪？</summary>
+
+前者放大发送/队列/任务，后者增加重连/历史查询与授权负载；都须守权威与游标。</details>
+
+<details><summary>18. B 先见9缺8、此前连续到7，游标能到9吗？</summary>
+
+不能，仍为7；待8取得且满足确认条件才可连续前进。</details>
+
+<details><summary>19. DB 已有 `m-9/seq9`、E9 未发，可回滚删DB记录吗？</summary>
+
+不可否定未来已给 A 的 stored 确认；须保全权威并恢复/对账派生。</details>
+
+<details><summary>20. 方案 C 独立扩 Transfer 就一定解决单热群吗？</summary>
+
+不一定。单分区顺序、共享 DB、网络和重连可能仍是瓶颈，需同负载实验。</details>
+
+<details><summary>21. 两处固定 OpenIM 源码能证明其写时/读时扇出选型吗？</summary>
+
+不能，只证明所读发送到 MQ 与另一 Mongo 消费异步边界。</details>
+
+<details><summary>22. 考官改条件后最少要更新哪几项？</summary>
+
+用户目标/合同状态、工作量算式、权威和确认点、故障/权限/旧端反例、验证停止门及决定人。</details>
+
+## 本章完成标准与后续路径
+
+能在群规模、离线时长、故障域或旧端条件变化时重新界定承诺、手算工作量、比较扇出/历史/部署候选，并用反例指出尚不能批准的部分，才算完成第一轮答辩。下一章 13.12 将收束为高级工程师在运行、评审、指导和长期决策中的持续责任。

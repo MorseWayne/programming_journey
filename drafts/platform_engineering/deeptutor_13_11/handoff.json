@@ -1,0 +1,32 @@
+{
+  "chapter": "13.11",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM architecture defense lesson combining fictional hot-group, long-offline, legacy-client and node-failure changes",
+  "prerequisites": [
+    "13.01–13.10 requirements, identity, architecture, capacity, quality, migration and evolution",
+    "11.12 connection, fanout, authority and cost arithmetic",
+    "12.10 Pod/Node fault-domain arithmetic",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "restate current facts, pending business goals and unknowns before selecting components",
+    "recalculate 20 inbound, 2000 baseline tasks, 20000 all-500 tasks and 10000 hot-conversation tasks",
+    "compare write-time, read-time and hybrid derivation without claiming an upstream strategy",
+    "preserve the current 6-byte, 409, 404 and accepted_in_memory contract"
+  ],
+  "second_pass": [
+    "require retained authorized DB history for B beyond 24-hour broker event retention",
+    "keep missing seq8 device cursor at 7 despite seeing 9",
+    "contrast loss of one Pod with loss of a Node holding two Pods",
+    "separate 12000-event/20-minute paper drain from user recovery goals",
+    "defend candidate architecture with evidence grades, failure and rollback gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.12 engineer's long-term responsibility",
+    "actual hot-group workload, retained history, client behavior and experiment evidence"
+  ],
+  "next_chapter": "13.12 engineer's long-term responsibility",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish actual fanout strategy, throughput, retained history or complete acknowledgments.",
+  "shared_integration_pending": []
+}

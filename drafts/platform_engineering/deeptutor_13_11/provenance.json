@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_59cdd43398",
+  "page_id": "pg_5911714cb7",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/workbook/non-abstract-design/",
+      "https://insights.sei.cmu.edu/library/architecture-tradeoff-analysis-method-collection/",
+      "https://sre.google/sre-book/handling-overload/",
+      "https://sre.google/sre-book/data-integrity/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "5e951398d7108f54d4f0d938ca27ae9b2bd022a0c66c754d899fd80b3575789a",
+  "original_characters": 31870,
+  "generation_request_sha256": "82a294dcfb62fbf8a75915c533a31accd0cbe9196e97646d91ee86ac94129fcf",
+  "reviewed_sha256": "0249a0f6c5e6dbd39733d34d45fddb247662dd1fb3a1f81c362dae39157eea82",
+  "reviewed_characters": 10506,
+  "reviewed_chinese_characters": 3608,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/11_complex_im_defense.md",
+  "course_sha256": "a72723d84e1c58b08c450eb74cb055fda7d26d922d692cf6b89270bd0bfd058a"
+}
