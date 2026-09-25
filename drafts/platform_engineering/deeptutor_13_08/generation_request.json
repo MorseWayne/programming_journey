@@ -1,0 +1,73 @@
+{
+  "code": "13.08",
+  "title": "迁移与兼容：旧内存受理不能凭回填变成权威历史",
+  "chapter_id": "ch_migration_compatibility",
+  "summary": "面向Go初学者，用虚构IM当前S2到未来S3教学DB提议说明扩展/迁移/收缩、单一权威、影子对账、旧客户端和不可丢失的回退。",
+  "objectives": [
+    "分清旧合同、可回填数据与新权威",
+    "解释expand/migrate/contract的阶段门",
+    "在双写/影读时指定唯一权威与对账口径",
+    "保持/v1与未来/v2、R9和旧端兼容",
+    "识别已确认新数据后的回滚限制",
+    "交付阶段/证据/责任矩阵"
+  ],
+  "sources": [
+    "https://martinfowler.com/bliki/ParallelChange.html",
+    "https://www.martinfowler.com/articles/evodb.html",
+    "https://sre.google/workbook/canarying-releases/",
+    "https://sre.google/workbook/data-processing/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、迁移先说什么旧事实能保留",
+      "words": 3300,
+      "focus": "Go初学者承接13.07 proposed设计。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。当前没有权威历史，旧S2进程从未持久保存的消息不可用回填脚本凭空恢复；区分保留旧合同、迁移现有数据、建立新权威三类任务。"
+    },
+    {
+      "title": "二、扩展迁移收缩三阶段及多版本共存",
+      "words": 3400,
+      "focus": "引用Fowler Parallel Change expand/migrate/contract与Evolutionary Database Design：先扩schema/可读能力兼容旧端，后小范围让经批准/v2写教学DB形成m-9 seq9/E9，再对账并收缩无用路径；绝不因schema先出现就说S3已启用。D1/D2代码、K1/K2配置、数据模式、事件和客户端版本独立版本轴；R9另行审。"
+    },
+    {
+      "title": "三、权威切换与双写缺口",
+      "words": 3400,
+      "focus": "候选v2 DB为新权威，任何双写/影子写需明确只一处权威、稳定message_id、事务/事件E9边界、失败状态和重试；不能在S2旧内存和S3 DB之间假设可比较全部历史，旧S2无权威可回填。已写v2 DB而旧副本未写，不得以旧读无结果否定权威；回填仅针对确有可靠来源的数据。"
+    },
+    {
+      "title": "四、影子读取与对账的可比口径",
+      "words": 3400,
+      "focus": "对只读/隔离数据样本比对同conversation seq、message_id、成员权限/可见范围与时间窗，遮蔽响应对用户；不同语义的S2内存与v2 DB不能作为等价历史断言。对账报告记录覆盖率/缺口/重复/未知与样本/不比较原因。B先见seq9缺seq8，连续游标7；25h>broker24h需DB真正保留且授权。"
+    },
+    {
+      "title": "五、客户端与协议兼容",
+      "words": 3400,
+      "focus": "旧/v1保持6 UTF8B/409/404/200 accepted_in_memory；未来/v2经审批仍6B只改变stored确认，7B仍拒绝；R9另版本与旧端升级路径。旧端无seq游标/新ACK时不能假装能读新权威历史；按显式客户端能力/会话隔离/cohort路由，混用同会话前须定义权威、可见性和转换，不能随机按Pod灰度造成同ID不同结果。"
+    },
+    {
+      "title": "六、发布、停止与可回退边界",
+      "words": 3400,
+      "focus": "阶段P0基线→P1可扩展schema与只读→P2隔离v2小流量权威→P3对账和兼容→P4扩大→P5删旧仅有证据后；每阶段写唯一权威、版本、读写目标、业务门与回退。v2 DB已确认m-9/seq9后回滚代码不能抹掉，须保留兼容读取/暂停新写/前进修复，不能回到v1内存就丢新历史。D1/D2、K1/K2、DB与事件回退不同。"
+    },
+    {
+      "title": "七、证据包与决定人",
+      "words": 3300,
+      "focus": "Fowler版本化迁移、Google SRE金丝雀：按候选组对照，不以总体200率判断。证据包含6B/409/404/200与v2 stored合同、唯一/seq/E9、B25h有权补拉、旧端、双写/影读对账、DB故障和回退演练、权限/保留、容量与事故门；阻断项由产品/客户端/数据/安全/值班决定。固定OpenIM两源码只支持异步边界。"
+    },
+    {
+      "title": "八、22题分层练习",
+      "words": 3200,
+      "focus": "基础8/推演8/决策6附答案：expand migrate contract、旧内存不可回填、S2/S3/R9和D/K轴、双写单权威、影读覆盖率、B seq7/9缺8、25h/24h、旧端7B、v2已存后回滚不可丢、P0-P5各门。静态不运行Go/IM/数据库/迁移/部署/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《13.08 迁移与兼容》，Go初学者八节丰富理论、虚构IM业务由浅入深、22题答案。承接13.07 proposed设计，严格固定当前S2/v1正文非空最多6 UTF-8 B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db仅提议且仍6B，R9 6→9B待审。当前S2没有权威历史，不能凭回填脚本恢复从未持久保存的消息。区分协议合同兼容、数据模式演进、权威迁移与客户端能力。引用Fowler Parallel Change expand/migrate/contract和Evolutionary Database Design、Google SRE Canarying Releases。纸上阶段P0固定旧合同及可恢复源→P1扩schema/只读能力但不激活S3→P2经批准小范围v2教学DB权威m-9 seq9/稳定E9派生→P3有口径影子读取/对账和旧端能力验证→P4扩大→P5在证据齐全后收缩旧路径。每阶段写写入权威、读路径、D1/D2镜像、K1/K2配置、DB数据/模式、E9、客户端协议、业务门/停止/回退。任何双写/影子写必须只定义一处权威；S2旧内存与v2 DB不具备等价历史，不能将旧读无结果视为新DB错误。回填只对确有可靠源的数据进行。影读比对同会话seq/message_id/成员权限和时间窗，报告覆盖/缺口/重复/不可比原因，不能暴露影子结果给用户。旧/v1持续6B/409/404/200；未来/v2经审批仍6B只可说stored，旧端无新seq游标和ACK不能假装可补新历史；R9独立评审。路由不能随机按Pod使同ID在不同权威间飘，需按明确客户端能力/会话cohort与可见规则；同会话跨版本前须决定数据交互。B离线25h>broker保留24h需真实保留且授权DB历史，先见seq9缺8时连续游标仍7。v2 DB一旦确认m-9/seq9，代码回滚不能删除/丢弃它；可能暂停新写、保留兼容读或前进修复，按已确认合同负责。D/K/DB/事件/客户端分别回退。固定OpenIM send.go选定分支MsgToMQ后返回与另一Mongo消费BatchInsertChat2DB仅证异步边界，不证明其迁移策略。静态课程，不运行Go/IM/数据库/迁移/压测/部署/站点。\n1. 一、迁移先说什么旧事实能保留: Go初学者承接13.07 proposed设计。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。当前没有权威历史，旧S2进程从未持久保存的消息不可用回填脚本凭空恢复；区分保留旧合同、迁移现有数据、建立新权威三类任务。\n2. 二、扩展迁移收缩三阶段及多版本共存: 引用Fowler Parallel Change expand/migrate/contract与Evolutionary Database Design：先扩schema/可读能力兼容旧端，后小范围让经批准/v2写教学DB形成m-9 seq9/E9，再对账并收缩无用路径；绝不因schema先出现就说S3已启用。D1/D2代码、K1/K2配置、数据模式、事件和客户端版本独立版本轴；R9另行审。\n3. 三、权威切换与双写缺口: 候选v2 DB为新权威，任何双写/影子写需明确只一处权威、稳定message_id、事务/事件E9边界、失败状态和重试；不能在S2旧内存和S3 DB之间假设可比较全部历史，旧S2无权威可回填。已写v2 DB而旧副本未写，不得以旧读无结果否定权威；回填仅针对确有可靠来源的数据。\n4. 四、影子读取与对账的可比口径: 对只读/隔离数据样本比对同conversation seq、message_id、成员权限/可见范围与时间窗，遮蔽响应对用户；不同语义的S2内存与v2 DB不能作为等价历史断言。对账报告记录覆盖率/缺口/重复/未知与样本/不比较原因。B先见seq9缺seq8，连续游标7；25h>broker24h需DB真正保留且授权。\n5. 五、客户端与协议兼容: 旧/v1保持6 UTF8B/409/404/200 accepted_in_memory；未来/v2经审批仍6B只改变stored确认，7B仍拒绝；R9另版本与旧端升级路径。旧端无seq游标/新ACK时不能假装能读新权威历史；按显式客户端能力/会话隔离/cohort路由，混用同会话前须定义权威、可见性和转换，不能随机按Pod灰度造成同ID不同结果。\n6. 六、发布、停止与可回退边界: 阶段P0基线→P1可扩展schema与只读→P2隔离v2小流量权威→P3对账和兼容→P4扩大→P5删旧仅有证据后；每阶段写唯一权威、版本、读写目标、业务门与回退。v2 DB已确认m-9/seq9后回滚代码不能抹掉，须保留兼容读取/暂停新写/前进修复，不能回到v1内存就丢新历史。D1/D2、K1/K2、DB与事件回退不同。\n7. 七、证据包与决定人: Fowler版本化迁移、Google SRE金丝雀：按候选组对照，不以总体200率判断。证据包含6B/409/404/200与v2 stored合同、唯一/seq/E9、B25h有权补拉、旧端、双写/影读对账、DB故障和回退演练、权限/保留、容量与事故门；阻断项由产品/客户端/数据/安全/值班决定。固定OpenIM两源码只支持异步边界。\n8. 八、22题分层练习: 基础8/推演8/决策6附答案：expand migrate contract、旧内存不可回填、S2/S3/R9和D/K轴、双写单权威、影读覆盖率、B seq7/9缺8、25h/24h、旧端7B、v2已存后回滚不可丢、P0-P5各门。静态不运行Go/IM/数据库/迁移/部署/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

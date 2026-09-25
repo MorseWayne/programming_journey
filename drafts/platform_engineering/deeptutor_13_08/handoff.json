@@ -1,0 +1,33 @@
+{
+  "chapter": "13.08",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM migration and compatibility lesson using fictional S2 current contract and future S3 authority proposal",
+  "prerequisites": [
+    "13.01–13.07 problem, identity, architecture and design review",
+    "06.03 schema evolution",
+    "09.10 protocol compatibility",
+    "12.09 multi-axis release and rollback",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "separate preserving /v1 semantics from migrating provable data and creating new authority",
+    "recognize that disappeared in-memory S2 messages cannot be backfilled",
+    "trace paper P0–P5 expansion, migration and contraction with one authority per cohort",
+    "keep future /v2 at 6 bytes and R9 as a separate pending change"
+  ],
+  "second_pass": [
+    "define dual-write and shadow-read failure and comparable-sample boundaries",
+    "hold the continuous cursor at 7 when 9 arrives but 8 is absent",
+    "route by explicit client/conversation capability rather than random Pods",
+    "preserve confirmed v2 DB messages through code/config rollback",
+    "assign D/K/data/event/client version gates and decision owners",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.09 cross-team delivery",
+    "approved historical visibility, client capability, retention and actual canary/reconciliation evidence"
+  ],
+  "next_chapter": "13.09 cross-team delivery",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish dual writes, shadow reads, migration phases, outbox, acknowledgments or rollback policy.",
+  "shared_integration_pending": []
+}

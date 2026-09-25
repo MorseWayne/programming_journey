@@ -30,9 +30,9 @@
   "original_sha256": "8cbf88abe1e12c6cc82a142c33cb7b072b941d5eef0eaa15016514de8579de8e",
   "original_characters": 32675,
   "generation_request_sha256": "22093a1d76c75f709cc7816ea2ec22d14cb24fc6c4097c568358de026a91e750",
-  "reviewed_sha256": "d7f5c9ecb31e4e586839b3675930583624ac1c37fec0228f777b5bda269d321d",
-  "reviewed_characters": 9884,
-  "reviewed_chinese_characters": 3794,
+  "reviewed_sha256": "5294e15998db955bcb1ddfeeea7deb2b6e363ff320c8de3f7d2e3d3f0436486b",
+  "reviewed_characters": 9984,
+  "reviewed_chinese_characters": 3796,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/07_design_review_adr.md",
-  "course_sha256": "e38ac4d1f6e8f3ef9f5e65fd16dded9bd0f2739aaac8db1bc58c20cedf5c941a"
+  "course_sha256": "dc4912846cf33471c7cfcb4198fcf9e0c68a9fa4044277f187809cd7a3309279"
 }

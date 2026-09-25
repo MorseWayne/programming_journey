@@ -378,6 +378,7 @@ export default sidebar({
             "curriculum/13_architecture/05_capacity_data_design",
             "curriculum/13_architecture/06_quality_attribute_tradeoffs",
             "curriculum/13_architecture/07_design_review_adr",
+            "curriculum/13_architecture/08_migration_compatibility",
             "curriculum/13_architecture/core"
           ]
         },

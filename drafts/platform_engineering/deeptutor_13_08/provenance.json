@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_0efc0f94b8",
+  "page_id": "pg_75144fe228",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://martinfowler.com/bliki/ParallelChange.html",
+      "https://www.martinfowler.com/articles/evodb.html",
+      "https://sre.google/workbook/canarying-releases/",
+      "https://sre.google/workbook/data-processing/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "06351d9965d231d71e40ff2f7ff940717482a8b4d9f5ea0002036ea1fa205190",
+  "original_characters": 29809,
+  "generation_request_sha256": "3f8292a2552499a014125c19551031e402ff04811046b7d8612c700f52bf8fe6",
+  "reviewed_sha256": "8000a16793a8da11e8db92435761ec392a5def1f50d5dbd96d733fe266f4d4c4",
+  "reviewed_characters": 10316,
+  "reviewed_chinese_characters": 3980,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/08_migration_compatibility.md",
+  "course_sha256": "6e066bc77eae295b6b454cc63977f439dbd142743537e972e01e267ec3581084"
+}
