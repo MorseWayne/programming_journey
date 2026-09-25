@@ -1,0 +1,33 @@
+{
+  "chapter": "11.11",
+  "stage": "S6–S7",
+  "business_scope": "static beginner-to-advanced blameless postmortem lesson for fictional IM B-side history catch-up delay",
+  "prerequisites": [
+    "11.01 user confirmation and bounded impact",
+    "11.04 falsifiable diagnosis",
+    "11.09 retry amplification and overload controls",
+    "11.10 T0–T+30 fictional incident response",
+    "10.11 decision records and technical communication",
+    "07.12 authorized authoritative history recovery"
+  ],
+  "first_pass": [
+    "freeze factual timeline and unknown impact without inventing users or root cause",
+    "separate observed threefold retry amplification from ninefold worst-case upper bound",
+    "distinguish trigger candidates, contributing factors, safeguards and detection coverage",
+    "write blameless causal statements focused on system conditions"
+  ],
+  "second_pass": [
+    "write counterfactuals that could refute retry-budget, pool and alert proposals",
+    "prioritize authorization and authoritative data before recovery and observability",
+    "assign owner, relative deadline, verification evidence and rollback to each action",
+    "test 25-hour offline recovery against 24-hour teaching broker retention using authorized DB history",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.12 capacity and cost decisions",
+    "learner's real reviewed postmortem and controlled improvement results"
+  ],
+  "next_chapter": "11.12 capacity and cost decisions",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish a real incident, SQL outbox, retry multiplier or improvement benefit.",
+  "shared_integration_pending": []
+}

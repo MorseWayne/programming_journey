@@ -339,6 +339,7 @@ export default sidebar({
             "curriculum/11_reliability/08_slo_alerting",
             "curriculum/11_reliability/09_overload_cascades",
             "curriculum/11_reliability/10_incident_response",
+            "curriculum/11_reliability/11_postmortem_improvement",
             "curriculum/11_reliability/core"
           ]
         },

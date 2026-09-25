@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_5d6cb4175e",
-  "page_id": "pg_8bbc57ce06",
+  "book_id": "bk_2c148f8814",
+  "page_id": "pg_5dd7959243",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,22 +16,22 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://sre.google/sre-book/managing-incidents/",
-      "https://sre.google/workbook/incident-response/",
+      "https://sre.google/sre-book/postmortem-culture/",
+      "https://sre.google/workbook/postmortem-culture/",
       "https://sre.google/sre-book/effective-troubleshooting/",
-      "https://sre.google/sre-book/addressing-cascading-failures/",
+      "https://sre.google/workbook/incident-response/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "e608b3b426f7fc6dbfc90e4f56e370ecc8f3c39560e9bfe731480a677d6ecbbe",
-  "original_characters": 30179,
-  "generation_request_sha256": "044e374a05b257563acef0235cad82eb68255bb0c1c8ebc8dfbdb7826ad4ba41",
-  "reviewed_sha256": "195f917882dfe45c23cd2413203ad34f5d0111f0efababdee43f234baaa1068d",
-  "reviewed_characters": 9537,
-  "reviewed_chinese_characters": 4230,
-  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/10_incident_response.md",
-  "course_sha256": "a0deae0ea6762f8a9fa7ced17095a4a67cf1e406b71cead4112455b25b798ed4"
+  "original_sha256": "640840e881e3f45e6a74a96f37f4d1dbd978ea593afe4fc424a8c545b041e23b",
+  "original_characters": 30087,
+  "generation_request_sha256": "3ecc26d4d9f29f6c556c3a011417826fe4ac365eb2091fd23d6295db5971b011",
+  "reviewed_sha256": "291659c77e3b6b688753c367ee183842d3da4cb5a4de041e1cd94b24d9767c2c",
+  "reviewed_characters": 9471,
+  "reviewed_chinese_characters": 4120,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/11_postmortem_improvement.md",
+  "course_sha256": "be6f38698c3cc4aa041d0ace83e07be3b49c164b1ec5a3401bd06bceb10e73dd"
 }
