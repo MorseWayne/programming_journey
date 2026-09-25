@@ -1,0 +1,32 @@
+{
+  "chapter": "13.05",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM capacity and data design lesson using fictional connections, fanout, retention and queue recovery",
+  "prerequisites": [
+    "13.01–13.04 problem, domain, modules and architecture boundaries",
+    "11.07 load validation and 11.12 capacity ledger",
+    "07.12 authoritative history and long-offline recovery",
+    "12.10 autoscaling and fault domains",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "separate concurrent connections, inbound messages, E9 events and device tasks",
+    "derive access patterns before choosing DB indexes or partitions",
+    "reuse the 11.12 paper baseline and show units in every formula",
+    "separate 6-byte body, 4096-byte HTTP request and 1-KiB hypothetical authoritative record"
+  ],
+  "second_pass": [
+    "account for retained authoritative history and broker events separately",
+    "compare one-variable growth with a hot 500-member conversation",
+    "calculate backlog drain as capacity minus new arrivals",
+    "separate RTO, RPO, backlog drain and authorized 25-hour history recovery",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.06 quality attribute conflicts",
+    "actual workload distributions, DB record size, retention approval and recovery measurements"
+  ],
+  "next_chapter": "13.06 quality attribute conflicts",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish real throughput, bytes per record, retention, queue drain or recovery capacity.",
+  "shared_integration_pending": []
+}

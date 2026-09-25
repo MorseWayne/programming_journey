@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_2de910423b",
+  "page_id": "pg_34b3596ec2",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/workbook/non-abstract-design/",
+      "https://sre.google/sre-book/software-engineering-in-sre/",
+      "https://sre.google/sre-book/handling-overload/",
+      "https://sre.google/sre-book/data-integrity/",
+      "https://aws.amazon.com/builders-library/avoiding-insurmountable-queue-backlogs/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "e091d066eabf862c7f0eebcda1726d81dc7820165ee7c0071b2b767f31a09408",
+  "original_characters": 30621,
+  "generation_request_sha256": "79b6280bbf350388144bf0e4f0e22b69e675884a2e90d8fa1d88b05008cb7b84",
+  "reviewed_sha256": "01814e3170b7c0e984460ac420d5fbddf56c60ac3a301da4c3c400ba50fbc6d4",
+  "reviewed_characters": 11006,
+  "reviewed_chinese_characters": 3575,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/05_capacity_data_design.md",
+  "course_sha256": "544bd38ff2b14598fcbf108897fff5eeb72949fd51c056c319aa210cfac51267"
+}
