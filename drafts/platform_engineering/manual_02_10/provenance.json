@@ -1,0 +1,29 @@
+{
+  "chapter": "02.10",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against primary algorithm sources and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "0fc1834763ee1ad686aacb2b878db514850a5043d253110acf6eb20f881888c0",
+  "reviewed_sha256": "e9cb90b851fe1f505adfc92d969c9d096fcd0fb504afaed6af512a7bdae0e250",
+  "reviewed_characters": 8401,
+  "reviewed_chinese_characters": 2889,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/10_dynamic_programming_greedy.md",
+  "course_sha256": "ab32a1a878d10810fe7b6e48ba384fdbbc3aac3c4cbfe38807149fb47aa2c926",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/7232b0ff982f501556118a8552654762_MIT6_006S20_r19.pdf",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/resources/mit6_006f11_rec21/",
+    "https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/resources/lecture-1-course-overview-interval-scheduling/",
+    "https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/ff2a7015ff913fc01f0381d8f5126a9a_MIT6_046JS15_lec01.pdf"
+  ]
+}

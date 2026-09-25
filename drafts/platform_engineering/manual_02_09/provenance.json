@@ -22,9 +22,9 @@
   "im_execution": false,
   "site_build": false,
   "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
-  "reviewed_sha256": "eccb91c08231c66bb9ad8b75bc3fef811d398e502dd9477e9ab252b548c5235a",
-  "reviewed_characters": 9227,
-  "reviewed_chinese_characters": 3300,
+  "reviewed_sha256": "8986f1954f1468b4a7495bce88ca979d162c4ab7b9f6b52f295e1da38d4e8765",
+  "reviewed_characters": 9333,
+  "reviewed_chinese_characters": 3307,
   "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/09_weighted_paths_state_space.md",
-  "course_sha256": "0f8b1a2cd910a163b6461642dd8bc5393da33829a19869268589dab024c329d4"
+  "course_sha256": "4f809d01fc609d73c2e6d44b7da2cb34202eff96e9a8a5134b1c806923d136d0"
 }

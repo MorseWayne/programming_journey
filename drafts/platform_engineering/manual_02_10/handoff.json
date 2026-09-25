@@ -1,0 +1,27 @@
+{
+  "chapter": "02.10",
+  "stage": "S4+ algorithms second pass",
+  "business_scope": "static dynamic-programming and greedy lesson using synthetic IM finite processing budget",
+  "prerequisites": [
+    "02.01 cost units and O notation",
+    "02.02 arrays and slices",
+    "02.03 loop invariants and boundary cases",
+    "02.09 algorithm prerequisites and counterexamples",
+    "09.02 current S2 contract"
+  ],
+  "first_pass": [
+    "define indivisible one-time task choice and enumerate a three-task optimum",
+    "counterexample the value-per-cost greedy rule on the same data",
+    "name dp[i][b], boundary and choose/skip transition before coding",
+    "fill the complete small table and reconstruct B+C"
+  ],
+  "second_pass": [
+    "show why one-dimensional zero-one DP updates budget downward",
+    "explain numerical-budget pseudopolynomial O(nM) cost",
+    "prove earliest-finish interval greedy only for single-slot equal-value count",
+    "keep permissions, message body bytes, duplicate ID and delivery outside paper value scoring"
+  ],
+  "next_chapter": "02.11 specialized structures and approximation",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}
