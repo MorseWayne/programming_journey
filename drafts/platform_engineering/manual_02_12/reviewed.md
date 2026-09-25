@@ -1,0 +1,186 @@
+# 02.12 业务算法评审：把正确性、规模与退化方案写全
+
+> 本章把第二卷的机制收成一份**静态评审卡**，不运行 Go、IM、数据库、压测或基准。先会 02.01 的成本模型、02.03 的搜索不变量、02.04 的精确 ID 集合、02.06 的有序索引，再用虚构本地 IM 历史回答“按会话序号取一页”与“按消息 ID 精确找”。当前 S2 `/v1` 正文非空且最多 **6 UTF-8 B**、原始 HTTP 请求正文最多 **4096 B**、同 ID 重复 **409**、非成员隐藏 **404**、`200 accepted_in_memory` 只到本进程内存受理；未来 S3 `/v2` 存库提案仍 6 B，R9 6→9 B 待审。算法选型不能重定义确认点。[09.02 当前合同](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)
+
+## 一、评审先写查询合同和不可牺牲的规则
+
+纸上本地会话 `c-a` 有已按**会话内序号升序**排列的 8 条虚构消息，序号 `1…8`。查询 `fromSeq=4, limit=3` 定义为“取序号 **≥4** 的前 3 条”，所以应返回 **4、5、6**；`fromSeq=9` 返回空，`limit=0` 返回空。另有按 `message_id` 精确找一条消息的需求。评审要先定这些边界、重复序号如何处理、是否跨会话、数据快照版本和调用者有权范围，才谈 `map`、排序切片或数据库索引。[02.03 下界搜索](../../../src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md) · [09.07 授权](../../../src/docs/platform_engineering/curriculum/09_backend_security/07_authentication_authorization.md)
+
+```text
+输入：actor、conversation_id、fromSeq、limit、历史快照版本
+输出：有权的本会话消息，序号升序，最多 limit 条；或明确拒绝/空结果
+硬门：非成员按当前合同隐藏 404；正文与同 ID 规则仍由业务层校验
+```
+
+“空结果”与“无权”不同；不能因算法找不到，就暴露该会话是否存在。现行 S2 `accepted_in_memory` **不提供跨重启权威历史**，本章查询的是学习者本地/纸上历史；未来 S3 若获批，DB 保留、序号和成员历史可见性仍需正式合同，不因本章下界算法自动存在。[09.02 当前/未来边界](../../../src/docs/platform_engineering/curriculum/09_backend_security/02_http_api_contract.md)
+
+## 二、输入分布是复杂度公式的前提，不是脚注
+
+先定义规模：`N` 是一个会话内记录数，`K` 是本页实际返回数，`C` 是会话数，`M` 是全局消息数。`N=8` 的小表只用于正确性；若预计很多小会话与少数超大热会话，平均 N 会掩盖最坏内存和尾时延。若读范围查询多、只追加少，与频繁在中间插入/删除的负载，适合的结构也不同。[02.01 输入规模](../../../src/docs/platform_engineering/curriculum/02_algorithms/01_discrete_cost.md) · [11.02 分布与统计](../../../src/docs/platform_engineering/curriculum/11_reliability/02_distributions_statistics.md)
+
+| 要问的输入事实 | 纸上对照 | 会改变的选择 |
+|---|---|---|
+| 查询形状 | 精确 ID、序号下界+limit、按时间排序 | map 与有序结构回答的问题不同 |
+| 写入形状 | 顺序追加、乱序导入、编辑/撤销 | 排序切片更新代价不同 |
+| 数据规模 | N=8、N=800、N=80,000 仅作候选档位 | 线性扫描何时值得优化须实测 |
+| 倾斜 | 多数会话小、少数会话很热 | 看每桶尾时延和内存，而非只看平均 |
+| 并发/版本 | 读写同时进行、快照变化 | 排序不变量与权限版本需明确 |
+
+这些数值不是实际用户规模或性能报告。资料来源、导出方式、旧端/异常记录比例、重复 ID/序号、最大正文长度和查询 limit 分布都应入评审清单。只有明确工作负载，`O(log N)` 才有可比较的对象。[MIT 6.006：渐进分析与输入模型](https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/)
+
+## 三、候选结构先按能回答的操作比较
+
+**无序切片线性扫描**：找精确 ID 或筛出序号范围可能查看 N 条，筛选为 `O(N)`；若输出还必须按序号排列，匹配结果另需排序或其它有序保证，小数据时仍易作正确性基线。**每会话序号有序切片**：先用下界二分找到第一个 `seq>=fromSeq` 的位置，约 `O(log N)` 次比较，再取 K 条 `O(K)`，合计 `O(log N+K)`；但中间插入/删除可能移动 `O(N)` 元素。**按 ID 的 map**：精确 ID 查找平均可近似 `O(1)`，需额外空间，**不能直接给序号范围顺序**，且最坏/扩容/哈希退化要看前提。[02.03 二分](../../../src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md) · [02.04 哈希](../../../src/docs/platform_engineering/curriculum/02_algorithms/04_hash_sets.md)
+
+| 候选 | 下界+分页 | 精确 message_id | 主要代价/边界 |
+|---|---|---|---|
+| 无序 `[]Message` | 扫描后筛/排序 | 线性扫描 | 简单；N 大时读代价升高 |
+| 每会话有序 `[]Message` | 二分 + K 条扫描 | 无额外索引时仍线性 | 保持排序、乱序插入搬移元素 |
+| `map[MessageID]Message` | 不按序号给有序页 | 平均快速 | 额外空间；map 遍历无稳定序 |
+| 将来经批准的 DB 有序索引 | 按 DB 查询语义评 | 可另有精确索引 | 事务、权限、持久化与执行计划独立评 |
+
+这里的“平均快”不是某个机器上已测得的 ns/op。若 `limit` 可能远大于剩余历史，`K=min(limit,实际剩余)`；即使定位 `O(log N)`，返回 K 条仍须 `O(K)` 的输出工作。未来数据库 B+ 树/有序索引见 06 卷；它带来维护、I/O 和事务语义，不能因为纸上切片二分漂亮就宣布 DB 已部署。[02.06 有序索引](../../../src/docs/platform_engineering/curriculum/02_algorithms/06_trees_ordered_index.md) · [06.04 存储页与缓冲](../../../src/docs/platform_engineering/curriculum/06_databases/04_pages_buffer_pool.md)
+
+02.11 的 Bloom 可在某些昂贵精确查询前做“必不在/可能在”预筛；**可能在必须再查权威 ID**，假阳性不能直接返回当前 409。选算法时写出“不允许牺牲哪项正确性”，比只报速度重要。[02.11 Bloom 假阳性](../../../src/docs/platform_engineering/curriculum/02_algorithms/11_specialized_structures_approximation.md)
+
+## 四、正确性证据先于 benchmark：下界与排序不变量
+
+有序切片方案需要不变量：同一会话内记录按确定的 `seq` 升序；若允许重复 seq，再以稳定 `message_id` 作第二键或明确定义拒绝重复。查询的二分下界保持 `0≤lo≤hi≤N`；`[0,lo)` 的序号都小于 `fromSeq`，`[hi,N)` 都不小于它。循环里取中点，若 `messages[mid].Seq<fromSeq` 则 `lo=mid+1`，否则 `hi=mid`；当 `lo==hi`，它就是第一个满足 `seq>=fromSeq` 的位置。再截取不超过 limit 条，始终在调用者有权的同一版本快照中。[02.03 下界循环不变量](../../../src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md)
+
+纸上 `seq=[1,2,3,4,5,6,7,8]`，下界 4 的下标是 3（Go 切片从 0 起），取 3 条得 `[4,5,6]`。边界还包括空切片、fromSeq 小于首项/大于末项、limit=0、负 limit、重复序号、乱序输入、跨会话 ID、旧格式导入和同时写入。可把线性扫描加排序的简单版本作**正确性参照**，让学习者日后对照自身二分实现；本章没有运行测试。[02.03 搜索边界](../../../src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md) · [10.02 测试基本方法](../../../src/docs/platform_engineering/curriculum/10_engineering/02_testing_basics.md)
+
+排序不变量若被乱序导入破坏，二分可能**快速返回错答案**。修复是入库/写入时按约定维护索引或在查询前验证/重建，而不是靠更多二分循环。算法证明只在输入前提成立时有效；权限过滤发生在查询前和交付前，不能拿下界结果代替成员授权。[09.07 对象权限](../../../src/docs/platform_engineering/curriculum/09_backend_security/07_authentication_authorization.md)
+
+## 五、基准设计要能重复，还要与用户路径分开
+
+如果学习者将来真的比较候选，在同一 Go 版本/机器/输入生成规则下，对小、中、大 N 档分别跑精确 ID 命中/未命中、序号范围首/中/尾/空结果、顺序追加和乱序插入；冷热缓存与多热会话分开。Go `testing.B` 可做微基准并报告时间与分配，`ReportAllocs` 可开启分配计数；若初始化/生成样本不属于被测操作，需在基准计时范围外完成并说明。重复运行、记录变动范围，不凭一次 ns/op 下结论。[Go testing 包：Benchmarks/ReportAllocs](https://pkg.go.dev/testing)
+
+微基准只量**所包围的代码段**：索引查找快，不等于 HTTP 授权、JSON 编解码、DB I/O、网络和用户最终结果都快。真实服务还需按会话大小/权限/请求类型看吞吐、p95/p99 时延、错误、分配和内存驻留，处理背景 GC/排队/锁竞争；Go 官方诊断文档把 profiling、tracing 和 runtime 统计的证据范围分开说明。[Go 官方：Diagnostics](https://go.dev/doc/diagnostics) · [11.03 日志指标 Trace](../../../src/docs/platform_engineering/curriculum/11_reliability/03_logs_metrics_traces.md)
+
+本章**只交基准计划，不执行 Go 或压测**。若评审卡写“排序切片快 10 倍”，必须附真正的负载形状、工具/环境、统计方法和对照结果；否则改写为“理论定位比较次数较少，实际差距待测”。
+
+## 六、内存、退化与失败路径也要有合同
+
+有序切片的记录/索引空间随 N 增长；若另建 ID map，常在同一份业务数据外多持有键/指针/桶，是否复制正文要看实现。大正文、嵌套切片、map 扩容、长连接和缓存会影响实际驻留，不可只用 `N×一个 struct 的 unsafe.Sizeof` 估完整内存，也不可把“线性扫描低内存”当无条件结论。[01.11 unsafe 与表示边界](../../../src/docs/platform_engineering/curriculum/01_go/11_reflection_unsafe_boundaries.md) · [11.05 CPU/内存性能](../../../src/docs/platform_engineering/curriculum/11_reliability/05_cpu_memory_performance.md)
+
+若输入规模或队列超出预算，先定义**有界 limit/并发、超时/取消、错误分类和安全回退**：例如拒绝不合理大 limit，或在小数据情况下使用清楚的线性扫描；不能悄悄截掉应返回的有权消息、将 Bloom 假阳性丢弃、把旧未授权索引结果交付，或把当前 `accepted_in_memory` 称为持久/送达。退化方案必须仍满足身份、排序/分页和当前 HTTP 合同。[11.09 过载级联](../../../src/docs/platform_engineering/curriculum/11_reliability/09_overload_cascades.md) · [02.11 近似边界](../../../src/docs/platform_engineering/curriculum/02_algorithms/11_specialized_structures_approximation.md)
+
+数据或权限版本变化时，要记录谁负责失效/重建，如何识别半更新状态，回滚是切回哪份**仍被允许**的历史快照。对未来 S3 DB/历史可见规则，课程只提出评审问题，不把提案写成已实现保证。[13.08 迁移兼容](../../../src/docs/platform_engineering/curriculum/13_architecture/08_migration_compatibility.md)
+
+## 七、形成一页可审的选择记录，而非“算法获胜”口号
+
+纸上建议：对 **S1 本地 CLI 的小会话顺序历史**，先保留按会话序号有序的切片与直接校验；当精确 message_id 查询确有重复工作且输入规模/内存证据支持时，再评估单独 ID map。此建议限于**虚构工作负载和静态设计**，不宣称已运行或适用于 OpenIM/S3 数据库。候选、拒绝理由、前置不变量与回退都写入同一评审卡。[13.07 ADR 与设计评审](../../../src/docs/platform_engineering/curriculum/13_architecture/07_design_review_adr.md)
+
+| 评审栏 | 本章纸上填写 |
+|---|---|
+| 问题/验收 | `fromSeq=4,limit=3` → 4/5/6；无权隐藏，缺失/空结果明确 |
+| 输入/负载 | 单会话 N、会话数 C、页 K、追加/乱序比例、热会话与权限版本；均待真实测量 |
+| 基线/候选 | 线性扫描；有序切片下界；精确 ID map；未来 DB 索引单独评 |
+| 正确性 | 排序/二分不变量、重复键策略、授权前后核对 |
+| 成本 | `O(N)` vs `O(log N+K)` 定位/输出、乱序插入 `O(N)`、额外索引内存 |
+| 实验 | 分档、冷热、命中/未中、分配与端到端延迟；**未执行** |
+| 退化/回退 | 有界 limit、明确错误、数据/权限失效、回到可验证基线 |
+
+批准一个算法方案前，还应问“如果输入分布与预想相反，哪项先坏？”：若大量乱序写入，维护有序切片成本可能更重要；若范围查询几乎没有，单独 ID map 可能更合适；若历史版本/成员规则未定，先补业务合同。可证正确、可观测、可回退比单点微基准好看更重要。[02.01 成本模型](../../../src/docs/platform_engineering/curriculum/02_algorithms/01_discrete_cost.md) · [11.04 诊断方法](../../../src/docs/platform_engineering/curriculum/11_reliability/04_diagnostic_method.md)
+
+## 八、22 道分层练习：审一张虚构算法评审卡
+
+1–8 定义问题/规模，9–16 推演候选与基准，17–22 做业务/退化决策。答案是静态纸上判断。
+
+### 基础 1–8：合同与输入
+
+<details><summary>1. `fromSeq=4,limit=3` 对序号 1…8 应返回什么？</summary>
+
+按本章 `seq>=4` 合同返回 4、5、6。</details>
+
+<details><summary>2. `fromSeq=9` 与无权请求的结果可混为一种吗？</summary>
+
+不能；前者有权空结果，后者按当前非成员隐藏 404 等授权合同处理。</details>
+
+<details><summary>3. N、K、C 分别代表什么？</summary>
+
+单会话记录数、实际返回条数、会话数。</details>
+
+<details><summary>4. 热会话 N 很大，平均 N 小能证明尾时延好看吗？</summary>
+
+不能；要按会话大小和热度分桶看。</details>
+
+<details><summary>5. map 的遍历顺序能当序号分页顺序吗？</summary>
+
+不能；按 ID 的 map 不保证有序范围输出。</details>
+
+<details><summary>6. 当前 S2 的 200 等于跨重启历史可查吗？</summary>
+
+不等于；它只表示本进程内存受理。</details>
+
+<details><summary>7. Bloom “可能在”能直接判重复 409 吗？</summary>
+
+不能；假阳性需权威精确 ID 核查。</details>
+
+<details><summary>8. 一个算法评审先写 Big-O 还是业务查询合同？</summary>
+
+先写查询、权限、版本、缺失/空结果等合同和输入分布，再分析成本。</details>
+
+### 推演 9–16：候选、证明与测量
+
+<details><summary>9. 序号 1…8 中下界 4 的零基下标是多少？</summary>
+
+3。</details>
+
+<details><summary>10. 有序切片下界加输出 K 条的成本量级是什么？</summary>
+
+约 `O(log N+K)`，并要求排序不变量成立。</details>
+
+<details><summary>11. 乱序在有序切片中间插入可能移动多少元素？</summary>
+
+最坏 `O(N)` 个，需量写入比例。</details>
+
+<details><summary>12. 精确 ID map 能直接回答 `fromSeq` 有序分页吗？</summary>
+
+不能；它按键查精确 ID，另需排序/范围结构。</details>
+
+<details><summary>13. 二分比较条件为何是 `seq<fromSeq` 时移动 lo？</summary>
+
+这些位置不可能是第一个 `seq>=fromSeq`，可排除到 mid。</details>
+
+<details><summary>14. 乱序数据上二分更快，能认为答案正确吗？</summary>
+
+不能；输入未满足排序前提，快速也可能错。</details>
+
+<details><summary>15. `testing.B` 微基准能证明 HTTP 用户 p95 吗？</summary>
+
+不能；它只量被测代码段，端到端还含授权、I/O、排队、网络等。</details>
+
+<details><summary>16. 基准把样本构造计入时间却候选构造成本不同，如何处理？</summary>
+
+明确测量范围；若只比较查询，统一提前建相同版本输入/索引，另测构建成本。</details>
+
+### 决策 17–22：退化与可审结论
+
+<details><summary>17. limit 极大时可静默少返而声称完整吗？</summary>
+
+不能；应有明确上限、错误/分页合同和用户可见结果。</details>
+
+<details><summary>18. 现行权限源不可用，可用旧索引结果代替授权吗？</summary>
+
+不可；要保守失败/等待，不能用过期候选泄内容。</details>
+
+<details><summary>19. `unsafe.Sizeof(Message)` 是每条历史完整内存吗？</summary>
+
+不是；字符串正文、切片、map/索引、对齐和运行缓冲等另算。</details>
+
+<details><summary>20. 顺序追加且范围读多的纸上 CLI，先考虑什么基线？</summary>
+
+有序切片加下界/校验；实际规模与写入模式再测。</details>
+
+<details><summary>21. 算法“胜出”但重复 ID 被改成 200，可接受吗？</summary>
+
+不可；现行同 ID 重复仍为 409，算法不改业务合同。</details>
+
+<details><summary>22. 评审卡还需写哪些退化/回退证据？</summary>
+
+容量/limit、错误与拒绝、版本失效、可验证基线、真实测量计划和负责人。</details>
+
+## 本章完成标准与后续路径
+
+能为虚构 `c-a` 历史写查询与授权合同、规模/分布假设、候选结构表、二分不变量、基准计划、内存/退化与回退方案，并把“纸上推导”和“学习者真实运行证据”明确分开，才算完成第二卷。剩余独立章稿将回到网络卷 04.08–04.12，继续补齐连接、名称解析、代理、故障与综合设计。[第二卷路线](../../../src/docs/platform_engineering/curriculum/02_algorithms/README.md)

@@ -1,0 +1,28 @@
+{
+  "chapter": "02.12",
+  "stage": "S4+ algorithms review capstone",
+  "business_scope": "static algorithm review card for synthetic local IM history range and message-ID queries",
+  "prerequisites": [
+    "02.01 cost and input size",
+    "02.03 binary-search invariant",
+    "02.04 exact hash-ID lookup",
+    "02.06 ordered indexes",
+    "02.11 Bloom prefilter limits",
+    "10.02 tests and 11.02-11.05 performance evidence"
+  ],
+  "first_pass": [
+    "define fromSeq>=4 limit3 output and authorization/empty-result contract",
+    "name N, K, C, M and describe skew, read/write and version distributions",
+    "compare scan, sorted slice, exact ID map and future DB indexing by supported operations",
+    "prove lower-bound invariant before benchmark plans"
+  ],
+  "second_pass": [
+    "separate microbenchmark scope from HTTP end-to-end user latency",
+    "account for memory, allocations, hot conversations and update costs",
+    "design bounded limit, safe failure, invalidation and rollback",
+    "record recommendation assumptions and actual learner-run evidence separately"
+  ],
+  "next_chapter": "04.08-04.12 network and transport deepening",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

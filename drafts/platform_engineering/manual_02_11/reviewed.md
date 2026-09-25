@@ -178,4 +178,4 @@ Find 查集合代表；Union 合并两集合。</details>
 
 ## 本章完成标准与后续路径
 
-能画出三个“会话”词项的前缀树，手算 `01001010=74`，用 m-x/m-y 解释 Bloom 的“可能在/必不在”并阻止假阳性直接 409；能在并查集中区分同组与路径/撤权，再说明四种结构的版本和并发边界，才算完成本章。下一章 02.12 将把这些算法选择整理成面向真实 IM 需求的静态评审卡。[第二卷路线](../../../src/docs/platform_engineering/curriculum/02_algorithms/README.md)
+能画出三个“会话”词项的前缀树，手算 `01001010=74`，用 m-x/m-y 解释 Bloom 的“可能在/必不在”并阻止假阳性直接 409；能在并查集中区分同组与路径/撤权，再说明四种结构的版本和并发边界，才算完成本章。下一章[02.12 业务算法评审](../../../src/docs/platform_engineering/curriculum/02_algorithms/12_business_algorithm_review.md)将把这些算法选择整理成面向真实 IM 需求的静态评审卡。[第二卷路线](../../../src/docs/platform_engineering/curriculum/02_algorithms/README.md)

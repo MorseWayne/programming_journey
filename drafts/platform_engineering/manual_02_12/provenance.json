@@ -1,5 +1,5 @@
 {
-  "chapter": "02.11",
+  "chapter": "02.12",
   "generator": "manual course authoring; DeepTutor BookEngine attempted",
   "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
   "book_id": null,
@@ -8,12 +8,12 @@
   "original_status": "not generated; no original.md is claimed",
   "review_status": "manually reviewed against primary documentation and course business contracts",
   "generation_request_file": "generation_request.json",
-  "generation_request_sha256": "64848f7a11508efdb572a3ee8166b2c7cc0d0271fac502953d76e73b96fc8dd4",
-  "reviewed_sha256": "6e1c0892c7f3ca22018896badf4599312f30bbf8c86b9220e841bbdd00ac97b4",
-  "reviewed_characters": 9042,
-  "reviewed_chinese_characters": 3294,
-  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/11_specialized_structures_approximation.md",
-  "course_sha256": "602c453d086db2dd0d158dc1b39d152622412e140924a96fe2f2a1e532968706",
+  "generation_request_sha256": "2b06e9d3b2f61701ef1e154604dffdf5dd5298ded92374402051799f5bfaf8e8",
+  "reviewed_sha256": "1858d76413c636c489e0817250be7b6fedf4abf447bcc90d9368280b0799d4aa",
+  "reviewed_characters": 9790,
+  "reviewed_chinese_characters": 3522,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/12_business_algorithm_review.md",
+  "course_sha256": "be19fdc8d08bc34dbae65deced3d3f886dd34ec7c51761fd2a281458e63c1c68",
   "model_request_attempted": true,
   "model_output_received": false,
   "course_go_execution": false,
@@ -21,10 +21,9 @@
   "site_build": false,
   "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
   "primary_sources": [
-    "https://algs4.cs.princeton.edu/52trie/",
-    "https://algs4.cs.princeton.edu/15uf/",
-    "https://www.cs.princeton.edu/courses/archive/spr05/cos598E/bib/p422-bloom.pdf",
-    "https://redis.io/docs/latest/data-types/probabilistic/bloom-filter/",
-    "https://redis.io/docs/latest/develop/clients/go/prob/"
+    "https://go.dev/doc/diagnostics",
+    "https://pkg.go.dev/testing",
+    "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/",
+    "https://go.dev/blog/pprof"
   ]
 }
