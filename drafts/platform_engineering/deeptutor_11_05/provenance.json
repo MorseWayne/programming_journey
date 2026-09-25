@@ -29,9 +29,9 @@
   "original_sha256": "b3fafa7e7c044bab28bf7fb8824f16baf81d96e35696aef817456c73c0ca1428",
   "original_characters": 30533,
   "generation_request_sha256": "b0eca499ee17361868adf49031508ae95377707b9d2dbe00001d5636f704e037",
-  "reviewed_sha256": "492e7efc943562c4fea75d4a73f9dcd2fafb7861b3a43bca5a75b1f802b7a041",
-  "reviewed_characters": 10363,
-  "reviewed_chinese_characters": 4012,
+  "reviewed_sha256": "8712ef3d07cc9137dfe4dd2e443692cf47acfdca09327b01db0b0f21beba1def",
+  "reviewed_characters": 10468,
+  "reviewed_chinese_characters": 4017,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/05_cpu_memory_performance.md",
-  "course_sha256": "06b5d5062694136bbc9de6a9b09b33fcfd34f880006707f89daba3bc56242a6e"
+  "course_sha256": "5bf982dd78d2b1629893f56f7f23f7f676c0aa039ff0b738785b76c9227f7baf"
 }

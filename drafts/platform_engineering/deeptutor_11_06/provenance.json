@@ -1,0 +1,39 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_2a819a0f04",
+  "page_id": "pg_3df79207a8",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/doc/database/manage-connections",
+      "https://pkg.go.dev/database/sql",
+      "https://pkg.go.dev/net",
+      "https://www.rfc-editor.org/rfc/rfc9293.html",
+      "https://www.postgresql.org/docs/17/wal-reliability.html",
+      "https://docs.kernel.org/filesystems/vfs.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "65f7f7764c92fdb2b47f7a16826386353570dc3fdadeb5f01d196cb50b636371",
+  "original_characters": 31355,
+  "generation_request_sha256": "b1e481ed64ad7561622a19864176e2300f6423257d64f0691524d7a93bed18bf",
+  "reviewed_sha256": "aba3d14e0e45f749cf44476ea97c73f08556f41720b1bb71923e156c377c2d4c",
+  "reviewed_characters": 10316,
+  "reviewed_chinese_characters": 4055,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/06_io_network_performance.md",
+  "course_sha256": "cb1d84d49a5b43637c6822cd851ab99276e70e8d48069bcb889808741c88642c"
+}

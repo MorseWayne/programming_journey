@@ -1,0 +1,75 @@
+{
+  "code": "11.06",
+  "title": "I/O与网络性能：低CPU时消息为何仍迟到",
+  "chapter_id": "ch_io_network_performance",
+  "summary": "面向Go初学者，以未来教学IM中B设备迟到为纸上病例，分段分析页缓存、数据库连接池、TCP重传、慢消费者与补拉。",
+  "objectives": [
+    "区分S2内存受理、S3存储提议和S5设备确认",
+    "沿阶段时间线定位I/O等待",
+    "解释页缓存与持久承诺的差异",
+    "计算连接池等待的正确分母",
+    "区分Go Write、TCP ACK与应用确认",
+    "推导慢消费者队列及权威历史补拉"
+  ],
+  "sources": [
+    "https://go.dev/doc/database/manage-connections",
+    "https://pkg.go.dev/database/sql",
+    "https://pkg.go.dev/net",
+    "https://www.rfc-editor.org/rfc/rfc9293.html",
+    "https://www.postgresql.org/docs/17/wal-reliability.html",
+    "https://docs.kernel.org/filesystems/vfs.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、低CPU但B迟到：先定未来确认点",
+      "words": 3000,
+      "focus": "当前S2/v1只有A侧200 accepted_in_memory，S3/v2 stored_in_teaching_db提议仍6B；本章B设备迟到只作未来S5纸上病例。固定m-9/c-a/seq9、E9 evt:m-9:v1、A持久回应与B设备应用确认分开，不把Go Write或TCP ACK叫送达。"
+    },
+    {
+      "title": "二、分段时间线找等待而非看总CPU",
+      "words": 3100,
+      "focus": "虚构t0发送、t25 S3权威数据库commit+outbox、t30 A收200 stored_in_teaching_db、t50 E9可被broker消费、t80 gateway排队、t900 socket Write返回、t2400 B应用确认；只在同一理想纸上时钟，真实跨机器时钟不可直接相减；各段候选磁盘/池/网络/慢端。"
+    },
+    {
+      "title": "三、文件、页缓存和持久边界",
+      "words": 3000,
+      "focus": "页缓存命中可减少物理读但高缓存命中不能证明持久性；脏页/写系统调用返回不等于fsync或数据库承诺。S3权威m-9的DB commit要以配置与合同证据定义；磁盘吞吐、I/O排队、WAL flush、页缺失/命中同范围辨别。"
+    },
+    {
+      "title": "四、Go database/sql连接池等待",
+      "words": 3100,
+      "focus": "DB.SetMaxOpenConns会让请求等待连接；DB.Stats WaitCount/WaitDuration是累计量，纸上100次获取、40次等待、总等8s则等过的40次均值200ms，不等于所有请求P95；查询本身12ms不能掩盖池等待。Context期限/Rows关闭要解释。"
+    },
+    {
+      "title": "五、TCP、RTT、重传与写入边界",
+      "words": 3200,
+      "focus": "TCP按序字节流有流控/拥塞和重传；Go net.Conn Write成功或缓冲成功不等于设备应用处理，TCP ACK也只是传输级，应用ACK另设计；Write超时可能部分字节n>0，必须协议 framing/稳定消息ID/幂等处理；不凭单一重传率判因果。"
+    },
+    {
+      "title": "六、慢消费者与两种队头阻塞",
+      "words": 3000,
+      "focus": "gateway每设备有界队列纸上到达12/s、消费6/s持续5s无其他流向净积压30；应用FIFO队头与TCP同连接字节序造成不同阻塞，慢B不能拖累快C需隔离/限额/断线补拉；B离线25h超过假设broker留24h，仍从有权限权威DB历史补，不靠broker保留。"
+    },
+    {
+      "title": "七、反证矩阵、止损与业务验收",
+      "words": 3200,
+      "focus": "候选池等待/盘WAL/网络重传/慢消费者，用阶段、USE资源、客户端ACK反证；扩大池可能压垮DB，缓存/异步写可能改变S3持久承诺，丢弃通知必须保留历史补拉；同窗对照A受理、B设备确认、积压、错误和越权。固定OpenIM send.go MsgToMQ与Mongo消费两处不足以推出真实瓶颈。"
+    },
+    {
+      "title": "八、22题与I/O诊断交付",
+      "words": 3000,
+      "focus": "基础8、推导8、业务决策6，完整答案含S2/S3/S5边界、页缓存/WAL、pool累计WaitDuration算术、TCP ACK/应用确认、Write部分成功、队列+30、队头阻塞、25h历史补拉、反证和回退。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《11.06 I/O与网络性能》，面向Go初学者，八节丰富理论由浅入深，22题分层答案。当前S2/v1合同仅教学静态：正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、200 accepted_in_memory只在本进程内存受理、同ID重复409、非成员隐藏404；未来S3/v2的200 stored_in_teaching_db是提议且仍6B，R9 6→9B未批准。以未来S5纸上情景m-9/c-a/seq9、E9 evt:m-9:v1、B设备迟到为主线，不把当前S2写成已运行持久系统。单一理想纸上时钟t0发送、t25未来S3 DB commit+outbox、t30 A收stored_in_teaching_db、t50 E9可消费、t80网关排队、t900 Go socket Write返回、t2400 B应用确认；真实跨机时间不能直接相减。低CPU可因DB连接池等待、磁盘WAL flush/page cache、网络流控重传、慢设备队列。Go database/sql池DB.Stats WaitCount/WaitDuration为累计；纸上100次获取其中40次等待8s，等过者均值200ms，不是全体P95。页缓存命中/脏页写入不等于DB持久承诺，具体commit/flush按配置。net.Conn.Write成功不等于对端应用处理，TCP ACK只是传输确认；Write超时可部分成功n>0，需协议帧/稳定ID/去重。B设备有界队列到达12/s、离开6/s、5秒无其他流向积压30，应用FIFO队头与TCP有序字节队头分别解释，慢B不拖C。B离线25h超过教学broker留24h，须从有权DB历史补拉而非仅依赖broker。按池/盘/网络/慢端候选写反证，扩池/异步写/丢通知有业务代价。公开OpenIM固定send.go MsgToMQ和另Mongo BatchInsert两处只说明异步边界，不证明真实瓶颈或设备确认。所有数字虚构，不运行Go、IM、DB、网络、压测或站点。\n1. 一、低CPU但B迟到：先定未来确认点: 当前S2/v1只有A侧200 accepted_in_memory，S3/v2 stored_in_teaching_db提议仍6B；本章B设备迟到只作未来S5纸上病例。固定m-9/c-a/seq9、E9 evt:m-9:v1、A持久回应与B设备应用确认分开，不把Go Write或TCP ACK叫送达。\n2. 二、分段时间线找等待而非看总CPU: 虚构t0发送、t25 S3权威数据库commit+outbox、t30 A收200 stored_in_teaching_db、t50 E9可被broker消费、t80 gateway排队、t900 socket Write返回、t2400 B应用确认；只在同一理想纸上时钟，真实跨机器时钟不可直接相减；各段候选磁盘/池/网络/慢端。\n3. 三、文件、页缓存和持久边界: 页缓存命中可减少物理读但高缓存命中不能证明持久性；脏页/写系统调用返回不等于fsync或数据库承诺。S3权威m-9的DB commit要以配置与合同证据定义；磁盘吞吐、I/O排队、WAL flush、页缺失/命中同范围辨别。\n4. 四、Go database/sql连接池等待: DB.SetMaxOpenConns会让请求等待连接；DB.Stats WaitCount/WaitDuration是累计量，纸上100次获取、40次等待、总等8s则等过的40次均值200ms，不等于所有请求P95；查询本身12ms不能掩盖池等待。Context期限/Rows关闭要解释。\n5. 五、TCP、RTT、重传与写入边界: TCP按序字节流有流控/拥塞和重传；Go net.Conn Write成功或缓冲成功不等于设备应用处理，TCP ACK也只是传输级，应用ACK另设计；Write超时可能部分字节n>0，必须协议 framing/稳定消息ID/幂等处理；不凭单一重传率判因果。\n6. 六、慢消费者与两种队头阻塞: gateway每设备有界队列纸上到达12/s、消费6/s持续5s无其他流向净积压30；应用FIFO队头与TCP同连接字节序造成不同阻塞，慢B不能拖累快C需隔离/限额/断线补拉；B离线25h超过假设broker留24h，仍从有权限权威DB历史补，不靠broker保留。\n7. 七、反证矩阵、止损与业务验收: 候选池等待/盘WAL/网络重传/慢消费者，用阶段、USE资源、客户端ACK反证；扩大池可能压垮DB，缓存/异步写可能改变S3持久承诺，丢弃通知必须保留历史补拉；同窗对照A受理、B设备确认、积压、错误和越权。固定OpenIM send.go MsgToMQ与Mongo消费两处不足以推出真实瓶颈。\n8. 八、22题与I/O诊断交付: 基础8、推导8、业务决策6，完整答案含S2/S3/S5边界、页缓存/WAL、pool累计WaitDuration算术、TCP ACK/应用确认、Write部分成功、队列+30、队头阻塞、25h历史补拉、反证和回退。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

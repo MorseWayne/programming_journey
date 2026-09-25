@@ -1,0 +1,32 @@
+{
+  "chapter": "11.06",
+  "stage": "S4–S5",
+  "business_scope": "static beginner-to-advanced I/O and network performance lesson using fictional future IM m-9 device delivery delay",
+  "prerequisites": [
+    "11.01–11.04 confirmation points, distributions, trace and diagnostic method",
+    "11.05 CPU time versus waiting",
+    "04.04–04.05 TCP reliable transport and long connections",
+    "06.04 and 06.10 database pages and Go connection pools",
+    "07.12 authoritative history and offline recovery"
+  ],
+  "first_pass": [
+    "separate current S2 acceptance from proposed S3 commit and future S5 device confirmation",
+    "partition the paper m-9 timeline into evidence-bearing stages",
+    "distinguish file/page cache, DB commit, socket Write, TCP ACK and application ACK",
+    "calculate connection wait and per-device queue growth with explicit denominators"
+  ],
+  "second_pass": [
+    "test database pool, WAL or storage, TCP and slow consumer hypotheses with counter-evidence",
+    "keep Go Write partial-success and frame identity in retry design",
+    "isolate slow B and recover 25-hour offline history from authorized authoritative DB rather than 24-hour broker retention",
+    "review pool expansion, asynchronous writes and dropped notification for contract changes",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.07 load testing and capacity",
+    "learner's actual controlled I/O and network measurements"
+  ],
+  "next_chapter": "11.07 load testing and capacity",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish actual SQL outbox, producer ACK, pool or disk bottleneck, TCP behavior or device receipt.",
+  "shared_integration_pending": []
+}
