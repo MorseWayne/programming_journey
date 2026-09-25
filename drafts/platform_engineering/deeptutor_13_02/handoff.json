@@ -1,0 +1,32 @@
+{
+  "chapter": "13.02",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM domain and state modeling lesson using fictional messages, devices and long-offline recovery",
+  "prerequisites": [
+    "13.01 problem framing and stakeholders",
+    "06.01 relational identity and 06.07 transaction anomalies",
+    "07.12 authoritative history and cross-system events",
+    "09.07 application authorization",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "derive objects from SendMessage, FetchHistory, AckDevice and ChangeMembership use cases",
+    "distinguish entity identity from value equality",
+    "separate request ID, stable message intention, conversation sequence, event ID, broker offset and device acknowledgment",
+    "write current contract rules separately from proposed authoritative invariants"
+  ],
+  "second_pass": [
+    "model authoritative storage, event, per-device acknowledgment and reading as separate axes",
+    "keep contiguous device cursor at 7 when 9 arrives but 8 is missing",
+    "derive candidate aggregate boundaries from invariant ownership rather than table names",
+    "review retries, publication failure, missing sequence and membership changes",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.03 modules and information hiding",
+    "actual historical membership policy, concurrency evidence and chosen persistence design"
+  ],
+  "next_chapter": "13.03 modules and information hiding",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish this chapter's aggregates, SQL uniqueness, outbox, acknowledgments or device cursors.",
+  "shared_integration_pending": []
+}

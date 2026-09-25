@@ -28,9 +28,9 @@
   "original_sha256": "8f80c1f77d4834d0ea094ddfb8e37e45d8bcf7467cda2493d8a15ee383c255f6",
   "original_characters": 33180,
   "generation_request_sha256": "cd5d321a1de052590f94cc71a8882744df812cf76e02d4c7659c00df5ad6763a",
-  "reviewed_sha256": "509f385e7258d594d5fe0fbe6fddc14486ffbe6b2153c86baba332891025f0c3",
-  "reviewed_characters": 9875,
-  "reviewed_chinese_characters": 4181,
+  "reviewed_sha256": "b42ceb163d24d9f030ef0ecb1f78aac1275bb9159f69ebb9d72e4fa7750d03a1",
+  "reviewed_characters": 9978,
+  "reviewed_chinese_characters": 4188,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/01_problem_stakeholders.md",
-  "course_sha256": "f4654fa603c28ff8b6fa4d58362971e007b21e5b596cea318974f7fa7911ab4d"
+  "course_sha256": "2fb3c551f151a2e84aae51e128305265f21d2b9544f5e77df81e56d810502e33"
 }

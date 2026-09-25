@@ -1,0 +1,73 @@
+{
+  "code": "13.02",
+  "title": "领域与状态建模：同一条消息为何有五种ID与多个进度",
+  "chapter_id": "ch_domain_state_modeling",
+  "summary": "面向Go初学者，用虚构IM消息从发送到长离线补拉的用例解释实体、值对象、身份、不变量、状态轴、设备游标与聚合边界。",
+  "objectives": [
+    "从用户旅程抽取用例和领域对象",
+    "区分实体/值与五类身份",
+    "为当前合同和未来提议分别写不变量",
+    "沿发送/存储/事件/设备ACK拆状态轴",
+    "手推连续游标与长离线补拉",
+    "选择可维护的一致性边界并用反例检验"
+  ],
+  "sources": [
+    "https://www.domainlanguage.com/ddd/reference/",
+    "https://martinfowler.com/bliki/EvansClassification.html",
+    "https://martinfowler.com/bliki/ValueObject.html",
+    "https://martinfowler.com/bliki/DDD_Aggregate.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、模型服务于用例而不是表名",
+      "words": 3300,
+      "focus": "Go初学者承接13.01虚构A发消息、B离线25h后补历史问题。当前S2/v1正文非空最多6 UTF-8B/原始HTTP请求体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。定义模型、对象、状态、用例、边界；先列SendMessage/FetchHistory/AckDevice/ChangeMembership，不把SQL表/API JSON/缓存key直接当领域。"
+    },
+    {
+      "title": "二、实体、值对象与身份账本",
+      "words": 3400,
+      "focus": "引Eric Evans DDD Reference与Fowler：实体靠连续身份，值对象靠属性相等。纸上u-a/u-b用户、dev-b1/dev-b2设备、c-a会话、成员关系、m-9消息实体；正文与游标等值或值的一部分。严格区分每次HTTP request_id与稳定客户端消息意图message_id、未来会话内seq9、事件E9=evt:m-9:v1、broker P0 offset42、设备ACK键，它们不互换。"
+    },
+    {
+      "title": "三、不变量与状态所有权",
+      "words": 3400,
+      "focus": "列当前可核合同与未来待审不变量：成员有权才能发送/补拉，未来(c-a,seq9)唯一并单调、同稳定消息意图至多一个权威消息、E9稳定标识允许重投、B每设备游标只前进连续确认。说明不可把过去/当前成员权限一概定死，历史可见规则待审；DB唯一索引/事务/权限检查负责未来，当前S2本进程409不跨Pod保证。"
+    },
+    {
+      "title": "四、用例和状态转换：一条消息不等于一个状态枚举",
+      "words": 3400,
+      "focus": "纸上SendMessage: 输入身份/会话/message_id/正文，先当前6B和成员校验，然后当前内存受理200/重复409/非成员404；未来S3提议在DB事务写权威m-9 seq9，再派生E9，转发和设备ACK独立轴。用存储状态、事件状态、各设备ACK/阅读状态向量表达，避免单一delivered布尔。失败重试和权威写后事件未发反例。"
+    },
+    {
+      "title": "五、设备游标与长离线补拉",
+      "words": 3300,
+      "focus": "未来候选历史按会话seq有序，设备B看到seq7和seq9但缺8时last_contiguous_seq仍7，不可用max seen9跳过8。区分每设备接收进度与每用户阅读进度、broker offset与会话seq。B25h>broker24h需按授权从权威历史补拉；成员撤销后的历史可见性待产品/安全决定。"
+    },
+    {
+      "title": "六、一致性边界与聚合大小",
+      "words": 3400,
+      "focus": "DDD aggregate守一次事务内不变量，不能把无限增长消息/设备状态全塞Conversation大聚合；区分Conversation成员策略、Message身份/seq、DeviceProgress与Outbox/事件投影，各自更新责任。跨边界通过显式事件与补偿/重试协调，不把聚合图直接等同SQL表或微服务划分。引用Fowler aggregate与Evans。"
+    },
+    {
+      "title": "七、纸上模型校验与OpenIM对照",
+      "words": 3300,
+      "focus": "把对象账本、用例前置/后置/失败、状态轴、约束归属、三条反例做成评审卡：同ID重试、权威已存事件未发、B拿seq9却缺8、非成员补拉。用固定OpenIM send.go选定分支MsgToMQ后返回与Mongo消费者BatchInsertChat2DB说明两处异步边界，仅映射问题不宣称相同模型/完整ACK/SQL事务/源码聚合。Go结构体伪示意可有但不得声称运行。"
+    },
+    {
+      "title": "八、22道分层练习",
+      "words": 3200,
+      "focus": "基础8、推演8、决策6，逐题附答案；涵盖实体/值、五类ID、当前S2/未来S3、候选不变量、单一delivered反例、连续游标7/9缺8、broker24h与B25h、权限历史待定、聚合边界与源代码证据。全部静态不运行Go/IM/数据库/部署/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《13.02 领域与状态建模》，Go初学者八节丰富理论、虚构IM业务由浅入深、22题含答案。承接13.01 A发消息、B离线25h后按权限找回。当前S2/v1合同必须固定：正文非空最多6 UTF-8 B、原始HTTP请求体最多4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db只是提议且仍6B，R9 6→9B待审。先讲模型是用例与不变量的语言，不是SQL表或HTTP JSON；SendMessage、FetchHistory、AckDevice、ChangeMembership四用例。引Eric Evans DDD Reference和Fowler区分实体（持续身份）与值对象（属性相等），纸上用户u-a/u-b、设备dev-b1/dev-b2、会话c-a、成员关系和m-9消息与正文/游标。严格区分每次请求request_id、稳定消息意图message_id=m-9、未来会话内seq9、稳定派生事件E9=evt:m-9:v1、broker P0 offset42和设备ACK键，不能互换。当前同ID重复409是本进程合同，不能冒充跨Pod持久幂等；未来候选在权威DB约束(c-a,seq)唯一和同意图至多一条权威消息，授权和成员历史规则需定。用多轴状态：权威存储、事件派生/发布、各设备接收ACK、阅读，避免一个delivered布尔；未来DB m-9 seq9之后事件E9可能失败或重投，不等于B收到。B设备收到seq7和seq9、缺seq8时last_contiguous_seq仍7，不能用max seen9跳过；每设备接收进度与每用户阅读进度不同，broker offset也不是会话seq。B离线25h而教学broker保留24h，应未来从有权权威DB历史补拉。DDD聚合以不变量和事务边界设计，不能把无限增长消息和设备状态放进巨大Conversation；跨边界需显式协调。用固定OpenIM send.go选定分支调用MsgToMQ后返回与Mongo消费者BatchInsertChat2DB对照有限异步边界，不能推断相同领域模型、完整ACK、SQL事务或真实聚合。全部静态，不运行Go/IM/数据库/部署/站点。\n1. 一、模型服务于用例而不是表名: Go初学者承接13.01虚构A发消息、B离线25h后补历史问题。当前S2/v1正文非空最多6 UTF-8B/原始HTTP请求体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。定义模型、对象、状态、用例、边界；先列SendMessage/FetchHistory/AckDevice/ChangeMembership，不把SQL表/API JSON/缓存key直接当领域。\n2. 二、实体、值对象与身份账本: 引Eric Evans DDD Reference与Fowler：实体靠连续身份，值对象靠属性相等。纸上u-a/u-b用户、dev-b1/dev-b2设备、c-a会话、成员关系、m-9消息实体；正文与游标等值或值的一部分。严格区分每次HTTP request_id与稳定客户端消息意图message_id、未来会话内seq9、事件E9=evt:m-9:v1、broker P0 offset42、设备ACK键，它们不互换。\n3. 三、不变量与状态所有权: 列当前可核合同与未来待审不变量：成员有权才能发送/补拉，未来(c-a,seq9)唯一并单调、同稳定消息意图至多一个权威消息、E9稳定标识允许重投、B每设备游标只前进连续确认。说明不可把过去/当前成员权限一概定死，历史可见规则待审；DB唯一索引/事务/权限检查负责未来，当前S2本进程409不跨Pod保证。\n4. 四、用例和状态转换：一条消息不等于一个状态枚举: 纸上SendMessage: 输入身份/会话/message_id/正文，先当前6B和成员校验，然后当前内存受理200/重复409/非成员404；未来S3提议在DB事务写权威m-9 seq9，再派生E9，转发和设备ACK独立轴。用存储状态、事件状态、各设备ACK/阅读状态向量表达，避免单一delivered布尔。失败重试和权威写后事件未发反例。\n5. 五、设备游标与长离线补拉: 未来候选历史按会话seq有序，设备B看到seq7和seq9但缺8时last_contiguous_seq仍7，不可用max seen9跳过8。区分每设备接收进度与每用户阅读进度、broker offset与会话seq。B25h>broker24h需按授权从权威历史补拉；成员撤销后的历史可见性待产品/安全决定。\n6. 六、一致性边界与聚合大小: DDD aggregate守一次事务内不变量，不能把无限增长消息/设备状态全塞Conversation大聚合；区分Conversation成员策略、Message身份/seq、DeviceProgress与Outbox/事件投影，各自更新责任。跨边界通过显式事件与补偿/重试协调，不把聚合图直接等同SQL表或微服务划分。引用Fowler aggregate与Evans。\n7. 七、纸上模型校验与OpenIM对照: 把对象账本、用例前置/后置/失败、状态轴、约束归属、三条反例做成评审卡：同ID重试、权威已存事件未发、B拿seq9却缺8、非成员补拉。用固定OpenIM send.go选定分支MsgToMQ后返回与Mongo消费者BatchInsertChat2DB说明两处异步边界，仅映射问题不宣称相同模型/完整ACK/SQL事务/源码聚合。Go结构体伪示意可有但不得声称运行。\n8. 八、22道分层练习: 基础8、推演8、决策6，逐题附答案；涵盖实体/值、五类ID、当前S2/未来S3、候选不变量、单一delivered反例、连续游标7/9缺8、broker24h与B25h、权限历史待定、聚合边界与源代码证据。全部静态不运行Go/IM/数据库/部署/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
