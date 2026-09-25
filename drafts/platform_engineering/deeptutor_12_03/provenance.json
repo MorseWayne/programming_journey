@@ -32,9 +32,9 @@
   "original_sha256": "5b91506bbb0a0a2a3793b5ad3680ecf50ae5b19ce4aed7bb5b000190bc7ffc55",
   "original_characters": 32644,
   "generation_request_sha256": "aebbf2feda71229ed8e265d630a8ca09bf523cc799e46a9bd6ff88a0dac1c0de",
-  "reviewed_sha256": "87d97b57e0e50a896a9660128120b18f835a863fd6848b9fc6205ed68b0e6a56",
-  "reviewed_characters": 10551,
-  "reviewed_chinese_characters": 3366,
+  "reviewed_sha256": "a3011f8402a43e81a5cc36dbce3974875af0edc419dfcaf83d24f86660157dd7",
+  "reviewed_characters": 10646,
+  "reviewed_chinese_characters": 3369,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/03_local_multi_service.md",
-  "course_sha256": "c0c52376b456487f76cc896db948d15aefd78a42bd5494d6e043172a745bb136"
+  "course_sha256": "25c62a5e7467f414ef080e513b2bde66a3dc48a72c29626fba8ca6b90e0e734d"
 }

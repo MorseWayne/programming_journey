@@ -1,0 +1,33 @@
+{
+  "chapter": "12.04",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Kubernetes control-loop lesson using a fictional three-replica IM gateway Pod replacement",
+  "prerequisites": [
+    "12.01 artifact and image identity",
+    "12.02 container process, writable layer and long-connection exit",
+    "12.03 local service discovery and readiness",
+    "08.01 distributed partial failure",
+    "11.12 workload capacity and N-1 caveats"
+  ],
+  "first_pass": [
+    "distinguish Kubernetes object metadata, spec and status",
+    "explain Deployment, ReplicaSet, Pod, Node, scheduler and kubelet responsibilities",
+    "step through a deleted Pod replacement from Ready 3 to 2 and back to 3",
+    "keep current S2 in-memory acceptance separate from proposed S3 and device receipt"
+  ],
+  "second_pass": [
+    "separate deleted Pod replacement from a still-present unready Pod",
+    "differentiate unscheduled Pending, bound image pull, Running and Ready",
+    "track replacement Pod UID, connection loss and missing local state",
+    "explain why local per-Pod dedup cannot automatically preserve global duplicate 409",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.05 workload types and service discovery",
+    "12.06 resource and persistent storage",
+    "learner's actual authorized Kubernetes and IM runtime evidence"
+  ],
+  "next_chapter": "12.05 workloads and service discovery",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish any course or upstream Deployment, Node, Pod count, readiness or post-failure business result.",
+  "shared_integration_pending": []
+}

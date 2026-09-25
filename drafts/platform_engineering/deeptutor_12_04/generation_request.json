@@ -1,0 +1,76 @@
+{
+  "code": "12.04",
+  "title": "集群控制模型：三副本网关怎样被维持",
+  "chapter_id": "ch_cluster_control_model",
+  "summary": "面向Go初学者，用虚构IM网关三副本故障解释Kubernetes API spec/status、控制循环、Deployment/Pod、调度和业务自愈边界。",
+  "objectives": [
+    "区分Kubernetes期望与观测状态",
+    "说明Deployment/ReplicaSet/Pod责任",
+    "手推控制器、调度器、kubelet的接力",
+    "解释Pending与Ready不同",
+    "追踪Pod替换的UID和内存/连接变化",
+    "守住当前S2和未来S3/设备确认边界"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/overview/working-with-objects/",
+    "https://kubernetes.io/docs/concepts/architecture/controller/",
+    "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/",
+    "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+    "https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/",
+    "https://kubernetes.io/docs/concepts/architecture/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、Compose多服务到集群的第一个问题",
+      "words": 3000,
+      "focus": "Go初学者用未来教学IM网关3副本纸上：当前S2/v1静态合同正文6 UTF8B/原始HTTP请求正文4096B/重复409/非成员404/200仅进程内存受理，S3提议仍6B、R9待审。期望3个运行副本不等于3个用户可用，也不等于消息已持久/设备收到。"
+    },
+    {
+      "title": "二、Kubernetes对象、spec与status",
+      "words": 3200,
+      "focus": "API对象metadata name/UID/namespace、spec期望、status观测；Deployment spec.replicas=3，纸上Ready先3再2，控制循环逼近3而非同步执行命令；读取更新需API，课程静态不创建集群。"
+    },
+    {
+      "title": "三、Deployment/ReplicaSet/Pod责任",
+      "words": 3100,
+      "focus": "Deployment管理模板/ReplicaSet，ReplicaSet维持所选Pod数，Pod是调度/运行基本单位、UID唯一且替换后新UID/IP/进程内存，Pod不是永久主机，标签/selector与模板需匹配。"
+    },
+    {
+      "title": "四、调度与节点",
+      "words": 3200,
+      "focus": "未绑定Pod由scheduler筛可行Node再评分选择，资源requests和约束影响，若无可行节点Pod Pending并不自动变Ready；绑定后kubelet在节点运行/汇报，拉镜像失败等另类问题。"
+    },
+    {
+      "title": "五、纸上t0-t4副本故障",
+      "words": 3100,
+      "focus": "t0 spec3 Ready3，t1网关Pod P1退出Ready2，t2 controller有新Pod P4但Pending，t3 scheduler绑定Node，t4 kubelet启动并应用readiness后Ready3；各环节证据不同，不能只看spec或Running即宣布A/B恢复。"
+    },
+    {
+      "title": "六、业务状态与自愈边界",
+      "words": 3100,
+      "focus": "旧P1 WebSocket/进程内S2 m-a断开失去跨重启保证，替代P4不会继承；A超时同ID重试可能409/状态未知需按合同查；未来S3 DB m-9/seq9/设备ACK另核，控制面只尽力维持Pod不是业务去重。"
+    },
+    {
+      "title": "七、控制面故障与证据",
+      "words": 3100,
+      "focus": "API server/控制器/scheduler/kubelet roles；spec3 statusReady2，Pending reason/Events、Node资源、镜像拉取、readiness各有不同定位；无kubectl真实输出，固定OpenIM两源码不证明K8s部署。"
+    },
+    {
+      "title": "八、22题与控制链图",
+      "words": 3000,
+      "focus": "基础8/控制链8/业务6，答案含spec/status、Deployment/ReplicaSet/Pod、scheduler过滤评分、Pod UID/不可搬、Pending与Readiness、容器运行vs应用合同、WebSocket断开、S2/S3/设备边界。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.04 集群控制模型》，Go初学者八节理论丰富、IM业务由浅入深，22题反馈。当前S2/v1仅静态教学合同正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。纸上未来IM gateway Deployment spec.replicas=3，t0三个Ready，t1 Pod P1退出Ready降2，t2控制器创建替代P4但Pending，t3 scheduler过滤/评分选择可行Node并绑定，t4 kubelet运行容器、readiness通过才Ready3；没有可行Node会继续Pending，镜像拉取/依赖失败也会阻止Ready。Kubernetes API对象metadata(name/UID/namespace)、spec期望与status观察，控制器异步调和不是一次命令立刻生效。Deployment管ReplicaSet/模板，ReplicaSet维持Pod副本，Pod是可替换调度单元，替换新UID/可能新IP/新进程内存，旧Pod不是搬到另一Node。scheduler负责未绑定Pod到Node，kubelet在Node执行；三副本数不保证三台不同节点、N-1余量或用户SLO。旧P1上的WebSocket断开、S2内存受理m-a无跨进程承诺，P4不继承；A超时同ID重试/有权状态查询，未来S3权威m-9/seq9与B设备ACK另核。区分spec3/statusReady2/Running但未Ready与用户实际结果。静态不运行kubectl、Kubernetes、Go、IM或部署，OpenIM固定send.go MsgToMQ与另Mongo BatchInsert两段不证明真实集群。\n1. 一、Compose多服务到集群的第一个问题: Go初学者用未来教学IM网关3副本纸上：当前S2/v1静态合同正文6 UTF8B/原始HTTP请求正文4096B/重复409/非成员404/200仅进程内存受理，S3提议仍6B、R9待审。期望3个运行副本不等于3个用户可用，也不等于消息已持久/设备收到。\n2. 二、Kubernetes对象、spec与status: API对象metadata name/UID/namespace、spec期望、status观测；Deployment spec.replicas=3，纸上Ready先3再2，控制循环逼近3而非同步执行命令；读取更新需API，课程静态不创建集群。\n3. 三、Deployment/ReplicaSet/Pod责任: Deployment管理模板/ReplicaSet，ReplicaSet维持所选Pod数，Pod是调度/运行基本单位、UID唯一且替换后新UID/IP/进程内存，Pod不是永久主机，标签/selector与模板需匹配。\n4. 四、调度与节点: 未绑定Pod由scheduler筛可行Node再评分选择，资源requests和约束影响，若无可行节点Pod Pending并不自动变Ready；绑定后kubelet在节点运行/汇报，拉镜像失败等另类问题。\n5. 五、纸上t0-t4副本故障: t0 spec3 Ready3，t1网关Pod P1退出Ready2，t2 controller有新Pod P4但Pending，t3 scheduler绑定Node，t4 kubelet启动并应用readiness后Ready3；各环节证据不同，不能只看spec或Running即宣布A/B恢复。\n6. 六、业务状态与自愈边界: 旧P1 WebSocket/进程内S2 m-a断开失去跨重启保证，替代P4不会继承；A超时同ID重试可能409/状态未知需按合同查；未来S3 DB m-9/seq9/设备ACK另核，控制面只尽力维持Pod不是业务去重。\n7. 七、控制面故障与证据: API server/控制器/scheduler/kubelet roles；spec3 statusReady2，Pending reason/Events、Node资源、镜像拉取、readiness各有不同定位；无kubectl真实输出，固定OpenIM两源码不证明K8s部署。\n8. 八、22题与控制链图: 基础8/控制链8/业务6，答案含spec/status、Deployment/ReplicaSet/Pod、scheduler过滤评分、Pod UID/不可搬、Pending与Readiness、容器运行vs应用合同、WebSocket断开、S2/S3/设备边界。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
