@@ -176,4 +176,4 @@ HPA 调整的是**Pod 期望数**，调度器还得找到各新 Pod 的 Node 空
 
 ## 本章完成标准与后续路径
 
-能从 CPU request 算出简化 HPA 五副本目标，说明为什么新增 Pod 仍可能 Pending、旧 WebSocket 不迁移；手算失一 Pod 与失两 Pod 的 Node 故障结果，并区分 PDB 自愿驱逐门与突发故障，才算完成第一轮。所有容量与时间均待未来隔离实测。下一章 12.11 将把镜像、配置、权限与期望状态纳入声明式交付和漂移审计。
+能从 CPU request 算出简化 HPA 五副本目标，说明为什么新增 Pod 仍可能 Pending、旧 WebSocket 不迁移；手算失一 Pod 与失两 Pod 的 Node 故障结果，并区分 PDB 自愿驱逐门与突发故障，才算完成第一轮。所有容量与时间均待未来隔离实测。下一章[12.11 声明式交付与可重复环境](../../../src/docs/platform_engineering/curriculum/12_platform/11_declarative_delivery.md)将把镜像、配置、权限与期望状态纳入漂移审计。

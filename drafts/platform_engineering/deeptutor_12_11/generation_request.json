@@ -1,0 +1,77 @@
+{
+  "code": "12.11",
+  "title": "声明式交付与可重复环境：配置提交后为何仍未生效",
+  "chapter_id": "ch_declarative_delivery",
+  "summary": "面向Go初学者，以虚构IM网关非秘密LOG_LEVEL变更解释配置分层、声明式交付、GitOps调谐、漂移、权限与审计。",
+  "objectives": [
+    "区分制品、配置、数据与业务合同",
+    "跟踪Git到用户结果的异步状态链",
+    "构建环境分层和可重复渲染证据",
+    "解释OpenGitOps四原则",
+    "辨认ConfigMap环境变量生效边界",
+    "分类漂移及字段所有权",
+    "形成最小权限和审计闭环"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
+    "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "https://kubernetes.io/docs/tutorials/configuration/updating-configuration-via-a-configmap/",
+    "https://kubernetes.io/docs/reference/using-api/server-side-apply/",
+    "https://kubernetes.io/docs/concepts/security/rbac-good-practices/",
+    "https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
+    "https://opengitops.dev/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、先分清制品、配置和用户合同",
+      "words": 3200,
+      "focus": "Go初学者用虚构IM网关LOG_LEVEL=info→debug的非秘密配置变更。当前S2/v1正文非空最多6 UTF-8 B、原始HTTP请求体4096B、同ID重复409、非成员404、200 accepted_in_memory仅本进程内存；S3/v2 stored_in_teaching_db仍是未来提议，R9 6→9 B待审。配置变更不改变业务合同。解释镜像digest、启动参数、ConfigMap、Secret引用、数据库数据的责任差别。"
+    },
+    {
+      "title": "二、声明式对象从意图到状态的五层",
+      "words": 3300,
+      "focus": "用版本控制声明源G、渲染后的目标对象R、API对象spec/status、Pod进程实际生效值E、业务结果B逐层解释。spec是期望不保证Ready，status是平台观察不保证合同。纸上变更C1与镜像D1/K1；手写简短非生产YAML示意，区分spec.template.env与ConfigMap数据。"
+    },
+    {
+      "title": "三、环境分层与可重复渲染",
+      "words": 3200,
+      "focus": "基础base与dev/stage/prod覆盖层，模板参数显式化：同一D1 digest、不同LOG_LEVEL与资源request。输出manifest内容hash、环境输入及版本；可重复是相同输入得相同目标，不意味依赖数据/Node/客户端相同。解释字段覆盖、默认值、密钥不进Git、schema/差异审阅。"
+    },
+    {
+      "title": "四、GitOps原则与两级调谐",
+      "words": 3300,
+      "focus": "引用OpenGitOps四原则：声明式、版本不可变、代理自动拉取、持续调谐。区分Git提交、合并、代理同步、API接受、Deployment就绪、进程加载、用户确认。GitOps代理调谐目标对象，Kubernetes Deployment调谐Pod；两个循环异步，可能失败和冲突。不要把kubectl apply等同完整GitOps。"
+    },
+    {
+      "title": "五、ConfigMap更新与混合版本陷阱",
+      "words": 3200,
+      "focus": "若LOG_LEVEL经ConfigMap映射环境变量，更新ConfigMap不会自动更新既有Pod环境变量，需要受控替换Pod；新旧Pod可能同时运行不同值。若volume投影有传播延迟且subPath不更新，还需程序主动重载/约定。记录K1/K2与D1/D2组合、回滚门，避免误称提交即生效。"
+    },
+    {
+      "title": "六、漂移、字段所有权与人工干预",
+      "words": 3300,
+      "focus": "区分源与渲染目标差、目标对象与API live spec差、spec与status不一致、进程effective值差、用户合同差；默认化和控制器/HPA负责字段不应误报；Server-Side Apply managedFields/冲突按字段所有权判，不强推覆盖。手工kubectl edit LOG_LEVEL=trace的示例需审谁写何字段、何时、预期调谐动作和事故处置。"
+    },
+    {
+      "title": "七、最小权限、审计与变更证据",
+      "words": 3300,
+      "focus": "Git评审者/CI制品构建者/GitOps代理/K8s SA与RBAC分权，Secret不写明文Git或日志，审计记录谁批准、哪提交、制品digest、渲染hash、API对象版本、field manager、Pod UID/K版本和业务观测。K8s audit log记录API行为不等于用户业务审计。配置失误不能用回滚代码镜像概括。OpenIM固定源码两条路径只支持异步边界不证明集群/GitOps实践。"
+    },
+    {
+      "title": "八、22道分层练习与交付审阅卡",
+      "words": 3200,
+      "focus": "基础8、推演8、决策6，共22题每题给答案；覆盖LOG_LEVEL env不热更、版本轴、GitOps四原则、渲染可重复、漂移误报、SSA冲突、权限、S2合同和业务停止门；可由学生用纸上时间线审查变更，不运行服务或集群。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.11 声明式交付与可重复环境》，Go初学者八节丰富理论、IM业务由浅入深、22题答案。严格区分当前S2/v1与未来S3/v2：当前正文非空最多6 UTF-8 B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db尚是提议且仍6B，R9 6→9 B待审。用虚构gateway LOG_LEVEL=info→debug非秘密配置演示，从Git声明源C1、环境渲染M1、API对象spec/status、Pod进程生效K1/K2、用户结果逐层追踪。镜像固定D1 digest，不能由配置变更推定业务合同改变；Secret明文不可入库。解释base+环境覆盖、确定性渲染、manifest hash和默认值。OpenGitOps四原则：声明式、版本化不可变、代理自动拉取、持续调谐；区分GitOps代理和K8s工作负载控制器两级调谐，提交/合并不等于已生效或用户成功。ConfigMap作为环境变量不会自动更新存活Pod；需有界替换并承认K1/K2混跑；volume投影更新有延迟，subPath不更新，进程是否重载另查。漂移要分Git/渲染、API live spec、status、进程effective和业务结果，考虑默认化、HPA/控制器字段归属、Server-Side Apply字段所有权与冲突。RBAC最小权限、API审计不等于业务审计，记录批准/提交/digest/渲染hash/对象版本/Pod UID/业务门；固定OpenIM两源码仅支持异步边界，不证明真实GitOps配置。只写静态课程，不运行Go、IM、Kubernetes、kubectl、压测、部署或站点。\n1. 一、先分清制品、配置和用户合同: Go初学者用虚构IM网关LOG_LEVEL=info→debug的非秘密配置变更。当前S2/v1正文非空最多6 UTF-8 B、原始HTTP请求体4096B、同ID重复409、非成员404、200 accepted_in_memory仅本进程内存；S3/v2 stored_in_teaching_db仍是未来提议，R9 6→9 B待审。配置变更不改变业务合同。解释镜像digest、启动参数、ConfigMap、Secret引用、数据库数据的责任差别。\n2. 二、声明式对象从意图到状态的五层: 用版本控制声明源G、渲染后的目标对象R、API对象spec/status、Pod进程实际生效值E、业务结果B逐层解释。spec是期望不保证Ready，status是平台观察不保证合同。纸上变更C1与镜像D1/K1；手写简短非生产YAML示意，区分spec.template.env与ConfigMap数据。\n3. 三、环境分层与可重复渲染: 基础base与dev/stage/prod覆盖层，模板参数显式化：同一D1 digest、不同LOG_LEVEL与资源request。输出manifest内容hash、环境输入及版本；可重复是相同输入得相同目标，不意味依赖数据/Node/客户端相同。解释字段覆盖、默认值、密钥不进Git、schema/差异审阅。\n4. 四、GitOps原则与两级调谐: 引用OpenGitOps四原则：声明式、版本不可变、代理自动拉取、持续调谐。区分Git提交、合并、代理同步、API接受、Deployment就绪、进程加载、用户确认。GitOps代理调谐目标对象，Kubernetes Deployment调谐Pod；两个循环异步，可能失败和冲突。不要把kubectl apply等同完整GitOps。\n5. 五、ConfigMap更新与混合版本陷阱: 若LOG_LEVEL经ConfigMap映射环境变量，更新ConfigMap不会自动更新既有Pod环境变量，需要受控替换Pod；新旧Pod可能同时运行不同值。若volume投影有传播延迟且subPath不更新，还需程序主动重载/约定。记录K1/K2与D1/D2组合、回滚门，避免误称提交即生效。\n6. 六、漂移、字段所有权与人工干预: 区分源与渲染目标差、目标对象与API live spec差、spec与status不一致、进程effective值差、用户合同差；默认化和控制器/HPA负责字段不应误报；Server-Side Apply managedFields/冲突按字段所有权判，不强推覆盖。手工kubectl edit LOG_LEVEL=trace的示例需审谁写何字段、何时、预期调谐动作和事故处置。\n7. 七、最小权限、审计与变更证据: Git评审者/CI制品构建者/GitOps代理/K8s SA与RBAC分权，Secret不写明文Git或日志，审计记录谁批准、哪提交、制品digest、渲染hash、API对象版本、field manager、Pod UID/K版本和业务观测。K8s audit log记录API行为不等于用户业务审计。配置失误不能用回滚代码镜像概括。OpenIM固定源码两条路径只支持异步边界不证明集群/GitOps实践。\n8. 八、22道分层练习与交付审阅卡: 基础8、推演8、决策6，共22题每题给答案；覆盖LOG_LEVEL env不热更、版本轴、GitOps四原则、渲染可重复、漂移误报、SSA冲突、权限、S2合同和业务停止门；可由学生用纸上时间线审查变更，不运行服务或集群。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

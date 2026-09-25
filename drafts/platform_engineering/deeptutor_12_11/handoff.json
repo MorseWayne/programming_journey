@@ -1,0 +1,31 @@
+{
+  "chapter": "12.11",
+  "stage": "S6–S7",
+  "business_scope": "static beginner-to-advanced IM gateway declarative delivery lesson using a fictional non-secret LOG_LEVEL change",
+  "prerequisites": [
+    "10.08–10.10 artifact, CI and rollout provenance",
+    "12.01 source, digest, config and data identities",
+    "12.04 spec/status and asynchronous controllers",
+    "12.07 ConfigMap, Secret and RBAC boundaries",
+    "12.09 multi-axis rollout and rollback"
+  ],
+  "first_pass": [
+    "keep current S2 contract and future S3/R9 proposals separate",
+    "trace Git declaration G, rendered M, API A, platform P, effective process E and business B",
+    "distinguish image D1, non-secret config K1/K2 and authoritative message data",
+    "explain deterministic environment rendering and the four OpenGitOps principles"
+  ],
+  "second_pass": [
+    "explain ConfigMap environment variable snapshots and mixed K1/K2 Pods",
+    "classify drift by state boundary and field ownership",
+    "review least privilege, audit evidence and stop/rollback gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.12 platform as a product",
+    "learner's actual deployment, configuration and business observations"
+  ],
+  "next_chapter": "12.12 platform as a product",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish real GitOps, RBAC, configuration templates or audit policy.",
+  "shared_integration_pending": []
+}

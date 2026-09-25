@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_fb5daf38a8",
+  "page_id": "pg_fad57bf72c",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
+      "https://kubernetes.io/docs/concepts/configuration/configmap/",
+      "https://kubernetes.io/docs/tutorials/configuration/updating-configuration-via-a-configmap/",
+      "https://kubernetes.io/docs/reference/using-api/server-side-apply/",
+      "https://kubernetes.io/docs/concepts/security/rbac-good-practices/",
+      "https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
+      "https://opengitops.dev/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "b05de130e971db23656dcab8b2b86a4050148bd5079499b3a7f7ec7456cefada",
+  "original_characters": 35584,
+  "generation_request_sha256": "4fd4fabbd6423fd692156f8f434132c020df28ccbbd52d3cab275d738d2fcc67",
+  "reviewed_sha256": "23bd1769136264dd3284f98cadea59313da8dcf532671c897f5108f2e64a6d04",
+  "reviewed_characters": 11494,
+  "reviewed_chinese_characters": 3879,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/11_declarative_delivery.md",
+  "course_sha256": "d1422baf70d1659e4bac3c9b154ab3f8ab11b8fc4f7fa037d46b57122695ba11"
+}

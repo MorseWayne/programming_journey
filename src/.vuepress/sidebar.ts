@@ -361,6 +361,7 @@ export default sidebar({
             "curriculum/12_platform/08_startup_probes_exit",
             "curriculum/12_platform/09_release_rollback",
             "curriculum/12_platform/10_autoscaling_fault_domains",
+            "curriculum/12_platform/11_declarative_delivery",
             "curriculum/12_platform/core"
           ]
         },

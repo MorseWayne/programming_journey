@@ -30,9 +30,9 @@
   "original_sha256": "71096595f2ffb44747bcd7883f106601d0f67044ec2b5300dd41ecf66c748db5",
   "original_characters": 30462,
   "generation_request_sha256": "53de48bf61650f1d7d0447f1a97658c8a4cb72704529ff2d76396df423d06817",
-  "reviewed_sha256": "f860ac1c52f0dbbd61efa9b8f2941b06c5a5cdbcf65dee10269f46edd9555a3b",
-  "reviewed_characters": 10163,
-  "reviewed_chinese_characters": 2848,
+  "reviewed_sha256": "955bce7d4faa6adaee901dada6b22ce0ccc3a2d91ee99dad0470b65de319bdf8",
+  "reviewed_characters": 10259,
+  "reviewed_chinese_characters": 2853,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/10_autoscaling_fault_domains.md",
-  "course_sha256": "977e644491fe1f0da5298fbf57926f82211098af2875a20f9572a2453a3636be"
+  "course_sha256": "da79d483173465e33bdf839192dc428d63850d4335deb01abb594d6163794fad"
 }
