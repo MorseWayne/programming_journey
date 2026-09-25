@@ -371,6 +371,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/13_architecture/",
+            "curriculum/13_architecture/01_problem_stakeholders",
             "curriculum/13_architecture/core"
           ]
         },

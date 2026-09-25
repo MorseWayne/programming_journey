@@ -1,0 +1,32 @@
+{
+  "chapter": "13.01",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM problem framing lesson using a fictional A-send, B-offline-25h recovery request",
+  "prerequisites": [
+    "09.02 current S2 HTTP contract and future S3/R9 proposals",
+    "10.01 verifiable requirements",
+    "11.01 user-visible confirmation points",
+    "11.02 distributions and long-tail evidence",
+    "07.12 authoritative history, event and offline recovery boundaries"
+  ],
+  "first_pass": [
+    "interrogate ambiguous words such as sent, success and not lost",
+    "identify sender, receiver, old client, product, data, safety, platform and cost stakeholders",
+    "separate current S2 facts from future m-9/seq9/E9 and B acknowledgment",
+    "classify goal, non-goal, constraint, assumption and candidate solution"
+  ],
+  "second_pass": [
+    "write six-part SEI quality attribute scenario with a clearly proposed response measure",
+    "review retry, 7-byte, nonmember, 25h offline and revoked-membership counterexamples",
+    "prioritize by user impact, frequency, recovery cost, uncertainty and operating cost",
+    "deliver a one-page problem brief with evidence gaps and decision owners",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.02 domain and state modeling",
+    "real user-offline distribution, contractual retention and target agreement"
+  ],
+  "next_chapter": "13.02 domain and state modeling",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish complete acknowledgments, actual user requirements, device delivery or this course's future design.",
+  "shared_integration_pending": []
+}

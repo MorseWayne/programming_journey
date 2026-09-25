@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a9166783f5",
+  "page_id": "pg_f58ebb481b",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/workbook/implementing-slos/",
+      "https://www.sei.cmu.edu/documents/3839/2007_017_001_297550.pdf",
+      "https://insights.sei.cmu.edu/documents/5465/2013_018_101_60984.pdf",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "8f80c1f77d4834d0ea094ddfb8e37e45d8bcf7467cda2493d8a15ee383c255f6",
+  "original_characters": 33180,
+  "generation_request_sha256": "cd5d321a1de052590f94cc71a8882744df812cf76e02d4c7659c00df5ad6763a",
+  "reviewed_sha256": "509f385e7258d594d5fe0fbe6fddc14486ffbe6b2153c86baba332891025f0c3",
+  "reviewed_characters": 9875,
+  "reviewed_chinese_characters": 4181,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/01_problem_stakeholders.md",
+  "course_sha256": "f4654fa603c28ff8b6fa4d58362971e007b21e5b596cea318974f7fa7911ab4d"
+}
