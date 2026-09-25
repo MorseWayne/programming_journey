@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_385f784237",
-  "page_id": "pg_910a78b6b2",
+  "book_id": "bk_2158932b7b",
+  "page_id": "pg_6b063255e8",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,23 +16,22 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://sre.google/sre-book/service-level-objectives/",
-      "https://sre.google/workbook/implementing-slos/",
+      "https://sre.google/sre-book/addressing-cascading-failures/",
+      "https://sre.google/sre-book/handling-overload/",
+      "https://go.dev/blog/context",
       "https://sre.google/workbook/alerting-on-slos/",
-      "https://sre.google/workbook/error-budget-policy/",
-      "https://prometheus.io/docs/practices/alerting/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "383f74481fb7752627ec53bef4698fbd83ab7738772df8cffc14ee3028b21302",
-  "original_characters": 28397,
-  "generation_request_sha256": "4cd11b2fc2bb252a94d720c0c82dcab0a314d04668d1a801570f8d2413feb7e5",
-  "reviewed_sha256": "3a1a5adc6165b1ff7215d9c4b9551d0d424013bf9f4ef1548e0dd62783851f66",
-  "reviewed_characters": 10149,
-  "reviewed_chinese_characters": 3871,
-  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/08_slo_alerting.md",
-  "course_sha256": "9e0e9074571a0775f8438196e48a610efe92602959ac59908ce0fa25a4d7532e"
+  "original_sha256": "4f99300e7553a8d4089f524b19d5b5b166bce071bde4e28530ebe2b6c2aa22a3",
+  "original_characters": 30438,
+  "generation_request_sha256": "ffcbcd4af250edfb64d1b715910fa02167314d7f9503e2f4dbdfca029686493c",
+  "reviewed_sha256": "2a08353ebdf664f2f64305e52d5db33f1614c252aab5dc9bbbf7947c22df0eb6",
+  "reviewed_characters": 9937,
+  "reviewed_chinese_characters": 4013,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/09_overload_cascades.md",
+  "course_sha256": "f9ba38a7169957115537c5908837127206325671bb615010bd0eb7f1318a305e"
 }

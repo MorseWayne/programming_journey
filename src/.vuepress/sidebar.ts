@@ -337,6 +337,7 @@ export default sidebar({
             "curriculum/11_reliability/06_io_network_performance",
             "curriculum/11_reliability/07_load_testing_capacity",
             "curriculum/11_reliability/08_slo_alerting",
+            "curriculum/11_reliability/09_overload_cascades",
             "curriculum/11_reliability/core"
           ]
         },
