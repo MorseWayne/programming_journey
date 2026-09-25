@@ -33,9 +33,9 @@
   "original_sha256": "2aecedcd6bbfe73f00dc17e0e2bf758cc5bc79d1bb5945ee638e7152c4a4c3cb",
   "original_characters": 32480,
   "generation_request_sha256": "66a139fc48b220595e558aa5bb8c20fc8d88deb08138204a077a30309911d698",
-  "reviewed_sha256": "e3f8306caba5834511783e04957121c05fe0a83c848514f1b5ff05241a5fb094",
-  "reviewed_characters": 10982,
-  "reviewed_chinese_characters": 3810,
+  "reviewed_sha256": "e591c869895ebfddaee2e72c8a46f2c7600a91cdc87fd84d560419a0f641258f",
+  "reviewed_characters": 11074,
+  "reviewed_chinese_characters": 3808,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/12_resource_failure_case.md",
-  "course_sha256": "2257169a543e108f64f76d7cedd75d523324589194dbe5ad2e742b21b97dea82"
+  "course_sha256": "fb44fe2cced3a2d9f67185e856aa3fd6ce9e9de1858db324ce6ab7ed47354537"
 }

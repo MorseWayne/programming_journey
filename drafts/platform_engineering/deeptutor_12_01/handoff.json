@@ -1,0 +1,33 @@
+{
+  "chapter": "12.01",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Go artifact and runtime-environment lesson using fictional IM gateway image identity and configuration",
+  "prerequisites": [
+    "01.09 Go modules and packages",
+    "03.11–03.12 process, isolation and resource recovery",
+    "10.08 dependency verification",
+    "10.09 artifact identity and CI",
+    "10.10 versioned delivery and rollback"
+  ],
+  "first_pass": [
+    "distinguish source, binary, image, tag, digest, container, config and external data",
+    "explain Go build provenance and go.sum versus a complete lockfile",
+    "keep current S2 contract separate from proposed S3 and pending R9",
+    "use same-tag-different-digest and same-digest-different-config counterexamples"
+  ],
+  "second_pass": [
+    "trace OCI manifest, config and layers with multi-platform index boundaries",
+    "treat BuildInfo as partial evidence and preserve build inputs separately",
+    "keep build and runtime secrets out of image layers and ordinary logs",
+    "review rollback across digest, config, data and old-client compatibility",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.02 container mechanisms",
+    "12.03 local multi-service environment",
+    "learner's actual personal build, image and runtime evidence"
+  ],
+  "next_chapter": "12.02 container mechanisms",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish any course image, binary, toolchain, runtime config or cluster identity.",
+  "shared_integration_pending": []
+}

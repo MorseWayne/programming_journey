@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f7f36af763",
+  "page_id": "pg_6b1b516c19",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://go.dev/ref/mod",
+      "https://pkg.go.dev/runtime/debug",
+      "https://github.com/opencontainers/image-spec/blob/main/manifest.md",
+      "https://github.com/opencontainers/image-spec/blob/main/config.md",
+      "https://docs.docker.com/build/building/best-practices/",
+      "https://docs.docker.com/build/building/variables/",
+      "https://docs.docker.com/build/building/secrets/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "afc22a7257c15941eb8cc5bc3948521a990296d0d52ad40b211508b74cbd97f2",
+  "original_characters": 32490,
+  "generation_request_sha256": "00e288118f4ed27bf37aa8034ad3efb3ca448a2edf33d20ea3533a52397c3048",
+  "reviewed_sha256": "3b3a4eb5671847ca4425ec95ce625ae34a851db9f05cecbd17e30a8b392910bc",
+  "reviewed_characters": 9854,
+  "reviewed_chinese_characters": 3789,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/01_runtime_artifacts.md",
+  "course_sha256": "71b258a2420b28169dbc7e650f82c1c862919eedd2f78f1cfc5b849cb5982b5c"
+}

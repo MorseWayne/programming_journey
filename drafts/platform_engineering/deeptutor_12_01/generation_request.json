@@ -1,0 +1,76 @@
+{
+  "code": "12.01",
+  "title": "运行环境与制品：从Go二进制到可核对镜像",
+  "chapter_id": "ch_runtime_artifacts",
+  "summary": "面向Go初学者，沿虚构IM网关说明源码、二进制、OCI镜像、标签/摘要、运行配置和数据的责任边界。",
+  "objectives": [
+    "区分源码、二进制、镜像、容器、配置和状态",
+    "列出Go构建来源与BuildInfo证据边界",
+    "理解OCI层、manifest、tag与digest",
+    "解释相同摘要不同运行环境为何有不同结果",
+    "保护构建与运行秘密",
+    "交付从提交到业务合同的制品核对单"
+  ],
+  "sources": [
+    "https://go.dev/ref/mod",
+    "https://pkg.go.dev/runtime/debug",
+    "https://github.com/opencontainers/image-spec/blob/main/manifest.md",
+    "https://github.com/opencontainers/image-spec/blob/main/config.md",
+    "https://docs.docker.com/build/building/best-practices/",
+    "https://docs.docker.com/build/building/variables/",
+    "https://docs.docker.com/build/building/secrets/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、同一版本为何跑出不同结果",
+      "words": 3000,
+      "focus": "Go初学者用虚构IM网关：当前S2/v1合同非空正文最多6 UTF8B/原始HTTP请求正文4096B/重复同ID409/非成员404/200 accepted_in_memory；未来S3/v2 DB提议仍6B、R9待审。区分源码、Go二进制、镜像、运行容器、配置和数据，不因同tag宣称同服务行为。"
+    },
+    {
+      "title": "二、Go二进制来源链",
+      "words": 3100,
+      "focus": "固定源提交、go.mod/go.sum模块选择与校验但go.sum非完整锁文件、生成代码、Go工具链/GOOS/GOARCH/构建参数；debug.ReadBuildInfo或go version -m可读部分构建信息，不能保证所有配置/源码都嵌入。"
+    },
+    {
+      "title": "三、OCI镜像、层、标签和摘要",
+      "words": 3200,
+      "focus": "OCI manifest引用config/layers，digest内容寻址；镜像标签可移动v1同名映到D1或D2，digest D1固定内容，不能从tag直接证明运行版本。多平台index digest与平台manifest digest的区别要入门点到。"
+    },
+    {
+      "title": "四、运行配置、数据与环境差异",
+      "words": 3100,
+      "focus": "相同D1可因环境变量/配置/挂载/外部DB与权限不同结果；启动时记录配置版本和源，不把私密值写日志/镜像，现行v1正文6B不能由某环境变量悄悄放宽。镜像文件层非权威历史卷，容器重建不承诺内存状态/设备确认。"
+    },
+    {
+      "title": "五、构建秘密与可升级性",
+      "words": 3000,
+      "focus": "Docker ARG/ENV会暴露秘密且可能留元数据，用build secret临时挂载；运行凭据由受控配置/权限注入。固定base digest提升复现也需定期审升级/漏洞，不因固定就永久不更新。"
+    },
+    {
+      "title": "六、从候选制品到运行实例的核对",
+      "words": 3100,
+      "focus": "纸上commit C、Go toolchain G、binary B、image digest D1、tag T、部署配置 K、平台架构 A、数据状态 S，手算两场景同T不同D与同D不同K；回滚要兼容数据/旧客户端，不只把tag指回。"
+    },
+    {
+      "title": "七、业务验收与公开项目边界",
+      "words": 3100,
+      "focus": "进入12.02/12.03前先有制品清单：source/build/deps/digest/配置/运行身份/环境权限/验证结果；当前S2 6B/409/404/200正反例和设备/DB不承诺，未来S3另测；固定OpenIM send.go MsgToMQ与Mongo消费两段不能证明本项目镜像。"
+    },
+    {
+      "title": "八、22题与交接",
+      "words": 3000,
+      "focus": "基础8/路径8/业务决策6，答案覆盖binary/image/container/data、tag可变/digest内容地址、go.sum作用、BuildInfo边界、同digest异配置、构建秘密、R9待审、rollback数据兼容、OpenIM证据。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.01 运行环境与制品》，Go初学者八节理论丰富由浅入深、22题答案。当前S2/v1只是静态教学合同：消息正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。解释source commit→Go binary（go.mod/go.sum/MVS、生成代码、toolchain、GOOS/GOARCH、flags）→OCI image（manifest/config/layers）→tag/digest→running container（runtime config/secrets/volumes/external data）；go.sum验证模块内容但非完整锁文件，debug.ReadBuildInfo能读嵌入部分信息但不保证源码/配置全在。标签T可变从D1指向D2，digest内容寻址；多架构index和具体平台manifest可能有不同digest。相同D1可因配置K/外部数据库数据/权限/架构不同表现不同，不能用同tag或同digest单独证明用户结果。当前v1正文6B不能被环境变量悄悄改成R9 9B；未来S3持久不因镜像有DB客户端就已部署。镜像内文件与挂载数据/权威历史分开，容器重建不保证旧S2内存状态。Docker ARG/ENV非构建秘密载体，构建秘密用secret mount；运行凭据受权限控制且不写进镜像/日志。固定base digest提升可复现也需审更新。纸上提交C、工具链G、二进制B、镜像digest D1、tag T、部署配置K、平台架构A与数据状态S，做两个反例和回滚矩阵；OpenIM固定send.go MsgToMQ与另一Mongo BatchInsert两段不证明本项目镜像或运行环境。静态不构建Go/镜像、不启动容器/IM、部署或站点。\n1. 一、同一版本为何跑出不同结果: Go初学者用虚构IM网关：当前S2/v1合同非空正文最多6 UTF8B/原始HTTP请求正文4096B/重复同ID409/非成员404/200 accepted_in_memory；未来S3/v2 DB提议仍6B、R9待审。区分源码、Go二进制、镜像、运行容器、配置和数据，不因同tag宣称同服务行为。\n2. 二、Go二进制来源链: 固定源提交、go.mod/go.sum模块选择与校验但go.sum非完整锁文件、生成代码、Go工具链/GOOS/GOARCH/构建参数；debug.ReadBuildInfo或go version -m可读部分构建信息，不能保证所有配置/源码都嵌入。\n3. 三、OCI镜像、层、标签和摘要: OCI manifest引用config/layers，digest内容寻址；镜像标签可移动v1同名映到D1或D2，digest D1固定内容，不能从tag直接证明运行版本。多平台index digest与平台manifest digest的区别要入门点到。\n4. 四、运行配置、数据与环境差异: 相同D1可因环境变量/配置/挂载/外部DB与权限不同结果；启动时记录配置版本和源，不把私密值写日志/镜像，现行v1正文6B不能由某环境变量悄悄放宽。镜像文件层非权威历史卷，容器重建不承诺内存状态/设备确认。\n5. 五、构建秘密与可升级性: Docker ARG/ENV会暴露秘密且可能留元数据，用build secret临时挂载；运行凭据由受控配置/权限注入。固定base digest提升复现也需定期审升级/漏洞，不因固定就永久不更新。\n6. 六、从候选制品到运行实例的核对: 纸上commit C、Go toolchain G、binary B、image digest D1、tag T、部署配置 K、平台架构 A、数据状态 S，手算两场景同T不同D与同D不同K；回滚要兼容数据/旧客户端，不只把tag指回。\n7. 七、业务验收与公开项目边界: 进入12.02/12.03前先有制品清单：source/build/deps/digest/配置/运行身份/环境权限/验证结果；当前S2 6B/409/404/200正反例和设备/DB不承诺，未来S3另测；固定OpenIM send.go MsgToMQ与Mongo消费两段不能证明本项目镜像。\n8. 八、22题与交接: 基础8/路径8/业务决策6，答案覆盖binary/image/container/data、tag可变/digest内容地址、go.sum作用、BuildInfo边界、同digest异配置、构建秘密、R9待审、rollback数据兼容、OpenIM证据。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

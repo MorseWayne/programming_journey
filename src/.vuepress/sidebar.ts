@@ -351,6 +351,7 @@ export default sidebar({
           "collapsible": true,
           "children": [
             "curriculum/12_platform/",
+            "curriculum/12_platform/01_runtime_artifacts",
             "curriculum/12_platform/core"
           ]
         },
