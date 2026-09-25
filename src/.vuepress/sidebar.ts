@@ -380,6 +380,7 @@ export default sidebar({
             "curriculum/13_architecture/07_design_review_adr",
             "curriculum/13_architecture/08_migration_compatibility",
             "curriculum/13_architecture/09_cross_team_delivery",
+            "curriculum/13_architecture/10_technical_debt_evolution",
             "curriculum/13_architecture/core"
           ]
         },

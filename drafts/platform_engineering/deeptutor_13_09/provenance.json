@@ -30,9 +30,9 @@
   "original_sha256": "d3bb949414f6d45917353fa3945470008f9c136531ab0935dbce5a176c321b88",
   "original_characters": 30512,
   "generation_request_sha256": "494f58a2f80c366bd0e2cb28365195c47cda9499efcdd5aa2e8818f7d98816a3",
-  "reviewed_sha256": "67a049c66a7c5449f55d0dfe38913e904cd32c7c9db71a63ce4a3210ea7401d5",
-  "reviewed_characters": 10113,
-  "reviewed_chinese_characters": 4082,
+  "reviewed_sha256": "43ce9063893795e37439823f89e728c9782122e0d79f1b5a8d1259601d36510f",
+  "reviewed_characters": 10219,
+  "reviewed_chinese_characters": 4089,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/09_cross_team_delivery.md",
-  "course_sha256": "aec90092b13b583bb31ebad6c67cf249058ad881c2d5dca4b5c1f936b02969c5"
+  "course_sha256": "6ed63348b85492aea8b9b83b87fc2ed638f0983be672890e449392ffc2f1c61a"
 }

@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_216c750a3d",
+  "page_id": "pg_2f66d7ca9f",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://martinfowler.com/bliki/TechnicalDebt.html",
+      "https://martinfowler.com/bliki/TechnicalDebtQuadrant.html",
+      "https://sre.google/workbook/postmortem-culture/",
+      "https://insights.sei.cmu.edu/documents/1434/2010_021_001_88118.pdf",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "a8d83e2052f098e4919f44d6b72572fdbddb6c63217ac17b0eb90071c1cfb8c9",
+  "original_characters": 29665,
+  "generation_request_sha256": "3a322859902b53f0b85eec7b4181c889afb5e477ba334e2eed4cf17fcdad7dda",
+  "reviewed_sha256": "17c8a586b96656dc983798366daf60d4f55069c888e6e04af7ee5e6db6ee441e",
+  "reviewed_characters": 9382,
+  "reviewed_chinese_characters": 4042,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/10_technical_debt_evolution.md",
+  "course_sha256": "08e268af37e7d75f8348d6da92cfe133007aaadf8d88ff6e0ef504fe2161e96e"
+}

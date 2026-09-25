@@ -1,0 +1,32 @@
+{
+  "chapter": "13.10",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM technical debt and evolution lesson using fictional protocol change costs",
+  "prerequisites": [
+    "13.01–13.09 requirements, domain, modules, design, migration and delivery",
+    "10.12 maintainability evidence",
+    "11.11 postmortem improvement",
+    "12.11 declarative delivery and runtime drift",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "explain principal and interest as a conditional maintenance-cost metaphor",
+    "separate current defects, S2 scope limits, S3 unresolved rules, new features and potential debt",
+    "calculate hypothetical six changes times three hours versus twelve-hour repair",
+    "prioritize current contract and data-integrity risks before optional refactoring"
+  ],
+  "second_pass": [
+    "distinguish proposed ADR, accepted-decision drift and runtime config drift",
+    "use small contract-preserving changes with owner, evidence and stop gate",
+    "measure same-class future change effort and user/on-call outcomes before claiming benefit",
+    "keep /v1 6-byte, 409, 404 and accepted_in_memory intact",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.11 complex case defense",
+    "real protocol change records, incident data and measured maintenance effort"
+  ],
+  "next_chapter": "13.11 complex case defense",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish actual technical debt, incidents, team wait time or repayment ROI.",
+  "shared_integration_pending": []
+}
