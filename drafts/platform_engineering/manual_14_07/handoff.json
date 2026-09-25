@@ -1,0 +1,27 @@
+{
+  "chapter": "14.07",
+  "stage": "S3+ optional AI branch",
+  "business_scope": "static beginner RAG evidence-to-answer course with synthetic IM documents and fixed questions",
+  "prerequisites": [
+    "14.05 answer JSON contract and prompt boundary",
+    "14.06 retrieval candidates, metadata and authorization",
+    "14.09 first-pass fixed questions and keyword baseline",
+    "14.03-14.04 context and inference distinction",
+    "09.07 application authorization"
+  ],
+  "first_pass": [
+    "trace actor and query intent to authorized candidates and authoritative source text",
+    "check evidence sufficiency and preserve current/proposed qualifiers under context limits",
+    "map each key answer claim to an accessible, applicable citation",
+    "distinguish answer, refusal and undecided without forcing every case through generation"
+  ],
+  "second_pass": [
+    "invalidate indexes and caches when evidence or permissions change",
+    "treat retrieved instructions as untrusted document content",
+    "find the first failing boundary for each q-01 to q-06 outcome",
+    "return to 14.09 component and end-to-end evaluation with the same labels"
+  ],
+  "next_chapter": "14.09 second-pass evaluation, then 14.08 tools and workflows",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

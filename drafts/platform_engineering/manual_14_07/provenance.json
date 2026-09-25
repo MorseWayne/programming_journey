@@ -1,0 +1,29 @@
+{
+  "chapter": "14.07",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against listed primary sources and chapter 14.09 business labels",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "ca03c1e3e6ba4ba397ddc8115235194a001d4fc995e4f4d041d4bae2e1571208",
+  "reviewed_sha256": "af2eb0d2a6ca85350959c393339b5e6d758b49fff9009c897595dd6400221850",
+  "reviewed_characters": 10131,
+  "reviewed_chinese_characters": 3669,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/07_rag_pipeline.md",
+  "course_sha256": "d7df596d440c2e78b5f320e9b791ad63f5a3b1df48d856ab0c416f3556a50d89",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_model_run": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://arxiv.org/abs/2005.11401",
+    "https://arxiv.org/abs/2311.09476",
+    "https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html",
+    "https://cloud.google.com/generative-ai-app-builder/docs/check-grounding?hl=en"
+  ]
+}

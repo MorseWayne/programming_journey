@@ -197,4 +197,4 @@ ANN 用更少搜索工作换取速度/容量，但可能漏真正近邻，还需
 
 ## 本章完成标准与后续路径
 
-能从四份虚构资料写出片段元数据与小倒排表，手算余弦和 RRF 纸上排名，解释为何 `q-01` 的高分 r9 仍不能当现行证据；能区分查询前/交付前权限检查、候选饥饿、状态与引用，才算完成本章。下一章 14.07 再把检索证据接入生成与引用链。[第十四卷路线](../../../src/docs/platform_engineering/curriculum/14_ai/README.md)
+能从四份虚构资料写出片段元数据与小倒排表，手算余弦和 RRF 纸上排名，解释为何 `q-01` 的高分 r9 仍不能当现行证据；能区分查询前/交付前权限检查、候选饥饿、状态与引用，才算完成本章。下一章[14.07 RAG 完整链路](../../../src/docs/platform_engineering/curriculum/14_ai/07_rag_pipeline.md)再把检索证据接入生成与引用链。[第十四卷路线](../../../src/docs/platform_engineering/curriculum/14_ai/README.md)
