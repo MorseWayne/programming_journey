@@ -1,0 +1,32 @@
+{
+  "chapter": "14.04",
+  "stage": "S3+ optional AI branch",
+  "business_scope": "static beginner Transformer inference lesson using synthetic IM document questions and toy attention/cache arithmetic",
+  "prerequisites": [
+    "14.02 vectors, dot products and sample caveats",
+    "14.03 tokens, embeddings and context budgets",
+    "14.09 first-pass scoped question and keyword baseline",
+    "09.02 current S2 contract and 09.07 authorization"
+  ],
+  "first_pass": [
+    "separate application document filtering and IM contract validation from Transformer computation",
+    "use one simple weighted-value toy example before the real scaled-dot-product formula",
+    "distinguish position, causal masks, heads and layers without anthropomorphizing heads",
+    "trace prefill, first token and incremental decode",
+    "separate position-attention weights from output-token probabilities and explain greedy versus sampling"
+  ],
+  "second_pass": [
+    "calculate a two-KiB KV cache for the complete 32-token toy sequence and about twenty KiB for ten independent requests",
+    "limit the 32-token context subtraction to a fictional request with omitted overhead",
+    "treat KV prefix reuse as dependent on model, prompt, document version and authorization scope",
+    "measure TTFT and decode separately before blaming model or cache",
+    "keep q-01 current six-byte answer and q-03 permission refusal as user-result gates"
+  ],
+  "not_yet_prerequisites": [
+    "14.05 prompting and structured output",
+    "actual model, tokenizer, hardware, prompt and permitted-corpus measurements"
+  ],
+  "next_chapter": "14.05 prompting and structured output",
+  "upstream_inspection": "No OpenIM implementation claim is needed. Transformer and KV-cache sources explain generic mechanisms; toy cache bytes and attention weights are not measured model behavior.",
+  "shared_integration_pending": []
+}

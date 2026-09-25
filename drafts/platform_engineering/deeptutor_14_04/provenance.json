@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a9c637fb06",
+  "page_id": "pg_a48df3e237",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://arxiv.org/abs/1706.03762",
+      "https://developers.google.com/machine-learning/crash-course/llm/transformers",
+      "https://developers.google.com/machine-learning/crash-course/embeddings/obtaining-embeddings",
+      "https://huggingface.co/docs/transformers/en/cache_explanation",
+      "https://huggingface.co/docs/transformers/en/kv_cache",
+      "https://huggingface.co/docs/transformers/en/continuous_batching",
+      "https://huggingface.co/docs/transformers/generation_strategies"
+    ],
+    "upstream_implementation_claims": false,
+    "upstream_commit": null
+  },
+  "original_sha256": "4cf955f9dce59dfc7e044573aa85fb190b89ba3798b3679964ad8bdff75512df",
+  "original_characters": 29710,
+  "generation_request_sha256": "37d201050f4e277e56e609a3d6ad341e4699c400935f326aeff6205b3f11547f",
+  "reviewed_sha256": "d8e71f5ce8940b32cb1a8d159c0689043b4c6285247c5ed4c53fd8e95f7c7fcd",
+  "reviewed_characters": 9906,
+  "reviewed_chinese_characters": 3443,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/04_transformer_inference_path.md",
+  "course_sha256": "2af1bc248fd0eb62b457c63a399ec5c84a4a81a887e6431e834b3887656d89b3"
+}

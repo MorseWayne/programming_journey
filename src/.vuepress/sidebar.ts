@@ -395,6 +395,7 @@ export default sidebar({
             "curriculum/14_ai/02_math_ml_intuition",
             "curriculum/14_ai/03_language_model_foundations",
             "curriculum/14_ai/09_evaluation_data_engineering",
+            "curriculum/14_ai/04_transformer_inference_path",
             "curriculum/14_ai/core"
           ]
         }

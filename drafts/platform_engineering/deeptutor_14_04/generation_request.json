@@ -1,0 +1,73 @@
+{
+  "code": "14.04",
+  "title": "Transformer与推理路径：注意力、prefill和KV缓存怎样影响聊天",
+  "chapter_id": "ch_transformer_inference_path",
+  "summary": "面向Go/Python初学者，以虚构IM资料问题解释QKV注意力、位置/因果遮罩、多头多层、prefill/decode、KV缓存资源和权限/上下文边界。",
+  "objectives": [
+    "用向量权重解释注意力的基本计算",
+    "分清真实scaled-dot-product与玩具加权直觉",
+    "说明位置、因果遮罩和多头多层作用边界",
+    "沿prefill/decode拆用户可见时延",
+    "手算toy KV缓存容量并限定模型假设",
+    "把资料权限/版本与模型缓存、截断和回答核证分开"
+  ],
+  "sources": [
+    "https://arxiv.org/abs/1706.03762",
+    "https://developers.google.com/machine-learning/crash-course/llm/transformers",
+    "https://developers.google.com/machine-learning/crash-course/embeddings/obtaining-embeddings",
+    "https://huggingface.co/docs/transformers/en/cache_explanation",
+    "https://huggingface.co/docs/transformers/en/kv_cache",
+    "https://huggingface.co/docs/transformers/en/continuous_batching"
+  ],
+  "sections": [
+    {
+      "title": "一、从固定IM问题追输入到输出",
+      "words": 3300,
+      "focus": "Go/Python初学者承接14.01–14.03和14.09虚构资料集。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db提议仍6B，R9待审。q01当前6B、q03 u-b不得见doc-private，先权限/版本过滤再分词和模型推理；Transformer改善序列建模不决定事实和访问权。"
+    },
+    {
+      "title": "二、Q/K/V与注意力的可手算直觉",
+      "words": 3400,
+      "focus": "14.02点积预备。每token表示投影为Query/Key/Value，Q问当前需要什么、K供匹配、V携被加权信息。纸上非负直觉权重1:3→1/4:3/4，V1=(1,0),V2=(0,2)→加权(0.25,1.5)，明确不是真实scaled-dot-product算法。真实注意力softmax(QK^T/sqrt(d_k)+mask)V，softmax先归一候选，遮罩禁止看未来/无效位；分数不是资料真实性。"
+    },
+    {
+      "title": "三、位置、因果遮罩、多头与多层",
+      "words": 3400,
+      "focus": "同token顺序变化意义可相反，模型加入/利用位置表示（方式依架构），decoder-only生成侧因果mask只能看本位置和过去，不能未来；多头可学不同关系但不可硬说某头就是权限判官，多层堆叠可组合复杂关系。encoder-only/full encoder-decoder存在，课程集中自回归decoder推理，不能把所有Transformer当同一种。引用原始Attention Is All You Need与Google MLCC。"
+    },
+    {
+      "title": "四、prefill和decode时间线",
+      "words": 3400,
+      "focus": "纸上一次请求：先预处理有权文档/分词→prefill整段输入并形成每层KV状态/第一个输出预测→decode逐token生成并更新缓存；TTFT受输入长度/排队/网络等影响，后续tokens/s受decode、并发和缓存影响，总时延还含应用检索/权限。短答与长答、长会话并发目标不同，快生成不证q01正确/可引用。"
+    },
+    {
+      "title": "五、KV cache节省重复计算但占内存",
+      "words": 3400,
+      "focus": "每层过去token的K/V缓存用于自回归推理，不是永久聊天记忆/业务历史；纸上全序列、无共享/压缩/滑窗的估算2(K+V)×layers2×KV heads2×head_dim4×tokens32×每元素2B×并发1=1024B(1KiB)，10并发约10KiB；真实架构层数/头数/GQA/MQA/精度/分页各异，不能推生产模型。上下文增长与并发让内存增，prompt/权限/模型版本变化时共享前缀须严格隔离。"
+    },
+    {
+      "title": "六、长上下文、质量与安全边界",
+      "words": 3400,
+      "focus": "14.03纸上窗口32tokens：指令6证据18问题4余4理想输出，实际特殊token另计；更多文档可能截断“R9待审”、成员scope、引用，导致答9B或泄私有。缓存复用不可跨u-a/u-b许可上下文，资料在进入模型前授权/版本过滤，模型注意力权重不是权限规则。被截证据应标不足/拒答，不用高分补事实。"
+    },
+    {
+      "title": "七、推理资源账与验收卡",
+      "words": 3300,
+      "focus": "记录模型/tokenizer版本、prompt token数、输出token数、prefill/decode阶段时间、TTFT/输出速率、KV模型假设、并发、缓存命中条件、来源版本/授权与q01/q03用户结果；先以14.09同问题关键词基线比较，费用/性能无实测不能下结论。失败：队列等待vs算力、长前缀截断、缓存范围错误、样本答案未证。"
+    },
+    {
+      "title": "八、22题分层练习",
+      "words": 3200,
+      "focus": "基础8/推演8/决策6附答案：QKV分工、1:3→.25/.75与V输出(.25,1.5)、mask/position/multihead、prefill/decode、32-6-18-4=4、KV公式1KiB/10并发10KiB、TTFT、doc-private权限和R9待审。静态不运行Python/Go/IM/模型/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.04 Transformer与推理路径》，Go/Python初学者八节丰富理论、虚构IM资料助手由浅入深、22题附答案。承接14.01-14.03与14.09固定问题/关键词基线。当前S2/v1正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。q01问当前6B，q03 actor u-b不得访问doc-private(scope=u-a-only)，在tokenizer/prefill前由应用过滤，无权资料不进入模型或共享前缀缓存。引原始Attention Is All You Need及Google/HuggingFace官方解释Q/K/V、scaled dot-product attention softmax(QK^T/sqrt(dk)+mask)V、位置表示、decoder-only causal mask、multi-head/multi-layer，明确也有encoder-only和encoder-decoder模型，不把所有头硬解释为固定权限/语法功能。给非常明确的纸上近似直觉：两个非负原始权重1:3正规化为0.25/0.75，V1=(1,0),V2=(0,2)得(0.25,1.5)，这不是完整scaled-dot-product/softmax计算，只帮助初学者理解加权求和；注意力权重不是证据真实性或权限。推理时间线：应用授权与版本过滤→分词→prefill处理输入并形成每层KV→首次token→decode逐token且更新KV；TTFT与后续生成速率/总时延分开，不能用快输出证明答对q01。KV cache缓存过去token的K/V以免每步重算，不是永久IM历史。纸上全长/无滑窗/无压缩/无共享假设KV字节=2(K,V)×2层×2 KV头×4 head_dim×32 token×2B/元素×1并发=1024B=1KiB，10并发约10KiB；真实模型的GQA/MQA/精度/分页/滑窗不同，数值绝非产品配置。14.03纸上窗口32token：指令6、证据18、问题4，忽略开销仅余4输出；超窗截断可能丢R9待审或doc scope，应用应承认资料不足/拒答而非模型猜。记录模型/tokenizer/资料/权限/提示/缓存版本、prompt/output token与阶段时延，14.09基线同条件比较；不运行模型/Go/Python/IM/站点。\n1. 一、从固定IM问题追输入到输出: Go/Python初学者承接14.01–14.03和14.09虚构资料集。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db提议仍6B，R9待审。q01当前6B、q03 u-b不得见doc-private，先权限/版本过滤再分词和模型推理；Transformer改善序列建模不决定事实和访问权。\n2. 二、Q/K/V与注意力的可手算直觉: 14.02点积预备。每token表示投影为Query/Key/Value，Q问当前需要什么、K供匹配、V携被加权信息。纸上非负直觉权重1:3→1/4:3/4，V1=(1,0),V2=(0,2)→加权(0.25,1.5)，明确不是真实scaled-dot-product算法。真实注意力softmax(QK^T/sqrt(d_k)+mask)V，softmax先归一候选，遮罩禁止看未来/无效位；分数不是资料真实性。\n3. 三、位置、因果遮罩、多头与多层: 同token顺序变化意义可相反，模型加入/利用位置表示（方式依架构），decoder-only生成侧因果mask只能看本位置和过去，不能未来；多头可学不同关系但不可硬说某头就是权限判官，多层堆叠可组合复杂关系。encoder-only/full encoder-decoder存在，课程集中自回归decoder推理，不能把所有Transformer当同一种。引用原始Attention Is All You Need与Google MLCC。\n4. 四、prefill和decode时间线: 纸上一次请求：先预处理有权文档/分词→prefill整段输入并形成每层KV状态/第一个输出预测→decode逐token生成并更新缓存；TTFT受输入长度/排队/网络等影响，后续tokens/s受decode、并发和缓存影响，总时延还含应用检索/权限。短答与长答、长会话并发目标不同，快生成不证q01正确/可引用。\n5. 五、KV cache节省重复计算但占内存: 每层过去token的K/V缓存用于自回归推理，不是永久聊天记忆/业务历史；纸上全序列、无共享/压缩/滑窗的估算2(K+V)×layers2×KV heads2×head_dim4×tokens32×每元素2B×并发1=1024B(1KiB)，10并发约10KiB；真实架构层数/头数/GQA/MQA/精度/分页各异，不能推生产模型。上下文增长与并发让内存增，prompt/权限/模型版本变化时共享前缀须严格隔离。\n6. 六、长上下文、质量与安全边界: 14.03纸上窗口32tokens：指令6证据18问题4余4理想输出，实际特殊token另计；更多文档可能截断“R9待审”、成员scope、引用，导致答9B或泄私有。缓存复用不可跨u-a/u-b许可上下文，资料在进入模型前授权/版本过滤，模型注意力权重不是权限规则。被截证据应标不足/拒答，不用高分补事实。\n7. 七、推理资源账与验收卡: 记录模型/tokenizer版本、prompt token数、输出token数、prefill/decode阶段时间、TTFT/输出速率、KV模型假设、并发、缓存命中条件、来源版本/授权与q01/q03用户结果；先以14.09同问题关键词基线比较，费用/性能无实测不能下结论。失败：队列等待vs算力、长前缀截断、缓存范围错误、样本答案未证。\n8. 八、22题分层练习: 基础8/推演8/决策6附答案：QKV分工、1:3→.25/.75与V输出(.25,1.5)、mask/position/multihead、prefill/decode、32-6-18-4=4、KV公式1KiB/10并发10KiB、TTFT、doc-private权限和R9待审。静态不运行Python/Go/IM/模型/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
