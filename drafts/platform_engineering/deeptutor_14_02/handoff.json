@@ -1,0 +1,32 @@
+{
+  "chapter": "14.02",
+  "stage": "S3+ optional AI branch",
+  "business_scope": "static beginner mathematics and ML intuition lesson using synthetic IM document questions and paper metrics",
+  "prerequisites": [
+    "14.01 Python objects, synthetic data and provenance",
+    "02.01 discrete objects and cost",
+    "09.07 application authorization",
+    "11.02 distributions and sample limits"
+  ],
+  "first_pass": [
+    "separate sample, manual feature, label, prediction and business truth",
+    "hand-calculate 3x2 matrix products, vector norms and cosine similarities",
+    "calculate conditional probabilities with explicit sub-population denominators",
+    "compute precision, recall and accuracy from a fixed confusion matrix"
+  ],
+  "second_pass": [
+    "treat a 12/4/4 training, validation and test split as an illustrative tiny dataset",
+    "flag 12/12 training and 2/4 validation as an overfitting warning, not a production error estimate",
+    "identify near-duplicate conversations/documents across splits as leakage",
+    "keep authorization and evidence checks ahead of similarity/answering",
+    "keep current S2 acceptance, future S3 and pending R9 separate from AI metrics"
+  ],
+  "not_yet_prerequisites": [
+    "14.03 language-model foundations",
+    "14.09 representative dataset, labels, baseline and evaluation",
+    "learner's own model execution and genuine permitted data"
+  ],
+  "next_chapter": "14.03 language-model foundations",
+  "upstream_inspection": "No OpenIM implementation claim is needed. The mathematical examples and labels are synthetic; the current S2 HTTP contract is referenced only to keep AI metrics separate from IM business behavior.",
+  "shared_integration_pending": []
+}

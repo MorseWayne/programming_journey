@@ -31,9 +31,9 @@
   "original_sha256": "57d0b926ccdcb4632e89f5b861922847cdccca3e8a0e68b4e127f00bde463134",
   "original_characters": 38772,
   "generation_request_sha256": "68b22e1fb3781b8e65df3e81ead19d10630b29dc731a6c6729bb694a3b0cf840",
-  "reviewed_sha256": "e605f5aaf1669a169d1867bba04a39e20ec22badd2466b999e5d175fd35359ae",
-  "reviewed_characters": 10916,
-  "reviewed_chinese_characters": 3558,
+  "reviewed_sha256": "948b9792a2ca6135c583f664354091b60ae7d7d70ff901868bb67c3573cd4db8",
+  "reviewed_characters": 11004,
+  "reviewed_chinese_characters": 3564,
   "course_file": "src/docs/platform_engineering/curriculum/14_ai/01_python_data_work.md",
-  "course_sha256": "8cd541e8d05e2e34c4cacbd473531b82e2eba81018939f4de95b8b13f7c37381"
+  "course_sha256": "4e1de5e833968e9a61868f127a7e2368bdcebcff9abad37e037f2f9ec1ed861e"
 }

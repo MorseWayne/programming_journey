@@ -392,6 +392,7 @@ export default sidebar({
           "children": [
             "curriculum/14_ai/",
             "curriculum/14_ai/01_python_data_work",
+            "curriculum/14_ai/02_math_ml_intuition",
             "curriculum/14_ai/core"
           ]
         }

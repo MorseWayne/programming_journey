@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_bd57a3e75a",
+  "page_id": "pg_5448ecf43f",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://developers.google.com/machine-learning/crash-course/embeddings",
+      "https://developers.google.com/machine-learning/clustering/dnn-clustering/check-your-understanding",
+      "https://online.stat.psu.edu/stat414/Lesson19",
+      "https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall",
+      "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets",
+      "https://developers.google.com/machine-learning/crash-course/overfitting/overfitting"
+    ],
+    "upstream_implementation_claims": false,
+    "upstream_commit": null
+  },
+  "original_sha256": "5ef85bc4bfb848bd6f4d41bb36f1eacfdf401b2a089a29bbcf41bf819f4b36c0",
+  "original_characters": 30120,
+  "generation_request_sha256": "6e1283ffce521348b6b516d08c7179a1e91084927f74a7893d6aee3621ab96ae",
+  "reviewed_sha256": "ee164518595d0d3731811ae3103f235fbbec4676e1006c3d6bfad1153268a65a",
+  "reviewed_characters": 9401,
+  "reviewed_chinese_characters": 3353,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/02_math_ml_intuition.md",
+  "course_sha256": "c3d1400f92d860b186800dee759e1863ecbcd949d87cdf76792fcf6bdb3ffed0"
+}

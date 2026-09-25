@@ -1,0 +1,73 @@
+{
+  "code": "14.02",
+  "title": "必要数学与机器学习直觉：相似不等于真实也不等于有权",
+  "chapter_id": "ch_math_ml_intuition",
+  "summary": "面向Go/Python初学者，以虚构IM资料问题手算向量余弦、条件概率、分类指标与训练/验证/测试，识别过拟合和权限边界。",
+  "objectives": [
+    "区分样本、特征、标签、模型训练与推理",
+    "手算二维向量点积、范数和余弦",
+    "按条件表正确选择概率分母",
+    "从混淆矩阵计算precision/recall/accuracy",
+    "分开训练、验证与最终测试并识别泄漏",
+    "说明相似度/分类分数不代替授权与业务证据"
+  ],
+  "sources": [
+    "https://developers.google.com/machine-learning/crash-course/embeddings",
+    "https://developers.google.com/machine-learning/clustering/dnn-clustering/check-your-understanding",
+    "https://online.stat.psu.edu/stat414/Lesson19",
+    "https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall",
+    "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets",
+    "https://developers.google.com/machine-learning/crash-course/overfitting/overfitting"
+  ],
+  "sections": [
+    {
+      "title": "一、先定义问题、样本、特征和标签",
+      "words": 3300,
+      "focus": "面向Go/Python初学者承接14.01人工虚构IM消息和资料：资料助手需判断某问题是否有有权证据而非直接调用LLM。当前S2/v1正文非空最多6 UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。样本、特征、标签、训练/推理与业务真相分别定义，不能用相似度替权限或事实。"
+    },
+    {
+      "title": "二、向量、矩阵、点积和余弦",
+      "words": 3400,
+      "focus": "纸上二维人工特征[字节限制,权限]：q=(1,0),d1=(1,1),d2=(0,1),d3=(2,0)，不是LLM embedding；3×2文档矩阵D，Dq点积[1,0,2]，范数q1/d1sqrt2/d2 1/d3 2，余弦[1/sqrt2≈0.707,0,1]；零向量余弦未定义。点积受长度影响，余弦归一角度；高分不能证明资料授权、正文正确或答案可引用。"
+    },
+    {
+      "title": "三、概率与条件分母",
+      "words": 3400,
+      "focus": "20道独立虚构问题的2×2表：权限主题8题，其中6题有充分证据、2题不足；非权限12题，其中6题有证据、6题不足，总证据12/20。P(证据|权限)=6/8=0.75、P(权限|证据)=6/12=0.5、P(权限)=8/20=0.4。解释条件方向、基率、小样本不代表生产概率和相似度分数不自动是校准概率。引用Penn State概率教材。"
+    },
+    {
+      "title": "四、分类输出、错误和阈值",
+      "words": 3400,
+      "focus": "纸上二分类“可否依据授权资料回答”：TP6 FP2 FN3 TN9总20；precision6/(6+2)=0.75, recall6/(6+3)=2/3, accuracy(6+9)/20=0.75。若误答无证据/越权FP代价较高，不能只看accuracy；权限过滤仍是硬约束，分类阈值不能交易越权。指标需要定义label/预测和分母，非真实评测结果。"
+    },
+    {
+      "title": "五、训练、验证、测试与过拟合",
+      "words": 3400,
+      "focus": "仅纸上另一个合成数据集12 train/4 validation/4 final test，样本q与资料关联；train学参数，val选规则/阈值，test冻结选择后一次独立检查，不用test反复调；某复杂规则train12/12正确但val2/4，是过拟合警讯而非足够统计证明；近重复会话/同文档跨划分是泄漏，按会话或时间分组结合实际任务，仍需代表性。"
+    },
+    {
+      "title": "六、模型分数与真实业务保证分层",
+      "words": 3300,
+      "focus": "高cosine不等于文档可靠/可见；先按u-b/c-a成员和文档access_scope过滤，再检索候选、核引用充分性、失败时拒答。当前S2 200只是内存受理，不能把AI“可回答”标签和IM消息送达混同。训练/推理区别与数据集/模型版本。"
+    },
+    {
+      "title": "七、可复现手算与下一章衔接",
+      "words": 3300,
+      "focus": "记录人工特征词表顺序、矩阵/问题版本、相似度公式、零向量处理、20题条件表与分类表、12/4/4划分种子和同会话去重规则；14.03才讲token/embedding/语言模型生成，14.09再建正式固定数据、关键词基线和组件端到端评测。纸上计算非模型运行。"
+    },
+    {
+      "title": "八、22题分层练习",
+      "words": 3200,
+      "focus": "基础8/计算8/决策6附答案：矩阵维度、dot/cos/零向量、0.707和1、6/8 vs6/12、TP/FP/FN/TN、P0.75/R0.667/accuracy0.75、train/val/test、过拟合/泄漏、授权与相似度、当前S2合同。全静态不运行Python/Go/IM/模型/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.02 必要数学与机器学习直觉》，Go/Python初学者八节丰富理论、虚构IM资料助手由浅入深、22题含答案。承接14.01虚构u-a/u-b/c-a消息与有owner/access_scope的资料，AI任务先判断“问题是否有权限内的充分证据”，不调用模型。当前S2/v1合同固定正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db仍提议6B，R9待审，不能把AI指标等同业务确认。先讲样本、人工特征、标签、训练参数与推理。二维手算特征[字节限制,权限]，q=(1,0),d1=(1,1),d2=(0,1),d3=(2,0)，只是人工玩具不是训练出的embedding；文档矩阵3×2，点积Dq=[1,0,2]，cosine=[1/sqrt2≈0.707,0,1]，零向量分母0不可算；高相似不证明授权/真实性/可回答。概率2×2虚构20题：权限主题8，其中充分证据6/不足2；非权限主题12，其中充分证据6/不足6。P(证据|权限)=6/8=.75，P(权限|证据)=6/12=.5，P(权限)=8/20=.4；方向和分母不能换，小样本不代表生产。独立的虚构二分类20题TP6 FP2 FN3 TN9，precision=.75, recall=6/9≈.667, accuracy=15/20=.75；标签是“有授权且充分的资料可答”，若FP导致越权/无证据答案代价高，accuracy不足，权限过滤仍硬门不能用概率阈值替代。训练/验证/测试另设12/4/4纸上分组，train拟合，validation调规则/阈值，final test冻结后才检，复杂规则train12/12、validation2/4是过拟合警讯非可靠统计结论；同会话/同文档近重复跨划分构成泄漏，划分策略需按真实任务，先去重/分组。记录人工词表、向量版本、算式、零向量、样本/标签来源、划分种子/版本；14.03再解释token/embedding和模型生成，14.09再建正式数据集和基线。引用Google ML Crash Course官方与Penn State概率教材，只写静态推导不运行Python/Go/IM/ML模型/站点。\n1. 一、先定义问题、样本、特征和标签: 面向Go/Python初学者承接14.01人工虚构IM消息和资料：资料助手需判断某问题是否有有权证据而非直接调用LLM。当前S2/v1正文非空最多6 UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。样本、特征、标签、训练/推理与业务真相分别定义，不能用相似度替权限或事实。\n2. 二、向量、矩阵、点积和余弦: 纸上二维人工特征[字节限制,权限]：q=(1,0),d1=(1,1),d2=(0,1),d3=(2,0)，不是LLM embedding；3×2文档矩阵D，Dq点积[1,0,2]，范数q1/d1sqrt2/d2 1/d3 2，余弦[1/sqrt2≈0.707,0,1]；零向量余弦未定义。点积受长度影响，余弦归一角度；高分不能证明资料授权、正文正确或答案可引用。\n3. 三、概率与条件分母: 20道独立虚构问题的2×2表：权限主题8题，其中6题有充分证据、2题不足；非权限12题，其中6题有证据、6题不足，总证据12/20。P(证据|权限)=6/8=0.75、P(权限|证据)=6/12=0.5、P(权限)=8/20=0.4。解释条件方向、基率、小样本不代表生产概率和相似度分数不自动是校准概率。引用Penn State概率教材。\n4. 四、分类输出、错误和阈值: 纸上二分类“可否依据授权资料回答”：TP6 FP2 FN3 TN9总20；precision6/(6+2)=0.75, recall6/(6+3)=2/3, accuracy(6+9)/20=0.75。若误答无证据/越权FP代价较高，不能只看accuracy；权限过滤仍是硬约束，分类阈值不能交易越权。指标需要定义label/预测和分母，非真实评测结果。\n5. 五、训练、验证、测试与过拟合: 仅纸上另一个合成数据集12 train/4 validation/4 final test，样本q与资料关联；train学参数，val选规则/阈值，test冻结选择后一次独立检查，不用test反复调；某复杂规则train12/12正确但val2/4，是过拟合警讯而非足够统计证明；近重复会话/同文档跨划分是泄漏，按会话或时间分组结合实际任务，仍需代表性。\n6. 六、模型分数与真实业务保证分层: 高cosine不等于文档可靠/可见；先按u-b/c-a成员和文档access_scope过滤，再检索候选、核引用充分性、失败时拒答。当前S2 200只是内存受理，不能把AI“可回答”标签和IM消息送达混同。训练/推理区别与数据集/模型版本。\n7. 七、可复现手算与下一章衔接: 记录人工特征词表顺序、矩阵/问题版本、相似度公式、零向量处理、20题条件表与分类表、12/4/4划分种子和同会话去重规则；14.03才讲token/embedding/语言模型生成，14.09再建正式固定数据、关键词基线和组件端到端评测。纸上计算非模型运行。\n8. 八、22题分层练习: 基础8/计算8/决策6附答案：矩阵维度、dot/cos/零向量、0.707和1、6/8 vs6/12、TP/FP/FN/TN、P0.75/R0.667/accuracy0.75、train/val/test、过拟合/泄漏、授权与相似度、当前S2合同。全静态不运行Python/Go/IM/模型/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
