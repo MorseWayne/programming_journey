@@ -1,0 +1,32 @@
+{
+  "chapter": "14.09",
+  "stage": "S3+ optional AI branch; first pass before 14.04, second pass after 14.07",
+  "business_scope": "static beginner IM assistant evaluation lesson using synthetic scoped documents, fixed questions and paper ranking metrics",
+  "prerequisites": [
+    "14.01 synthetic Python data provenance",
+    "14.02 conditional probability and classification metrics",
+    "14.03 language model outputs and context boundaries",
+    "09.02 current S2 HTTP contract and 09.07 authorization"
+  ],
+  "first_pass": [
+    "fix six synthetic IM question categories and document versions/statuses/scopes",
+    "label answer, permission refusal and undecided-rule cases separately",
+    "filter actor scope and current/proposed status before deterministic keyword ranking",
+    "prevent duplicated or near-duplicated conversation/document examples from leaking across splits"
+  ],
+  "second_pass": [
+    "keep unauthorized document exposure at zero as a separate hard gate",
+    "define complete minimal gold evidence before calculating paper Recall@2 and Precision@2",
+    "check every significant answer claim against permitted current citations",
+    "count correct abstention separately from answer errors",
+    "audit judge order and verbosity bias with blinded human samples",
+    "attribute failure to its earliest data, permission, retrieval, context, generation or contract boundary"
+  ],
+  "not_yet_prerequisites": [
+    "14.04–14.07 model, prompting, retrieval and RAG for the second reading",
+    "actual representative permitted corpus, labels, baseline execution and human review evidence"
+  ],
+  "next_chapter": "14.04 Transformer and inference path",
+  "upstream_inspection": "No OpenIM implementation claim is needed. All documents, questions, labels, rankings and metrics are fabricated; current IM behavior is referenced only from the course HTTP contract.",
+  "shared_integration_pending": []
+}

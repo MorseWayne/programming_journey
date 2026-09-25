@@ -1,0 +1,36 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_d3690b8d18",
+  "page_id": "pg_017f98eeee",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets",
+      "https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring",
+      "https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall",
+      "https://arxiv.org/abs/2311.09476",
+      "https://arxiv.org/abs/2306.05685"
+    ],
+    "upstream_implementation_claims": false,
+    "upstream_commit": null
+  },
+  "original_sha256": "5cce343f59bb0dfa18c2a49b51651c471f0a115e71908ed72f5604b66cf10764",
+  "original_characters": 29489,
+  "generation_request_sha256": "1adffa54edd579c0d9375a73735396d079c0ae5e766384787f668d594f11774a",
+  "reviewed_sha256": "d4c99b17e19a37a142b3712d53ec119a59832bf0618a6b59ce2defd3cbb1bfe0",
+  "reviewed_characters": 9990,
+  "reviewed_chinese_characters": 3747,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/09_evaluation_data_engineering.md",
+  "course_sha256": "6d96ba5267fda0e49bb9397e706573b236a7847fed53cc3cd5b30494ae087286"
+}

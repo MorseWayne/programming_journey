@@ -1,0 +1,72 @@
+{
+  "code": "14.09",
+  "title": "评测与数据工程：先定IM问题和关键词基线再比较RAG",
+  "chapter_id": "ch_ai_evaluation_data_engineering",
+  "summary": "面向Go/Python初学者，用虚构IM资料与六类问题建立有权限的固定数据集和关键词基线，再分层评估检索、引用、拒答、端到端效果及裁判偏差。",
+  "objectives": [
+    "固定业务问题、资料版本、actor与标签",
+    "在模型前建立权限和版本过滤的确定性关键词基线",
+    "避免重复/近重复与开发测试泄漏",
+    "为检索和引用指标定义明确分母",
+    "把正确拒答、无权资料和未定规则分开评估",
+    "识别自动裁判偏差并记录可追溯失败归因"
+  ],
+  "sources": [
+    "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets",
+    "https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring",
+    "https://developers.google.com/machine-learning/crash-course/classification/accuracy-precision-recall",
+    "https://arxiv.org/abs/2311.09476",
+    "https://arxiv.org/abs/2306.05685"
+  ],
+  "sections": [
+    {
+      "title": "一、第一次学评测先固定业务问题",
+      "words": 3400,
+      "focus": "第十四卷路线14.01–14.03后先读本章前四节建立数据集/关键词基线，学完14.04–14.07再回来读后半组件/端到端，工具14.08更晚。虚构IM资料助手，当前S2/v1正文非空最多6 UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。问答成功须有权、有当前证据、回答或正确拒答。"
+    },
+    {
+      "title": "二、固定文档、问题与金标签",
+      "words": 3400,
+      "focus": "虚构doc-current公开现行6B/409/404/200，doc-r9公开但status=proposed 6→9B，doc-private scope=u-a-only，doc-history记broker24h而B25h不能只靠它；q-01当前上限6B，q-02 R9是否生效否，q-03 u-b能读私有doc否（只凭元数据拒绝不泄内容），q-04退群历史规则未定应拒答，q-05 200是否送达否，q-06 25h是否凭24h broker补全否/未来DB条件。每题记录actor、scope、语料版本、可答/拒答原因、gold证据和未决状态，所有虚构。"
+    },
+    {
+      "title": "三、关键词基线先于向量和模型",
+      "words": 3400,
+      "focus": "纸上确定性关键词匹配：先actor/scope权限过滤、current/proposed版本状态过滤，再用预设词项计分与doc_id固定打破平分；q01若未状态过滤可能误选doc-r9并答9B，q03应仅根据scope元数据拒绝而不把私有正文进提示。保留原始输入/规则/顺序/预期失败，不声称运行。向量/RAG是否改善要与同问题/同权限基线比较。"
+    },
+    {
+      "title": "四、代表性、去重与数据泄漏",
+      "words": 3400,
+      "focus": "问题桶：当前事实、提议状态、授权拒绝、规则未知、跨确认点、长离线；六题只教学示意不代表真实分布。按会话/文档/时间分组避免相邻c-a片段或改写问题同时进开发与最终集；标签在看到候选回答前审定，版本变更记录新基线，不反复用最终集调提示。Python manifest记录doc/query/label/reviewer/schema版本、SHA256、split和拒绝数。"
+    },
+    {
+      "title": "五、组件指标各有分母",
+      "words": 3400,
+      "focus": "第二遍读：权限过滤违反次数必须0独立硬门；在四个有gold文档的虚构问题q01/q02/q05/q06上，纸上top2命中q01/q02/q06、漏q05→Recall@2=3/4，仅假设非运行；若top2只有一个相关则Precision@2=1/2，相关性和有权不同。检索、证据引用、生成/拒答分别评，citation出现不等于每句被支持。"
+    },
+    {
+      "title": "六、端到端与成本质量取舍",
+      "words": 3400,
+      "focus": "按q桶分别统计当前6B正确、R9拒绝冒报、无权文档拒绝、规则未定正确拒答、S2 200非送达、25h/24h条件；答错/无证据FP可能高风险，正确拒答不算失败。测响应/人工复核/模型token与成本需固定模型/提示/资料/权限/窗口版本；无真实云价格或运行结果。"
+    },
+    {
+      "title": "七、自动裁判偏差与诊断",
+      "words": 3400,
+      "focus": "引用原始LLM-as-a-judge研究：位置、冗长、自我偏好，自动裁判不能独自当金标；盲评交换顺序、人工抽检、双标争议和标准答案版本。失败归因沿数据来源→权限→切分/索引→检索→上下文→生成→引用/业务合同；先修最早坏边界，保存覆盖/缺失/不可比较案例。"
+    },
+    {
+      "title": "八、22题分层练习与两遍学习门",
+      "words": 3200,
+      "focus": "基础8/组件8/决策6附答案，q01-q06类别、status proposed、scope u-a-only对u-b、关键词基线版本过滤、近重复泄漏、Recall@2=3/4/Precision@2=1/2、权限0硬门、引用支持、正确拒答、裁判偏差和版本manifest。静态不运行Go/Python/IM/模型/检索/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.09 评测与数据工程》，Go/Python初学者八节丰富理论、虚构IM资料助手由浅入深、22题含答案。按本卷学习顺序，14.01–14.03后先读本章前四节建立问题/数据/关键词基线，学完14.04–14.07回读后四节组件和端到端评测，14.08工具工作流更晚。当前S2/v1合同正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。全部人工虚构资料：doc-current公开、记录现行6B/409/404/200；doc-r9公开但status=proposed 6→9B；doc-private scope=u-a-only；doc-history注明教学broker24h而B离线25h不能只靠broker恢复，未来DB是否保留/授权待审。固定问题：q01当前正文上限答6B需doc-current；q02 R9已生效吗答否需doc-r9+current；q03 u-b能读doc-private吗依据scope元数据拒绝，不把私有正文进提示；q04 B退群后能读旧历史吗规则未定须拒答/说明待决定；q05当前S2 200等于B送达吗答否；q06 B25h可只凭24h broker补全吗答否、未来DB要真实保留/有权。每题actor、权限、文档版本/状态、期望回答/拒答、gold证据与标注理由明确，6题仅教学不代表生产。先权限过滤和current/proposed状态过滤，再做确定性关键词匹配/稳定tie-break；q01若用旧提议文档答9B是版本失败，q03不能把doc-private正文送模型。按当前事实/提议/无权/未知规则/跨确认点/长离线分桶，开发与最终样本按会话/资料/时间防近重复和标签泄漏，不反复调最终集。第二遍组件指标：权限泄露次数必须0硬门；四个有gold资料问题q01/q02/q05/q06纸上假设top2命中q01/q02/q06漏q05，Recall@2=3/4；top2仅一相关则Precision@2=1/2，分母先定义，纸上非运行。证据引用须逐句支持，正确拒答单独统计；端到端按用户任务、权限和现行合同分层，不能以平均分掩FP。引用原始LLM-as-a-Judge/ARES论文说明自动裁判位置/冗长/自我偏好、检索/生成分层，需盲评/换序/人工抽检。manifest记录样本/标签/审阅者/数据/模型/提示/权限版本与哈希、未比较原因；当前不调用模型或检索。静态不运行Python/Go/IM/ML/站点。\n1. 一、第一次学评测先固定业务问题: 第十四卷路线14.01–14.03后先读本章前四节建立数据集/关键词基线，学完14.04–14.07再回来读后半组件/端到端，工具14.08更晚。虚构IM资料助手，当前S2/v1正文非空最多6 UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审。问答成功须有权、有当前证据、回答或正确拒答。\n2. 二、固定文档、问题与金标签: 虚构doc-current公开现行6B/409/404/200，doc-r9公开但status=proposed 6→9B，doc-private scope=u-a-only，doc-history记broker24h而B25h不能只靠它；q-01当前上限6B，q-02 R9是否生效否，q-03 u-b能读私有doc否（只凭元数据拒绝不泄内容），q-04退群历史规则未定应拒答，q-05 200是否送达否，q-06 25h是否凭24h broker补全否/未来DB条件。每题记录actor、scope、语料版本、可答/拒答原因、gold证据和未决状态，所有虚构。\n3. 三、关键词基线先于向量和模型: 纸上确定性关键词匹配：先actor/scope权限过滤、current/proposed版本状态过滤，再用预设词项计分与doc_id固定打破平分；q01若未状态过滤可能误选doc-r9并答9B，q03应仅根据scope元数据拒绝而不把私有正文进提示。保留原始输入/规则/顺序/预期失败，不声称运行。向量/RAG是否改善要与同问题/同权限基线比较。\n4. 四、代表性、去重与数据泄漏: 问题桶：当前事实、提议状态、授权拒绝、规则未知、跨确认点、长离线；六题只教学示意不代表真实分布。按会话/文档/时间分组避免相邻c-a片段或改写问题同时进开发与最终集；标签在看到候选回答前审定，版本变更记录新基线，不反复用最终集调提示。Python manifest记录doc/query/label/reviewer/schema版本、SHA256、split和拒绝数。\n5. 五、组件指标各有分母: 第二遍读：权限过滤违反次数必须0独立硬门；在四个有gold文档的虚构问题q01/q02/q05/q06上，纸上top2命中q01/q02/q06、漏q05→Recall@2=3/4，仅假设非运行；若top2只有一个相关则Precision@2=1/2，相关性和有权不同。检索、证据引用、生成/拒答分别评，citation出现不等于每句被支持。\n6. 六、端到端与成本质量取舍: 按q桶分别统计当前6B正确、R9拒绝冒报、无权文档拒绝、规则未定正确拒答、S2 200非送达、25h/24h条件；答错/无证据FP可能高风险，正确拒答不算失败。测响应/人工复核/模型token与成本需固定模型/提示/资料/权限/窗口版本；无真实云价格或运行结果。\n7. 七、自动裁判偏差与诊断: 引用原始LLM-as-a-judge研究：位置、冗长、自我偏好，自动裁判不能独自当金标；盲评交换顺序、人工抽检、双标争议和标准答案版本。失败归因沿数据来源→权限→切分/索引→检索→上下文→生成→引用/业务合同；先修最早坏边界，保存覆盖/缺失/不可比较案例。\n8. 八、22题分层练习与两遍学习门: 基础8/组件8/决策6附答案，q01-q06类别、status proposed、scope u-a-only对u-b、关键词基线版本过滤、近重复泄漏、Recall@2=3/4/Precision@2=1/2、权限0硬门、引用支持、正确拒答、裁判偏差和版本manifest。静态不运行Go/Python/IM/模型/检索/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

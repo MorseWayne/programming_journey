@@ -29,9 +29,9 @@
   "original_sha256": "422797cc28f69f2d4704bbef1a44ee77d4cd3332a42a047c795c377c645dccbb",
   "original_characters": 27938,
   "generation_request_sha256": "ff2a2313c7e1cda615b1976bcbaaf83efaf3a62d2a315847a1d4a1d214b0d25d",
-  "reviewed_sha256": "0ab8fcae9d762b51c04d86be2891adca1a2fbb68491c13aca289d6f459da6c82",
-  "reviewed_characters": 9302,
-  "reviewed_chinese_characters": 3587,
+  "reviewed_sha256": "dc7caebd3820e1f8ef5d3d144e729407e9185f711cd8d3b3c3cd39d281f792e4",
+  "reviewed_characters": 9396,
+  "reviewed_chinese_characters": 3589,
   "course_file": "src/docs/platform_engineering/curriculum/14_ai/03_language_model_foundations.md",
-  "course_sha256": "453e9e3e8884e95dd420326c01fba793423dd81c8755f5a0a93e2ed3cf643b98"
+  "course_sha256": "b3bbd4ea91a82cba407f434a29ee5074de5df0d98b905c8bfa25c0e883e32380"
 }
