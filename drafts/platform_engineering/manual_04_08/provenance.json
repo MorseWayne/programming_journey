@@ -6,7 +6,7 @@
   "page_id": null,
   "blocks_ready": 0,
   "original_status": "not generated; no original.md is claimed",
-  "review_status": "manually reviewed against Go standard-library documentation and course business contracts",
+  "review_status": "manually reviewed against primary proxy/RFC/Go documentation and course business contracts",
   "generation_request_file": "generation_request.json",
   "generation_request_sha256": "2adf3ccd7f5c906fbe15559b4195b3fd8e512946336f6d714fb8652fae4835b5",
   "primary_sources": [
@@ -23,9 +23,9 @@
   "im_execution": false,
   "site_build": false,
   "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
-  "reviewed_sha256": "95ac6def4d275d3f243dddd5290ae7b1601a08757ccb923b1095bac7f180b89d",
-  "reviewed_characters": 9972,
-  "reviewed_chinese_characters": 3040,
+  "reviewed_sha256": "94d82496401049e54dbf2c201d9c496075803954feaf03f537fd73df7d558d0c",
+  "reviewed_characters": 10072,
+  "reviewed_chinese_characters": 3047,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/08_go_network_io.md",
-  "course_sha256": "e7f686af144382e8df67780c6c6b3a59ab4de54ea4cea453ac60e616003029b3"
+  "course_sha256": "3da9841318add14558c3078b92b54e7c6f7e0fbf1f354908ffaae0f336a544ac"
 }

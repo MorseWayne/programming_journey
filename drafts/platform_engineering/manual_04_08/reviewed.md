@@ -186,4 +186,4 @@ HTTP 和 WebSocket 有各自的报错/关闭码；教学帧的 `EOF` 是练习�
 
 ## 本章完成标准与后续路径
 
-能把 `00 06 | E5 85 AC E5 91 8A` 按短读重组，解释 `ReadFull` 的两种 EOF、限长先于分配、短写与 deadline 的未知结果，并区分教学帧、HTTP 原始体、业务正文和设备 ACK，才算完成本章。下一章 04.09 将在 TLS/HTTP 已明白后追踪代理、连接复用、健康探测和超时预算。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)
+能把 `00 06 | E5 85 AC E5 91 8A` 按短读重组，解释 `ReadFull` 的两种 EOF、限长先于分配、短写与 deadline 的未知结果，并区分教学帧、HTTP 原始体、业务正文和设备 ACK，才算完成本章。下一章[04.09 代理与负载均衡](../../../src/docs/platform_engineering/curriculum/04_networks/09_proxies_load_balancing.md)将在 TLS/HTTP 已明白后追踪代理、连接复用、健康探测和超时预算。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)

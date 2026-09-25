@@ -1,0 +1,73 @@
+{
+  "code": "04.09",
+  "title": "代理与负载均衡：逐跳追踪请求和超时",
+  "chapter_id": "ch_proxies_load_balancing",
+  "summary": "面向Go初学者，以虚构A→P→N1/N2解释反向代理、头部信任、S2进程内存、健康探测、WebSocket和超时重试。",
+  "objectives": [
+    "画客户端/代理/后端逐跳连接与TLS边界",
+    "正确处理Forwarded/X-Forwarded-For信任",
+    "证明轮询和粘性不等于S2持久化",
+    "区分健康探测与用户消息确认",
+    "设计WebSocket空闲/连接资源观察",
+    "预算总超时/逐次超时并阻止504后盲重试"
+  ],
+  "sources": [
+    "https://pkg.go.dev/net/http/httputil",
+    "https://www.rfc-editor.org/rfc/rfc7239.html",
+    "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking",
+    "https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter",
+    "https://nginx.org/en/docs/http/websocket.html"
+  ],
+  "sections": [
+    {
+      "title": "一、先画每一跳：代理能转发，不能替后端完成业务",
+      "words": 3300,
+      "focus": "**反向代理**接收客户端面向服务的请求，再选择后端、转发请求和响应。**负载均衡**按某种策略在可用后端间分配新请求；它可由反向代理承担，也可以在不同网络层实现。虚构路径中 A 与 P 有一条连接，P 与 N1/N2 各可有另一条连接；连接、TLS 和超时都是**逐跳**的，不能把 P 的 TCP ACK 写成 N1 已存库或 B 设备 ACK。[Go `httputil.ReverseProxy`](https://pkg.go.dev/net/http/httputil) · [04.07 TLS 终止边界](./07_tls_identity.md) A 客户端 --TLS/HTTP 或 WebSocket--> P 代理 --受保护的上游连接--> N1/N2 请求身份/ID/body                 路由/头部/预算               S2 本进程受理 若 P 在客户端侧终止 TLS，P 能看到明文，P→N1/N2 是否再次用 TLS 要另定；证书验证的是相应**连接端点**，应用还需核用户身份与会话成员。代理可以报告自己产生的 502/504，也可以转发后端产生的状态；排障要记清**谁产生了响应、哪一跳已观察到什么**。[04.07 服务身份与应用授权](./07_tls_identity.md) · [RFC 9110：502/504](https://www.rfc-editor.org/rfc/rfc9110.html)"
+    },
+    {
+      "title": "二、Host、路径与转发头：只有受信代理能提供来源线索",
+      "words": 3300,
+      "focus": "代理可能改写目标 URL、Host、路径前缀和转发头。Go 标准库 `httputil.ReverseProxy` 提供 `Rewrite`、`SetURL` 和 `SetXForwarded` 等入口；**使用它们不等于自动信任原客户端传来的头**。`Forwarded`（标准化格式）或常见 `X-Forwarded-For` 可记录逐跳来源线索，但客户端可自己构造同名头；后端只能在**明确受信代理链、入口清洗和逐跳保护**下解释。IP 线索也不能代替登录身份、会话授权或 R9 的状态。[Go ReverseProxy 文档](https://pkg.go.dev/net/http/httputil) · [RFC 7239：Forwarded 安全考虑](https://www.rfc-editor.org/rfc/rfc7239.html) 纸上反例：`u-b` 自带 `X-Forwarded-For: 127.0.0.1`，若应用看到“像本机”就放行 `doc-private`，是信任边界错位。P 应按配置处理来自外部的头，后端按可信链验证；即便真实源 IP 确认，也仍须用应用身份判断 `u-b` 对 `doc-private` 或 `c-a` 的权限。[09.07 授权](../09_backend_security/07_authentication_authorization.md) 路径改写也会影响合同：把 `/v1/send` 错转成 `/v2/send`，或把"
+    },
+    {
+      "title": "三、轮询、健康与粘性都救不了 S2 进程内存历史",
+      "words": 3300,
+      "focus": "假设 P 先把 `m-1` 发到 N1，N1 返回 `200 accepted_in_memory`；随后 P 把 A 的历史查询分到 N2。N2 的本进程内存并不会自动拥有 N1 的 `m-1`。**轮询**是后端选择方法，不是复制或持久化机制；**粘性会话**若让 A 暂时回 N1，N1 一重启/失效仍可能丢这份内存状态。未来 S3 共享/持久数据若获批且真实实现，可另行改变数据边界，但目前只是提议。[09.02 当前与 S3](../09_backend_security/02_http_api_contract.md) · [08.03 复制与一致性](../08_distributed/03_replication_goals_costs.md) 负载策略可能按轮询、连接数、权重或健康状态选择，适用性受长连接数、请求成本和热会话分布影响。两条 WebSocket 长连接不必代表相同工作量；某实例“连接数少”也不证明它的队列、CPU 或下游 DB 健康。先定义要均衡的**资源与失败域**，再做实验；本章没有任何实际调度效果数据。[11.07 压测与容量](../11_reliability/07_load_testing_capacity.md)"
+    },
+    {
+      "title": "四、健康探测回答“可否接流量”，不证明某消息成功",
+      "words": 3300,
+      "focus": "**健康探测**可问某实例端口是否可连、HTTP 路径能否回预期码、依赖是否具备接请求的条件。Envoy 官方资料区分多种主动探测与状态变化条件，说明“健康”本来就取决于探测定义。TCP 端口开着，可能仍无法核成员授权或写入状态；HTTP `/ready` 回 200，也不证明 B 收到 `m-1`。反过来，下游某项服务坏了，实例可能仍能完成别的只读任务；探测范围要与路由的任务类型相符。[Envoy：Health checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) 探测频率、失败/恢复阈值与摘除时机影响误判和抖动；别把探测请求当用户动作运行，也别让“深度健康”造成实际消息写入。发布/过载时，健康探测与用户结果须分开记录。[11.08 SLO 与告警](../11_reliability/08_slo_alerting.md)"
+    },
+    {
+      "title": "五、WebSocket 经过代理：一次握手后是长寿命双向通道",
+      "words": 3300,
+      "focus": "在 HTTP/1.1 WebSocket 路径，客户端先请求升级，代理须正确处理升级协商与之后的双向字节传输；成功后连接可持续很久，P 的下游和上游各自占资源。代理若按普通短 HTTP 请求的空闲超时关闭上游，客户端看见断线，不意味着用户登出或业务消息被撤销。NGINX 官方说明 WebSocket 代理需要处理相应升级头与上游读超时；具体配置随所选代理和协议版本而变，本章只教观察边界，不复制生产配置。[NGINX：WebSocket proxying](https://nginx.org/en/docs/http/websocket.html) · [04.03 升级握手](./03_http_websocket_basics.md) 心跳可帮助发现某一段连接在特定时间窗口没有响应，却不能单凭 P 的连接存活推 B 当前在线/已读。若 N1 重启，P 是否把旧 WebSocket 自动“迁移”到 N2，要看协议和应用的重连/恢复设计，不能因 N2 健康就凭空恢复 N1 内存中的会话状态。[04.05 心跳与重连](./05_tcp_connection_lifecycle.md) 长连接还要限制连接数、空闲时间、每连接内存和慢消费者积压；代理前后流控/缓冲可能让“写入 P 成功”与“N1 已处理”出现较长间隔。04.06 的接收窗口/拥塞区分仍适用，应用确认点照旧独立。[04.06 流控与拥塞](./06_flow_congestion_control.md)"
+    },
+    {
+      "title": "六、端到端预算和逐跳超时，重试可能放大未知结果",
+      "words": 3300,
+      "focus": "纸上设用户请求总预算 **1000 ms**：名称/TLS/代理入站等先用 100 ms，上游处理最多计划 700 ms，余 200 ms 给传回和校验。只是**加法预算演练**，不是实测或推荐阈值。若 P 的单次上游超时设 700 ms，却允许两次串行尝试，每次都可能耗满，连同开销就超过总预算；还可能在两台实例各触发一次写动作。代理的“每次尝试超时”与“整个请求超时”必须同时审，且保留取消/排队开销。[Envoy：逐次与总超时](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter) · [11.07 容量预算](../11_reliability/07_load_testing_capacity.md) 对只读查询，某些已验证幂等路径可以讨论有界重试；对当前 S2 **写消息**，N1 可能已 `accepted_in_memory`，P 却在收到响应前超时并回 504。若 P 自动把同 `message_id` 发 N2，N2 可能另受理一份；若再发 N1，当前同 ID 重复会是 **409**，不能把 409 当本次安全成功证明。没有权威操作结果查询/持久去重前，**504 是结果未知，不是“必未执行”**。[14.08 未知结果与幂等边界](../14_ai/08_tools_workflows_agents.md) · [RFC 9110：50"
+    },
+    {
+      "title": "七、Go 代理入口与可观测证据应逐跳关联",
+      "words": 3300,
+      "focus": "若学习者日后用 Go 设计代理，`net/http/httputil.ReverseProxy` 可作为了解转发、改写、上游 Transport、响应修改/错误处理的标准库入口；Go `http.Transport` 管理连接复用。它们提供机制，应用仍须定义受信转发头、目标范围、身份/权限、body 限额、重试条件与超时预算。不能因为库叫 ReverseProxy 就把它接进当前 IM 服务并宣布多实例可用。[Go ReverseProxy](https://pkg.go.dev/net/http/httputil) · [Go Transport](https://pkg.go.dev/net/http) 排障/评测卡至少关联**外部请求 ID、P 选的后端、下游/上游连接阶段、TLS/升级结果、逐跳超时与重试次数、响应产生者、后端业务确认点**；私有正文不进普通日志。若客户端看到 502/503/504，先看产生响应的层：RFC 9110 分别描述代理收到无效上游响应、服务暂不可用、代理等上游超时的含义；它们不自带 IM 写动作“未执行”证明。[RFC 9110：5xx](https://www.rfc-editor.org/rfc/rfc9110.html) · [11.03 日志指标 Trace](../11_reliability/03_logs_metrics_traces.md)"
+    },
+    {
+      "title": "八、22 道分层练习：一条请求经过两段连接",
+      "words": 3300,
+      "focus": "1–8 认代理与边界，9–16 推演多实例/超时，17–22 做重试与证据决策。答案只针对虚构 A/P/N1/N2 图。 按配置选择/转发到上游，再把响应带回；不自动完成业务存储或授权。</details> 不是；它们是逐跳连接，TLS 终止与再加密需分别定义。</details> 不能；传输 ACK 与 IM 应用/设备确认不同。</details> 不能；代理链、入口清洗和逐跳保护须明确，IP 也不等于用户授权。</details> 不能；服务端连接身份与应用对象权限不同。</details> 不能；只反映该探测路径/条件，范围取决于探测定义。</details> 不是；它只选后端，不把进程内存同步或持久化。</details> 不是；它继续作为长寿命双向通道，占逐跳连接资源。</details> 不必；当前 S2 200 仅说明 N1 本进程内存受理。</details> 不能；粘性不等于持久化。</details> 200 ms，仍要覆盖回传/核验等；数值非实测阈值。</details> 不能；还含前后开销，且写操作重试可能重复副作用。</details> 不能；上游响应未及时到 P，服务端执行状态可能未知。</details> 不能；当前 409 是重复冲突，需查原操作权威结果。</details> 不会；两进程内存互不自动同步，可能发生分裂/重复受理。</details> 不能；需查代理/上游 timeout、心跳和客户端重连。</details> 不能；当前与提议合"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《04.09 代理与负载均衡》，面向Go初学者，八节丰富理论，虚构IM A客户端→P代理→N1/N2由浅入深，22题附答案。当前S2/v1正文非空最多6UTF8B、原始HTTP体4096B、同ID重复409即使同内容、非成员隐藏404、200 accepted_in_memory仅受理实例本进程；S3/v2存库提案仍6B、R9待审。画逐跳TCP/TLS/HTTP与确认边界，代理终止TLS/再加密与应用授权分离；Go httputil.ReverseProxy Rewrite/SetXForwarded、RFC7239 Forwarded/XFF不可信客户端头，不能用IP代用户授权；轮询N1受理m-1后N2无此内存，粘性不持久；健康probe只核其定义不证用户成功；WebSocket升级和代理idle timeout/心跳/连接资源；纸上总预算1000ms=前置100+上游700+回传200，两个700ms尝试超总预算；N1可能先受理后P504，自动同ID重试N2有重复副作用，回N1得409也非幂等成功；502/503/504来源分类和逐跳证据。引Go标准库、RFC、Envoy、NGINX原始文档。静态不运行代理/Go/IM/抓包/站点。\n1. 一、先画每一跳：代理能转发，不能替后端完成业务: **反向代理**接收客户端面向服务的请求，再选择后端、转发请求和响应。**负载均衡**按某种策略在可用后端间分配新请求；它可由反向代理承担，也可以在不同网络层实现。虚构路径中 A 与 P 有一条连接，P 与 N1/N2 各可有另一条连接；连接、TLS 和超时都是**逐跳**的，不能把 P 的 TCP ACK 写成 N1 已存库或 B 设备 ACK。[Go `httputil.ReverseProxy`](https://pkg.go.dev/net/http/httputil) · [04.07 TLS 终止边界](./07_tls_identity.md) A 客户端 --TLS/HTTP 或 WebSocket--> P 代理 --受保护的上游连接--> N1/N2 请求身份/ID/body                 路由/头部/预算               S2 本进程受理 若 P 在客户端侧终止 TLS，P 能看到明文，P→N1/N2 是否再次用 TLS 要另定；证书验证的是相应**连接端点**，应用还需核用户身份与会话成员。代理可以报告自己产生的 502/504，也可以转发后端产生的状态；排障要记清**谁产生了响应、哪一跳已观察到什么**。[04.07 服务身份与应用授权](./07_tls_identity.md) · [RFC 9110：502/504](https://www.rfc-editor.org/rfc/rfc9110.html)\n2. 二、Host、路径与转发头：只有受信代理能提供来源线索: 代理可能改写目标 URL、Host、路径前缀和转发头。Go 标准库 `httputil.ReverseProxy` 提供 `Rewrite`、`SetURL` 和 `SetXForwarded` 等入口；**使用它们不等于自动信任原客户端传来的头**。`Forwarded`（标准化格式）或常见 `X-Forwarded-For` 可记录逐跳来源线索，但客户端可自己构造同名头；后端只能在**明确受信代理链、入口清洗和逐跳保护**下解释。IP 线索也不能代替登录身份、会话授权或 R9 的状态。[Go ReverseProxy 文档](https://pkg.go.dev/net/http/httputil) · [RFC 7239：Forwarded 安全考虑](https://www.rfc-editor.org/rfc/rfc7239.html) 纸上反例：`u-b` 自带 `X-Forwarded-For: 127.0.0.1`，若应用看到“像本机”就放行 `doc-private`，是信任边界错位。P 应按配置处理来自外部的头，后端按可信链验证；即便真实源 IP 确认，也仍须用应用身份判断 `u-b` 对 `doc-private` 或 `c-a` 的权限。[09.07 授权](../09_backend_security/07_authentication_authorization.md) 路径改写也会影响合同：把 `/v1/send` 错转成 `/v2/send`，或把\n3. 三、轮询、健康与粘性都救不了 S2 进程内存历史: 假设 P 先把 `m-1` 发到 N1，N1 返回 `200 accepted_in_memory`；随后 P 把 A 的历史查询分到 N2。N2 的本进程内存并不会自动拥有 N1 的 `m-1`。**轮询**是后端选择方法，不是复制或持久化机制；**粘性会话**若让 A 暂时回 N1，N1 一重启/失效仍可能丢这份内存状态。未来 S3 共享/持久数据若获批且真实实现，可另行改变数据边界，但目前只是提议。[09.02 当前与 S3](../09_backend_security/02_http_api_contract.md) · [08.03 复制与一致性](../08_distributed/03_replication_goals_costs.md) 负载策略可能按轮询、连接数、权重或健康状态选择，适用性受长连接数、请求成本和热会话分布影响。两条 WebSocket 长连接不必代表相同工作量；某实例“连接数少”也不证明它的队列、CPU 或下游 DB 健康。先定义要均衡的**资源与失败域**，再做实验；本章没有任何实际调度效果数据。[11.07 压测与容量](../11_reliability/07_load_testing_capacity.md)\n4. 四、健康探测回答“可否接流量”，不证明某消息成功: **健康探测**可问某实例端口是否可连、HTTP 路径能否回预期码、依赖是否具备接请求的条件。Envoy 官方资料区分多种主动探测与状态变化条件，说明“健康”本来就取决于探测定义。TCP 端口开着，可能仍无法核成员授权或写入状态；HTTP `/ready` 回 200，也不证明 B 收到 `m-1`。反过来，下游某项服务坏了，实例可能仍能完成别的只读任务；探测范围要与路由的任务类型相符。[Envoy：Health checking](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking) 探测频率、失败/恢复阈值与摘除时机影响误判和抖动；别把探测请求当用户动作运行，也别让“深度健康”造成实际消息写入。发布/过载时，健康探测与用户结果须分开记录。[11.08 SLO 与告警](../11_reliability/08_slo_alerting.md)\n5. 五、WebSocket 经过代理：一次握手后是长寿命双向通道: 在 HTTP/1.1 WebSocket 路径，客户端先请求升级，代理须正确处理升级协商与之后的双向字节传输；成功后连接可持续很久，P 的下游和上游各自占资源。代理若按普通短 HTTP 请求的空闲超时关闭上游，客户端看见断线，不意味着用户登出或业务消息被撤销。NGINX 官方说明 WebSocket 代理需要处理相应升级头与上游读超时；具体配置随所选代理和协议版本而变，本章只教观察边界，不复制生产配置。[NGINX：WebSocket proxying](https://nginx.org/en/docs/http/websocket.html) · [04.03 升级握手](./03_http_websocket_basics.md) 心跳可帮助发现某一段连接在特定时间窗口没有响应，却不能单凭 P 的连接存活推 B 当前在线/已读。若 N1 重启，P 是否把旧 WebSocket 自动“迁移”到 N2，要看协议和应用的重连/恢复设计，不能因 N2 健康就凭空恢复 N1 内存中的会话状态。[04.05 心跳与重连](./05_tcp_connection_lifecycle.md) 长连接还要限制连接数、空闲时间、每连接内存和慢消费者积压；代理前后流控/缓冲可能让“写入 P 成功”与“N1 已处理”出现较长间隔。04.06 的接收窗口/拥塞区分仍适用，应用确认点照旧独立。[04.06 流控与拥塞](./06_flow_congestion_control.md)\n6. 六、端到端预算和逐跳超时，重试可能放大未知结果: 纸上设用户请求总预算 **1000 ms**：名称/TLS/代理入站等先用 100 ms，上游处理最多计划 700 ms，余 200 ms 给传回和校验。只是**加法预算演练**，不是实测或推荐阈值。若 P 的单次上游超时设 700 ms，却允许两次串行尝试，每次都可能耗满，连同开销就超过总预算；还可能在两台实例各触发一次写动作。代理的“每次尝试超时”与“整个请求超时”必须同时审，且保留取消/排队开销。[Envoy：逐次与总超时](https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter) · [11.07 容量预算](../11_reliability/07_load_testing_capacity.md) 对只读查询，某些已验证幂等路径可以讨论有界重试；对当前 S2 **写消息**，N1 可能已 `accepted_in_memory`，P 却在收到响应前超时并回 504。若 P 自动把同 `message_id` 发 N2，N2 可能另受理一份；若再发 N1，当前同 ID 重复会是 **409**，不能把 409 当本次安全成功证明。没有权威操作结果查询/持久去重前，**504 是结果未知，不是“必未执行”**。[14.08 未知结果与幂等边界](../14_ai/08_tools_workflows_agents.md) · [RFC 9110：50\n7. 七、Go 代理入口与可观测证据应逐跳关联: 若学习者日后用 Go 设计代理，`net/http/httputil.ReverseProxy` 可作为了解转发、改写、上游 Transport、响应修改/错误处理的标准库入口；Go `http.Transport` 管理连接复用。它们提供机制，应用仍须定义受信转发头、目标范围、身份/权限、body 限额、重试条件与超时预算。不能因为库叫 ReverseProxy 就把它接进当前 IM 服务并宣布多实例可用。[Go ReverseProxy](https://pkg.go.dev/net/http/httputil) · [Go Transport](https://pkg.go.dev/net/http) 排障/评测卡至少关联**外部请求 ID、P 选的后端、下游/上游连接阶段、TLS/升级结果、逐跳超时与重试次数、响应产生者、后端业务确认点**；私有正文不进普通日志。若客户端看到 502/503/504，先看产生响应的层：RFC 9110 分别描述代理收到无效上游响应、服务暂不可用、代理等上游超时的含义；它们不自带 IM 写动作“未执行”证明。[RFC 9110：5xx](https://www.rfc-editor.org/rfc/rfc9110.html) · [11.03 日志指标 Trace](../11_reliability/03_logs_metrics_traces.md)\n8. 八、22 道分层练习：一条请求经过两段连接: 1–8 认代理与边界，9–16 推演多实例/超时，17–22 做重试与证据决策。答案只针对虚构 A/P/N1/N2 图。 按配置选择/转发到上游，再把响应带回；不自动完成业务存储或授权。</details> 不是；它们是逐跳连接，TLS 终止与再加密需分别定义。</details> 不能；传输 ACK 与 IM 应用/设备确认不同。</details> 不能；代理链、入口清洗和逐跳保护须明确，IP 也不等于用户授权。</details> 不能；服务端连接身份与应用对象权限不同。</details> 不能；只反映该探测路径/条件，范围取决于探测定义。</details> 不是；它只选后端，不把进程内存同步或持久化。</details> 不是；它继续作为长寿命双向通道，占逐跳连接资源。</details> 不必；当前 S2 200 仅说明 N1 本进程内存受理。</details> 不能；粘性不等于持久化。</details> 200 ms，仍要覆盖回传/核验等；数值非实测阈值。</details> 不能；还含前后开销，且写操作重试可能重复副作用。</details> 不能；上游响应未及时到 P，服务端执行状态可能未知。</details> 不能；当前 409 是重复冲突，需查原操作权威结果。</details> 不会；两进程内存互不自动同步，可能发生分裂/重复受理。</details> 不能；需查代理/上游 timeout、心跳和客户端重连。</details> 不能；当前与提议合",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

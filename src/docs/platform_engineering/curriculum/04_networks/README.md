@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[04.01 应用通信与分层](./01_application_communication_layers.md)已完成。它承接 03.01 的位/字节、03.02 的进程与 I/O，以及 03.04 的等待时间模型，从两个虚构 IM 用户的一条消息出发，分八节讲清协议、封装、成功确认点和带单位的单链路时延。[04.02 地址、名称与路由入口](./02_addresses_names_routes.md)继续从端点推导到 IP、端口、DNS 和分层失败。[04.03 HTTP 与 WebSocket 入门](./03_http_websocket_basics.md)从只读历史查询进入双向通道、握手、帧与业务确认。[04.04 可靠传输](./04_reliable_transport.md)纸上推演 TCP 序号、累计确认、重传、乱序和窗口。[04.05 TCP 与长连接生命周期](./05_tcp_connection_lifecycle.md)再讲握手、半关闭、重置、TIME_WAIT、心跳与重连。[04.06 流量与拥塞控制](./06_flow_congestion_control.md)区分慢接收设备与网络瓶颈，手算 BDP 和排队等待。[04.07 TLS 与身份](./07_tls_identity.md)补加密、证书、名称与代理逐跳边界。[04.08 Go 网络 I/O](./08_go_network_io.md)补短读短写、教学帧、deadline 与连接复用。八章各含 8 节与 22 道练习；04.09–04.12 仍按下方设计展开。
+[04.01 应用通信与分层](./01_application_communication_layers.md)已完成。它承接 03.01 的位/字节、03.02 的进程与 I/O，以及 03.04 的等待时间模型，从两个虚构 IM 用户的一条消息出发，分八节讲清协议、封装、成功确认点和带单位的单链路时延。[04.02 地址、名称与路由入口](./02_addresses_names_routes.md)继续从端点推导到 IP、端口、DNS 和分层失败。[04.03 HTTP 与 WebSocket 入门](./03_http_websocket_basics.md)从只读历史查询进入双向通道、握手、帧与业务确认。[04.04 可靠传输](./04_reliable_transport.md)纸上推演 TCP 序号、累计确认、重传、乱序和窗口。[04.05 TCP 与长连接生命周期](./05_tcp_connection_lifecycle.md)再讲握手、半关闭、重置、TIME_WAIT、心跳与重连。[04.06 流量与拥塞控制](./06_flow_congestion_control.md)区分慢接收设备与网络瓶颈，手算 BDP 和排队等待。[04.07 TLS 与身份](./07_tls_identity.md)补加密、证书、名称与代理逐跳边界。[04.08 Go 网络 I/O](./08_go_network_io.md)补短读短写、教学帧、deadline 与连接复用。[04.09 代理与负载均衡](./09_proxies_load_balancing.md)追逐跳信任、多实例内存、健康与重试预算。九章各含 8 节与 22 道练习；04.10–04.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -54,7 +54,7 @@ HTTP 查询、WebSocket 双向通信、帧与载荷、心跳、超时、TLS、�
 |---|---|---|
 | [04.07 TLS 与身份](./07_tls_identity.md) | 加密、完整性、证书、名称校验、握手；信任链与应用授权。 | 解释TLS保护的边界、证书名称与身份校验，再区分传输身份和会话授权。 |
 | [04.08 Go 网络 I/O](./08_go_network_io.md) | Reader/Writer、短读短写、帧、deadline、连接池和取消。 | 设计有大小上限的消息读取与写入，处理截断、部分读写、deadline和关闭。 |
-| 04.09 代理与负载均衡 | 反向代理、连接复用、健康探测、地址传播、超时预算。 | 追踪经过代理的连接与请求，说明健康探测、超时预算和重试叠加风险。 |
+| [04.09 代理与负载均衡](./09_proxies_load_balancing.md) | 反向代理、连接复用、健康探测、地址传播、超时预算。 | 追踪经过代理的连接与请求，说明健康探测、超时预算和重试叠加风险。 |
 
 ## 进阶层
 

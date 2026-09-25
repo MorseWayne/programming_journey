@@ -210,6 +210,7 @@ export default sidebar({
             "curriculum/04_networks/06_flow_congestion_control",
             "curriculum/04_networks/07_tls_identity",
             "curriculum/04_networks/08_go_network_io",
+            "curriculum/04_networks/09_proxies_load_balancing",
             "curriculum/04_networks/core"
           ]
         },

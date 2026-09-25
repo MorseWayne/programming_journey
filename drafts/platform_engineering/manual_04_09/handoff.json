@@ -1,0 +1,27 @@
+{
+  "chapter": "04.09",
+  "stage": "S2+ network engineering second pass",
+  "business_scope": "static reverse-proxy and load-balancing lesson using synthetic A/P/N1/N2 IM request paths",
+  "prerequisites": [
+    "04.03 HTTP and WebSocket upgrade",
+    "04.05 long-lived connection lifecycle",
+    "04.07 TLS endpoint identity",
+    "04.08 Go network I/O partial results",
+    "09.02 current S2 per-process acceptance"
+  ],
+  "first_pass": [
+    "draw client-to-proxy and proxy-to-backend as separate connections",
+    "treat Forwarded/X-Forwarded-For as trusted only through a configured proxy chain",
+    "show round-robin and sticky routing do not replicate or persist S2 memory",
+    "separate health probes from user task and device-ACK evidence"
+  ],
+  "second_pass": [
+    "trace WebSocket upgrade and proxy idle timeout across two connection legs",
+    "budget total request and per-try timeouts without multiplying retries",
+    "treat proxy 504 as possible unknown write outcome; same-ID 409 is not safe retry success",
+    "correlate external request ID, chosen backend, response source and business confirmation"
+  ],
+  "next_chapter": "04.10 HTTP versions and RPC",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

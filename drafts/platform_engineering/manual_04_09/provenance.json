@@ -1,0 +1,31 @@
+{
+  "chapter": "04.09",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against primary proxy/RFC/Go documentation and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "eb32692261fd0429b91f40345a4a28654923ab55f038d796430b736a4d4006fb",
+  "reviewed_sha256": "e60b5d1899d5c218e07507c87e42dcd65b842daf4faa43b2a8bb48e8ee268770",
+  "reviewed_characters": 9057,
+  "reviewed_chinese_characters": 3191,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/09_proxies_load_balancing.md",
+  "course_sha256": "05b5f461ba49b73259ca2a4e31ce6af8b0d896013ca993e1c9b2338cbebcbf09",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://pkg.go.dev/net/http/httputil",
+    "https://www.rfc-editor.org/rfc/rfc7239.html",
+    "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking",
+    "https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter",
+    "https://nginx.org/en/docs/http/websocket.html"
+  ]
+}
