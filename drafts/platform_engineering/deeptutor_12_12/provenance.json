@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_fb5daf38a8",
-  "page_id": "pg_fad57bf72c",
+  "book_id": "bk_cee31aa74a",
+  "page_id": "pg_65422ec7d9",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,25 +16,24 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/",
+      "https://tag-app-delivery.cncf.io/whitepapers/platform-eng-maturity-model/",
+      "https://dora.dev/capabilities/platform-engineering/",
+      "https://dora.dev/research/2024/dora-report/",
+      "https://sre.google/sre-book/eliminating-toil/",
       "https://kubernetes.io/docs/concepts/configuration/configmap/",
-      "https://kubernetes.io/docs/tutorials/configuration/updating-configuration-via-a-configmap/",
-      "https://kubernetes.io/docs/reference/using-api/server-side-apply/",
       "https://kubernetes.io/docs/concepts/security/rbac-good-practices/",
-      "https://kubernetes.io/docs/tasks/debug/debug-cluster/audit/",
-      "https://opengitops.dev/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "b05de130e971db23656dcab8b2b86a4050148bd5079499b3a7f7ec7456cefada",
-  "original_characters": 35584,
-  "generation_request_sha256": "4fd4fabbd6423fd692156f8f434132c020df28ccbbd52d3cab275d738d2fcc67",
-  "reviewed_sha256": "a04564548c70190b2d89a54fcf4500b1e86d27e6ca8b7141de29299e279c8595",
-  "reviewed_characters": 11588,
-  "reviewed_chinese_characters": 3883,
-  "course_file": "src/docs/platform_engineering/curriculum/12_platform/11_declarative_delivery.md",
-  "course_sha256": "1db87b52819c97c86ce37337798c1857b9293b0beff12ba147d064eae1f884d6"
+  "original_sha256": "fea883b7ef18161ad6289919ebf149429a7b66c538f49c9b70dadda29f89919a",
+  "original_characters": 29804,
+  "generation_request_sha256": "d8919fdb26a547e07ccf028b58970685c7bee1a37070f46f6e858763b0b0388e",
+  "reviewed_sha256": "ed3eb7a92b2db5bd61ca9e1422b1a87235c8f4376bd14e93d14fbb05b0724dc4",
+  "reviewed_characters": 10424,
+  "reviewed_chinese_characters": 4211,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/12_platform_as_product.md",
+  "course_sha256": "f149d027f12647fca91fbc1f6f371c75deda6ff07f5426badd463ef9706ed5c5"
 }

@@ -1,0 +1,32 @@
+{
+  "chapter": "12.12",
+  "stage": "S6–S7",
+  "business_scope": "static beginner-to-advanced platform-as-product lesson using a fictional second IM gateway team's onboarding needs",
+  "prerequisites": [
+    "11.01–11.03 workload signals and observability evidence",
+    "11.08 business SLO and alerting boundaries",
+    "12.07 configuration and RBAC",
+    "12.08–12.10 long connections, rollout and fault domains",
+    "12.11 declarative delivery and drift"
+  ],
+  "first_pass": [
+    "identify application developers and on-call staff as direct platform users",
+    "keep current S2 contract separate from future S3 and R9",
+    "make a golden path an input, output, error and ownership contract",
+    "distinguish safe defaults from IM-specific exceptions"
+  ],
+  "second_pass": [
+    "trace self-service from input validation through business acceptance and handoff",
+    "separate platform signals and application business signals",
+    "calculate conditional gross and net person-hours and effective self-service rate",
+    "review support, maintenance and feature-removal decisions",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.01 problem framing and stakeholders",
+    "learner's actual platform onboarding, incident and user feedback data"
+  ],
+  "next_chapter": "13.01 problem framing and stakeholders",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish a real platform product, onboarding duration, self-service rate or maintenance cost.",
+  "shared_integration_pending": []
+}

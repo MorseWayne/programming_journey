@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[12.01 运行环境与制品](./01_runtime_artifacts.md)已完成。它承接 01.09 的 Go 模块、10.08–10.10 的依赖/制品/回退及 03.11–03.12 的进程与资源边界，用虚构 IM 网关区分源提交、二进制、OCI 镜像、可变标签、内容摘要、运行配置和外部数据。[12.02 容器机制](./02_container_mechanisms.md)再把镜像层、容器可写层、volume、namespace/cgroup 与 PID 1 关停接到 IM 状态重建。[12.03 本地多服务环境](./03_local_multi_service.md)用服务名、端口、健康与就绪串起纸上 gateway/db/events。[12.04 集群控制模型](./04_cluster_control_model.md)用三副本网关说明 spec/status、控制器、调度与业务自愈边界。[12.05 工作负载与服务发现](./05_workloads_service_discovery.md)按 gateway、transfer、db 和迁移任务的状态责任选择对象及入口。[12.06 资源与持久存储](./06_resources_persistent_storage.md)手算 request/limit，区分 CPU 节流、OOM、Pod 临时卷与 PV/PVC。[12.07 配置与权限](./07_config_permissions.md)分清非秘密配置、Secret、SA/RBAC、网络策略与 IM 成员授权。[12.08 启动、探针与退出](./08_startup_probes_exit.md)用 P1→P4 摘流案例拆 startup/readiness/liveness 与有界排空。[12.09 发布与回滚](./09_release_rollback.md)以 D1→D2 纸上变更审滚动预算、金丝雀曝光与多轴回退。[12.10 扩缩容与故障域](./10_autoscaling_fault_domains.md)手算 HPA、Pod/Node N−1 与重连尖峰。[12.11 声明式交付与可重复环境](./11_declarative_delivery.md)沿非秘密 IM 配置变更解释 GitOps、配置生效、漂移与审计。十一章各含 8 节讲解、22 道分层练习；12.12 仍按下方设计展开。
+[12.01 运行环境与制品](./01_runtime_artifacts.md)已完成。它承接 01.09 的 Go 模块、10.08–10.10 的依赖/制品/回退及 03.11–03.12 的进程与资源边界，用虚构 IM 网关区分源提交、二进制、OCI 镜像、可变标签、内容摘要、运行配置和外部数据。[12.02 容器机制](./02_container_mechanisms.md)再把镜像层、容器可写层、volume、namespace/cgroup 与 PID 1 关停接到 IM 状态重建。[12.03 本地多服务环境](./03_local_multi_service.md)用服务名、端口、健康与就绪串起纸上 gateway/db/events。[12.04 集群控制模型](./04_cluster_control_model.md)用三副本网关说明 spec/status、控制器、调度与业务自愈边界。[12.05 工作负载与服务发现](./05_workloads_service_discovery.md)按 gateway、transfer、db 和迁移任务的状态责任选择对象及入口。[12.06 资源与持久存储](./06_resources_persistent_storage.md)手算 request/limit，区分 CPU 节流、OOM、Pod 临时卷与 PV/PVC。[12.07 配置与权限](./07_config_permissions.md)分清非秘密配置、Secret、SA/RBAC、网络策略与 IM 成员授权。[12.08 启动、探针与退出](./08_startup_probes_exit.md)用 P1→P4 摘流案例拆 startup/readiness/liveness 与有界排空。[12.09 发布与回滚](./09_release_rollback.md)以 D1→D2 纸上变更审滚动预算、金丝雀曝光与多轴回退。[12.10 扩缩容与故障域](./10_autoscaling_fault_domains.md)手算 HPA、Pod/Node N−1 与重连尖峰。[12.11 声明式交付与可重复环境](./11_declarative_delivery.md)沿非秘密 IM 配置变更解释 GitOps、配置生效、漂移与审计。[12.12 平台作为产品](./12_platform_as_product.md)以虚构新网关接入评估契约、默认值、自助率与维护成本。十二章各含 8 节讲解、22 道分层练习，已完成本卷独立章稿。
 
 ## IM 主线中的位置
 
@@ -63,7 +63,7 @@ date: 2026-09-23
 |---|---|---|
 | [12.10 扩缩容与故障域](./10_autoscaling_fault_domains.md) | 水平/垂直扩容、指标滞后、节点分布、可用区与中断。 | 估计节点退出和重连突发所需余量，处理扩容指标滞后与故障域分布。 |
 | [12.11 声明式交付与可重复环境](./11_declarative_delivery.md) | 配置分层、模板、GitOps 思想、漂移、权限与审计。 | 从一次IM配置变更追踪到制品、权限和运行状态，解释漂移与审计。 |
-| 12.12 平台作为产品 | 接入契约、默认配置、可观测性、自助流程与维护负担。 | 以接入、升级和排障成本评估平台默认能力，避免只按组件数量评价平台。 |
+| [12.12 平台作为产品](./12_platform_as_product.md) | 接入契约、默认配置、可观测性、自助流程与维护负担。 | 以接入、升级和排障成本评估平台默认能力，避免只按组件数量评价平台。 |
 
 ## 本卷综合任务
 
