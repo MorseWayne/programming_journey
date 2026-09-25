@@ -1,0 +1,32 @@
+{
+  "chapter": "14.03",
+  "stage": "S3+ optional AI branch",
+  "business_scope": "static beginner language-model foundations lesson using synthetic IM contract and document-access questions",
+  "prerequisites": [
+    "14.01 Python data provenance and UTF-8 byte boundaries",
+    "14.02 vectors, conditional probability and train/validation intuition",
+    "09.02 current S2 HTTP contract",
+    "09.07 application and document authorization"
+  ],
+  "first_pass": [
+    "separate generated text from IM request, storage, device and permission evidence",
+    "explain that two characters and six UTF-8 bytes do not determine a tokenizer's token count",
+    "distinguish human toy features, model token embeddings and retrieval document embeddings",
+    "derive a toy next-token distribution and greedy versus sampled continuation"
+  ],
+  "second_pass": [
+    "limit the 32-token arithmetic to an explicitly fictional request budget",
+    "separate training weight updates from inference-time prompts and retrieval context",
+    "require authorized current sources for q-01 and abstention or clarification for undecided q-02",
+    "preserve current S2 acceptance, future S3 storage and pending R9 from model output",
+    "prepare version and failure cards for the 14.09 baseline"
+  ],
+  "not_yet_prerequisites": [
+    "14.09 dataset and keyword baseline first pass",
+    "14.04 Transformer internals and inference path",
+    "actual model, tokenizer and permission-filtered corpus evidence"
+  ],
+  "next_chapter": "14.09 evaluation and data engineering baseline first pass",
+  "upstream_inspection": "No OpenIM implementation claim is needed. Toy tokens, probabilities and window size are fabricated, and current IM behavior is referenced only from the course HTTP contract.",
+  "shared_integration_pending": []
+}

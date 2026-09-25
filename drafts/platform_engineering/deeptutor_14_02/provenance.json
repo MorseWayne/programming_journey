@@ -29,9 +29,9 @@
   "original_sha256": "5ef85bc4bfb848bd6f4d41bb36f1eacfdf401b2a089a29bbcf41bf819f4b36c0",
   "original_characters": 30120,
   "generation_request_sha256": "6e1283ffce521348b6b516d08c7179a1e91084927f74a7893d6aee3621ab96ae",
-  "reviewed_sha256": "ee164518595d0d3731811ae3103f235fbbec4676e1006c3d6bfad1153268a65a",
-  "reviewed_characters": 9401,
-  "reviewed_chinese_characters": 3353,
+  "reviewed_sha256": "ae2652074a319a24cfca77c9ce2d05bb63f58fea5534cf92b5a55bb61ca0b2cb",
+  "reviewed_characters": 9493,
+  "reviewed_chinese_characters": 3354,
   "course_file": "src/docs/platform_engineering/curriculum/14_ai/02_math_ml_intuition.md",
-  "course_sha256": "c3d1400f92d860b186800dee759e1863ecbcd949d87cdf76792fcf6bdb3ffed0"
+  "course_sha256": "a15889e09d132322520d49dabd6fcc8b37400c5ac8d425d2c34710663d886fd7"
 }

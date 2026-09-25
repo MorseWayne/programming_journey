@@ -1,0 +1,73 @@
+{
+  "code": "14.03",
+  "title": "语言模型基础：会生成下一词为什么仍可能答错IM合同",
+  "chapter_id": "ch_language_model_foundations",
+  "summary": "面向Go/Python初学者，以虚构IM资料问题解释token、embedding、序列预测、上下文、训练/推理与证据/权限边界。",
+  "objectives": [
+    "区分模型token与UTF-8字节和字符",
+    "理解token ID到学习向量与人工特征的差别",
+    "解读玩具下一token分布和解码",
+    "估纸上上下文预算和截断风险",
+    "区分训练、推理、提示、微调和检索",
+    "用当前IM合同/权限证据验证或拒答模型输出"
+  ],
+  "sources": [
+    "https://developers.google.com/machine-learning/crash-course/llm",
+    "https://developers.google.com/machine-learning/crash-course/embeddings",
+    "https://developers.google.com/machine-learning/crash-course/embeddings/obtaining-embeddings",
+    "https://developers.google.com/machine-learning/crash-course/llm/tuning",
+    "https://huggingface.co/learn/llm-course/chapter2/4",
+    "https://huggingface.co/learn/agents-course/en/unit1/what-are-llms"
+  ],
+  "sections": [
+    {
+      "title": "一、语言模型与IM业务系统各回答不同问题",
+      "words": 3300,
+      "focus": "Go/Python初学者承接14.01虚构JSONL和14.02手算。当前S2/v1正文非空最多6 UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。语言模型估计token序列分布，生成文本不是消息入库/设备ACK/访问许可；举q-01问当前6B、q-02问B有权看文档规则未定。"
+    },
+    {
+      "title": "二、token不是字符/UTF8字节/单词",
+      "words": 3400,
+      "focus": "文本经特定tokenizer版本转token ID，可能词/子词/标点/字节片段等；“你好”len字符2、UTF8 6B，但token数因模型/词表而变，绝不可按6B推token数。玩具词表t6/t9/tU明确非真实模型，tokenizer与模型版本必须匹配。引用Google MLCC及HuggingFace官方教程。"
+    },
+    {
+      "title": "三、embedding与序列位置",
+      "words": 3400,
+      "focus": "14.02二维人工特征不是模型embedding；模型将token ID映到学习的向量，位置/上下文使相同词在不同句子含义可能不同。输入token embedding与专门用于检索的文档embedding不保证相同空间/可直接比较。按顺序读上下文，改变前文/资料会改变后续分布；14.04才展开注意力机制和KV。"
+    },
+    {
+      "title": "四、下一token分布、解码与真实性",
+      "words": 3400,
+      "focus": "纸上玩具前缀“当前/v1正文上限为”，自造toy-token t6概率0.7、t9概率0.2、tU概率0.1，总和1，非任何模型真实分数；贪心选t6，采样可能选t9，连续追加直到停止条件/预算。即使概率高也不是事实置信度，若R9待审、过期资料写9，必须核09.02当前合同和引用，不能只看模型输出。"
+    },
+    {
+      "title": "五、上下文窗口、截断与业务记忆不同",
+      "words": 3400,
+      "focus": "模型一次请求可处理的token上下文有限且模型/接口计数方式不同；纸上窗口32token、指令6、证据18、问题4→理想最多4输出token（忽略特殊token/开销，仅示意），截断可能丢权限/版本/来源。长IM会话不等于模型永久记忆，真实历史权威与访问控制由应用管理；摘要可能漏事实，需可引用来源和时效。"
+    },
+    {
+      "title": "六、训练、推理、提示、检索的责任",
+      "words": 3400,
+      "focus": "训练调参数，推理用既定参数条件生成；提示改变输入上下文不自动改变参数，微调才另做训练，RAG在推理时注入经授权检索资料但不自动证明答案。预训练知识可能过期/混杂，示意q-01查当前6B而不是生成9；q-02历史成员规则未定则拒答或说明缺规则，非成员404不能交模型决定。"
+    },
+    {
+      "title": "七、版本与失败卡：从候选文字到可答产品",
+      "words": 3300,
+      "focus": "记录tokenizer/model/提示/资料版本、用户身份/权限过滤、上下文预算、采样设置、引用证据与拒答条件；失败卡：token计数错截断、检索doc过期、模型输出旧R9为9B、模型伪造seq9送达、无权doc进提示。14.09先建立问题集和关键词基线，14.04再讲Transformer，14.05提示/14.06检索。全部静态未调用模型。"
+    },
+    {
+      "title": "八、22题分层练习",
+      "words": 3200,
+      "focus": "基础8/推演8/决策6附答案：token vs字符/字节、2字符6B与未知token数、embedding与14.02人工向量、0.7/0.2/0.1分布/贪心/采样、32-6-18-4=4纸上预算、训练/推理/提示/检索、模型文字与S2/S3/B边界、旧9B错误、未定权限拒答和版本证据。静态不运行Python/Go/IM/模型/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.03 语言模型基础》，Go/Python初学者八节丰富理论、虚构IM资料助手由浅入深、22题附答案。承接14.01虚构JSONL与14.02向量/概率/数据划分。当前S2/v1合同固定正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9 6→9B待审，模型输出不能改业务事实或授权。语言模型估计token序列条件分布，文本经模型特定tokenizer转ID，再查学习的向量表示，经上下文条件产生下一token分布并按解码策略连续选token；不要在此展开Transformer细节（14.04）。token不是字符、词或UTF8字节的固定换算：“你好”字符数2、UTF8 6B，但具体token数未知需固定tokenizer/model版本核。14.02二维人工[字节限制,权限]不是训练embedding；模型输入token embedding与检索文档embedding不保证同模型/同空间。玩具前缀“当前/v1正文上限为”自造toy tokens t6/t9/tU概率0.7/0.2/0.1，合计1；贪心选t6，采样可选t9；概率不是事实正确率/权限置信度，真实当前合同从09.02核，R9待审。纸上一次窗口32token，指令6/有权证据18/问题4，理想剩4输出token（不含特殊token/协议开销），不是任何产品真实窗口；长IM会话不是模型永久记忆，截断可能丢来源/权限/版本，应用保留权威历史和按成员授权。训练调参数、推理用参数生成；提示改变上下文不自动更新权重，微调另训练，RAG在推理时注入经授权资料但仍需引用核证。q-01问当前/v1 6B，模型若输出9B是错误；q-02问B有权读某文档，成员历史规则未定应说明未知/拒答，不能由相似度判断。记录tokenizer/model/提示/资料/权限/采样版本与上下文预算，14.09先固定问题集和关键词基线再比较方案。只写静态教材，不调用模型、不运行Python/Go/IM/站点。\n1. 一、语言模型与IM业务系统各回答不同问题: Go/Python初学者承接14.01虚构JSONL和14.02手算。当前S2/v1正文非空最多6 UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。语言模型估计token序列分布，生成文本不是消息入库/设备ACK/访问许可；举q-01问当前6B、q-02问B有权看文档规则未定。\n2. 二、token不是字符/UTF8字节/单词: 文本经特定tokenizer版本转token ID，可能词/子词/标点/字节片段等；“你好”len字符2、UTF8 6B，但token数因模型/词表而变，绝不可按6B推token数。玩具词表t6/t9/tU明确非真实模型，tokenizer与模型版本必须匹配。引用Google MLCC及HuggingFace官方教程。\n3. 三、embedding与序列位置: 14.02二维人工特征不是模型embedding；模型将token ID映到学习的向量，位置/上下文使相同词在不同句子含义可能不同。输入token embedding与专门用于检索的文档embedding不保证相同空间/可直接比较。按顺序读上下文，改变前文/资料会改变后续分布；14.04才展开注意力机制和KV。\n4. 四、下一token分布、解码与真实性: 纸上玩具前缀“当前/v1正文上限为”，自造toy-token t6概率0.7、t9概率0.2、tU概率0.1，总和1，非任何模型真实分数；贪心选t6，采样可能选t9，连续追加直到停止条件/预算。即使概率高也不是事实置信度，若R9待审、过期资料写9，必须核09.02当前合同和引用，不能只看模型输出。\n5. 五、上下文窗口、截断与业务记忆不同: 模型一次请求可处理的token上下文有限且模型/接口计数方式不同；纸上窗口32token、指令6、证据18、问题4→理想最多4输出token（忽略特殊token/开销，仅示意），截断可能丢权限/版本/来源。长IM会话不等于模型永久记忆，真实历史权威与访问控制由应用管理；摘要可能漏事实，需可引用来源和时效。\n6. 六、训练、推理、提示、检索的责任: 训练调参数，推理用既定参数条件生成；提示改变输入上下文不自动改变参数，微调才另做训练，RAG在推理时注入经授权检索资料但不自动证明答案。预训练知识可能过期/混杂，示意q-01查当前6B而不是生成9；q-02历史成员规则未定则拒答或说明缺规则，非成员404不能交模型决定。\n7. 七、版本与失败卡：从候选文字到可答产品: 记录tokenizer/model/提示/资料版本、用户身份/权限过滤、上下文预算、采样设置、引用证据与拒答条件；失败卡：token计数错截断、检索doc过期、模型输出旧R9为9B、模型伪造seq9送达、无权doc进提示。14.09先建立问题集和关键词基线，14.04再讲Transformer，14.05提示/14.06检索。全部静态未调用模型。\n8. 八、22题分层练习: 基础8/推演8/决策6附答案：token vs字符/字节、2字符6B与未知token数、embedding与14.02人工向量、0.7/0.2/0.1分布/贪心/采样、32-6-18-4=4纸上预算、训练/推理/提示/检索、模型文字与S2/S3/B边界、旧9B错误、未定权限拒答和版本证据。静态不运行Python/Go/IM/模型/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
