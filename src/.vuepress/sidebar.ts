@@ -333,6 +333,7 @@ export default sidebar({
             "curriculum/11_reliability/02_distributions_statistics",
             "curriculum/11_reliability/03_logs_metrics_traces",
             "curriculum/11_reliability/04_diagnostic_method",
+            "curriculum/11_reliability/05_cpu_memory_performance",
             "curriculum/11_reliability/core"
           ]
         },

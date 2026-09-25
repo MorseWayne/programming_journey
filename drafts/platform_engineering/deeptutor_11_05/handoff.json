@@ -1,0 +1,34 @@
+{
+  "chapter": "11.05",
+  "stage": "S4",
+  "business_scope": "static beginner-to-advanced Go CPU and memory performance lesson for fictional IM in-memory acceptance latency",
+  "prerequisites": [
+    "11.01 business confirmation points and denominators",
+    "11.02 distributions and missing samples",
+    "11.04 workload, USE and falsifiable diagnosis",
+    "05.05 Go scheduler",
+    "05.06–05.07 Go memory lifecycle and garbage collection",
+    "03.06 address space, allocations and RSS"
+  ],
+  "first_pass": [
+    "distinguish CPU seconds, wall time, cgroup quota and goroutine waiting",
+    "calculate per-request allocation rate in KiB and MiB",
+    "separate cumulative allocations, live heap and RSS",
+    "keep S2 in-memory acceptance separate from proposed S3 and future device delivery"
+  ],
+  "second_pass": [
+    "choose CPU, alloc, heap, block, mutex or trace based on a falsifiable hypothesis",
+    "use an explicitly simplified effective allocation budget to reason about GC frequency",
+    "explain GOGC and GOMEMLIMIT CPU-memory tradeoffs and soft-limit boundaries",
+    "review copy removal or pooling for ownership, concurrency, peak memory and business correctness",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.06 I/O and network performance",
+    "11.07 load testing and capacity",
+    "learner's actual controlled Go profiles and runtime measurements"
+  ],
+  "next_chapter": "11.06 I/O and network performance",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish producer ACK level, CPU or GC hotspot, or device receipt.",
+  "shared_integration_pending": []
+}

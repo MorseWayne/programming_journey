@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_36c2a93939",
-  "page_id": "pg_b1f421cd13",
+  "book_id": "bk_13cce71c28",
+  "page_id": "pg_43be5f6dd4",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,22 +16,22 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://www.brendangregg.com/usemethod.html",
-      "https://www.brendangregg.com/methodology.html",
-      "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "https://go.dev/doc/gc-guide",
       "https://go.dev/doc/diagnostics",
+      "https://go.dev/blog/pprof",
+      "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "0aebe1dc74c7035c4b1346e4b4ebe1b5b87aca2a120ed38f49b4c89164701b3c",
-  "original_characters": 30674,
-  "generation_request_sha256": "9a4e615086b09f1b0fbe54edc35ea908fa7227111151e8038ed3e572f1ab1a7e",
-  "reviewed_sha256": "d384d1566d29e311ce1cacb4b32d892d94ae943a2fab53fbae85b70173813f4d",
-  "reviewed_characters": 9920,
-  "reviewed_chinese_characters": 4251,
-  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/04_diagnostic_method.md",
-  "course_sha256": "b935eaec1dde7cff8456ea08c896d63067ede609aad96e1fbcf201f0818d740b"
+  "original_sha256": "b3fafa7e7c044bab28bf7fb8824f16baf81d96e35696aef817456c73c0ca1428",
+  "original_characters": 30533,
+  "generation_request_sha256": "b0eca499ee17361868adf49031508ae95377707b9d2dbe00001d5636f704e037",
+  "reviewed_sha256": "492e7efc943562c4fea75d4a73f9dcd2fafb7861b3a43bca5a75b1f802b7a041",
+  "reviewed_characters": 10363,
+  "reviewed_chinese_characters": 4012,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/05_cpu_memory_performance.md",
+  "course_sha256": "06b5d5062694136bbc9de6a9b09b33fcfd34f880006707f89daba3bc56242a6e"
 }

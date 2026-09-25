@@ -1,0 +1,73 @@
+{
+  "code": "11.05",
+  "title": "CPU与内存性能：一次消息变慢是算力、分配还是等待",
+  "chapter_id": "ch_cpu_memory_performance",
+  "summary": "面向Go初学者，把IM受理变慢放进同口径负载，区分CPU、调度、分配、存活堆与GC的证据。",
+  "objectives": [
+    "区分CPU时间、墙钟、配额和调度等待",
+    "阅读CPU profile的证据范围",
+    "计算每请求分配与每秒速率",
+    "区分累计分配、存活堆和RSS",
+    "解释GOGC与GOMEMLIMIT取舍",
+    "用业务结果验证一项优化"
+  ],
+  "sources": [
+    "https://go.dev/doc/gc-guide",
+    "https://go.dev/doc/diagnostics",
+    "https://go.dev/blog/pprof",
+    "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、CPU与内存慢先锁定业务窗口",
+      "words": 2900,
+      "focus": "承接11.04 A等S2/v1 200内存受理变慢。固定请求尝试、成功/拒绝/在途、P95、实例和时间窗；未来群扇出/S5仅扩展，不能混进当前受理结果。"
+    },
+    {
+      "title": "二、Go任务、CPU配额与调度等待",
+      "words": 3100,
+      "focus": "从CPU时间/墙上时间/核秒/容器配额/宿主CPU区别讲起；Go goroutine可运行、运行、阻塞，GOMAXPROCS是同时执行Go代码的并行度，不等于CPU配额；解释单核热点、调度等待、CFS节流的候选证据。"
+    },
+    {
+      "title": "三、计算热点与CPU profile",
+      "words": 3000,
+      "focus": "群扇出、序列化、签名、排序可能增加CPU工作；CPU profile仅采样真正消耗CPU的时间，不直接显示I-O/锁等待；比较相同负载下总CPU秒/成功消息和函数flat/cum，避免只看百分比。"
+    },
+    {
+      "title": "四、分配速率与存活堆的两本账",
+      "words": 3200,
+      "focus": "纸上每实例200请求/s，100KiB/req约19.5MiB/s，300KiB/req约58.6MiB/s；live heap约80MiB不变、RSS上升不能直接判泄漏。区分alloc profile总分配、heap profile存活、Go堆/RSS/外部内存。"
+    },
+    {
+      "title": "五、GC CPU与内存取舍",
+      "words": 3200,
+      "focus": "Go GC guide GOGC影响目标堆、CPU与内存；用简化live80MiB、有效新分配预算80MiB、20与60MiB/s近似算周期4s与1.33s，仅教学估算；GOMEMLIMIT是Go运行时管理内存软限制，非RSS/容器硬上限；调大GOGC/放宽limit可能增加峰值和OOM风险，不能盲调。"
+    },
+    {
+      "title": "六、从证据选CPU/heap/alloc/block/mutex/trace",
+      "words": 3100,
+      "focus": "同窗口采容器usage/quota/throttled、请求率、分配率、GC周期/CPU、堆存活与RSS；CPU profile回答计算，alloc回答分配来源，heap回答存活，block/mutex回答等待，trace看调度/GC阶段；说明采样开销和不能由一个profile证明业务根因。"
+    },
+    {
+      "title": "七、小步优化与业务回归",
+      "words": 3000,
+      "focus": "假设复制正文造成短命分配，对照零拷贝/预分配/池化的所有权、生命周期与数据竞态风险，不能为省分配破坏消息身份/权限/正文不可变；单变量对照吞吐、成功、尾延迟、GC CPU、RSS/峰值、回退；S3/S5另测。"
+    },
+    {
+      "title": "八、22题分层练习与交付",
+      "words": 3000,
+      "focus": "基础8/推导8/评审6；答案覆盖CPU秒vs墙时、配额/宿主、GOMAXPROCS、profile盲区、20MiB/s算式、alloc vs inuse、GC估算、GOGC/GOMEMLIMIT边界、RSS、池化所有权、业务成功点、OpenIM证据限制。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《11.05 CPU与内存性能》，面向Go初学者，八节丰富理论由浅入深，22题分层答案。沿11.04虚构病例：A点击发送到收到S2/v1 200 accepted_in_memory变慢；当前S2/v1正文非空最多6 UTF-8 B、原始HTTP请求正文最多4096B、同ID重复409、非成员隐藏404、200仅本进程内存受理。未来S3/v2 stored_in_teaching_db是提议仍6B，R9 6→9B待审；未来群扇出和设备送达不能当当前承诺。区分CPU核秒/墙钟、宿主CPU/容器配额、GOMAXPROCS/CPU限额与可运行goroutine等待。CPU profile只见运行时CPU消耗，等待要block/mutex/trace等证据。纸上200请求/s，每请求分配100KiB约19.5MiB/s，300KiB约58.6MiB/s；live heap保持80MiB不证明无短命分配，RSS增加也不直接证明Go堆泄漏。教学简化有效新分配预算80MiB，20MiB/s与60MiB/s分别约4s与1.33s触发周期，仅估算不是Go精准GC公式。GOGC在CPU与内存取舍，GOMEMLIMIT是Go runtime管理内存软限制，不是RSS/容器硬限；盲调可能增峰值。比较CPU/alloc/heap/block/mutex profile与trace证据，分阶段小步优化，避免对象池复用破坏正文所有权与并发安全。公开OpenIM固定send.go MsgToMQ与另一Mongo BatchInsert只说明异步边界，不证明真实性能瓶颈。所有值虚构，不运行Go、IM、剖析、压测或站点。\n1. 一、CPU与内存慢先锁定业务窗口: 承接11.04 A等S2/v1 200内存受理变慢。固定请求尝试、成功/拒绝/在途、P95、实例和时间窗；未来群扇出/S5仅扩展，不能混进当前受理结果。\n2. 二、Go任务、CPU配额与调度等待: 从CPU时间/墙上时间/核秒/容器配额/宿主CPU区别讲起；Go goroutine可运行、运行、阻塞，GOMAXPROCS是同时执行Go代码的并行度，不等于CPU配额；解释单核热点、调度等待、CFS节流的候选证据。\n3. 三、计算热点与CPU profile: 群扇出、序列化、签名、排序可能增加CPU工作；CPU profile仅采样真正消耗CPU的时间，不直接显示I-O/锁等待；比较相同负载下总CPU秒/成功消息和函数flat/cum，避免只看百分比。\n4. 四、分配速率与存活堆的两本账: 纸上每实例200请求/s，100KiB/req约19.5MiB/s，300KiB/req约58.6MiB/s；live heap约80MiB不变、RSS上升不能直接判泄漏。区分alloc profile总分配、heap profile存活、Go堆/RSS/外部内存。\n5. 五、GC CPU与内存取舍: Go GC guide GOGC影响目标堆、CPU与内存；用简化live80MiB、有效新分配预算80MiB、20与60MiB/s近似算周期4s与1.33s，仅教学估算；GOMEMLIMIT是Go运行时管理内存软限制，非RSS/容器硬上限；调大GOGC/放宽limit可能增加峰值和OOM风险，不能盲调。\n6. 六、从证据选CPU/heap/alloc/block/mutex/trace: 同窗口采容器usage/quota/throttled、请求率、分配率、GC周期/CPU、堆存活与RSS；CPU profile回答计算，alloc回答分配来源，heap回答存活，block/mutex回答等待，trace看调度/GC阶段；说明采样开销和不能由一个profile证明业务根因。\n7. 七、小步优化与业务回归: 假设复制正文造成短命分配，对照零拷贝/预分配/池化的所有权、生命周期与数据竞态风险，不能为省分配破坏消息身份/权限/正文不可变；单变量对照吞吐、成功、尾延迟、GC CPU、RSS/峰值、回退；S3/S5另测。\n8. 八、22题分层练习与交付: 基础8/推导8/评审6；答案覆盖CPU秒vs墙时、配额/宿主、GOMAXPROCS、profile盲区、20MiB/s算式、alloc vs inuse、GC估算、GOGC/GOMEMLIMIT边界、RSS、池化所有权、业务成功点、OpenIM证据限制。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
