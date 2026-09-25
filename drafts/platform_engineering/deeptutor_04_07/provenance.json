@@ -27,9 +27,9 @@
   "original_sha256": "8de55f04df21c19d67f2771a381afb53814a761fc32f2f088079463220f487e9",
   "original_characters": 32567,
   "generation_request_sha256": "a15b917c0d7fbf693d5def603ef357868196c0151ad21f60204b2f43529db0bb",
-  "reviewed_sha256": "f4debd8a08b0c8ded3d3753b3de9e3970b46854a0ecc9fc24f0d431588034dc0",
-  "reviewed_characters": 7864,
-  "reviewed_chinese_characters": 3741,
+  "reviewed_sha256": "20e3b753e19ac370f8ba72ce7a99ab3d8a80d0b1c9e7b20d3b03657966e78c74",
+  "reviewed_characters": 7978,
+  "reviewed_chinese_characters": 3756,
   "course_file": "src/docs/platform_engineering/curriculum/04_networks/07_tls_identity.md",
-  "course_sha256": "7bb56d6848dbd64d7eebfa9d2c2c02cdd7dd10f557e05734e3e1f1a0c86c21b7"
+  "course_sha256": "cb67d26ee99a66502444f166b46000a20188d4250a5e0e0234c4ac84ea7223bc"
 }

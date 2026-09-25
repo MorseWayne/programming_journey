@@ -1,0 +1,31 @@
+{
+  "chapter": "04.08",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against Go standard-library documentation and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "2adf3ccd7f5c906fbe15559b4195b3fd8e512946336f6d714fb8652fae4835b5",
+  "primary_sources": [
+    "https://pkg.go.dev/io",
+    "https://pkg.go.dev/net",
+    "https://pkg.go.dev/net/http",
+    "https://pkg.go.dev/context",
+    "https://pkg.go.dev/encoding/binary",
+    "https://pkg.go.dev/unicode/utf8"
+  ],
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "reviewed_sha256": "95ac6def4d275d3f243dddd5290ae7b1601a08757ccb923b1095bac7f180b89d",
+  "reviewed_characters": 9972,
+  "reviewed_chinese_characters": 3040,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/08_go_network_io.md",
+  "course_sha256": "e7f686af144382e8df67780c6c6b3a59ab4de54ea4cea453ac60e616003029b3"
+}

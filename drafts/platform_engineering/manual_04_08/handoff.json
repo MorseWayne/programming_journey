@@ -1,0 +1,27 @@
+{
+  "chapter": "04.08",
+  "stage": "S2+ network engineering second pass",
+  "business_scope": "static Go network I/O lesson using a synthetic six-byte IM body and separate teaching frame",
+  "prerequisites": [
+    "01.07-01.08 errors, resources and io.Reader/Writer",
+    "04.03 HTTP and WebSocket framing distinction",
+    "04.04 TCP ordered byte stream",
+    "04.05 connection lifecycle and 04.07 TLS identity",
+    "09.02 current S2 HTTP contract"
+  ],
+  "first_pass": [
+    "distinguish TCP reads and writes from application message boundaries",
+    "hand-calculate a 2-byte length plus six-byte UTF-8 teaching frame",
+    "use ReadFull and validate length before allocating payload",
+    "interpret short write and EOF as partial I/O rather than business results"
+  ],
+  "second_pass": [
+    "separate DialContext, established-connection deadlines, close and cancellation",
+    "serialize application frames despite net.Conn method concurrency",
+    "bound HTTP raw body and decoded body independently",
+    "classify DNS, TCP, TLS, frame, deadline and S2 business confirmation failures"
+  ],
+  "next_chapter": "04.09 proxy and load balancing",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

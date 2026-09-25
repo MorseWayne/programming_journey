@@ -201,4 +201,4 @@ TLS 会话密钥的对称认证加密；证书公钥不是逐条聊天正文的�
 - [Go `crypto/tls`](https://pkg.go.dev/crypto/tls)与[`crypto/x509`](https://pkg.go.dev/crypto/x509)：`ServerName`、根信任和证书名称的 Go API 入口。
 - [MDN：TLS](https://developer.mozilla.org/en-US/docs/Web/Security/Defenses/Transport_Layer_Security)：浏览器 HTTPS 场景和传输保护边界。
 
-按[学习路线](../learning_path.md)，04.04–04.07 的传输、连接、流控和 TLS 前置已成章，下一步进入[09.12 完整教学 IM 服务项目课程](../09_backend_security/12_im_service_capstone.md)。离开本章前，应能分别回答：**这条连接加密到哪里、验证了哪个服务名称、应用用户是谁、有权操作哪个会话，以及 `m-a` 已达到什么业务确认点**。
+按[学习路线](../learning_path.md)，04.04–04.07 的传输、连接、流控和 TLS 前置已成章，下一步进入[09.12 完整教学 IM 服务项目课程](../09_backend_security/12_im_service_capstone.md)；具备后续工程前置后回本卷学[04.08 Go 网络 I/O](./08_go_network_io.md)。离开本章前，应能分别回答：**这条连接加密到哪里、验证了哪个服务名称、应用用户是谁、有权操作哪个会话，以及 `m-a` 已达到什么业务确认点**。
