@@ -1,0 +1,31 @@
+{
+  "chapter": "14.12",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses observed, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against listed primary sources and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "672d9426b3c48460ee67468923e3ec7929806ec061b0b0b4def5bc555fd0a84c",
+  "reviewed_sha256": "49e220652d975b2ce47c58aa8d5a8e5d1cc59692d7c3320a91a9f2ec799d9859",
+  "reviewed_characters": 8866,
+  "reviewed_chinese_characters": 3540,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/12_sustainable_delivery.md",
+  "course_sha256": "86050fff9290ede7d5e52535ed77451b6abe01d1d5a211c466f8b783c8013d75",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_model_run": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://developers.google.com/machine-learning/crash-course/production-ml-systems/deployment-testing",
+    "https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring",
+    "https://sre.google/workbook/canarying-releases/",
+    "https://www.mlflow.org/docs/latest/ml/model-registry/workflow/",
+    "https://cheatsheetseries.owasp.org/cheatsheets/RAG_Security_Cheat_Sheet.html",
+    "https://sre.google/sre-book/managing-incidents/"
+  ]
+}
