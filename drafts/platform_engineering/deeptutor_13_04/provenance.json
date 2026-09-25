@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a137f49e77",
+  "page_id": "pg_f37c47fb83",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://martinfowler.com/bliki/MonolithFirst.html",
+      "https://martinfowler.com/articles/microservice-trade-offs.html",
+      "https://martinfowler.com/articles/microservices.html",
+      "https://microservices.io/patterns/data/transactional-outbox",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "2a23b036e89f13258a04e1aaa9f145e7af8f4404ec02ac976b4a3e129c518e50",
+  "original_characters": 30571,
+  "generation_request_sha256": "683f9c979b822694c5a13f14394a262d20a7a1559e32aec4d76ae6f66fee483c",
+  "reviewed_sha256": "4bdce1ce48016de043eea058ad16c2b188077cdadb940cd1d0e4524211228fd6",
+  "reviewed_characters": 10470,
+  "reviewed_chinese_characters": 4023,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/04_architecture_styles_boundaries.md",
+  "course_sha256": "29d91969c2c1de00742f942c3c484534276226484ef9b89ffb155de925c6ccb5"
+}

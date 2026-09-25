@@ -374,6 +374,7 @@ export default sidebar({
             "curriculum/13_architecture/01_problem_stakeholders",
             "curriculum/13_architecture/02_domain_state_modeling",
             "curriculum/13_architecture/03_modules_information_hiding",
+            "curriculum/13_architecture/04_architecture_styles_boundaries",
             "curriculum/13_architecture/core"
           ]
         },

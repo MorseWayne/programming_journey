@@ -1,0 +1,33 @@
+{
+  "chapter": "13.04",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM architecture styles lesson comparing modular monolith, events and coarse services",
+  "prerequisites": [
+    "13.01 problem framing and stakeholders",
+    "13.02 domain identity, state axes and continuous cursor",
+    "13.03 module interfaces and information hiding",
+    "08.01 partial failure and 08.08 cross-service transactions",
+    "11.12 workload and capacity units"
+  ],
+  "first_pass": [
+    "separate code modules, deployment units, data authority and failure domains",
+    "distinguish layered dependency, asynchronous events and independent services",
+    "trace current S2 and two future candidates through A, authoritative storage, E9 and B",
+    "keep 6-byte current contract, future S3 and pending R9 separate"
+  ],
+  "second_pass": [
+    "explain same-DB atomic scope and conditional transactional outbox pattern",
+    "account for relay re-publication and consumer idempotency without claiming device delivery",
+    "require authorized retained DB history for B offline 25h beyond broker 24h",
+    "weigh independent scaling and deployment against RPC, consistency and operations cost",
+    "define migration and rollback evidence gates rather than assuming decomposition succeeds",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.05 capacity and data design",
+    "actual workload, team, data-retention and migration evidence"
+  ],
+  "next_chapter": "13.05 capacity and data design",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish full service topology, DB transactions, outbox, device acknowledgments or these candidate designs.",
+  "shared_integration_pending": []
+}
