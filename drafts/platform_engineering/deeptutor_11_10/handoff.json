@@ -1,0 +1,33 @@
+{
+  "chapter": "11.10",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced incident response lesson for fictional IM B-side authorized history catch-up delay",
+  "prerequisites": [
+    "11.01 user result and confirmation boundaries",
+    "11.04 evidence-driven diagnosis",
+    "11.08 SLI, missing evidence and alerting",
+    "11.09 overload feedback and recovery gates",
+    "10.11 runbook and technical communication",
+    "07.12 authoritative history and device catch-up"
+  ],
+  "first_pass": [
+    "scope B history catch-up user impact without conflating current S2 acceptance",
+    "assign IC, Ops, Comms and Planning responsibilities",
+    "separate known facts, inferred cause, unknown scope and proposed action",
+    "write a concise user-facing update with next checkpoint and no private body"
+  ],
+  "second_pass": [
+    "evaluate one reversible mitigation with predicted benefit and side effects",
+    "track T0–T+30 without treating queue decline or one B device as full recovery",
+    "verify authorized authoritative m-9/seq9, outbox/E9 and device catch-up",
+    "handoff temporary switches, owners, rollback and remaining unknowns",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.11 blameless postmortem and improvement validation",
+    "learner's actual incident, communication and authorized runtime evidence"
+  ],
+  "next_chapter": "11.11 postmortem and improvement",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish teaching SQL outbox, a real incident, root cause or device recovery.",
+  "shared_integration_pending": []
+}

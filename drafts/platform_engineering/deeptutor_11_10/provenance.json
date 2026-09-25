@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_2158932b7b",
-  "page_id": "pg_6b063255e8",
+  "book_id": "bk_5d6cb4175e",
+  "page_id": "pg_8bbc57ce06",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,22 +16,22 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
+      "https://sre.google/sre-book/managing-incidents/",
+      "https://sre.google/workbook/incident-response/",
+      "https://sre.google/sre-book/effective-troubleshooting/",
       "https://sre.google/sre-book/addressing-cascading-failures/",
-      "https://sre.google/sre-book/handling-overload/",
-      "https://go.dev/blog/context",
-      "https://sre.google/workbook/alerting-on-slos/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "4f99300e7553a8d4089f524b19d5b5b166bce071bde4e28530ebe2b6c2aa22a3",
-  "original_characters": 30438,
-  "generation_request_sha256": "ffcbcd4af250edfb64d1b715910fa02167314d7f9503e2f4dbdfca029686493c",
-  "reviewed_sha256": "b6ad7a43813d1b38ce76c1fa1d381b0005337bb5bf4953ea39326814af334207",
-  "reviewed_characters": 10030,
-  "reviewed_chinese_characters": 4015,
-  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/09_overload_cascades.md",
-  "course_sha256": "7d2cd161a93d03c67726c4eb906d71fbca41a7792a5d5c3f85ce9da73a5ec6f3"
+  "original_sha256": "e608b3b426f7fc6dbfc90e4f56e370ecc8f3c39560e9bfe731480a677d6ecbbe",
+  "original_characters": 30179,
+  "generation_request_sha256": "044e374a05b257563acef0235cad82eb68255bb0c1c8ebc8dfbdb7826ad4ba41",
+  "reviewed_sha256": "2d0d709efdd4f5fe3ccd6497df15c99a07dd186d0aa104407f88f81a67cd9e55",
+  "reviewed_characters": 9436,
+  "reviewed_chinese_characters": 4225,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/10_incident_response.md",
+  "course_sha256": "c5b1bfe9db886e31b5616f899dd4fc662aaf39b3f10661ea25950e8f57e4f4f3"
 }
