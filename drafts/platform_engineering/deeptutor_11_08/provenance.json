@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_385f784237",
+  "page_id": "pg_910a78b6b2",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/sre-book/service-level-objectives/",
+      "https://sre.google/workbook/implementing-slos/",
+      "https://sre.google/workbook/alerting-on-slos/",
+      "https://sre.google/workbook/error-budget-policy/",
+      "https://prometheus.io/docs/practices/alerting/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "383f74481fb7752627ec53bef4698fbd83ab7738772df8cffc14ee3028b21302",
+  "original_characters": 28397,
+  "generation_request_sha256": "4cd11b2fc2bb252a94d720c0c82dcab0a314d04668d1a801570f8d2413feb7e5",
+  "reviewed_sha256": "064fc2f3130065eca4566da3462e1701fb38e278c033278e9d6bad1762957a5e",
+  "reviewed_characters": 10054,
+  "reviewed_chinese_characters": 3867,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/08_slo_alerting.md",
+  "course_sha256": "51ed0db71428aa48fbbfdb1178e829428846b07d243be9ca15945bb93731b2b8"
+}

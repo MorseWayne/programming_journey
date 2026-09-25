@@ -1,0 +1,74 @@
+{
+  "code": "11.08",
+  "title": "SLO与告警：从IM用户结果到错误预算",
+  "chapter_id": "ch_slo_alerting",
+  "summary": "面向Go初学者，沿A内存受理与未来B设备确认定义SLI/SLO、预算、消耗速度和可行动告警。",
+  "objectives": [
+    "从用户动作定义可测SLI的分子分母",
+    "区分S2当前与S3/S5未来确认点",
+    "解释SLI、SLO与SLA",
+    "手算错误预算及消耗速度",
+    "处理低流量/未知/遥测缺失",
+    "设计可行动告警与预算政策"
+  ],
+  "sources": [
+    "https://sre.google/sre-book/service-level-objectives/",
+    "https://sre.google/workbook/implementing-slos/",
+    "https://sre.google/workbook/alerting-on-slos/",
+    "https://sre.google/workbook/error-budget-policy/",
+    "https://prometheus.io/docs/practices/alerting/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、用户结果先于目标数字",
+      "words": 3000,
+      "focus": "当前S2/v1是静态教学合同非空最多6 UTF8B/原始请求正文4096B/同ID409/非成员404/200 accepted_in_memory；未来S3/v2 stored_in_teaching_db提议仍6B、R9待审。SLI先定义A收到内存受理，未来B设备应用确认另SLI，不能把CPU或HTTP200替代送达。"
+    },
+    {
+      "title": "二、SLI分子分母、时间窗与未知",
+      "words": 3200,
+      "focus": "纸上S2有效首发授权非重复请求尝试作分母，A从发起到2秒内收到200为good，其余超时/未知回应为bad；400/409/404单列，不悄悄挪分母。按开始时刻入30日滚动队列并观察期限；无请求分母0未定义，遥测丢失另标覆盖不足。"
+    },
+    {
+      "title": "三、SLO与SLA不同",
+      "words": 3000,
+      "focus": "SLI是指标、SLO是内部目标、SLA是含后果的协议。纸上S2 30日99.9%只是待评审教学目标，不是已批准或生产承诺；目标须业务权衡、测量可行与目标门。未来S5在线有权目标设备60秒应用ACK另设99%示例。"
+    },
+    {
+      "title": "四、错误预算手算",
+      "words": 3100,
+      "focus": "纸上100000合格首发机会，SLO99.9%，容许bad100；若99500good/500bad则耗500超过预算400，不能称99.5达标。未来1000设备机会目标99%，985good/15bad，预算10超5；各自分母不能合并。"
+    },
+    {
+      "title": "五、消耗速度与多窗口告警",
+      "words": 3100,
+      "focus": "99.9%容许bad0.1%，纸上1h 1000机会10bad=1%为10倍burn rate；仅数学示意，不自动设生产page。短/长窗口结合减少抖动，低流量窗口分母0未定义；等候未完成与延迟补报明确。"
+    },
+    {
+      "title": "六、告警可行动、证据与反例",
+      "words": 3200,
+      "focus": "症状优先：A受理坏事件与未来B设备ACK坏事件分别告警；CPU/队列作为诊断附证；每条有owner、级别、用户影响、确认点、时间窗、分子分母、证据入口、止损与停止/升级门；拒绝越权404不算系统失败，缺遥测不能绿色。"
+    },
+    {
+      "title": "七、预算政策与版本化维护",
+      "words": 3000,
+      "focus": "业务产品/SRE评审容忍度、预算耗尽后可能限制发布/优先修可靠性，政策须明确负责人和例外，不把纸上预算当行政承诺。版本迁移S2到S3不得无标记改SLI分母或成功点，R9未批准不改变v1。固定OpenIM send.go MsgToMQ与Mongo消费两段不能证明真实SLO。"
+    },
+    {
+      "title": "八、22题与SLI卡片",
+      "words": 3000,
+      "focus": "基础8/计算8/评审6，答案覆盖确认点、S2 409/404分类、分母0、预算100/500、设备预算10/15、10x burn、遥测缺失、P99与事件式SLI、告警行动、S2/S3/S5分栏与公开源码边界。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《11.08 SLO与告警》，Go初学者八节理论丰富，由浅入深，22题分层答案。当前S2/v1仅静态教学合同：正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db仍提议且6B，R9 6→9B未批准。先从用户结果定义教学S2候选SLI：有权、合法、非重复首发请求尝试按开始时刻入30日队列，A在2秒内收到200为good，未收到/超时为bad；无效输入400、重复409、非成员404另计且事先固定分类；无请求分母0未定义，遥测丢失应报覆盖不足。纸上30日99.9%仅候选目标，10万合格机会允许bad100；99500good/500bad超预算400。未来S5在线有权目标设备60秒应用ACK另SLI示例99%，1000机会985good/15bad，预算10超5，不能与A受理合并。区分SLI指标、SLO目标、SLA含后果协议。容许坏率0.1%，1小时1000机会10bad即1%是10倍burn rate，只是纸上算式，短长窗口/样本量/行动门另审。告警优先用户症状而非原始CPU，包含owner、用户影响、确认点、分母/窗口、证据入口、止损/升级；404正确拒绝不是服务失败，数据缺失不能绿色。预算政策需团队批准与版本化，S2→S3成功语义不能偷偷改变SLI；固定OpenIM send.go MsgToMQ与另Mongo BatchInsert只支持异步边界，不证明真实SLO。所有数字虚构，不运行Go、IM、监控、部署或站点。\n1. 一、用户结果先于目标数字: 当前S2/v1是静态教学合同非空最多6 UTF8B/原始请求正文4096B/同ID409/非成员404/200 accepted_in_memory；未来S3/v2 stored_in_teaching_db提议仍6B、R9待审。SLI先定义A收到内存受理，未来B设备应用确认另SLI，不能把CPU或HTTP200替代送达。\n2. 二、SLI分子分母、时间窗与未知: 纸上S2有效首发授权非重复请求尝试作分母，A从发起到2秒内收到200为good，其余超时/未知回应为bad；400/409/404单列，不悄悄挪分母。按开始时刻入30日滚动队列并观察期限；无请求分母0未定义，遥测丢失另标覆盖不足。\n3. 三、SLO与SLA不同: SLI是指标、SLO是内部目标、SLA是含后果的协议。纸上S2 30日99.9%只是待评审教学目标，不是已批准或生产承诺；目标须业务权衡、测量可行与目标门。未来S5在线有权目标设备60秒应用ACK另设99%示例。\n4. 四、错误预算手算: 纸上100000合格首发机会，SLO99.9%，容许bad100；若99500good/500bad则耗500超过预算400，不能称99.5达标。未来1000设备机会目标99%，985good/15bad，预算10超5；各自分母不能合并。\n5. 五、消耗速度与多窗口告警: 99.9%容许bad0.1%，纸上1h 1000机会10bad=1%为10倍burn rate；仅数学示意，不自动设生产page。短/长窗口结合减少抖动，低流量窗口分母0未定义；等候未完成与延迟补报明确。\n6. 六、告警可行动、证据与反例: 症状优先：A受理坏事件与未来B设备ACK坏事件分别告警；CPU/队列作为诊断附证；每条有owner、级别、用户影响、确认点、时间窗、分子分母、证据入口、止损与停止/升级门；拒绝越权404不算系统失败，缺遥测不能绿色。\n7. 七、预算政策与版本化维护: 业务产品/SRE评审容忍度、预算耗尽后可能限制发布/优先修可靠性，政策须明确负责人和例外，不把纸上预算当行政承诺。版本迁移S2到S3不得无标记改SLI分母或成功点，R9未批准不改变v1。固定OpenIM send.go MsgToMQ与Mongo消费两段不能证明真实SLO。\n8. 八、22题与SLI卡片: 基础8/计算8/评审6，答案覆盖确认点、S2 409/404分类、分母0、预算100/500、设备预算10/15、10x burn、遥测缺失、P99与事件式SLI、告警行动、S2/S3/S5分栏与公开源码边界。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

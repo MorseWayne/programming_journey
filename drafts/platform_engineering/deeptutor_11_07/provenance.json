@@ -31,9 +31,9 @@
   "original_sha256": "1dd8b8fdf2b31e6cc315e39dd12d9400e642b50155c8a371295ac65a83eb48dc",
   "original_characters": 28991,
   "generation_request_sha256": "2a5ee15bce15e6aa4e5c7d611994f3153ab073196888215866f385bc57a93721",
-  "reviewed_sha256": "4801777d3d5d7476b48e64181c6ddd2857257b96079c8f867130f30e8bf3ca61",
-  "reviewed_characters": 10207,
-  "reviewed_chinese_characters": 4299,
+  "reviewed_sha256": "6755fc14be254c7fc56807022d182ed02399b36e9659c85f8b5f3c8c6488a61f",
+  "reviewed_characters": 10300,
+  "reviewed_chinese_characters": 4302,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/07_load_testing_capacity.md",
-  "course_sha256": "d47de437ff3bfc28dd5325e2c6661df34a2f541b74877adcfc8d24bf3c9cb354"
+  "course_sha256": "e9acd5d53eaef5d8a9aee9fb7ab16785f832d1e7a4c94887ee8a239e1782f6bb"
 }

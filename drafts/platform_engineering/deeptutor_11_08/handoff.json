@@ -1,0 +1,32 @@
+{
+  "chapter": "11.08",
+  "stage": "S3–S6",
+  "business_scope": "static beginner-to-advanced SLI, SLO, error budget and alerting lesson for fictional IM acceptance and device acknowledgment",
+  "prerequisites": [
+    "11.01 measurement point, unit, cohort and denominator",
+    "11.02 distribution and missing sample boundaries",
+    "11.03 client and server observability limits",
+    "11.07 capacity and load-test outcome categories",
+    "07.12 acceptance, persistence and delivery confirmation matrix"
+  ],
+  "first_pass": [
+    "define a client-visible S2 first-attempt SLI with two-second observation",
+    "separate expected 400, 409 and 404 from eligible first-attempt failures",
+    "distinguish SLI measurement, SLO goal and SLA agreement",
+    "keep current S2, proposed S3 and future S5 outcomes distinct"
+  ],
+  "second_pass": [
+    "calculate separate S2 and future device error budgets",
+    "derive tenfold short-window burn rate without declaring a production page threshold",
+    "handle zero traffic, pending responses and lost telemetry honestly",
+    "design symptom-based actionable alerts with owner, evidence and stop gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "11.09 overload and cascading failure",
+    "learner's approved targets and actual monitoring coverage"
+  ],
+  "next_chapter": "11.09 overload and cascading failure",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish producer ACK level, measured SLI/SLO, device receipt or alert rules.",
+  "shared_integration_pending": []
+}
