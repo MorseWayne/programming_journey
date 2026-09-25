@@ -1,0 +1,38 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_6d8515ee7e",
+  "page_id": "pg_9b5b5499f9",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://web.stanford.edu/~ouster/cgi-bin/cs190-winter18/lecture.php?topic=modularDesign",
+      "https://web.stanford.edu/~ouster/CS349W/lectures/abstraction.html",
+      "https://www.cs.lafayette.edu/~gexia/cs301/resources/parnas.html",
+      "https://go.dev/wiki/CodeReviewComments",
+      "https://go.dev/doc/effective_go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "dcbcb92c865635e295833ad09e5f89db661a56360836cf7ed102dd4b3cc33080",
+  "original_characters": 33378,
+  "generation_request_sha256": "9e284c92963adfaaf8a330831102605c950b632c3f5625b9d0bc6b4284e1c497",
+  "reviewed_sha256": "a91446db890d7bd27309217f3a1992a2419f34820dbf0df97a7e54749bd3d1d4",
+  "reviewed_characters": 10841,
+  "reviewed_chinese_characters": 4020,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/03_modules_information_hiding.md",
+  "course_sha256": "88b920d4afb631580736a99558468614fc84a7788eef4da9b3f6bac64ea077c1"
+}

@@ -29,9 +29,9 @@
   "original_sha256": "1b1e41efd3465d8d4e988c966d1af3f2ae0ea7dd98cc2205bb22c70c00e936b0",
   "original_characters": 34411,
   "generation_request_sha256": "799d0498e402258adc740aa833a3092012f1f1eeb338ef2ae696dee91c2597e5",
-  "reviewed_sha256": "db4be1f8cc0b842f6b637a70d96b93f64d3add17ed720e50f627f12ce39dab1d",
-  "reviewed_characters": 10181,
-  "reviewed_chinese_characters": 3897,
+  "reviewed_sha256": "4e0527d3baf95045d085be50d5943770ec549701af1af7d881f3cdc0799c85ac",
+  "reviewed_characters": 10287,
+  "reviewed_chinese_characters": 3902,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/02_domain_state_modeling.md",
-  "course_sha256": "150b9b7881d05ddc12228c158b2f01f9f1b2e472719f2015a00f849818731cad"
+  "course_sha256": "9bd6c8776ef70d6c520011b04bb49fa6f332db36572b3ca903e96d629fbada7c"
 }

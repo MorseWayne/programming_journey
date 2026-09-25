@@ -1,0 +1,74 @@
+{
+  "code": "13.03",
+  "title": "模块与信息隐藏：消息接口为什么不能暴露分区和表名",
+  "chapter_id": "ch_modules_information_hiding",
+  "summary": "面向Go初学者，以虚构IM发送和历史补拉接口解释模块、信息隐藏、深模块、Go接口方向、错误确认点与变更冲击。",
+  "objectives": [
+    "区分公开承诺与内部实现细节",
+    "按可能变化的设计决策划分模块",
+    "比较泄漏式与语义型IM发送接口",
+    "理解Go包与消费侧接口",
+    "把确认点/错误/不确定结果暴露给调用者",
+    "用变更冲击矩阵检验边界"
+  ],
+  "sources": [
+    "https://web.stanford.edu/~ouster/cgi-bin/cs190-winter18/lecture.php?topic=modularDesign",
+    "https://web.stanford.edu/~ouster/CS349W/lectures/abstraction.html",
+    "https://www.cs.lafayette.edu/~gexia/cs301/resources/parnas.html",
+    "https://go.dev/wiki/CodeReviewComments",
+    "https://go.dev/doc/effective_go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、接口是调用方需要知道的承诺",
+      "words": 3300,
+      "focus": "Go初学者承接13.02未来虚构m-9/seq9/E9模型。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/重复同ID409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db仍提议6B，R9 6→9B待审。定义模块、公开接口、内部实现、信息隐藏与抽象泄漏，不把隐藏实现误读成隐藏业务确认语义。"
+    },
+    {
+      "title": "二、从需求变化找模块边界",
+      "words": 3300,
+      "focus": "引用Parnas模块划分按可能变化的设计决策、Ousterhout深模块/信息隐藏：未来存储引擎、序号分配、队列分区/offset、成员历史规则、客户端协议变化频率不同。画简易变更冲击矩阵，说明R9会影响公开合同不能假装被模块完全隐藏。"
+    },
+    {
+      "title": "三、比较两个IM发送接口的调用成本",
+      "words": 3400,
+      "focus": "坏纸上Go API要求调用者自己检查成员、分配seq、知道Mongo集合、Kafka分区/offset和先后顺序；失败后调用者无法判权威是否已提交。改为语义型Send(ctx,SendCommand)->明确确认边界/错误，当前/v1只能AcceptedInMemory，未来/v2若批准StoredInTeachingDB另合同。保留MessageID稳定意图、重复409/非成员404，事务与重试机制在模块内但不伪造送达。"
+    },
+    {
+      "title": "四、Go包、接口与依赖方向",
+      "words": 3400,
+      "focus": "Go官方CodeReviewComments建议接口一般定义在使用者包，勿仅为mock在实现方制造巨大接口。区分应用用例包、领域对象/权限规则、内部存储端口适配器、HTTP映射；依赖方向内层不import具体Mongo/Kafka。小接口如HistoryReader/MessageWriter只因真实替换/测试需求存在，不为了层数发明接口。示意Go类型代码静态未运行。"
+    },
+    {
+      "title": "五、深模块仍要显露错误与确认点",
+      "words": 3400,
+      "focus": "API隐藏序号分配细节、broker offset、存储表名，却必须暴露200 accepted_in_memory和未来stored的差异、重复ID409、非成员404、超时后结果可能未知。context取消不必然回滚已提交DB事务；用稳定message_id和可查询结果的未来设计解决未知，不把所有错误都包成500。客户端25h补拉必须有权且从权威历史，不从offset造用户游标。"
+    },
+    {
+      "title": "六、抽象泄漏与过度分层反例",
+      "words": 3300,
+      "focus": "若public API返回KafkaPartition/Offset或MongoDocument泄漏实现；若仅提供map[string]any不表达确认点也危险；若五个薄包装让调用者编排校验→分配seq→写DB→发E9，隐藏失败边界失败。大群扇出与成员历史规则改变时分析哪些模块/合同必须修改。测试端到端用例、契约和失败变式，非仅mock调用次数。"
+    },
+    {
+      "title": "七、用变更冲击矩阵和固定源码评审",
+      "words": 3300,
+      "focus": "对R9待审、S3未来权威、E9重投、broker换型、成员历史规则、B多端ACK做修改面清单：哪些是内实现、哪些是客户端公开合同、哪些要迁移。固定OpenIM send.go选定分支MsgToMQ后返回与Mongo消费BatchInsertChat2DB仅证实阅读到的两段异步路径，不能推其真实包边界/所有ACK/事务/可替换性。"
+    },
+    {
+      "title": "八、22题分层练习",
+      "words": 3200,
+      "focus": "基础8/推演8/决策6题附答案：识别模块接口/实现、Parnas/Ousterhout、坏API与语义API、Go接口消费侧、R9不可隐藏、取消后不确定、重复409/非成员404、seq vs offset、25h补拉、变更矩阵、OpenIM证据边界。全部静态不运行Go/IM/DB/部署/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《13.03 模块与信息隐藏》，Go初学者八节丰富理论、虚构IM业务由浅入深、22题答案。承接13.02用户/设备/会话/消息/连续游标领域模型。当前S2/v1正文非空最多6 UTF-8 B、原始HTTP请求体4096 B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db仍提议且仍6B，R9 6→9B待审。用Parnas按可能变化的设计决策分模块、Ousterhout深模块与信息隐藏、Go官方接口建议为理论基础。区分模块公开语义承诺与内部算法/数据结构，信息隐藏不能隐藏用户必须知道的成功边界。坏接口让调用者自己校验成员、分配seq9、选择Mongo集合/Kafka分区offset、编排写DB/发布E9，导致时序知识泄漏与失败后状态未知；改成Send(ctx,SendCommand)->明确受理结果和错误，当前/v1只能200 accepted_in_memory，未来/v2若批准才有StoredInTeachingDB，业务合同差异不可被抽象隐藏。Go示意按应用用例/领域规则/存储适配器分包，接口尽量在使用方定义，有真实需求才引入；不能每层复制一套薄接口或为了mock造大接口。比较R9、未来S3持久权威、E9重投、broker换型、成员历史规则待定、B25h离线补拉/多端ACK变更的影响面；可藏broker offset/存储表名/序号分配细节，不能藏重复409、非成员404、超时结果不确定及授权。context取消不等于已提交事务回滚；未来稳定message_id和查结果可解决歧义，但尚未实现。固定OpenIM提交f6411a8a1a31d3df36f4c2b3ad28481a94141e1f的send.go选定分支MsgToMQ后返回与Mongo消费路径BatchInsertChat2DB，只支持所读异步边界，不能推真实接口/事务/ACK。全部静态，不运行Go/IM/数据库/部署/站点。\n1. 一、接口是调用方需要知道的承诺: Go初学者承接13.02未来虚构m-9/seq9/E9模型。当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/重复同ID409/非成员404/200 accepted_in_memory仅本进程；S3/v2 stored_in_teaching_db仍提议6B，R9 6→9B待审。定义模块、公开接口、内部实现、信息隐藏与抽象泄漏，不把隐藏实现误读成隐藏业务确认语义。\n2. 二、从需求变化找模块边界: 引用Parnas模块划分按可能变化的设计决策、Ousterhout深模块/信息隐藏：未来存储引擎、序号分配、队列分区/offset、成员历史规则、客户端协议变化频率不同。画简易变更冲击矩阵，说明R9会影响公开合同不能假装被模块完全隐藏。\n3. 三、比较两个IM发送接口的调用成本: 坏纸上Go API要求调用者自己检查成员、分配seq、知道Mongo集合、Kafka分区/offset和先后顺序；失败后调用者无法判权威是否已提交。改为语义型Send(ctx,SendCommand)->明确确认边界/错误，当前/v1只能AcceptedInMemory，未来/v2若批准StoredInTeachingDB另合同。保留MessageID稳定意图、重复409/非成员404，事务与重试机制在模块内但不伪造送达。\n4. 四、Go包、接口与依赖方向: Go官方CodeReviewComments建议接口一般定义在使用者包，勿仅为mock在实现方制造巨大接口。区分应用用例包、领域对象/权限规则、内部存储端口适配器、HTTP映射；依赖方向内层不import具体Mongo/Kafka。小接口如HistoryReader/MessageWriter只因真实替换/测试需求存在，不为了层数发明接口。示意Go类型代码静态未运行。\n5. 五、深模块仍要显露错误与确认点: API隐藏序号分配细节、broker offset、存储表名，却必须暴露200 accepted_in_memory和未来stored的差异、重复ID409、非成员404、超时后结果可能未知。context取消不必然回滚已提交DB事务；用稳定message_id和可查询结果的未来设计解决未知，不把所有错误都包成500。客户端25h补拉必须有权且从权威历史，不从offset造用户游标。\n6. 六、抽象泄漏与过度分层反例: 若public API返回KafkaPartition/Offset或MongoDocument泄漏实现；若仅提供map[string]any不表达确认点也危险；若五个薄包装让调用者编排校验→分配seq→写DB→发E9，隐藏失败边界失败。大群扇出与成员历史规则改变时分析哪些模块/合同必须修改。测试端到端用例、契约和失败变式，非仅mock调用次数。\n7. 七、用变更冲击矩阵和固定源码评审: 对R9待审、S3未来权威、E9重投、broker换型、成员历史规则、B多端ACK做修改面清单：哪些是内实现、哪些是客户端公开合同、哪些要迁移。固定OpenIM send.go选定分支MsgToMQ后返回与Mongo消费BatchInsertChat2DB仅证实阅读到的两段异步路径，不能推其真实包边界/所有ACK/事务/可替换性。\n8. 八、22题分层练习: 基础8/推演8/决策6题附答案：识别模块接口/实现、Parnas/Ousterhout、坏API与语义API、Go接口消费侧、R9不可隐藏、取消后不确定、重复409/非成员404、seq vs offset、25h补拉、变更矩阵、OpenIM证据边界。全部静态不运行Go/IM/DB/部署/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

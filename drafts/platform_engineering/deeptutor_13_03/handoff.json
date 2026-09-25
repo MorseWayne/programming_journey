@@ -1,0 +1,32 @@
+{
+  "chapter": "13.03",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM module and information-hiding lesson using fictional Send and history interfaces",
+  "prerequisites": [
+    "13.01 problem framing and stakeholders",
+    "13.02 domain identity, state axes and continuous cursor",
+    "09.03 Go program organization",
+    "10.05 refactoring boundaries",
+    "08.01 partial failure and uncertain results"
+  ],
+  "first_pass": [
+    "distinguish interface business promise from internal mechanism",
+    "partition changeable decisions following Parnas and deep modules following Ousterhout",
+    "compare a leaky HTTP orchestration with a semantic Send command and explicit acceptance level",
+    "apply Go consumer-side interface guidance only where actual behavior needs a port"
+  ],
+  "second_pass": [
+    "keep current S2 409, 404 and accepted_in_memory distinct from future S3",
+    "expose timeout and unknown outcomes without assuming context cancellation rolls back commits",
+    "use R9, event E9, broker, membership policy and device acknowledgment change cards",
+    "keep conversation sequence separate from broker offset and message identity",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.04 architecture styles and service boundaries",
+    "actual consumer API, migration, load and failure evidence"
+  ],
+  "next_chapter": "13.04 architecture styles and boundaries",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish all module interfaces, complete acknowledgments, transactions or broker replaceability.",
+  "shared_integration_pending": []
+}
