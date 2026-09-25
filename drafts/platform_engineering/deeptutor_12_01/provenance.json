@@ -32,9 +32,9 @@
   "original_sha256": "afc22a7257c15941eb8cc5bc3948521a990296d0d52ad40b211508b74cbd97f2",
   "original_characters": 32490,
   "generation_request_sha256": "00e288118f4ed27bf37aa8034ad3efb3ca448a2edf33d20ea3533a52397c3048",
-  "reviewed_sha256": "3b3a4eb5671847ca4425ec95ce625ae34a851db9f05cecbd17e30a8b392910bc",
-  "reviewed_characters": 9854,
-  "reviewed_chinese_characters": 3789,
+  "reviewed_sha256": "513f84ab7f7dcde5713ba8bc6fc2179ab390c05db4cc67c8011251930d81cb43",
+  "reviewed_characters": 9949,
+  "reviewed_chinese_characters": 3793,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/01_runtime_artifacts.md",
-  "course_sha256": "71b258a2420b28169dbc7e650f82c1c862919eedd2f78f1cfc5b849cb5982b5c"
+  "course_sha256": "477bffe8d269af1780d3fef26afed13980b56b57100b0cfea6dc92aee03ebb7a"
 }

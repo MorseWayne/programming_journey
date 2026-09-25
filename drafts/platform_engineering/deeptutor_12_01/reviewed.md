@@ -186,4 +186,4 @@ D1 是相应内容标识；T 是方便引用、可移动的名字。</details>
 
 ## 本章完成标准与后续路径
 
-能从提交 C 追到二进制 B、镜像摘要 D1、运行配置 K 和外部状态 S，解释同 tag 不同内容与同 digest 不同结果，并守住当前 `/v1` 的 6 B/409/404/内存受理合同，才算完成第一轮。本页没有构建或部署 IM 制品。下一章 12.02 再拆镜像文件层、容器进程、namespace/cgroup、volume 与信号，解释容器重建后哪些东西还在。
+能从提交 C 追到二进制 B、镜像摘要 D1、运行配置 K 和外部状态 S，解释同 tag 不同内容与同 digest 不同结果，并守住当前 `/v1` 的 6 B/409/404/内存受理合同，才算完成第一轮。本页没有构建或部署 IM 制品。下一章[12.02 容器机制](../../../src/docs/platform_engineering/curriculum/12_platform/02_container_mechanisms.md)再拆镜像文件层、容器进程、namespace/cgroup、volume 与信号，解释容器重建后哪些东西还在。

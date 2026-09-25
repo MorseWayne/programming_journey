@@ -1,0 +1,32 @@
+{
+  "chapter": "12.02",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced container mechanism lesson for fictional IM gateway image D1 and A/B container replacement",
+  "prerequisites": [
+    "12.01 source, binary, OCI image and runtime configuration identity",
+    "03.11 namespace and cgroup views and limits",
+    "03.12 FD, disk and signal resource failures",
+    "04.05 long-lived TCP/WebSocket connection lifecycle",
+    "09.02 current S2 HTTP contract"
+  ],
+  "first_pass": [
+    "distinguish identical image from independent container processes and writable layers",
+    "compare restart of one container with deletion and recreation",
+    "separate volume bytes, temporary files, process memory and external authoritative DB",
+    "keep current S2 acceptance distinct from proposed S3 persistence"
+  ],
+  "second_pass": [
+    "explain Docker empty-volume copy-up versus non-empty mount obscuring files",
+    "apply configurable namespace and cgroup runtime boundaries",
+    "trace PID 1 stop signal and separate Go HTTP from WebSocket draining",
+    "audit same-digest different-config and post-rebuild IM user results",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.03 local multi-service environment",
+    "learner's actual personal image, mount and container evidence"
+  ],
+  "next_chapter": "12.03 local multi-service environment",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish any course container image, mount, runtime namespace, PID 1 or draining behavior.",
+  "shared_integration_pending": []
+}

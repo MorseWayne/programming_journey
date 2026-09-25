@@ -352,6 +352,7 @@ export default sidebar({
           "children": [
             "curriculum/12_platform/",
             "curriculum/12_platform/01_runtime_artifacts",
+            "curriculum/12_platform/02_container_mechanisms",
             "curriculum/12_platform/core"
           ]
         },

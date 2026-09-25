@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_bdf93e2893",
+  "page_id": "pg_6fa44ddc11",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://github.com/opencontainers/runtime-spec/blob/main/config-linux.md",
+      "https://docs.docker.com/engine/storage",
+      "https://docs.docker.com/engine/storage/volumes/",
+      "https://docs.docker.com/reference/dockerfile",
+      "https://docs.docker.com/reference/cli/docker/container/stop/",
+      "https://pkg.go.dev/net/http",
+      "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "7f482fc9517c1d67ceef2a1cb02ce0b1b48451898d770ca0f280a494363f2de5",
+  "original_characters": 30288,
+  "generation_request_sha256": "bb4cf5e561b6ec6ebabf48649219cdfd733832f75a7d0f7b7483be14e553b931",
+  "reviewed_sha256": "746dec677594f56fade8acb84e670863d5571355f8daa62c0165810bdf27e3bb",
+  "reviewed_characters": 10526,
+  "reviewed_chinese_characters": 3905,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/02_container_mechanisms.md",
+  "course_sha256": "57b06eceef80cf7eff94fb56d0ba19caa7f91b04ad554c4ca8e690d4cac0d818"
+}

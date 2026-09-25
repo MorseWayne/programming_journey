@@ -1,0 +1,76 @@
+{
+  "code": "12.02",
+  "title": "容器机制：镜像、进程、可写层和长连接退出",
+  "chapter_id": "ch_container_mechanisms",
+  "summary": "面向Go初学者，沿虚构IM网关重建解释镜像层、容器可写层、volume、namespace/cgroup与PID1信号。",
+  "objectives": [
+    "区分镜像摘要与运行容器/进程",
+    "解释只读层、可写层与持久卷生命周期",
+    "复用namespace和cgroup模型",
+    "说明PID1、停止信号与Go长连接排空",
+    "逐项核对S2进程状态与未来S3权威数据",
+    "诊断同摘要不同挂载/权限/网络行为"
+  ],
+  "sources": [
+    "https://github.com/opencontainers/runtime-spec/blob/main/config-linux.md",
+    "https://docs.docker.com/engine/storage",
+    "https://docs.docker.com/engine/storage/volumes/",
+    "https://docs.docker.com/reference/dockerfile",
+    "https://docs.docker.com/reference/cli/docker/container/stop/",
+    "https://pkg.go.dev/net/http",
+    "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、镜像启动容器究竟发生什么",
+      "words": 3000,
+      "focus": "Go初学者区分12.01 image digest D1与一次运行容器/进程，入口命令、配置、挂载、namespace/cgroup由运行时组合。当前S2/v1静态6B正文/原始请求体4096B/409/404/200内存受理，S3未来提议，容器可重建不等于数据可恢复。"
+    },
+    {
+      "title": "二、只读镜像层与容器可写层",
+      "words": 3100,
+      "focus": "镜像不可变层+每容器独立可写层，copy-on-write概念；同D1两容器写入各自/tmp不会互见，重启同容器与删除重建不同，container layer销毁随容器移除，不能当权威历史。避免限定所有环境都overlay2。"
+    },
+    {
+      "title": "三、volume与数据身份",
+      "words": 3200,
+      "focus": "named volume可在容器删除后保留但需重新挂载/管理，bind mount/volume/tmpfs语义不同；volume持久不保证数据库事务/备份/授权，挂载覆盖镜像目录，权威m-9/seq9未来S3只能有明确定义的DB事实。S2纯内存m-a即使挂volume也不会自动写进去。"
+    },
+    {
+      "title": "四、namespace/cgroup如何组合",
+      "words": 3100,
+      "focus": "承接03.11 PID/mount/net/user namespace视图、cgroup v2 CPU/内存/pids限制；配置决定哪些namespace新建或继承，容器不等于VM，容器127.0.0.1在自己netns。host CPU空、容器配额0.5核仍可节流；能力/权限另控。"
+    },
+    {
+      "title": "五、PID1、信号与长连接",
+      "words": 3200,
+      "focus": "容器主进程与可能shell wrapper，Docker exec-form ENTRYPOINT使程序可直接接收停止信号，shell form不一定转发；docker stop一般先停止信号再宽限到期强制kill，具体可配置。Go http.Server.Shutdown不管理hijacked WebSocket，需应用有界通知/排空；PID1子进程回收若有子任务。"
+    },
+    {
+      "title": "六、重建前后IM状态矩阵",
+      "words": 3200,
+      "focus": "纸上旧容器有当前S2内存受理m-a/在线B连接/可写层临时文件、未来DB volume m-9/seq9；停机重建D1后内存/连接必重建，临时层只有同容器restart仍可能保留、删除重建不保留；named volume视管理保留、DB提交证据与设备ACK另查，不从docker running宣称恢复。"
+    },
+    {
+      "title": "七、配置与故障分流",
+      "words": 3100,
+      "focus": "同digest D1不同volume映射/权限/port/CPU限额能导致不同结果；检查源提交/镜像/容器实例/挂载/网络/cgroup/健康与业务正反例，静态不执行；OpenIM固定两段源码不能证明真实运行配置。"
+    },
+    {
+      "title": "八、22题与运行边界卡",
+      "words": 3000,
+      "focus": "基础8/推导8/恢复6，答案含image/container、writable layer/volume/tmpfs、namespace/cgroup、PID1/signals、Shutdown/WebSocket、S2内存与S3 DB/设备ACK区别、同D1异配置、回退与证据。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.02 容器机制》，Go初学者八节理论丰富，由浅入深22题答案。当前S2/v1静态教学合同：消息正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。沿12.01的虚构IM镜像摘要D1和容器重建：镜像是只读层及配置，容器是一次运行的进程/资源/挂载并有独立可写层；同D1两容器/tmp写入不互见，停止/重启同容器与删除/重建容器不同，writable layer随容器删除消失，不要把它当权威历史。named volume可跨容器删除保留但需明确重新挂载/管理，volume不自动使S2内存消息持久，未来S3权威m-9/seq9必须以数据库事务/恢复证据定义；tmpfs更短命，挂载可能遮住镜像目录。namespace视图PID/mount/net/user可配置创建/继承，cgroup管CPU/内存/pids限额，容器非虚拟机，容器127.0.0.1在自身netns；宿主闲、容器0.5核额度仍可节流，权限/能力另控制。容器PID1可能为Go程序或shell wrapper，Docker exec-form ENTRYPOINT能更直接传停止信号，shell form可能不转发；docker stop按配置发停止信号后宽限期到强杀，不能假设通用秒数。Go net/http.Server.Shutdown不等待hijacked/WebSocket，长连接需应用单独停止接入、有界排空、通知重连；进程退出后S2内存/在线状态不能保证恢复，未来S3 DB/设备ACK另验。纸上同D1不同配置/卷/网络/CPU限额导致结果不同，业务验收守6B/409/404/200。固定OpenIM send.go MsgToMQ与Mongo BatchInsert不证明真实容器配置。静态不构建镜像/启动容器/运行Go/IM/部署/站点。\n1. 一、镜像启动容器究竟发生什么: Go初学者区分12.01 image digest D1与一次运行容器/进程，入口命令、配置、挂载、namespace/cgroup由运行时组合。当前S2/v1静态6B正文/原始请求体4096B/409/404/200内存受理，S3未来提议，容器可重建不等于数据可恢复。\n2. 二、只读镜像层与容器可写层: 镜像不可变层+每容器独立可写层，copy-on-write概念；同D1两容器写入各自/tmp不会互见，重启同容器与删除重建不同，container layer销毁随容器移除，不能当权威历史。避免限定所有环境都overlay2。\n3. 三、volume与数据身份: named volume可在容器删除后保留但需重新挂载/管理，bind mount/volume/tmpfs语义不同；volume持久不保证数据库事务/备份/授权，挂载覆盖镜像目录，权威m-9/seq9未来S3只能有明确定义的DB事实。S2纯内存m-a即使挂volume也不会自动写进去。\n4. 四、namespace/cgroup如何组合: 承接03.11 PID/mount/net/user namespace视图、cgroup v2 CPU/内存/pids限制；配置决定哪些namespace新建或继承，容器不等于VM，容器127.0.0.1在自己netns。host CPU空、容器配额0.5核仍可节流；能力/权限另控。\n5. 五、PID1、信号与长连接: 容器主进程与可能shell wrapper，Docker exec-form ENTRYPOINT使程序可直接接收停止信号，shell form不一定转发；docker stop一般先停止信号再宽限到期强制kill，具体可配置。Go http.Server.Shutdown不管理hijacked WebSocket，需应用有界通知/排空；PID1子进程回收若有子任务。\n6. 六、重建前后IM状态矩阵: 纸上旧容器有当前S2内存受理m-a/在线B连接/可写层临时文件、未来DB volume m-9/seq9；停机重建D1后内存/连接必重建，临时层只有同容器restart仍可能保留、删除重建不保留；named volume视管理保留、DB提交证据与设备ACK另查，不从docker running宣称恢复。\n7. 七、配置与故障分流: 同digest D1不同volume映射/权限/port/CPU限额能导致不同结果；检查源提交/镜像/容器实例/挂载/网络/cgroup/健康与业务正反例，静态不执行；OpenIM固定两段源码不能证明真实运行配置。\n8. 八、22题与运行边界卡: 基础8/推导8/恢复6，答案含image/container、writable layer/volume/tmpfs、namespace/cgroup、PID1/signals、Shutdown/WebSocket、S2内存与S3 DB/设备ACK区别、同D1异配置、回退与证据。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
