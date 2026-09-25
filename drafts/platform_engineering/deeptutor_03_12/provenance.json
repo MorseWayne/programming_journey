@@ -1,0 +1,41 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_ea65f95df3",
+  "page_id": "pg_c23216148b",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://www.man7.org/linux/man-pages/man2/accept.2.html",
+      "https://man7.org/linux/man-pages/man2/getrlimit.2.html",
+      "https://man7.org/linux/man-pages/man2/write.2.html",
+      "https://www.man7.org/linux/man-pages/man2/fsync.2.html",
+      "https://man7.org/linux/man-pages/man2/close.2.html",
+      "https://man7.org/linux/man-pages/man7/signal.7.html",
+      "https://pkg.go.dev/net/http",
+      "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "2aecedcd6bbfe73f00dc17e0e2bf758cc5bc79d1bb5945ee638e7152c4a4c3cb",
+  "original_characters": 32480,
+  "generation_request_sha256": "66a139fc48b220595e558aa5bb8c20fc8d88deb08138204a077a30309911d698",
+  "reviewed_sha256": "e3f8306caba5834511783e04957121c05fe0a83c848514f1b5ff05241a5fb094",
+  "reviewed_characters": 10982,
+  "reviewed_chinese_characters": 3810,
+  "course_file": "src/docs/platform_engineering/curriculum/03_systems/12_resource_failure_case.md",
+  "course_sha256": "2257169a543e108f64f76d7cedd75d523324589194dbe5ad2e742b21b97dea82"
+}

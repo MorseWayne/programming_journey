@@ -1,0 +1,32 @@
+{
+  "chapter": "03.12",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Linux resource-failure lesson using four independent fictional IM gateway and future DB cases",
+  "prerequisites": [
+    "03.03 process, descriptor, signal and resource basics",
+    "03.07–03.08 file identity and persistence mechanisms",
+    "03.10 evidence-driven system diagnosis",
+    "03.11 namespace, cgroup and OOM boundaries",
+    "04.05 TCP connection lifecycle and 10.10 graceful delivery"
+  ],
+  "first_pass": [
+    "distinguish process EMFILE, system ENFILE and cgroup pids task limits",
+    "calculate conditional FD headroom without calling it maximum clients",
+    "separate current S2 in-memory acceptance from proposed S3 storage success",
+    "classify memory pressure, oom_kill and signal exit as different paths"
+  ],
+  "second_pass": [
+    "explain delayed ENOSPC or EIO at write, fsync or close in a future storage case",
+    "differentiate SIGTERM handling from uncatchable SIGKILL",
+    "design HTTP shutdown and separate hijacked WebSocket drain with finite deadline",
+    "write competing evidence and business recovery gates for four separate failure cards",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.01–12.12 artifact, container and platform operating model",
+    "learner's actual authorized resource and recovery observations"
+  ],
+  "next_chapter": "12.01 artifacts and runtime environments",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish real descriptor limits, disk-full faults, termination behavior, websocket draining or device recovery.",
+  "shared_integration_pending": []
+}

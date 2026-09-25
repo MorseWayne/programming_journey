@@ -29,9 +29,9 @@
   "original_sha256": "80961b3f5a11e29c564cf67b83b4d0299a5e3a47a216181e3deb8db2525e9003",
   "original_characters": 32144,
   "generation_request_sha256": "fdfbe9b37238b44c7c742c9e83284891af8dd51322f13e9d68cbb980509f31fd",
-  "reviewed_sha256": "274080a4292fb23cc7cb6f9c694c553f68b2bf6bbaa14749712a278b14f8c9a7",
-  "reviewed_characters": 10922,
+  "reviewed_sha256": "1258b67f80444559e763a2612aad5fa329cc890c6c1f4957e50ac5c49d106226",
+  "reviewed_characters": 11013,
   "reviewed_chinese_characters": 3633,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/11_isolation_limits.md",
-  "course_sha256": "f1391fcfcacd8abe2c85cc8ac6ed52d2080e9216d8aaffeac751b11ddac1c1f7"
+  "course_sha256": "004854944774abd3a0f8e02bda4032e6eb1851bdb99fc689ef6cc0ce3eb203aa"
 }

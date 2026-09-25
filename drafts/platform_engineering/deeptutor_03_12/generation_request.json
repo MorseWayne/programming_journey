@@ -1,0 +1,77 @@
+{
+  "code": "03.12",
+  "title": "资源故障案例：描述符耗尽、磁盘满与网关退出",
+  "chapter_id": "ch_resource_failure_case",
+  "summary": "面向Go初学者，用独立IM资源故障变式训练FD、持久I/O、内存压力和信号关停的证据与业务恢复。",
+  "objectives": [
+    "区分EMFILE、ENFILE和pids任务限制",
+    "手算进程FD额度与连接影响",
+    "解释ENOSPC可能延迟报告与持久提交",
+    "区分页缓存回收与OOM kill",
+    "说明SIGTERM/SIGKILL及HTTP/WebSocket关停",
+    "核对S2内存受理与未来S3/S5恢复边界"
+  ],
+  "sources": [
+    "https://www.man7.org/linux/man-pages/man2/accept.2.html",
+    "https://man7.org/linux/man-pages/man2/getrlimit.2.html",
+    "https://man7.org/linux/man-pages/man2/write.2.html",
+    "https://www.man7.org/linux/man-pages/man2/fsync.2.html",
+    "https://man7.org/linux/man-pages/man2/close.2.html",
+    "https://man7.org/linux/man-pages/man7/signal.7.html",
+    "https://pkg.go.dev/net/http",
+    "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、同样是IM连接失败先分四种资源路径",
+      "words": 3000,
+      "focus": "Go初学者：当前S2/v1仅静态6 UTF8B正文/原始HTTP请求正文4096B/同ID409/非成员404/200内存受理，未来S3 DB提议。纸上独立变式FD耗尽、未来S3 WAL盘满、页缓存回收压力、SIGTERM退出，不能把它们写成一次已经发生事故。"
+    },
+    {
+      "title": "二、FD、socket和EMFILE/ENFILE",
+      "words": 3200,
+      "focus": "进程RLIMIT_NOFILE软1024、当前打开1020个FD，在无其他打开/关闭且每新连接占1FD的玩具模型仅余4；accept/open可能报EMFILE进程限额，ENFILE系统wide，pids.max限制task非FD。区分监听fd、已连接socket、日志、epoll，拒绝/排队和老连接行为不从EMFILE直接推。"
+    },
+    {
+      "title": "三、磁盘满与持久提交边界",
+      "words": 3200,
+      "focus": "未来S3教学事务m-9/seq9+outbox，WAL/设备ENOSPC可能在write、后续write/fsync甚至close报告；write返回不等于持久。若未满足stored_in_teaching_db承诺不得返回该成功语义；当前S2内存200不是持久保证。区分磁盘空间、inode、quota、删除但仍打开文件。"
+    },
+    {
+      "title": "四、页缓存与cgroup回收压力",
+      "words": 3000,
+      "focus": "memory.current逼近memory.max时可能回收页缓存或进入memory.high压力，业务I/O变慢但不必OOM；memory.events high/max/oom_kill增量与RSS/Go heap不同。不要看到主机空闲就断定无容器压力。"
+    },
+    {
+      "title": "五、SIGTERM、SIGKILL与Go HTTP关停",
+      "words": 3200,
+      "focus": "SIGTERM可被程序接管触发停止接入、在途期限与退出；SIGKILL不可捕获。net/http.Server.Shutdown关闭listener、等待活动HTTP变idle，但不等待hijacked/WebSocket，必须由应用单独通知/等待。进程退出后S2内存状态不能承诺恢复，未来S3权威另查。"
+    },
+    {
+      "title": "六、同一用户症状如何用证据分流",
+      "words": 3000,
+      "focus": "A无法连接/超时、B断线、m-9状态未知，对照accept EMFILE、fsync ENOSPC、memory.events、退出信号与实例时间窗；每个路径提供能推翻的证据，不因重启后一时恢复宣布根因。"
+    },
+    {
+      "title": "七、恢复顺序与业务核对",
+      "words": 3100,
+      "focus": "先阻止更多接入/写失败，保留有限证据，按权限调整FD/清理空间/缓和内存压力/终止排空；不能直接删权威消息或重放m-9。恢复验收含A当前6B/409/404/200、在途结果未知、有权状态查询、B重连与未来S3权威历史/设备ACK分开；固定OpenIM源码不证明真实资源故障。"
+    },
+    {
+      "title": "八、22题与分支案例",
+      "words": 3000,
+      "focus": "基础8/推导8/恢复6，答案含1024-1020=4、EMFILE/ENFILE/pids、write/fsync/close延迟错误、page cache压力与OOM、SIGTERM/SIGKILL、Shutdown与WebSocket、S2/S3/S5边界和权限补拉。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《03.12 资源故障案例》，Go初学者八节理论丰富由浅入深、22题反馈。当前S2/v1仅静态教学合同：消息正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db是提议仍6B，R9未批。以四个独立纸上故障变式说明相似症状不同证据：A未来网关进程RLIMIT_NOFILE软限1024、已打开1020 FD，假设无其他开关且每新连接1FD，仅余4，之后accept可能EMFILE；ENFILE是系统级打开文件限制、pids.max限制内核task非FD。B未来S3权威m-9/seq9+outbox事务的WAL/磁盘ENOSPC可能在write、后续write/fsync或close才报告；普通write成功不证明持久，未达DB承诺不得返回stored_in_teaching_db。C cgroup memory.current逼近memory.max、页缓存回收/内存高水位可能增I/O时延而尚无oom_kill，区分Go heap/RSS；D SIGTERM可由程序处理、停止接入/在途有界排空，SIGKILL不能捕获。Go net/http.Server.Shutdown停止listener并等待普通HTTP活动连接变idle，但不管hijacked/WebSocket，需要应用单独退出协议；进程退出后S2内存受理状态不能保证恢复，未来S3权威另论。所有分支用错误码/文件/作用域/时间窗反证，不盲重启、删权威消息或拿CPU低判根因。恢复验收A当前6B/409/404/200与在途未知，B重连和未来S3/S5各自确认。固定OpenIM send.go MsgToMQ与Mongo BatchInsert两处不能证明真实FD/盘/退出事故。纸上不运行Go/IM/数据库/容器/信号/站点。\n1. 一、同样是IM连接失败先分四种资源路径: Go初学者：当前S2/v1仅静态6 UTF8B正文/原始HTTP请求正文4096B/同ID409/非成员404/200内存受理，未来S3 DB提议。纸上独立变式FD耗尽、未来S3 WAL盘满、页缓存回收压力、SIGTERM退出，不能把它们写成一次已经发生事故。\n2. 二、FD、socket和EMFILE/ENFILE: 进程RLIMIT_NOFILE软1024、当前打开1020个FD，在无其他打开/关闭且每新连接占1FD的玩具模型仅余4；accept/open可能报EMFILE进程限额，ENFILE系统wide，pids.max限制task非FD。区分监听fd、已连接socket、日志、epoll，拒绝/排队和老连接行为不从EMFILE直接推。\n3. 三、磁盘满与持久提交边界: 未来S3教学事务m-9/seq9+outbox，WAL/设备ENOSPC可能在write、后续write/fsync甚至close报告；write返回不等于持久。若未满足stored_in_teaching_db承诺不得返回该成功语义；当前S2内存200不是持久保证。区分磁盘空间、inode、quota、删除但仍打开文件。\n4. 四、页缓存与cgroup回收压力: memory.current逼近memory.max时可能回收页缓存或进入memory.high压力，业务I/O变慢但不必OOM；memory.events high/max/oom_kill增量与RSS/Go heap不同。不要看到主机空闲就断定无容器压力。\n5. 五、SIGTERM、SIGKILL与Go HTTP关停: SIGTERM可被程序接管触发停止接入、在途期限与退出；SIGKILL不可捕获。net/http.Server.Shutdown关闭listener、等待活动HTTP变idle，但不等待hijacked/WebSocket，必须由应用单独通知/等待。进程退出后S2内存状态不能承诺恢复，未来S3权威另查。\n6. 六、同一用户症状如何用证据分流: A无法连接/超时、B断线、m-9状态未知，对照accept EMFILE、fsync ENOSPC、memory.events、退出信号与实例时间窗；每个路径提供能推翻的证据，不因重启后一时恢复宣布根因。\n7. 七、恢复顺序与业务核对: 先阻止更多接入/写失败，保留有限证据，按权限调整FD/清理空间/缓和内存压力/终止排空；不能直接删权威消息或重放m-9。恢复验收含A当前6B/409/404/200、在途结果未知、有权状态查询、B重连与未来S3权威历史/设备ACK分开；固定OpenIM源码不证明真实资源故障。\n8. 八、22题与分支案例: 基础8/推导8/恢复6，答案含1024-1020=4、EMFILE/ENFILE/pids、write/fsync/close延迟错误、page cache压力与OOM、SIGTERM/SIGKILL、Shutdown与WebSocket、S2/S3/S5边界和权限补拉。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
