@@ -1,0 +1,76 @@
+{
+  "code": "12.06",
+  "title": "资源与持久存储：网关Pod能调度不等于消息能恢复",
+  "chapter_id": "ch_resource_persistent_storage",
+  "summary": "面向Go初学者，结合虚构IM网关和未来数据库，区分Kubernetes request/limit、CPU节流/OOM、emptyDir、PV/PVC与业务权威。",
+  "objectives": [
+    "手算Node allocatable与Pod requests是否可调度",
+    "区分CPU/memory request与limit的运行边界",
+    "从cgroup/OOM证据核对网关用户影响",
+    "区分emptyDir和PV/PVC生命周期",
+    "解释RWO/RWOP访问模式",
+    "守住S2内存与未来S3数据库恢复责任"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+    "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/",
+    "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+    "https://kubernetes.io/docs/concepts/storage/volumes/",
+    "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+    "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+    "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、能调度不等于能跑好业务",
+      "words": 3000,
+      "focus": "Go初学者虚构未来IM网关Pod，当前S2/v1静态合同6 UTF8B正文/原始HTTP体4096B/重复409/非成员404/200仅内存受理，未来S3/v2 DB提议仍6B、R9待审。区分Node资源、Pod request/limit、Ready和A/B结果。"
+    },
+    {
+      "title": "二、requests用于调度、limits用于运行约束",
+      "words": 3200,
+      "focus": "纸上N1 allocatable2CPU/4GiB，已请求1.7CPU/3GiB，gateway request500m/512MiB使CPU2.2>2而内存3.5<4，Pod Pending即使实时CPU空；N2有余可放。cpu request争用权重不等持续保证，limit1CPU可节流。"
+    },
+    {
+      "title": "三、CPU节流、内存OOM与QoS边界",
+      "words": 3100,
+      "focus": "gateway limit1CPU/1GiB，CPU超限一般限速不杀，memory逼限可能回收/杀；cgroup同窗cpu.stat/memory.events和K8s状态/退出码比对，Go heap/RSS/GOMEMLIMIT不是容器总内存。QoS Guaranteed/Burstable/BestEffort影响节点压力驱逐排序，不能免除应用失败或复制状态。"
+    },
+    {
+      "title": "四、emptyDir、PV、PVC与StorageClass",
+      "words": 3200,
+      "focus": "emptyDir随Pod UID生命周期，替代Pod失去；PV是集群存储资源，PVC是命名空间请求并绑定PV，StorageClass可供应/约束，不从PVC Bound推DB事务/备份/可用区。"
+    },
+    {
+      "title": "五、访问模式与StatefulSet身份",
+      "words": 3100,
+      "focus": "RWO允许单Node读写不等单Pod，RWOP限制单Pod（支持CSI条件），多Pod共享卷不是自动复制/仲裁；db-0 StatefulSet volumeClaimTemplates稳定卷关联但Node故障/区域限制可能阻再挂，m-9/seq9 authority依DB日志事务。"
+    },
+    {
+      "title": "六、纸上调度与OOM时间线",
+      "words": 3000,
+      "focus": "t0 gateway request无法N1落N2，t1限1CPU峰值节流，t2 cgroup内存事件oom_kill增、Pod重启/就绪变化，旧WebSocket和S2内存m-a没跨进程；未来DB权威/设备ACK另查，不把重新Ready当消息恢复。"
+    },
+    {
+      "title": "七、容量/成本/恢复门",
+      "words": 3200,
+      "focus": "资源request不是价格或保留量，node allocatable/limit/储存卷/热点和N-1同算；调整限额/卷前先固定版本/负载/同窗业务SLI和PV身份，防止更大限额只是移瓶颈；固定OpenIM两源码不证明K8s资源设置。"
+    },
+    {
+      "title": "八、22题与验收",
+      "words": 3000,
+      "focus": "基础8/算式8/决策6，答案含N1 2.2CPU>2 Pending、request vs limit、CPU throttle vs memory OOM、emptyDir/PV/PVC、RWO/RWOP、StatefulSet卷与DB一致性、S2本地状态与S3/B确认。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.06 资源与持久存储》，Go初学者八节理论丰富、IM业务由浅入深、22题答案。当前S2/v1静态合同：正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。纸上Node N1 allocatable2 CPU/4GiB，已有Pod requests总1.7CPU/3GiB，gateway request500m/512MiB则CPU2.2>2不调度，内存3.5<4可放；即使N1实际CPU空也Pending，N2余量足时可调度。CPU request用于scheduler/争用权重不等每秒真实占用，limit1CPU通过cgroup可能节流不杀；memory request调度参考，limit1GiB逼限可回收或OOM杀，需同窗memory.events oom_kill和Pod退出/业务结果，不从Go heap或GOMEMLIMIT软限代替cgroup。QoS类只影响资源压力驱逐/调度边界，不保证消息状态。emptyDir随Pod UID，P1替换P4时旧emptyDir消失；PV集群存储资源、PVC命名空间请求、StorageClass供应/类别，Bound不证明DB事务/备份。RWO是单节点读写并不等单Pod，RWOP才限制单Pod（依CSI/版本），StatefulSet db-0 volumeClaimTemplates保卷身份不自动DB复制/仲裁/m-9/seq9权威；卷拓扑也可能阻碍换节点。纸上t0调度N2、t1 CPU节流、t2内存OOM后网关重启，S2本地m-a与WebSocket不自动恢复，未来S3 DB和B设备ACK分层验。资源成本、N-1与容量另试，不从固定OpenIM send.go MsgToMQ和Mongo BatchInsert推真实K8s配置。静态不运行Go/IM/kubectl/Kubernetes/DB/部署/站点。\n1. 一、能调度不等于能跑好业务: Go初学者虚构未来IM网关Pod，当前S2/v1静态合同6 UTF8B正文/原始HTTP体4096B/重复409/非成员404/200仅内存受理，未来S3/v2 DB提议仍6B、R9待审。区分Node资源、Pod request/limit、Ready和A/B结果。\n2. 二、requests用于调度、limits用于运行约束: 纸上N1 allocatable2CPU/4GiB，已请求1.7CPU/3GiB，gateway request500m/512MiB使CPU2.2>2而内存3.5<4，Pod Pending即使实时CPU空；N2有余可放。cpu request争用权重不等持续保证，limit1CPU可节流。\n3. 三、CPU节流、内存OOM与QoS边界: gateway limit1CPU/1GiB，CPU超限一般限速不杀，memory逼限可能回收/杀；cgroup同窗cpu.stat/memory.events和K8s状态/退出码比对，Go heap/RSS/GOMEMLIMIT不是容器总内存。QoS Guaranteed/Burstable/BestEffort影响节点压力驱逐排序，不能免除应用失败或复制状态。\n4. 四、emptyDir、PV、PVC与StorageClass: emptyDir随Pod UID生命周期，替代Pod失去；PV是集群存储资源，PVC是命名空间请求并绑定PV，StorageClass可供应/约束，不从PVC Bound推DB事务/备份/可用区。\n5. 五、访问模式与StatefulSet身份: RWO允许单Node读写不等单Pod，RWOP限制单Pod（支持CSI条件），多Pod共享卷不是自动复制/仲裁；db-0 StatefulSet volumeClaimTemplates稳定卷关联但Node故障/区域限制可能阻再挂，m-9/seq9 authority依DB日志事务。\n6. 六、纸上调度与OOM时间线: t0 gateway request无法N1落N2，t1限1CPU峰值节流，t2 cgroup内存事件oom_kill增、Pod重启/就绪变化，旧WebSocket和S2内存m-a没跨进程；未来DB权威/设备ACK另查，不把重新Ready当消息恢复。\n7. 七、容量/成本/恢复门: 资源request不是价格或保留量，node allocatable/limit/储存卷/热点和N-1同算；调整限额/卷前先固定版本/负载/同窗业务SLI和PV身份，防止更大限额只是移瓶颈；固定OpenIM两源码不证明K8s资源设置。\n8. 八、22题与验收: 基础8/算式8/决策6，答案含N1 2.2CPU>2 Pending、request vs limit、CPU throttle vs memory OOM、emptyDir/PV/PVC、RWO/RWOP、StatefulSet卷与DB一致性、S2本地状态与S3/B确认。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

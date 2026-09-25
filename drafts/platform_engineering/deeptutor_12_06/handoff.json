@@ -1,0 +1,32 @@
+{
+  "chapter": "12.06",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Kubernetes resource and storage lesson using fictional IM gateway scheduling and future DB recovery",
+  "prerequisites": [
+    "12.04 desired state, scheduler and Pod lifecycle",
+    "12.05 Deployment, StatefulSet and Service responsibility",
+    "03.11 cgroup CPU, memory and OOM boundaries",
+    "11.12 workload capacity and N-1 assumptions",
+    "07.12 authoritative history and device confirmation"
+  ],
+  "first_pass": [
+    "calculate Pod placement from Node allocatable and existing requests",
+    "distinguish scheduler requests from runtime CPU and memory limits",
+    "separate CPU throttling, cgroup OOM and node-pressure eviction",
+    "keep current S2 in-memory acceptance separate from proposed S3 DB"
+  ],
+  "second_pass": [
+    "distinguish Pod-lifetime emptyDir, PV and PVC identity and StorageClass",
+    "explain RWO single-node and RWOP single-Pod access boundaries",
+    "review db-0 StatefulSet PVC reattachment versus database transaction/recovery",
+    "write N-1 resource and S2/S3/device business recovery gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.07 config and permission boundaries",
+    "learner's actual authorized Kubernetes and DB storage evidence"
+  ],
+  "next_chapter": "12.07 configuration and permissions",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish actual Pod requests, limits, PVC, OOM or recovered message state.",
+  "shared_integration_pending": []
+}

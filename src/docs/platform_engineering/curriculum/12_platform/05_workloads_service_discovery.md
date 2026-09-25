@@ -191,4 +191,4 @@ HTTP(S) host/path 等路由到 Service，需控制器实现。</details>
 
 ## 本章完成标准与后续路径
 
-能为 gateway、transfer、db 和一次性迁移分别说明为何选择某种工作负载、哪个状态仍归应用，沿 Service/DNS/EndpointSlice/Ingress 画出外部与内部入口，并用四个反例守跨 Pod 409、DB 权威、Job 重跑与长连接补拉，才算完成第一轮。本页没有部署集群或运行任务。下一章 12.06 将进入资源 request/limit、OOM 与 PV/PVC 的数据身份。
+能为 gateway、transfer、db 和一次性迁移分别说明为何选择某种工作负载、哪个状态仍归应用，沿 Service/DNS/EndpointSlice/Ingress 画出外部与内部入口，并用四个反例守跨 Pod 409、DB 权威、Job 重跑与长连接补拉，才算完成第一轮。本页没有部署集群或运行任务。下一章[12.06 资源与持久存储](./06_resources_persistent_storage.md)将进入 request/limit、OOM 与 PV/PVC 的数据身份。

@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_29c6e5edbd",
+  "page_id": "pg_a0de68ef10",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+      "https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/",
+      "https://kubernetes.io/docs/concepts/storage/persistent-volumes/",
+      "https://kubernetes.io/docs/concepts/storage/volumes/",
+      "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+      "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+      "https://cdn.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "1c7b30bc61b28cdb0dccb6270f7d616d7ce366b3bf68aac926ec5b754df8bc33",
+  "original_characters": 30903,
+  "generation_request_sha256": "9b827648cc9cb0e7ece5732281bf52ca5c921cafc3150e4d5ed2732303d14c26",
+  "reviewed_sha256": "7b427c85a571b5ed4f1ad365e75231e19eb7cfd0e1b129c1e37d270a5864a1fb",
+  "reviewed_characters": 11023,
+  "reviewed_chinese_characters": 3165,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/06_resources_persistent_storage.md",
+  "course_sha256": "4df50024153ef3fe3543b6507c1c217da69cb1b6b787574caad8e753c9f560d3"
+}

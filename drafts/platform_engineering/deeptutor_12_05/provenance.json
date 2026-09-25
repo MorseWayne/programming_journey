@@ -32,9 +32,9 @@
   "original_sha256": "79674118351f20656f3a5cd2c0c6dad8a2723071f1a328761ac1df26aa940d72",
   "original_characters": 32555,
   "generation_request_sha256": "1901848b0d20e44962a51ebc0ee0b9ae8c3b54954ec389fbc7ab37c959973326",
-  "reviewed_sha256": "cd1f738b864c534df9055db12d83dac2fcb1d2d0a01a4068c99defaaf641ea10",
-  "reviewed_characters": 10170,
-  "reviewed_chinese_characters": 3087,
+  "reviewed_sha256": "7767131be60d8b094999f4f4cd825615aeacd628b6479304ae83c6058b83550c",
+  "reviewed_characters": 10274,
+  "reviewed_chinese_characters": 3092,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/05_workloads_service_discovery.md",
-  "course_sha256": "7a4177058e6c15c6b5e97191ef514cc545c3d2b4da7e64ba560f4d557c912703"
+  "course_sha256": "57aadf90286c5d8d22c512b6d4c7de009508dad927431946262297a317729463"
 }

@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[12.01 运行环境与制品](./01_runtime_artifacts.md)已完成。它承接 01.09 的 Go 模块、10.08–10.10 的依赖/制品/回退及 03.11–03.12 的进程与资源边界，用虚构 IM 网关区分源提交、二进制、OCI 镜像、可变标签、内容摘要、运行配置和外部数据。[12.02 容器机制](./02_container_mechanisms.md)再把镜像层、容器可写层、volume、namespace/cgroup 与 PID 1 关停接到 IM 状态重建。[12.03 本地多服务环境](./03_local_multi_service.md)用服务名、端口、健康与就绪串起纸上 gateway/db/events。[12.04 集群控制模型](./04_cluster_control_model.md)用三副本网关说明 spec/status、控制器、调度与业务自愈边界。[12.05 工作负载与服务发现](./05_workloads_service_discovery.md)按 gateway、transfer、db 和迁移任务的状态责任选择对象及入口。五章各含 8 节讲解、22 道分层练习；12.06–12.12 仍按下方设计展开。
+[12.01 运行环境与制品](./01_runtime_artifacts.md)已完成。它承接 01.09 的 Go 模块、10.08–10.10 的依赖/制品/回退及 03.11–03.12 的进程与资源边界，用虚构 IM 网关区分源提交、二进制、OCI 镜像、可变标签、内容摘要、运行配置和外部数据。[12.02 容器机制](./02_container_mechanisms.md)再把镜像层、容器可写层、volume、namespace/cgroup 与 PID 1 关停接到 IM 状态重建。[12.03 本地多服务环境](./03_local_multi_service.md)用服务名、端口、健康与就绪串起纸上 gateway/db/events。[12.04 集群控制模型](./04_cluster_control_model.md)用三副本网关说明 spec/status、控制器、调度与业务自愈边界。[12.05 工作负载与服务发现](./05_workloads_service_discovery.md)按 gateway、transfer、db 和迁移任务的状态责任选择对象及入口。[12.06 资源与持久存储](./06_resources_persistent_storage.md)手算 request/limit，区分 CPU 节流、OOM、Pod 临时卷与 PV/PVC。六章各含 8 节讲解、22 道分层练习；12.07–12.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -47,7 +47,7 @@ date: 2026-09-23
 |---|---|---|
 | [12.04 集群控制模型](./04_cluster_control_model.md) | 期望状态、控制循环、节点、Pod、控制器与调度。 | 解释期望副本数怎样形成运行实例，识别调度、控制循环和应用就绪的职责。 |
 | [12.05 工作负载与服务发现](./05_workloads_service_discovery.md) | Deployment、StatefulSet、Job、Service、DNS、Ingress。 | 按网关、消息转发和后台任务的状态与生命周期选择工作负载及服务发现。 |
-| 12.06 资源与持久存储 | request/limit、调度、CPU 限制、OOM、PV/PVC 与数据身份。 | 分析网关资源限制、OOM、存储身份和扩副本，说明状态并不会自动共享。 |
+| [12.06 资源与持久存储](./06_resources_persistent_storage.md) | request/limit、调度、CPU 限制、OOM、PV/PVC 与数据身份。 | 分析网关资源限制、OOM、存储身份和扩副本，说明状态并不会自动共享。 |
 
 ## 工程层
 
