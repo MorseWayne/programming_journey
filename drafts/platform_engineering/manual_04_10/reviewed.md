@@ -183,4 +183,4 @@ QUIC；不同 stream 可独立可靠有序交付，仍有流控/拥塞。</detai
 
 ## 本章完成标准与后续路径
 
-能把应用 `/v1` 与 HTTP/1.1、/v2 与 HTTP/2 分开，解释 HTTP/2 多路复用与 TCP 队头、HTTP/3 QUIC stream、gRPC 方法/状态/trailers 的不同责任；能指出 deadline/重试不能改写 S2 409 与 `accepted_in_memory`，才算完成本章。下一章 04.11 下沉到转发、NAT、MTU 和无线/移动网络的可达性问题。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)
+能把应用 `/v1` 与 HTTP/1.1、/v2 与 HTTP/2 分开，解释 HTTP/2 多路复用与 TCP 队头、HTTP/3 QUIC stream、gRPC 方法/状态/trailers 的不同责任；能指出 deadline/重试不能改写 S2 409 与 `accepted_in_memory`，才算完成本章。下一章[04.11 网络层与链路层](../../../src/docs/platform_engineering/curriculum/04_networks/11_network_link_layers.md)下沉到转发、NAT、MTU 和无线/移动网络的可达性问题。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)

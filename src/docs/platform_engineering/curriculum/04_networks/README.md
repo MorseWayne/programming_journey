@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[04.01 应用通信与分层](./01_application_communication_layers.md)已完成。它承接 03.01 的位/字节、03.02 的进程与 I/O，以及 03.04 的等待时间模型，从两个虚构 IM 用户的一条消息出发，分八节讲清协议、封装、成功确认点和带单位的单链路时延。[04.02 地址、名称与路由入口](./02_addresses_names_routes.md)继续从端点推导到 IP、端口、DNS 和分层失败。[04.03 HTTP 与 WebSocket 入门](./03_http_websocket_basics.md)从只读历史查询进入双向通道、握手、帧与业务确认。[04.04 可靠传输](./04_reliable_transport.md)纸上推演 TCP 序号、累计确认、重传、乱序和窗口。[04.05 TCP 与长连接生命周期](./05_tcp_connection_lifecycle.md)再讲握手、半关闭、重置、TIME_WAIT、心跳与重连。[04.06 流量与拥塞控制](./06_flow_congestion_control.md)区分慢接收设备与网络瓶颈，手算 BDP 和排队等待。[04.07 TLS 与身份](./07_tls_identity.md)补加密、证书、名称与代理逐跳边界。[04.08 Go 网络 I/O](./08_go_network_io.md)补短读短写、教学帧、deadline 与连接复用。[04.09 代理与负载均衡](./09_proxies_load_balancing.md)追逐跳信任、多实例内存、健康与重试预算。[04.10 HTTP 版本与 RPC](./10_http_versions_rpc.md)把 HTTP/2/3、gRPC 状态和 IM 业务确认分层。十章各含 8 节与 22 道练习；04.11–04.12 仍按下方设计展开。
+[04.01 应用通信与分层](./01_application_communication_layers.md)已完成。它承接 03.01 的位/字节、03.02 的进程与 I/O，以及 03.04 的等待时间模型，从两个虚构 IM 用户的一条消息出发，分八节讲清协议、封装、成功确认点和带单位的单链路时延。[04.02 地址、名称与路由入口](./02_addresses_names_routes.md)继续从端点推导到 IP、端口、DNS 和分层失败。[04.03 HTTP 与 WebSocket 入门](./03_http_websocket_basics.md)从只读历史查询进入双向通道、握手、帧与业务确认。[04.04 可靠传输](./04_reliable_transport.md)纸上推演 TCP 序号、累计确认、重传、乱序和窗口。[04.05 TCP 与长连接生命周期](./05_tcp_connection_lifecycle.md)再讲握手、半关闭、重置、TIME_WAIT、心跳与重连。[04.06 流量与拥塞控制](./06_flow_congestion_control.md)区分慢接收设备与网络瓶颈，手算 BDP 和排队等待。[04.07 TLS 与身份](./07_tls_identity.md)补加密、证书、名称与代理逐跳边界。[04.08 Go 网络 I/O](./08_go_network_io.md)补短读短写、教学帧、deadline 与连接复用。[04.09 代理与负载均衡](./09_proxies_load_balancing.md)追逐跳信任、多实例内存、健康与重试预算。[04.10 HTTP 版本与 RPC](./10_http_versions_rpc.md)把 HTTP/2/3、gRPC 状态和 IM 业务确认分层。[04.11 网络层与链路层](./11_network_link_layers.md)补本地下一跳、NAT、MTU 与移动路径。十一章各含 8 节与 22 道练习；04.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -61,7 +61,7 @@ HTTP 查询、WebSocket 双向通信、帧与载荷、心跳、超时、TLS、�
 | 章节 | 要详细讲解的内容 | IM 练习与验收目标 |
 |---|---|---|
 | [04.10 HTTP 版本与 RPC](./10_http_versions_rpc.md) | HTTP/2 多路复用与流控；HTTP/3 概念；gRPC、模式与错误。 | 比较HTTP版本与内部RPC，区分流控、序列化、协议错误与业务错误。 |
-| 04.11 网络层与链路层 | 转发与路由、NAT、MTU、局部寻址；无线与移动的基本限制。 | 用NAT、MTU和转发路径解释长连接可达性与大消息传输问题。 |
+| [04.11 网络层与链路层](./11_network_link_layers.md) | 转发与路由、NAT、MTU、局部寻址；无线与移动的基本限制。 | 用NAT、MTU和转发路径解释长连接可达性与大消息传输问题。 |
 | 04.12 网络排障与协议演进 | 抓包读法、阶段计时、失败分类、兼容矩阵与限额。 | 提交一次断线或投递延迟排障，包含阶段计时、抓包观察与协议兼容边界。 |
 
 ## 本卷综合任务

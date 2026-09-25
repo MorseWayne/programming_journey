@@ -1,0 +1,27 @@
+{
+  "chapter": "04.11",
+  "stage": "S2+ network layers second pass",
+  "business_scope": "static link/network layer and mobile-path lesson for a synthetic IM client",
+  "prerequisites": [
+    "04.02 IP names and routing",
+    "04.04-04.06 TCP, connection and flow-control model",
+    "04.09 proxy and NAT-adjacent boundaries",
+    "04.10 HTTP/3 QUIC stream concept",
+    "09.02 current S2 acceptance contract"
+  ],
+  "first_pass": [
+    "distinguish local next-hop link address from remote service IP",
+    "trace a documented NAT address/port mapping without treating IP as actor identity",
+    "hand-calculate MTU1500 minus minimal IPv4/TCP headers as 1460 B",
+    "separate single-packet MTU, HTTP raw body and IM text-body limits"
+  ],
+  "second_pass": [
+    "treat small-works/large-stalls as a diagnostic hypothesis, not proof of PMTU",
+    "explain Wi-Fi/cellular address change and TCP reconnect versus conditional QUIC migration",
+    "record stage, hop, unit and time window for network observations",
+    "keep S2 per-process acceptance and 25h offline/24h broker business results independent"
+  ],
+  "next_chapter": "04.12 network troubleshooting and protocol evolution",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}
