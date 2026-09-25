@@ -1,0 +1,27 @@
+{
+  "chapter": "14.10",
+  "stage": "S3+ optional AI branch, advanced serving design",
+  "business_scope": "static beginner-to-advanced model serving optimization and deployment decisions for a synthetic IM document assistant",
+  "prerequisites": [
+    "14.04 prefill, decode and KV cache",
+    "14.07 evidence-to-answer and authorization",
+    "14.09 fixed questions and component/end-to-end evaluation",
+    "11.02 latency distributions and 11.03 observability",
+    "12 platform runtime concepts for optional second pass"
+  ],
+  "first_pass": [
+    "define success as correct authorized answers or correct refusal/undecided outcomes",
+    "separate TTFT, full latency, throughput, token volume and cost",
+    "compare application routing, model candidates and keyword baseline on the same questions",
+    "explain batching and KV concurrency before performance claims"
+  ],
+  "second_pass": [
+    "separate retrieval, answer and prefix caches with scope/version invalidation",
+    "treat streamed tokens as unverified until business and citation checks pass",
+    "bound overload with queues, rate limits and safe degradation",
+    "measure resource and user-result slices without inventing production thresholds"
+  ],
+  "next_chapter": "14.11 optional fine-tuning and multimodal inputs, then 14.12 sustainable delivery",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

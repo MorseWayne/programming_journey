@@ -21,7 +21,7 @@
     "treat current duplicate ID 409 and lost response as unknown/conflict rather than idempotent success",
     "evaluate user intent, tool trace, authorization, approval and actual confirmation boundary"
   ],
-  "next_chapter": "14.10 AI application governance",
+  "next_chapter": "14.10 optimization and deployment",
   "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
   "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
 }

@@ -1,5 +1,5 @@
 {
-  "chapter": "14.08",
+  "chapter": "14.10",
   "generator": "manual course authoring; DeepTutor BookEngine attempted",
   "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
   "book_id": null,
@@ -8,12 +8,12 @@
   "original_status": "not generated; no original.md is claimed",
   "review_status": "manually reviewed against listed primary sources and course business contracts",
   "generation_request_file": "generation_request.json",
-  "generation_request_sha256": "962fe2655b38a1baa2bd97e642285884d763fda43aa87d24fac6769d0f4efd7b",
-  "reviewed_sha256": "5e514c732a5c7ec2de89c37bf8f68fb62f45482306e5519d8619185f72a2b928",
-  "reviewed_characters": 10790,
-  "reviewed_chinese_characters": 3962,
-  "course_file": "src/docs/platform_engineering/curriculum/14_ai/08_tools_workflows_agents.md",
-  "course_sha256": "e52363fdfa9da30b405528cec73bd37caa737e58b853495268b7fec595ae8e2f",
+  "generation_request_sha256": "995259d2c19f4d1f672684ff2baa7e82e74aac4c940e35faea18c3d55fdc05c7",
+  "reviewed_sha256": "086df133c4e3846f74c6802b16ec52eb2e05d02b395a3aea65b16d61f31f8c8a",
+  "reviewed_characters": 9162,
+  "reviewed_chinese_characters": 3848,
+  "course_file": "src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md",
+  "course_sha256": "0905a29b404f0b558df4d6f422e0a46e7609cffa9572164eadb5c33d944f9c63",
   "model_request_attempted": true,
   "model_output_received": false,
   "course_model_run": false,
@@ -21,10 +21,10 @@
   "site_build": false,
   "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
   "primary_sources": [
-    "https://www.anthropic.com/engineering/building-effective-agents",
-    "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents",
-    "https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html",
-    "https://docs.langchain.com/oss/javascript/langgraph/thinking-in-langgraph",
-    "https://www.rfc-editor.org/rfc/rfc9110.html"
+    "https://huggingface.co/docs/transformers/en/continuous_batching",
+    "https://huggingface.co/docs/transformers/en/kv_cache",
+    "https://docs.vllm.ai/en/latest/usage/security/",
+    "https://sre.google/sre-book/handling-overload/",
+    "https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring"
   ]
 }

@@ -199,4 +199,4 @@ Agent 若能反复查资料、改草稿、调用工具，必须有**最大步数
 
 ## 本章完成标准与后续路径
 
-能为虚构 `公告` 发送写出只读/写工具契约、从草稿到批准再到 `accepted_in_memory/result_unknown` 的状态转移；能解释为何当前 409 和响应丢失不能自动推出幂等成功，并能设计越权、注入、预算和重启的停止门，才算完成本章。后续 14.10 将从数据和模型生命周期看质量、安全与版本治理；14.11 再讨论需要时的专项进阶。[第十四卷路线](../../../src/docs/platform_engineering/curriculum/14_ai/README.md)
+能为虚构 `公告` 发送写出只读/写工具契约、从草稿到批准再到 `accepted_in_memory/result_unknown` 的状态转移；能解释为何当前 409 和响应丢失不能自动推出幂等成功，并能设计越权、注入、预算和重启的停止门，才算完成本章。后续[14.10 优化与部署](../../../src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md)将按成功 IM 任务比较模型选择、批量、缓存、路由、流式输出与过载成本；14.11 再讨论需要时的专项进阶。[第十四卷路线](../../../src/docs/platform_engineering/curriculum/14_ai/README.md)
