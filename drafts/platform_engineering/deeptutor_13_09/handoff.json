@@ -1,0 +1,32 @@
+{
+  "chapter": "13.09",
+  "stage": "S7",
+  "business_scope": "static beginner-to-advanced IM cross-team delivery lesson using fictional send, authoritative history and long-offline recovery",
+  "prerequisites": [
+    "13.01–13.08 requirements, identity, architecture, design and migration",
+    "10.11 technical collaboration",
+    "12.09 multi-axis release and rollback",
+    "09.02 current S2 HTTP contract and future S3/R9 proposals"
+  ],
+  "first_pass": [
+    "make A-to-B user result the unit of delivery rather than each team's PR",
+    "define provider and consumer contracts for client, gateway, data, event, history and on-call boundaries",
+    "separate implementation responsibility from product/safety decision and incident ownership",
+    "keep current /v1 6-byte, 409, 404 and accepted_in_memory intact"
+  ],
+  "second_pass": [
+    "order blocking dependencies before paper milestone 2 and canary expansion",
+    "test DB-stored/event-not-sent, replay, missing seq8 and 25-hour offline scenarios",
+    "keep future /v2 at 6 bytes and R9 as an independent pending decision",
+    "preserve confirmed new DB messages after D/K rollback",
+    "assign stop, recovery, communication and handoff roles",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "13.10 technical debt and evolution",
+    "product-approved historical visibility, actual team owners and executed integration evidence"
+  ],
+  "next_chapter": "13.10 technical debt and evolution",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish real team responsibilities, release milestones, product goals, authority or acknowledgments.",
+  "shared_integration_pending": []
+}

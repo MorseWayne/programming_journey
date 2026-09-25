@@ -1,7 +1,7 @@
 {
   "generator": "DeepTutor BookEngine",
-  "book_id": "bk_0efc0f94b8",
-  "page_id": "pg_75144fe228",
+  "book_id": "bk_a4f87fc725",
+  "page_id": "pg_cb30b3ad98",
   "page_status": "ready",
   "book_status": "ready",
   "blocks_ready": 8,
@@ -16,22 +16,23 @@
   "publication_status": "integrated into local course source",
   "source_reference": {
     "primary_sources": [
-      "https://martinfowler.com/bliki/ParallelChange.html",
-      "https://www.martinfowler.com/articles/evodb.html",
+      "https://sre.google/workbook/engagement-model/",
+      "https://dora.dev/capabilities/loosely-coupled-teams/",
+      "https://dora.dev/capabilities/continuous-delivery/",
+      "https://docs.pact.io/",
       "https://sre.google/workbook/canarying-releases/",
-      "https://sre.google/workbook/data-processing/",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
       "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
     ],
     "upstream_implementation_claims": true,
     "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
   },
-  "original_sha256": "06351d9965d231d71e40ff2f7ff940717482a8b4d9f5ea0002036ea1fa205190",
-  "original_characters": 29809,
-  "generation_request_sha256": "3f8292a2552499a014125c19551031e402ff04811046b7d8612c700f52bf8fe6",
-  "reviewed_sha256": "1214a62630e902c5af3e5d630d6525a279ca4ebf00d9ad84d65c4fb7d9e33f64",
-  "reviewed_characters": 10415,
-  "reviewed_chinese_characters": 3985,
-  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/08_migration_compatibility.md",
-  "course_sha256": "bca354bd9f66bf1a247af9a21bfbcaac7301df00e2451b0e27396076ba5a016e"
+  "original_sha256": "d3bb949414f6d45917353fa3945470008f9c136531ab0935dbce5a176c321b88",
+  "original_characters": 30512,
+  "generation_request_sha256": "494f58a2f80c366bd0e2cb28365195c47cda9499efcdd5aa2e8818f7d98816a3",
+  "reviewed_sha256": "67a049c66a7c5449f55d0dfe38913e904cd32c7c9db71a63ce4a3210ea7401d5",
+  "reviewed_characters": 10113,
+  "reviewed_chinese_characters": 4082,
+  "course_file": "src/docs/platform_engineering/curriculum/13_architecture/09_cross_team_delivery.md",
+  "course_sha256": "aec90092b13b583bb31ebad6c67cf249058ad881c2d5dca4b5c1f936b02969c5"
 }

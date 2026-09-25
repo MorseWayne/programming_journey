@@ -1,0 +1,74 @@
+{
+  "code": "13.09",
+  "title": "跨团队交付：网关、客户端与数据变更如何同日过业务门",
+  "chapter_id": "ch_cross_team_delivery",
+  "summary": "面向Go初学者，以虚构IM未来S3提议组织跨团队契约地图、责任与决定权、依赖里程碑、业务验收和事故交接。",
+  "objectives": [
+    "把交付单位固定为A到B用户旅程",
+    "定义提供/消费双方的版本化契约",
+    "区分执行者、决定者与值班责任",
+    "按真实依赖安排可并行里程碑",
+    "以跨团队故障反例验收业务结果",
+    "写发布/回退/交接与阻断风险卡"
+  ],
+  "sources": [
+    "https://sre.google/workbook/engagement-model/",
+    "https://dora.dev/capabilities/loosely-coupled-teams/",
+    "https://dora.dev/capabilities/continuous-delivery/",
+    "https://docs.pact.io/",
+    "https://sre.google/workbook/canarying-releases/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、交付单位是A到B的用户旅程",
+      "words": 3300,
+      "focus": "Go初学者承接13.08虚构S2到S3迁移，跨团队目标A发送、B离线25h有权补拉；当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。区分各团队任务完成与端到端用户结果，定义交付依赖、契约、决定人、验收证据。"
+    },
+    {
+      "title": "二、接口契约地图",
+      "words": 3400,
+      "focus": "客户端↔网关/v1状态码与/v2拟议DB确认、Go发送用例↔数据稳定message_id与(c-a,seq9)、数据↔E9稳定evt:m-9:v1和幂等、历史↔设备连续游标/成员可见、平台↔告警/回退。每条契约列提供方/使用方/版本/错误/失败时结果/测试/状态，旧7B仍拒绝，R9单独审。"
+    },
+    {
+      "title": "三、责任与决定权",
+      "words": 3400,
+      "focus": "产品确认25h用户目标/旧端文案，安全定退群历史可见，客户端定回执/seq/ACK能力，Go后端守身份/409/404/DB确认，数据定权威/留存/恢复，平台值班定发布/观测/事故；每个不变量单个决定负责人和多个参与者，不能用模糊共同负责；未定规则阻断依赖，独立准备可继续。"
+    },
+    {
+      "title": "四、里程碑与依赖顺序",
+      "words": 3400,
+      "focus": "纸上里程碑0现状/目标/契约决定→1并行准备DB schema/客户端解析/观测但无S3启用→2隔离v2会话端到端验证→3受控灰度/旧端混跑与对账→4交接/支持；映射13.08 P0-P5但不是实际进度。画阻断依赖图：历史可见规则→授权查询测试；DB唯一与seq→v2 stored；客户端能力→灰度；runbook/回退→扩量。"
+    },
+    {
+      "title": "五、跨团队契约验证与业务验收",
+      "words": 3400,
+      "focus": "借DORA loosely coupled teams与Pact官方consumer contract概念但不依赖具体工具；消费方需求样例与提供方验证，不以mock调用次数替代真实数据/权限/失败实验。旧/v1 6B/409/404/200，未来/v2仅DB commit可stored、E9重投、B先见9缺8游标仍7、B25h>broker24h从有权DB、旧客户端7B拒绝与回滚后新数据可读。测试未运行，只设计证据门。"
+    },
+    {
+      "title": "六、发布、事故与交接责任",
+      "words": 3400,
+      "focus": "D1/D2镜像/K1/K2配置/DB模式/E9/客户端版本独立；未来v2一旦已确认m-9 seq9，旧代码回滚不得丢新历史。谁停止扩大/暂停新写、谁保留兼容读/对账、谁告知用户、谁值班要写；Google SRE early engagement/production readiness思想。触发条件从用户结果而非Pod Ready。"
+    },
+    {
+      "title": "七、工作板与阻断风险处理",
+      "words": 3300,
+      "focus": "纸上每交付条目写owner、输入依赖、产物、证据、截止/升级、失败时决定人；风险矩阵阻断产品历史规则/DB不可持久/旧端无法理解/回退会丢权威，待验证热群20入站2000任务、积压恢复、维护成本。独立性由能否独立测试/部署而非服务数衡量。固定OpenIM两源码只支持异步路径不证明组织分工。"
+    },
+    {
+      "title": "八、22题分层练习",
+      "words": 3200,
+      "focus": "基础8、推演8、决策6附答案：区分任务与用户结果、契约提供/使用、责任/决定、前置依赖、S2/S3/R9、B25h/24h、seq7/9缺8、DB已存E9未发、旧端7B、D/K/DB回退、阻断与止损；全部静态不运行Go/IM/DB/测试/部署/站点。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《13.09 跨团队交付》，Go初学者八节丰富理论、虚构IM业务由浅入深、22题答案。承接13.08纸上S2→未来S3迁移。当前S2/v1合同必须固定：正文非空最多6 UTF-8B、原始HTTP请求体4096B、同ID重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db仅提议仍6B，R9 6→9B独立待审。交付单位不是各团队PR完成，而是A正确获当前/未来分层回执、B离线25h后若获批准可从真实保留且有权的DB历史补seq9，broker24h不足以当权威；若前置目标未获批，只交设计和阻断项。契约地图包括客户端↔网关/v1和/v2拟议、Go发送用例↔DB稳定message_id/(c-a,seq9)、DB↔E9稳定evt:m-9:v1与消费幂等、历史↔每设备连续游标和成员可见、平台↔观测发布/回退。每条契约写提供方/使用方/版本/失败结果/测试状态；旧7B在/v1或拟议/v2仍拒绝。产品决定25h目标/文案，安全决定退群历史可见，客户端决定回执/seq/ACK能力，Go服务守409/404/确认，数据负责唯一性/留存/恢复，平台值班负责发布/监测/事故接手；明确一个决定负责人，可多参与，不能模糊共同负责。纸上里程碑0现状/目标决定→1可并行DB schema/客户端解析/监控准备但S3未启用→2隔离v2会话端到端验证→3按cohort灰度/影读对账→4值班交接；依赖规则→授权测试，DB唯一/seq→v2 stored，客户端能力→灰度，故障演练/回退→扩量。借DORA loosely coupled teams与Pact消费/提供契约思想，但不要求工具，不运行测试；用旧合同、DB已存E9未发、E9重投、B先见9缺8游标7、B25h>broker24h、非成员历史、旧7B、D1/D2 K1/K2 DB事件客户端多轴回退设计验收。v2 DB已确认m-9/seq9后旧代码回滚不得使新消息消失。Google SRE早期值班参与与PRR思想，停止门看用户结果而非Pod Ready。固定OpenIM send.go选定分支MsgToMQ后返回及另一Mongo消费BatchInsertChat2DB只证所读异步边界，不证明组织架构。全静态，不运行Go/IM/DB/测试/部署/站点。\n1. 一、交付单位是A到B的用户旅程: Go初学者承接13.08虚构S2到S3迁移，跨团队目标A发送、B离线25h有权补拉；当前S2/v1正文非空最多6UTF8B/原始HTTP体4096B/同ID重复409/非成员404/200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。区分各团队任务完成与端到端用户结果，定义交付依赖、契约、决定人、验收证据。\n2. 二、接口契约地图: 客户端↔网关/v1状态码与/v2拟议DB确认、Go发送用例↔数据稳定message_id与(c-a,seq9)、数据↔E9稳定evt:m-9:v1和幂等、历史↔设备连续游标/成员可见、平台↔告警/回退。每条契约列提供方/使用方/版本/错误/失败时结果/测试/状态，旧7B仍拒绝，R9单独审。\n3. 三、责任与决定权: 产品确认25h用户目标/旧端文案，安全定退群历史可见，客户端定回执/seq/ACK能力，Go后端守身份/409/404/DB确认，数据定权威/留存/恢复，平台值班定发布/观测/事故；每个不变量单个决定负责人和多个参与者，不能用模糊共同负责；未定规则阻断依赖，独立准备可继续。\n4. 四、里程碑与依赖顺序: 纸上里程碑0现状/目标/契约决定→1并行准备DB schema/客户端解析/观测但无S3启用→2隔离v2会话端到端验证→3受控灰度/旧端混跑与对账→4交接/支持；映射13.08 P0-P5但不是实际进度。画阻断依赖图：历史可见规则→授权查询测试；DB唯一与seq→v2 stored；客户端能力→灰度；runbook/回退→扩量。\n5. 五、跨团队契约验证与业务验收: 借DORA loosely coupled teams与Pact官方consumer contract概念但不依赖具体工具；消费方需求样例与提供方验证，不以mock调用次数替代真实数据/权限/失败实验。旧/v1 6B/409/404/200，未来/v2仅DB commit可stored、E9重投、B先见9缺8游标仍7、B25h>broker24h从有权DB、旧客户端7B拒绝与回滚后新数据可读。测试未运行，只设计证据门。\n6. 六、发布、事故与交接责任: D1/D2镜像/K1/K2配置/DB模式/E9/客户端版本独立；未来v2一旦已确认m-9 seq9，旧代码回滚不得丢新历史。谁停止扩大/暂停新写、谁保留兼容读/对账、谁告知用户、谁值班要写；Google SRE early engagement/production readiness思想。触发条件从用户结果而非Pod Ready。\n7. 七、工作板与阻断风险处理: 纸上每交付条目写owner、输入依赖、产物、证据、截止/升级、失败时决定人；风险矩阵阻断产品历史规则/DB不可持久/旧端无法理解/回退会丢权威，待验证热群20入站2000任务、积压恢复、维护成本。独立性由能否独立测试/部署而非服务数衡量。固定OpenIM两源码只支持异步路径不证明组织分工。\n8. 八、22题分层练习: 基础8、推演8、决策6附答案：区分任务与用户结果、契约提供/使用、责任/决定、前置依赖、S2/S3/R9、B25h/24h、seq7/9缺8、DB已存E9未发、旧端7B、D/K/DB回退、阻断与止损；全部静态不运行Go/IM/DB/测试/部署/站点。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
