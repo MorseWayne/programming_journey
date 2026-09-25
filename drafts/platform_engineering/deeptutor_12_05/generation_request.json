@@ -1,0 +1,76 @@
+{
+  "code": "12.05",
+  "title": "工作负载与服务发现：网关、存储和后台任务怎样选",
+  "chapter_id": "ch_workloads_service_discovery",
+  "summary": "面向Go初学者，按虚构IM网关、消费者、数据库和回填任务的状态责任理解Deployment、StatefulSet、Job、Service、DNS和Ingress。",
+  "objectives": [
+    "按状态与生命周期选择工作负载控制器",
+    "理解StatefulSet身份/PVC不等于DB一致性",
+    "解释Job可能重复执行与幂等",
+    "沿Service selector/EndpointSlice/DNS追入口",
+    "区分Ingress HTTP路由与任意TCP",
+    "验证Pod替换后连接和业务状态"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+    "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+    "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+    "https://kubernetes.io/docs/concepts/services-networking/service/",
+    "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+    "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+    "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、工作负载类型按状态责任选",
+      "words": 3100,
+      "focus": "Go初学者沿未来虚构IM gateway/transfer/db/migration四角色，当前S2/v1静态6 UTF8B正文/4096B原始请求正文/重复409/非成员404/200仅内存受理，S3 DB提议仍6B，R9待审。Deployment/StatefulSet/Job/Service/Ingress不是按名字套模板。"
+    },
+    {
+      "title": "二、Deployment与网关/转发",
+      "words": 3200,
+      "focus": "gateway有多Pod替换可用Deployment+Service，但本地连接/消息身份不自动复制，WebSocket断/重连；转发消费者若checkpoint/归属在外部可Deployment，顺序/幂等另守，别说无状态等于无业务状态。"
+    },
+    {
+      "title": "三、StatefulSet与权威DB边界",
+      "words": 3100,
+      "focus": "StatefulSet提供序号/稳定网络身份/与PVC关联，用于自管DB某些情况；PV/PVC存在和稳定Pod名不自动给数据库复制、仲裁、备份、崩溃事务；外部DB也可能更合适但本章不推荐购买。"
+    },
+    {
+      "title": "四、Job与可重试一次性任务",
+      "words": 3100,
+      "focus": "未来模式迁移或有权历史回填可Job，Job完成表示进程满足退出条件不证明每条数据对账；即使parallelism1/completions1程序可能运行两次，任务需幂等身份、检查点/事务与权限。"
+    },
+    {
+      "title": "五、Service/DNS/EndpointSlice",
+      "words": 3200,
+      "focus": "Service按label selector选Pod，通过DNS提供稳定地址；EndpointSlice记录后端和ready/serving/terminating条件，Pod替换IP变，已有长连接不透明迁移；同namespace短名，跨namespace写namespace，cluster domain可配置。Service不复制m-a或保证409。"
+    },
+    {
+      "title": "六、Ingress与外部入口",
+      "words": 3100,
+      "focus": "Ingress按HTTP(S) host/path路由到Service，需controller实现；任意TCP非Ingress通用语义；WebSocket Upgrade/超时/长连接迁移依具体controller和应用验证。外部A→Ingress→gateway Service→Ready Pod与内部transfer→db分别画。"
+    },
+    {
+      "title": "七、故障对照和选择表",
+      "words": 3200,
+      "focus": "四个反例：Pod Ready但S2本地去重跨Pod破坏409、DB StatefulSet PV在但未复制、Job重跑双写、Service DNS稳定但旧TCP断；对每个写平台证据/业务验收/回退。固定OpenIM两源码不证明K8s资源。"
+    },
+    {
+      "title": "八、22题与S6交付",
+      "words": 3000,
+      "focus": "基础8/选型8/故障6，答案含Deployment/StatefulSet/Job/Service/Ingress、PVC不是DB一致性、Job重复、selector/ready、DNS namespace、WebSocket断线、S2/S3/设备确认。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.05 工作负载与服务发现》，Go初学者八节理论丰富，IM业务由浅入深、22题反馈。当前S2/v1只是静态教学合同：消息正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。以未来虚构gateway/transfer/db/migration四角色：gateway多副本可用Deployment+Service但Pod替换会断WebSocket，S2本地内存判重跨Pod不自动保证409；transfer消费服务若checkpoint/分区归属在外部可用Deployment，但异步重试/顺序/幂等另设计；自管DB在需要稳定网络身份与PVC关系时可考虑StatefulSet，然而stable pod name/PV不自动提供数据库复制、仲裁、事务、备份，外部DB为另选项不推荐购买；未来一次性模式迁移/历史回填可Job，但即使parallelism=1/completions=1程序可能跑两次，需稳定任务身份/幂等/检查点和授权。Service以selector匹配Pod、EndpointSlice存后端及ready/serving/terminating，提供稳定DNS/虚拟地址但不复制内存/消息，Pod IP可变、旧TCP不能透明迁移；同namespace可短名，跨namespace指定名字，cluster domain可配置。Ingress是HTTP(S) host/path到Service，需controller，不通用暴露任意TCP；WebSocket Upgrade/超时需按具体controller和应用测试。纸上A→Ingress→gateway Service→Ready Pod与内部transfer→db两链路；四反例：Ready但本地判重跨Pod失败、StatefulSet卷在但无DB复制、Job重跑双写、Service DNS稳定但旧WebSocket断。固定OpenIM send.go MsgToMQ与另Mongo BatchInsert两段不证明K8s拓扑。静态不运行Go/IM/Kubernetes/kubectl/部署/站点。\n1. 一、工作负载类型按状态责任选: Go初学者沿未来虚构IM gateway/transfer/db/migration四角色，当前S2/v1静态6 UTF8B正文/4096B原始请求正文/重复409/非成员404/200仅内存受理，S3 DB提议仍6B，R9待审。Deployment/StatefulSet/Job/Service/Ingress不是按名字套模板。\n2. 二、Deployment与网关/转发: gateway有多Pod替换可用Deployment+Service，但本地连接/消息身份不自动复制，WebSocket断/重连；转发消费者若checkpoint/归属在外部可Deployment，顺序/幂等另守，别说无状态等于无业务状态。\n3. 三、StatefulSet与权威DB边界: StatefulSet提供序号/稳定网络身份/与PVC关联，用于自管DB某些情况；PV/PVC存在和稳定Pod名不自动给数据库复制、仲裁、备份、崩溃事务；外部DB也可能更合适但本章不推荐购买。\n4. 四、Job与可重试一次性任务: 未来模式迁移或有权历史回填可Job，Job完成表示进程满足退出条件不证明每条数据对账；即使parallelism1/completions1程序可能运行两次，任务需幂等身份、检查点/事务与权限。\n5. 五、Service/DNS/EndpointSlice: Service按label selector选Pod，通过DNS提供稳定地址；EndpointSlice记录后端和ready/serving/terminating条件，Pod替换IP变，已有长连接不透明迁移；同namespace短名，跨namespace写namespace，cluster domain可配置。Service不复制m-a或保证409。\n6. 六、Ingress与外部入口: Ingress按HTTP(S) host/path路由到Service，需controller实现；任意TCP非Ingress通用语义；WebSocket Upgrade/超时/长连接迁移依具体controller和应用验证。外部A→Ingress→gateway Service→Ready Pod与内部transfer→db分别画。\n7. 七、故障对照和选择表: 四个反例：Pod Ready但S2本地去重跨Pod破坏409、DB StatefulSet PV在但未复制、Job重跑双写、Service DNS稳定但旧TCP断；对每个写平台证据/业务验收/回退。固定OpenIM两源码不证明K8s资源。\n8. 八、22题与S6交付: 基础8/选型8/故障6，答案含Deployment/StatefulSet/Job/Service/Ingress、PVC不是DB一致性、Job重复、selector/ready、DNS namespace、WebSocket断线、S2/S3/设备确认。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

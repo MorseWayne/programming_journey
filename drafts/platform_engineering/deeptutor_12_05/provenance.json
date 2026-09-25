@@ -1,0 +1,40 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_a566d5ed90",
+  "page_id": "pg_05885ef172",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+      "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/",
+      "https://kubernetes.io/docs/concepts/workloads/controllers/job/",
+      "https://kubernetes.io/docs/concepts/services-networking/service/",
+      "https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/",
+      "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/",
+      "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "79674118351f20656f3a5cd2c0c6dad8a2723071f1a328761ac1df26aa940d72",
+  "original_characters": 32555,
+  "generation_request_sha256": "1901848b0d20e44962a51ebc0ee0b9ae8c3b54954ec389fbc7ab37c959973326",
+  "reviewed_sha256": "cd1f738b864c534df9055db12d83dac2fcb1d2d0a01a4068c99defaaf641ea10",
+  "reviewed_characters": 10170,
+  "reviewed_chinese_characters": 3087,
+  "course_file": "src/docs/platform_engineering/curriculum/12_platform/05_workloads_service_discovery.md",
+  "course_sha256": "7a4177058e6c15c6b5e97191ef514cc545c3d2b4da7e64ba560f4d557c912703"
+}

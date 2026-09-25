@@ -1,0 +1,32 @@
+{
+  "chapter": "12.05",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Kubernetes workload and service-discovery lesson for fictional IM gateway, transfer, db and migration",
+  "prerequisites": [
+    "12.04 object spec/status, Pod and scheduler control chain",
+    "07.12 authoritative versus derived IM state",
+    "08.07 coordination and ownership",
+    "08.09 reliable retryable tasks",
+    "09.02 current S2 HTTP contract"
+  ],
+  "first_pass": [
+    "choose Deployment, StatefulSet or Job from state and lifecycle rather than names",
+    "distinguish Service and DNS discovery from per-Pod IP and connection continuity",
+    "keep S2 local acceptance separate from future S3 database and device receipt",
+    "trace external HTTP(S) Ingress to gateway Service and internal transfer to db"
+  ],
+  "second_pass": [
+    "challenge local per-Pod dedup and global duplicate 409 after gateway replacement",
+    "show StatefulSet PVC does not implement database replication or recovery",
+    "design idempotent Job reruns with scoped authority and reconciliation",
+    "interpret EndpointSlice readiness with terminating and Service option caveats",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.06 resource requests, limits and persistent storage",
+    "learner's actual authorized cluster resources and business tests"
+  ],
+  "next_chapter": "12.06 resource and persistent storage",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish Deployment, StatefulSet, Job, Service, Ingress or course platform state.",
+  "shared_integration_pending": []
+}

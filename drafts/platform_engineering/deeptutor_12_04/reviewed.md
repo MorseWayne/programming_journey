@@ -183,4 +183,4 @@ spec/status、Deployment/ReplicaSet/Pod UID、调度与 Node/kubelet、就绪和
 
 ## 本章完成标准与后续路径
 
-能从 `spec.replicas=3` 推到控制器创建、调度器选 Node、kubelet运行和就绪汇报，解释 P1 被 P4 替换为何丢连接/本地内存，并指出跨 Pod 重复 409 的业务缺口，才算完成第一轮。所有 Pod 与时间线均为纸上推演，未运行集群。下一章 12.05 将按网关、权威存储与后台任务的状态/生命周期选择工作负载和服务发现方式。
+能从 `spec.replicas=3` 推到控制器创建、调度器选 Node、kubelet运行和就绪汇报，解释 P1 被 P4 替换为何丢连接/本地内存，并指出跨 Pod 重复 409 的业务缺口，才算完成第一轮。所有 Pod 与时间线均为纸上推演，未运行集群。下一章[12.05 工作负载与服务发现](../../../src/docs/platform_engineering/curriculum/12_platform/05_workloads_service_discovery.md)将按网关、权威存储与后台任务的状态/生命周期选择平台对象。
