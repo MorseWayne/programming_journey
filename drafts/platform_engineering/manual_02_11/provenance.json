@@ -1,0 +1,30 @@
+{
+  "chapter": "02.11",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against primary algorithm sources and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "64848f7a11508efdb572a3ee8166b2c7cc0d0271fac502953d76e73b96fc8dd4",
+  "reviewed_sha256": "e271f3d9bbb5e34c84058a8004d55e52eb85ba7ef7d51b20e8c88e594e3f7292",
+  "reviewed_characters": 8938,
+  "reviewed_chinese_characters": 3288,
+  "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/11_specialized_structures_approximation.md",
+  "course_sha256": "da3d46e6f8e1688f921c98f0f543cd35c98206ef9bb2a7488f8d7eb71e576c2f",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://algs4.cs.princeton.edu/52trie/",
+    "https://algs4.cs.princeton.edu/15uf/",
+    "https://www.cs.princeton.edu/courses/archive/spr05/cos598E/bib/p422-bloom.pdf",
+    "https://redis.io/docs/latest/data-types/probabilistic/bloom-filter/",
+    "https://redis.io/docs/latest/develop/clients/go/prob/"
+  ]
+}

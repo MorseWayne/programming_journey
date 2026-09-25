@@ -179,4 +179,4 @@ B 结束不晚于原第一项，不妨碍原后续从那个结束时刻可做的
 
 ## 本章完成标准与后续路径
 
-能枚举 A/B/C 的合法组合反驳比值贪心，按 `dp[i][b]` 填到最优值 6 并追出 B+C，解释 0/1 一维倒序、`O(nM)` 的伪多项式边界，以及最早结束区间贪心只在其条件下成立，才算完成本章。下一章 02.11 将从关键词前缀、位图、Bloom 预筛与并查集看专用结构的收益和误判风险。[第二卷路线](../../../src/docs/platform_engineering/curriculum/02_algorithms/README.md)
+能枚举 A/B/C 的合法组合反驳比值贪心，按 `dp[i][b]` 填到最优值 6 并追出 B+C，解释 0/1 一维倒序、`O(nM)` 的伪多项式边界，以及最早结束区间贪心只在其条件下成立，才算完成本章。下一章[02.11 近似与专用结构](../../../src/docs/platform_engineering/curriculum/02_algorithms/11_specialized_structures_approximation.md)将从关键词前缀、位图、Bloom 预筛与并查集看专用结构的收益和误判风险。[第二卷路线](../../../src/docs/platform_engineering/curriculum/02_algorithms/README.md)

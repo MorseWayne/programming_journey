@@ -1,0 +1,27 @@
+{
+  "chapter": "02.11",
+  "stage": "S4+ algorithms second pass",
+  "business_scope": "static specialized-structure lesson using synthetic IM prefix queries, bitmap IDs, Bloom prefilter and incremental connectivity",
+  "prerequisites": [
+    "01.04 UTF-8 and slices",
+    "02.01 discrete units and space costs",
+    "02.04 hash sets and exact IDs",
+    "02.08 undirected graphs and reachability",
+    "05.04 shared-state synchronization for second pass"
+  ],
+  "first_pass": [
+    "select Trie, bitmap, Bloom or union-find by exact query shape",
+    "draw a code-point Trie with complete-word terminal markers",
+    "hand-calculate a dense one-byte bitmap and its ID mapping",
+    "explain Bloom zero-bit exclusion and all-one possible-membership"
+  ],
+  "second_pass": [
+    "counterexample Bloom false positive m-x and require exact ID confirmation before 409",
+    "explain ordinary Bloom deletion risks and version/capacity conditions",
+    "trace union-find parent sets, path compression and lack of edge deletion/path output",
+    "keep authorization, live presence and S2 acceptance outside data-structure claims"
+  ],
+  "next_chapter": "02.12 business algorithm review",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

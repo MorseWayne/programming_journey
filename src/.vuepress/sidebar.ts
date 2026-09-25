@@ -172,6 +172,7 @@ export default sidebar({
             "curriculum/02_algorithms/08_graph_dependency_traversal",
             "curriculum/02_algorithms/09_weighted_paths_state_space",
             "curriculum/02_algorithms/10_dynamic_programming_greedy",
+            "curriculum/02_algorithms/11_specialized_structures_approximation",
             "curriculum/02_algorithms/core"
           ]
         },
