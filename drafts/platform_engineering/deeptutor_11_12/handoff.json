@@ -1,0 +1,34 @@
+{
+  "chapter": "11.12",
+  "stage": "S6–S7",
+  "business_scope": "static beginner-to-advanced IM capacity and cost decision lesson using fictional connections, fanout, retention and N-1 assumptions",
+  "prerequisites": [
+    "11.01–11.06 measurement and resource diagnosis",
+    "11.07 open/closed load experiments and N-1 arithmetic",
+    "11.08 user result and SLO candidates",
+    "11.09–11.11 overload, recovery and postmortem evidence",
+    "07.12 authoritative history versus broker replay",
+    "08.05 hotspot and partition rebalancing"
+  ],
+  "first_pass": [
+    "calculate distinct device connections, active senders, incoming messages and delivery tasks",
+    "estimate raw authoritative message and E9 event retention separately",
+    "keep current S2 acceptance distinct from proposed S3 and future S5",
+    "compute conditional three-versus-two-instance N-1 nominal spare throughput"
+  ],
+  "second_pass": [
+    "compare one-variable connection, group-size and retention growth cases",
+    "attribute gateway, DB, broker, network and engineering costs without inventing prices",
+    "compare added gateway, reduced redundant derivation and extended event retention for business risks",
+    "write a capacity decision with missing evidence and controlled verification gates",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "03.11–03.12 isolation and resource-failure foundations",
+    "12.01–12.12 platform operating model",
+    "learner's approved retention requirements, measured capacity and actual prices"
+  ],
+  "next_chapter": "03.11 isolation and resource boundaries",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish actual connection counts, throughput, retention, instance capacity or cost.",
+  "shared_integration_pending": []
+}

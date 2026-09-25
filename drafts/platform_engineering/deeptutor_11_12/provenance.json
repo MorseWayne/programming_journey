@@ -1,0 +1,37 @@
+{
+  "generator": "DeepTutor BookEngine",
+  "book_id": "bk_f8b0345858",
+  "page_id": "pg_8d5c81d49e",
+  "page_status": "ready",
+  "book_status": "ready",
+  "blocks_ready": 8,
+  "blocks_failed": 0,
+  "language": "zh",
+  "depth": "deep",
+  "http_export_verified": true,
+  "generation_request_file": "generation_request.json",
+  "code_execution": false,
+  "benchmark_execution": false,
+  "site_build": false,
+  "publication_status": "integrated into local course source",
+  "source_reference": {
+    "primary_sources": [
+      "https://sre.google/workbook/non-abstract-design/",
+      "https://sre.google/sre-book/introduction/",
+      "https://sre.google/sre-book/embracing-risk/",
+      "https://sre.google/sre-book/data-integrity/",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+      "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+    ],
+    "upstream_implementation_claims": true,
+    "upstream_commit": "f6411a8a1a31d3df36f4c2b3ad28481a94141e1f"
+  },
+  "original_sha256": "d896d322f47eba6beb449de1c5d53276f6c6beed93c31f5ace329bb38d4227c8",
+  "original_characters": 31386,
+  "generation_request_sha256": "7fa3b77b12bd4d3a0c0d213ece14bbd486f4e5ceae3ec5f7bdca0a9818941008",
+  "reviewed_sha256": "bd86375879f15bbe67dacf30be9a8b34bb86e110bd6e9c3510d880a7859a8230",
+  "reviewed_characters": 10446,
+  "reviewed_chinese_characters": 3654,
+  "course_file": "src/docs/platform_engineering/curriculum/11_reliability/12_capacity_cost_decision.md",
+  "course_sha256": "c7b7df5828f0dfdabb0a7901c4d186a3cc7a533741db67568a35fff90e60c7af"
+}

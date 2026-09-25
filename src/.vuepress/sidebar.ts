@@ -340,6 +340,7 @@ export default sidebar({
             "curriculum/11_reliability/09_overload_cascades",
             "curriculum/11_reliability/10_incident_response",
             "curriculum/11_reliability/11_postmortem_improvement",
+            "curriculum/11_reliability/12_capacity_cost_decision",
             "curriculum/11_reliability/core"
           ]
         },
