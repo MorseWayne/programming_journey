@@ -1,0 +1,75 @@
+{
+  "code": "04.12",
+  "title": "网络排障与协议演进：用阶段证据审一次断线",
+  "chapter_id": "ch_network_diagnostics_evolution",
+  "summary": "面向Go初学者，以合成A→P→N1的504/409纸上故障训练抓包可见范围、阶段计时、错误归因、兼容矩阵与限额。",
+  "objectives": [
+    "固定用户症状和S2/设备确认点",
+    "限定抓包采集点/TLS密文的证据范围",
+    "手算分阶段1000ms时间线",
+    "区分DNS/TCP/TLS/WS/代理/业务错误",
+    "设计协议兼容/限额/重试停止门",
+    "完成纸上遏制、核影响与复盘"
+  ],
+  "sources": [
+    "https://www.wireshark.org/docs/wsug_html_chunked/ChUsePacketListPaneSection.html",
+    "https://www.wireshark.org/docs/wsug_html/",
+    "https://www.wireshark.org/docs/wsug_html_chunked/ChStatHTTP2.html",
+    "https://pkg.go.dev/net/http/httptrace",
+    "https://go.dev/doc/diagnostics",
+    "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "https://www.rfc-editor.org/rfc/rfc6455.html",
+    "https://sre.google/sre-book/managing-incidents/"
+  ],
+  "sections": [
+    {
+      "title": "一、先固定用户症状与确认点，再收集包",
+      "words": 3300,
+      "focus": "虚构事故：A 向会话 `c-a` 发送正文 `公告`（两个汉字共 **6 UTF-8 B**）、消息 ID `m-9`。客户端经过代理 P，到后端 N1；A 最后看到代理返回 **504**，随后同 ID 再试看到 **409**。B 恰好切换了网络并离线 25h，教学 broker 仅保留 24h。用户问“B 到底收到了吗？”本章不能从这几条现象直接答“是”或“否”：P 504 只表示它没按时等到上游响应；409 只表示同 ID 冲突；即使 N1 曾返回 S2 200，也只到 N1 进程内存；24h broker 不保证 25h 离线完整补齐。[04.09 504/进程内存](./09_proxies_load_balancing.md) · [14.09 固定 `q-06` 标签](../14_ai/09_evaluation_data_engineering.md) 先写纸上**待核命题**，而非先找一个“网络慢”标签：A 的请求是否到 P？P 是否把同一 ID 发给 N1？N1 是否实际完成 S2 内存受理？A 为何没有收到它的响应？第二次 409 由哪一实例产生？B 的连接/历史/授权与 m-9 处于什么状态？这些问题各有证据来源，不能靠一张客户端抓包回答所有。[11.04 诊断方法](../11_reliability/04_diagnostic_method.md)"
+    },
+    {
+      "title": "二、抓包只说明采集点看见了什么",
+      "words": 3300,
+      "focus": "学习者读一份**获许可的合成抓包**时，先看采集点、时间戳、源/目的地址端口、协议与包长度，再按同一连接关联 SYN/ACK、重传、关闭/RST 等。Wireshark 的包列表展示编号、时间、源/目的、协议、长度和摘要；过滤/Follow Stream 能帮助缩小范围，但显示过滤后编号不重排，时间戳精度与采集环境也有限。[Wireshark：Packet List](https://www.wireshark.org/docs/wsug_html_chunked/ChUsePacketListPaneSection.html) · [User's Guide](https://www.wireshark.org/docs/wsug_html/) 若 A→P 使用 TLS，普通网络抓包通常**看不到明文 JSON、`message_id` 或用户正文**；即使能看到 TCP 字节与 TLS 记录，也不能单凭它声称读到了应用字段。代理 P 在 TLS 终止后、N1 应用入口的有权日志可提供其它证据；若确需解密抓包，密钥/内容的获取、保存与访问必须另有许可。本章只用合成元数据，不接触真实私聊。[Wireshark：TLS/HTTP2 解密前提](https://www.wireshark.org/docs/wsug_html_chunked/ChStatHTTP2.html) · [04.07 TLS 边界](./07_tls_identity.md) **TCP ACK**说明某段"
+    },
+    {
+      "title": "三、阶段计时：一秒不等于单一慢点",
+      "words": 3300,
+      "focus": "纸上端到端 1000 ms 时间线如下；**所有数字都是演练假设，不是实测或超时建议**： `20+30+40+900+10=1000 ms`，只是一张分阶段卡。Go `net/http/httptrace.ClientTrace` 可为**出站 HTTP 请求**观察 DNS、建连、TLS 握手、首响应字节等钩子；连接复用或代理会使某些阶段缺失/发生在不同跳，不能硬把客户端 trace 的 `GotConn` 当 N1 的建连时间。P→N1 还要有代理/后端的关联 trace 或日志。[Go `httptrace`](https://pkg.go.dev/net/http/httptrace) · [Go Diagnostics](https://go.dev/doc/diagnostics) 若 504 后客户端同 ID 再试，需把第二次尝试单独标 `attempt=2`、目标实例与时间；不能把两次耗时都记成一次请求，也不能凭 409 逆推第一次一定以相同正文成功。时钟不同步的机器上比较绝对时间戳要小心，用同一请求 ID 和阶段顺序/单机时长核证。[04.09 超时预算](./09_proxies_load_balancing.md)"
+    },
+    {
+      "title": "四、失败分类：先找第一坏边界，再解释用户结果",
+      "words": 3300,
+      "focus": "用“**最早哪一层已违背已知前提**”排查，比统一写网络故障更有效：DNS 失败则没有后续 TCP；TCP 建连失败则未到 TLS；证书名称错误是信任边界；WebSocket 升级失败/关闭与 HTTP 请求业务错误分开；代理 502/503/504 的 RFC 含义也不同。到了 N1，才审 S2 404/409/200 的业务合同。[04.02 名称/路由](./02_addresses_names_routes.md) · [RFC 9110：HTTP 5xx](https://www.rfc-editor.org/rfc/rfc9110.html) WebSocket 的**正常关闭握手**可含 Close 帧和状态；底层 TCP 突然丢失时，本端可能观察到异常关闭而没有收到真实 Close 帧。RFC 6455 的本地观察值 1006 不应被误写为“对端发来了 1006 帧”。这又是一个**本端观察不等于对端动作**的例子。[RFC 6455：Closing Handshake/1006](https://www.rfc-editor.org/rfc/rfc6455.html)"
+    },
+    {
+      "title": "五、抓包、日志、Trace 各能证明哪段",
+      "words": 3300,
+      "focus": "**抓包**看采集点的包/连接时间线；**应用日志**记 N1 接到哪个请求、做了哪些授权/ID/状态判断；**分布式 Trace**可把 A/P/N1 的一次请求与尝试关联，呈现分阶段延迟；**指标**看一段时间内各错误桶/尾时延。它们互补，也可能因采样、时钟、丢日志或隐私限制而不完整。不能用“没查到 N1 日志”直接证明 N1 没执行，也不能用“看到 TCP ACK”直接证明应用已受理。[Go Diagnostics：profiling/tracing](https://go.dev/doc/diagnostics) · [11.03 日志指标 Trace](../11_reliability/03_logs_metrics_traces.md) 一条可审记录至少含 `request_id`、`attempt_id`、`message_id` 的**非敏感标识/必要摘要**、actor 的授权决策结果、外部/上游协议与实例、阶段时长、HTTP/gRPC/WebSocket 错误、N1 的业务确认点及最终用户可见结果。不要把私聊正文、凭据或 TLS 密钥写入普通诊断日志；用合成/脱敏材料讲课程。[09.07 授权与最小披露](../09_backend_security/07_authentication_authorization.md) 即使完整 trace 说明 N1 返回了 `200 accepted_in_memory`，它仍**没有**自动观测 DB/设备 ACK。"
+    },
+    {
+      "title": "六、协议演进的兼容矩阵与限额不能藏在“升级”里",
+      "words": 3300,
+      "focus": "一次协议候选变更要列**旧端/新端、A→P 与 P→N1 的 HTTP 版本、WebSocket 握手/关闭、TLS 名称、正文/原始请求限额、错误映射、代理/后端超时与重试、回退条件**。例如外部 HTTP/2 与内部 HTTP/1.1 可以并存；把外部 `/v1` 错路由到未来 `/v2` 是**应用合同错位**，不是 HTTP/2 自动带来的能力。R9 9 B 尚待审，不因更大 MTU 或新版网关就可发。[04.10 HTTP 与 RPC 版本](./10_http_versions_rpc.md) · [13.08 兼容迁移](../13_architecture/08_migration_compatibility.md) 限额是资源和业务的共同门：太大请求要在对应层明确拒绝，不能无限缓存；过载时可用有界排队/限流与可解释失败，但不可以静默截掉 `公告` 的 UTF-8 字节、放宽私有权限或把 409 改成 200。实际阈值除当前已固定合同外都需负载/兼容证据，本章不编造生产配置。[11.09 过载级联](../11_reliability/09_overload_cascades.md)"
+    },
+    {
+      "title": "七、纸上事件响应：先遏制重试，再留证、修第一坏边界",
+      "words": 3300,
+      "focus": "若 A 的 504/409 让客户端反复自动发送 `m-9`，先**停止盲目重试/放大**，保留每次 attempt 与 P/N1/N2 的证据；核现有能力能否查询原操作真实结果，若没有就明确标 `result_unknown`。同时确认 `u-a` 对 `c-a` 的授权、正文 `公告` 的 6 B、P 是否曾把请求改路由/重复送 N2。不能为“让用户安心”虚构 B 已收到。[14.08 未知结果停止门](../14_ai/08_tools_workflows_agents.md) · [Google SRE：Managing Incidents](https://sre.google/sre-book/managing-incidents/) 若第一坏边界是 P 的上游超时设置/错误重试，修代理预算并用合成故障卡复核；若是 N1 处理慢，继续查它的队列/依赖；若是 B 换网后没补齐，查历史权威源、游标、成员权限和设备确认。改协议或回滚要保留旧端兼容和 R9 待审状态。事件复盘写触发、影响、遏制、第一坏边界、检测延迟与下一次的可验证停止门；没有真实事故就只交纸上演练记录。[11.10 事件响应](../11_reliability/10_incident_response.md) · [11.11 复盘](../11_reliability/11_postmortem_improvement.md)"
+    },
+    {
+      "title": "八、22 道分层练习：一张断线报告够不够证据",
+      "words": 3300,
+      "focus": "1–8 认采集点/阶段，9–16 推演 504/409/200 与关闭，17–22 审兼容/限额和事件决策。答案均基于虚构时间线。 不能；采集点只见自身链路，需代理/后端证据关联。</details> 通常不能；未授权解密前只能见外层连接/记录等，不应伪称看到正文。</details> 20 ms、30 ms、40 ms；全是虚构演练数。</details> 900 ms；不证明 N1 没执行。</details> `20+30+40+900+10=1000 ms`，纸上预算。</details> 不是；可能是复用 A→P 连接，需看每一跳的追踪。</details> 不表示；ACK 在某段传输层，不是 IM 设备确认。</details> 两个汉字各 3 B，共 6 B，正好当前正文上限。</details> P 等上游没有及时收到响应；原写操作可能已发生，也可能未发生。</details> 不能；它是冲突，仍需原操作权威结果。</details> 只到 N1 本进程内存受理，非 DB/设备 ACK。</details> 不能；1006 可是本端异常关闭观察值，不是发送的 Close 帧。</details> 不应；分别审无效上游响应、暂不可用、代理等上游超时及来源。</details> 不能；还需核日志采集、采样、实例与请求 ID，缺日志不是执行证明。</details> 不能；需真正保留的 DB 和有权历史查询等额外证据。</details> 放大负载、跨实例重复副作用；当"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《04.12 网络排障与协议演进》，面向Go初学者，八节丰富理论，虚构IM断线慢投递由浅入深，22题附答案。当前S2/v1正文非空最多6UTF8B、原始HTTP体4096B、同ID重复409即使同内容、非成员隐藏404、200 accepted_in_memory仅本进程；S3/v2存库提案仍6B，R9 6→9B待审。合成A发m-9正文“公告”6B，A→P→N1，P最后504，同ID再试409，B离线25h broker仅24h，不能直接判断B收到。抓包只证明采集点可见包，TLS明文需另有授权解密；逐跳日志/trace关联request_id/attempt_id。纸上时间线DNS0–20ms、TCP20–50、TLS50–90、P上游90–990、504回传990–1000，总20+30+40+900+10=1000ms；Go httptrace只观客户端对应跳，连接复用会缺阶段。区分DNS/TCP/TLS/WebSocket异常关闭1006（本端观察非对端帧）/代理502-503-504/业务404-409-200；504不证明N1未执行，409非幂等成功，S2 200非B ACK。旧端/HTTP版本/WS/限额/权限/重试/回退矩阵，先停盲重试、留证、找第一坏边界。引Wireshark、Go、RFC、Google SRE原始资料。静态不抓包/运行Go/IM/代理/站点。\n1. 一、先固定用户症状与确认点，再收集包: 虚构事故：A 向会话 `c-a` 发送正文 `公告`（两个汉字共 **6 UTF-8 B**）、消息 ID `m-9`。客户端经过代理 P，到后端 N1；A 最后看到代理返回 **504**，随后同 ID 再试看到 **409**。B 恰好切换了网络并离线 25h，教学 broker 仅保留 24h。用户问“B 到底收到了吗？”本章不能从这几条现象直接答“是”或“否”：P 504 只表示它没按时等到上游响应；409 只表示同 ID 冲突；即使 N1 曾返回 S2 200，也只到 N1 进程内存；24h broker 不保证 25h 离线完整补齐。[04.09 504/进程内存](./09_proxies_load_balancing.md) · [14.09 固定 `q-06` 标签](../14_ai/09_evaluation_data_engineering.md) 先写纸上**待核命题**，而非先找一个“网络慢”标签：A 的请求是否到 P？P 是否把同一 ID 发给 N1？N1 是否实际完成 S2 内存受理？A 为何没有收到它的响应？第二次 409 由哪一实例产生？B 的连接/历史/授权与 m-9 处于什么状态？这些问题各有证据来源，不能靠一张客户端抓包回答所有。[11.04 诊断方法](../11_reliability/04_diagnostic_method.md)\n2. 二、抓包只说明采集点看见了什么: 学习者读一份**获许可的合成抓包**时，先看采集点、时间戳、源/目的地址端口、协议与包长度，再按同一连接关联 SYN/ACK、重传、关闭/RST 等。Wireshark 的包列表展示编号、时间、源/目的、协议、长度和摘要；过滤/Follow Stream 能帮助缩小范围，但显示过滤后编号不重排，时间戳精度与采集环境也有限。[Wireshark：Packet List](https://www.wireshark.org/docs/wsug_html_chunked/ChUsePacketListPaneSection.html) · [User's Guide](https://www.wireshark.org/docs/wsug_html/) 若 A→P 使用 TLS，普通网络抓包通常**看不到明文 JSON、`message_id` 或用户正文**；即使能看到 TCP 字节与 TLS 记录，也不能单凭它声称读到了应用字段。代理 P 在 TLS 终止后、N1 应用入口的有权日志可提供其它证据；若确需解密抓包，密钥/内容的获取、保存与访问必须另有许可。本章只用合成元数据，不接触真实私聊。[Wireshark：TLS/HTTP2 解密前提](https://www.wireshark.org/docs/wsug_html_chunked/ChStatHTTP2.html) · [04.07 TLS 边界](./07_tls_identity.md) **TCP ACK**说明某段\n3. 三、阶段计时：一秒不等于单一慢点: 纸上端到端 1000 ms 时间线如下；**所有数字都是演练假设，不是实测或超时建议**： `20+30+40+900+10=1000 ms`，只是一张分阶段卡。Go `net/http/httptrace.ClientTrace` 可为**出站 HTTP 请求**观察 DNS、建连、TLS 握手、首响应字节等钩子；连接复用或代理会使某些阶段缺失/发生在不同跳，不能硬把客户端 trace 的 `GotConn` 当 N1 的建连时间。P→N1 还要有代理/后端的关联 trace 或日志。[Go `httptrace`](https://pkg.go.dev/net/http/httptrace) · [Go Diagnostics](https://go.dev/doc/diagnostics) 若 504 后客户端同 ID 再试，需把第二次尝试单独标 `attempt=2`、目标实例与时间；不能把两次耗时都记成一次请求，也不能凭 409 逆推第一次一定以相同正文成功。时钟不同步的机器上比较绝对时间戳要小心，用同一请求 ID 和阶段顺序/单机时长核证。[04.09 超时预算](./09_proxies_load_balancing.md)\n4. 四、失败分类：先找第一坏边界，再解释用户结果: 用“**最早哪一层已违背已知前提**”排查，比统一写网络故障更有效：DNS 失败则没有后续 TCP；TCP 建连失败则未到 TLS；证书名称错误是信任边界；WebSocket 升级失败/关闭与 HTTP 请求业务错误分开；代理 502/503/504 的 RFC 含义也不同。到了 N1，才审 S2 404/409/200 的业务合同。[04.02 名称/路由](./02_addresses_names_routes.md) · [RFC 9110：HTTP 5xx](https://www.rfc-editor.org/rfc/rfc9110.html) WebSocket 的**正常关闭握手**可含 Close 帧和状态；底层 TCP 突然丢失时，本端可能观察到异常关闭而没有收到真实 Close 帧。RFC 6455 的本地观察值 1006 不应被误写为“对端发来了 1006 帧”。这又是一个**本端观察不等于对端动作**的例子。[RFC 6455：Closing Handshake/1006](https://www.rfc-editor.org/rfc/rfc6455.html)\n5. 五、抓包、日志、Trace 各能证明哪段: **抓包**看采集点的包/连接时间线；**应用日志**记 N1 接到哪个请求、做了哪些授权/ID/状态判断；**分布式 Trace**可把 A/P/N1 的一次请求与尝试关联，呈现分阶段延迟；**指标**看一段时间内各错误桶/尾时延。它们互补，也可能因采样、时钟、丢日志或隐私限制而不完整。不能用“没查到 N1 日志”直接证明 N1 没执行，也不能用“看到 TCP ACK”直接证明应用已受理。[Go Diagnostics：profiling/tracing](https://go.dev/doc/diagnostics) · [11.03 日志指标 Trace](../11_reliability/03_logs_metrics_traces.md) 一条可审记录至少含 `request_id`、`attempt_id`、`message_id` 的**非敏感标识/必要摘要**、actor 的授权决策结果、外部/上游协议与实例、阶段时长、HTTP/gRPC/WebSocket 错误、N1 的业务确认点及最终用户可见结果。不要把私聊正文、凭据或 TLS 密钥写入普通诊断日志；用合成/脱敏材料讲课程。[09.07 授权与最小披露](../09_backend_security/07_authentication_authorization.md) 即使完整 trace 说明 N1 返回了 `200 accepted_in_memory`，它仍**没有**自动观测 DB/设备 ACK。\n6. 六、协议演进的兼容矩阵与限额不能藏在“升级”里: 一次协议候选变更要列**旧端/新端、A→P 与 P→N1 的 HTTP 版本、WebSocket 握手/关闭、TLS 名称、正文/原始请求限额、错误映射、代理/后端超时与重试、回退条件**。例如外部 HTTP/2 与内部 HTTP/1.1 可以并存；把外部 `/v1` 错路由到未来 `/v2` 是**应用合同错位**，不是 HTTP/2 自动带来的能力。R9 9 B 尚待审，不因更大 MTU 或新版网关就可发。[04.10 HTTP 与 RPC 版本](./10_http_versions_rpc.md) · [13.08 兼容迁移](../13_architecture/08_migration_compatibility.md) 限额是资源和业务的共同门：太大请求要在对应层明确拒绝，不能无限缓存；过载时可用有界排队/限流与可解释失败，但不可以静默截掉 `公告` 的 UTF-8 字节、放宽私有权限或把 409 改成 200。实际阈值除当前已固定合同外都需负载/兼容证据，本章不编造生产配置。[11.09 过载级联](../11_reliability/09_overload_cascades.md)\n7. 七、纸上事件响应：先遏制重试，再留证、修第一坏边界: 若 A 的 504/409 让客户端反复自动发送 `m-9`，先**停止盲目重试/放大**，保留每次 attempt 与 P/N1/N2 的证据；核现有能力能否查询原操作真实结果，若没有就明确标 `result_unknown`。同时确认 `u-a` 对 `c-a` 的授权、正文 `公告` 的 6 B、P 是否曾把请求改路由/重复送 N2。不能为“让用户安心”虚构 B 已收到。[14.08 未知结果停止门](../14_ai/08_tools_workflows_agents.md) · [Google SRE：Managing Incidents](https://sre.google/sre-book/managing-incidents/) 若第一坏边界是 P 的上游超时设置/错误重试，修代理预算并用合成故障卡复核；若是 N1 处理慢，继续查它的队列/依赖；若是 B 换网后没补齐，查历史权威源、游标、成员权限和设备确认。改协议或回滚要保留旧端兼容和 R9 待审状态。事件复盘写触发、影响、遏制、第一坏边界、检测延迟与下一次的可验证停止门；没有真实事故就只交纸上演练记录。[11.10 事件响应](../11_reliability/10_incident_response.md) · [11.11 复盘](../11_reliability/11_postmortem_improvement.md)\n8. 八、22 道分层练习：一张断线报告够不够证据: 1–8 认采集点/阶段，9–16 推演 504/409/200 与关闭，17–22 审兼容/限额和事件决策。答案均基于虚构时间线。 不能；采集点只见自身链路，需代理/后端证据关联。</details> 通常不能；未授权解密前只能见外层连接/记录等，不应伪称看到正文。</details> 20 ms、30 ms、40 ms；全是虚构演练数。</details> 900 ms；不证明 N1 没执行。</details> `20+30+40+900+10=1000 ms`，纸上预算。</details> 不是；可能是复用 A→P 连接，需看每一跳的追踪。</details> 不表示；ACK 在某段传输层，不是 IM 设备确认。</details> 两个汉字各 3 B，共 6 B，正好当前正文上限。</details> P 等上游没有及时收到响应；原写操作可能已发生，也可能未发生。</details> 不能；它是冲突，仍需原操作权威结果。</details> 只到 N1 本进程内存受理，非 DB/设备 ACK。</details> 不能；1006 可是本端异常关闭观察值，不是发送的 Close 帧。</details> 不应；分别审无效上游响应、暂不可用、代理等上游超时及来源。</details> 不能；还需核日志采集、采样、实例与请求 ID，缺日志不是执行证明。</details> 不能；需真正保留的 DB 和有权历史查询等额外证据。</details> 放大负载、跨实例重复副作用；当",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}

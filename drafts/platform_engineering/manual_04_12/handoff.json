@@ -1,0 +1,27 @@
+{
+  "chapter": "04.12",
+  "stage": "S2+ network troubleshooting capstone",
+  "business_scope": "static troubleshooting and protocol-evolution review using a synthetic m-9 A/P/N1 IM timeline",
+  "prerequisites": [
+    "04.03 HTTP/WebSocket entry",
+    "04.04-04.06 TCP, long connection and flow control",
+    "04.07 TLS identity",
+    "04.08-04.11 Go I/O, proxy, HTTP versions, network/link layers",
+    "09.02 current S2 contract and 11.10-11.11 incident practice"
+  ],
+  "first_pass": [
+    "fix user symptom and separate transport, S2 acceptance, persistence and device ACK",
+    "read only the packet evidence visible at a known capture point",
+    "hand-calculate DNS, connect, TLS, proxy wait and response timeline",
+    "classify DNS/TCP/TLS/WebSocket/proxy/app statuses by first failing boundary"
+  ],
+  "second_pass": [
+    "join packet, proxy/application logs and traces using request and attempt IDs",
+    "avoid treating TLS ciphertext or missing logs as business proof",
+    "review old/new protocol, authorization, byte limits, retry and rollback matrix",
+    "stop blind retry after 504, preserve unknown result and complete paper incident response"
+  ],
+  "next_chapter": "all 168 independent chapters have text; revisit prerequisites and learner-run evidence",
+  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
+  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+}

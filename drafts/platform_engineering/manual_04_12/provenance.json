@@ -1,0 +1,33 @@
+{
+  "chapter": "04.12",
+  "generator": "manual course authoring; DeepTutor BookEngine attempted",
+  "generation_status": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds",
+  "book_id": null,
+  "page_id": null,
+  "blocks_ready": 0,
+  "original_status": "not generated; no original.md is claimed",
+  "review_status": "manually reviewed against primary Wireshark/Go/RFC sources and course business contracts",
+  "generation_request_file": "generation_request.json",
+  "generation_request_sha256": "eaa8d9814f0958d112433ce1845b8d2a85cf286943a98c6b4f3c9415211b36d1",
+  "reviewed_sha256": "4e345792eccb8b38aa2a740f49d67611b69af229d7d5c40031cd39f0dd56f384",
+  "reviewed_characters": 9447,
+  "reviewed_chinese_characters": 3085,
+  "course_file": "src/docs/platform_engineering/curriculum/04_networks/12_network_diagnostics_evolution.md",
+  "course_sha256": "31b93e4c5a3c6fb0f811db32b51b00991121aa8968ad34206a4680a600ae518d",
+  "model_request_attempted": true,
+  "model_output_received": false,
+  "course_go_execution": false,
+  "im_execution": false,
+  "site_build": false,
+  "backfill_action": "Retry DeepTutor generation when its configured model endpoint recovers; archive original separately, review differences, then update provenance without overwriting this reviewed course.",
+  "primary_sources": [
+    "https://www.wireshark.org/docs/wsug_html_chunked/ChUsePacketListPaneSection.html",
+    "https://www.wireshark.org/docs/wsug_html/",
+    "https://www.wireshark.org/docs/wsug_html_chunked/ChStatHTTP2.html",
+    "https://pkg.go.dev/net/http/httptrace",
+    "https://go.dev/doc/diagnostics",
+    "https://www.rfc-editor.org/rfc/rfc9110.html",
+    "https://www.rfc-editor.org/rfc/rfc6455.html",
+    "https://sre.google/sre-book/managing-incidents/"
+  ]
+}

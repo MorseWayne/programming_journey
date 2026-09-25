@@ -172,4 +172,4 @@ NAT 后的外侧地址、代理的 `Forwarded` 头和移动切换前后的 IP �
 
 ## 本章完成标准与后续路径
 
-能画出 A 的本地下一跳与 NAT 映射，算出 MTU1500 的简化 1460 B TCP 数据并说清它与正文 6 B 的区别；能按网络切换、PMTU、代理和应用确认点定位三类故障，不用路由/NAT/QUIC 结果冒充 B 设备 ACK，才算完成本章。下一章 04.12 汇总抓包观察、阶段计时、失败分类与协议兼容评审。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)
+能画出 A 的本地下一跳与 NAT 映射，算出 MTU1500 的简化 1460 B TCP 数据并说清它与正文 6 B 的区别；能按网络切换、PMTU、代理和应用确认点定位三类故障，不用路由/NAT/QUIC 结果冒充 B 设备 ACK，才算完成本章。下一章[04.12 网络排障与协议演进](../../../src/docs/platform_engineering/curriculum/04_networks/12_network_diagnostics_evolution.md)汇总抓包观察、阶段计时、失败分类与协议兼容评审。[第四卷路线](../../../src/docs/platform_engineering/curriculum/04_networks/README.md)

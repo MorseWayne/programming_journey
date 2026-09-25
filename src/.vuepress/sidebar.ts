@@ -213,6 +213,7 @@ export default sidebar({
             "curriculum/04_networks/09_proxies_load_balancing",
             "curriculum/04_networks/10_http_versions_rpc",
             "curriculum/04_networks/11_network_link_layers",
+            "curriculum/04_networks/12_network_diagnostics_evolution",
             "curriculum/04_networks/core"
           ]
         },
