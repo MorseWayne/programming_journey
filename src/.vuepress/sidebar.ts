@@ -397,6 +397,7 @@ export default sidebar({
             "curriculum/14_ai/09_evaluation_data_engineering",
             "curriculum/14_ai/04_transformer_inference_path",
             "curriculum/14_ai/05_prompt_structured_output",
+            "curriculum/14_ai/06_retrieval_indexing",
             "curriculum/14_ai/core"
           ]
         }

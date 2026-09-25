@@ -1,0 +1,73 @@
+{
+  "code": "14.06",
+  "title": "检索与索引：从资料切分到有权证据",
+  "chapter_id": "ch_retrieval_indexing",
+  "summary": "面向Go初学者，以虚构IM资料问答解释文档切分、倒排/BM25、向量/ANN、混合与重排、权限版本和评测。",
+  "objectives": [
+    "定义可追溯片段与索引元数据",
+    "解释倒排/BM25和向量近邻的候选含义",
+    "手算余弦/RRF并识别相似不等于现行证据",
+    "比较前过滤、后过滤和权限撤销",
+    "按固定六题拆候选召回、引用与用户结果"
+  ],
+  "sources": [
+    "https://nlp.stanford.edu/IR-book/html/htmledition/the-term-vocabulary-and-postings-lists-1.html",
+    "https://nlp.stanford.edu/IR-book/html/htmledition/a-first-take-at-building-an-inverted-index-1.html",
+    "https://nlp.stanford.edu/IR-book/html/htmledition/okapi-bm25-a-non-binary-model-1.html",
+    "https://github.com/facebookresearch/faiss/wiki",
+    "https://arxiv.org/abs/1603.09320",
+    "https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion",
+    "https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-knn-query"
+  ],
+  "sections": [
+    {
+      "title": "一、检索要交付的是有权证据，不只是“相似文本”",
+      "words": 3300,
+      "focus": "14.05 假定应用已把允许的证据交给提示。现在补上**证据如何找到**。用户 `u-a` 问 `q-01`“当前 `/v1` 正文上限？”：`doc-current` 和 `doc-r9` 都含“正文”“上限”，后者还写 9 B，却是 `status=proposed`。若只看词匹配或向量距离，就可能把提议排在前面。`u-b` 问 `q-03` 的私有内容，则 `doc-private(scope=u-a-only)` 根本不应成为可交付候选。检索的目标是按身份、状态、问题找到**可读且足以支持主张**的资料，而不是返回一个大分数。[14.09 六题金标签](./09_evaluation_data_engineering.md) 资料原文 → 标来源/版本/权限 → 切分 → 建词项和向量索引 用户身份/问题 → 访问与状态约束 → 词项/向量候选 → 合并/重排 → 再核访问与原文 → 有权证据或拒绝/不足 这里的“检索”只找候选和证据，不决定 IM 消息是否存库、设备是否 ACK、退群历史规则是否批准。`q-04` 本来没有已批准规则，索引再快也不会凭空产生合法答案；`q-05` 的 S2 200 也不能因搜到“消息成功”就变成送达。[14.05 输出契约](./05_prompt_structured_output.md)"
+    },
+    {
+      "title": "二、先确定文档单位，再决定如何切分",
+      "words": 3300,
+      "focus": "检索前先定“**一条可引用资料**”是什么。四份虚构记录各保留 `document_id`、来源、`version`、`status=current/proposed`、`access_scope`、生效时间/废止时间和正文散列；切出来的每个片段再有稳定的 `chunk_id`、父文档 ID、起止位置与切分器版本。这样命中片段后才能回到**哪份原文的哪一段**核证，也能在资料改版时找出应撤掉的旧片段。[《信息检索导论》：文档单位与分词](https://nlp.stanford.edu/IR-book/html/htmledition/the-term-vocabulary-and-postings-lists-1.html) · [14.01 来源 manifest](./01_python_data_work.md) doc-current@v1 [current, public] c-current-1：/v1 正文非空、最多 6 UTF-8 B；请求体最多 4096 B。 c-current-2：同 ID 重复 409；非成员隐藏 404；200 仅内存受理。 doc-r9@draft [proposed, public] c-r9-1：R9 建议把正文上限从 6 B 改为 9 B；尚待审。 doc-private@v1 [current, u-a-only] c-private-1：正文省略；u-b 不得检索或进入模型。 这是**纸上切分**，不是资料系统的实际记录。按"
+    },
+    {
+      "title": "三、倒排索引让词项检索可解释，BM25 也不懂“待审”",
+      "words": 3300,
+      "focus": "把文字分成可索引的**词项**，为每个词项保存出现过的文档/片段 ID 列表，这叫**倒排索引**。例如纸上词项表： 查询“正文上限”时可查词项的 posting list 并合并候选；相同词在长短文中出现的次数、全库有多少文档包含它，也可帮助排序。**BM25** 是常见词项排名模型，它考虑词频、文档频率和长度，能让词项检索比简单“出现就加一分”更稳；它的分数仍是**相关性排序线索**，不验证生效状态、引用是否支持结论或用户权限。[《信息检索导论》：倒排表](https://nlp.stanford.edu/IR-book/html/htmledition/a-first-take-at-building-an-inverted-index-1.html) · [BM25 讲解](https://nlp.stanford.edu/IR-book/html/htmledition/okapi-bm25-a-non-binary-model-1.html) 直观地看：在大量文档都出现的“消息”通常不如少见的 `accepted_in_memory` 能区分候选；同一个词出现两次可能比一次更相关，但重复一百次不应机械得到一百倍；很长的片段也不能只因容纳了更多词就无条件占优。这对应**逆文档频率、词频饱和和长度归一化**三种作用。具体 BM25 公式与参数实现会影响名次，本章先要求能解释它们为何存在；调参必须在固定问题和资料版本上观察，不能让权重替代 current/proposed "
+    },
+    {
+      "title": "四、向量检索找语义近邻，但近邻未必是可用证据",
+      "words": 3300,
+      "focus": "14.02 已把**嵌入向量**当成把文本映射到数字空间的表示，并手算过余弦。给每个片段和问题用**同一兼容的嵌入模型/版本**得到固定维度向量；查询时按余弦、点积或距离找最近候选。度量方式和向量正规化必须配套，不能把某个模型的距离分数与另一模型或 BM25 原分直接比较。Faiss 的官方说明把它定义为固定维度向量上的近邻搜索；不同索引和距离各有假设。[Faiss：相似检索与索引](https://github.com/facebookresearch/faiss/wiki) · [14.02 余弦](./02_math_ml_intuition.md) 纸上造一个**与真实模型无关**的二维例子：问题 `q=(1,0)`，`c-current-1=(0.8,0.6)`，`c-r9-1=(1,0)`。三者长度都是 1，于是与 q 的余弦分别是 **0.8** 和 **1.0**。向量路径会更偏向 `c-r9-1`，但它仍为 `proposed`，不能答“当前 9 B”。若私有片段恰好更近，距离也不会授予 `u-b` 权限。**相似、相关、可读、现行、能支持主张**是五道不同判断。 **精确近邻**可以在很小集合中逐个比较；数据大时可用近似近邻（ANN）索引减少搜索工作，但可能漏掉真正的最近项。HNSW 是基于分层邻居图的一类方法：从较高层逐步导航到更近候选。它是速度、内存、建索引成本和召回之间的取舍，不保证每次都找全。[HNSW 原论文](https://arxiv.org/a"
+    },
+    {
+      "title": "五、混合检索和重排解决覆盖与排序，仍需业务硬门",
+      "words": 3300,
+      "focus": "词项路径对精确编号、`409`、`6 B` 等字面线索有用；向量路径可能捞到改写表达。**混合检索**取两路候选并合并，**重排**则在已得到的少量候选上用额外规则或模型重新比较。可用 RRF（Reciprocal Rank Fusion）示意**按名次**合并：每路中第 `r` 名贡献 `1/(k+r)`，两路贡献相加；`k` 是选定常数，与“取 top k 个片段”的 k 不是同一个参数。RRF 不要求 BM25 分和向量距离落在同一数字尺度，但融合结果仍可能把提议资料排第一。[Elasticsearch：RRF 原理与公式](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion) 若纸上取 `k=60`，两者贡献都为 `1/61+1/62`，**恰好打平**；这不是融合算法“知道两份资料一样可信”，而是人工排名对称。实际还须固定并列排序规则、候选窗口与各路版本。重排器即使偏爱措辞更像问题的 `c-r9-1`，应用也不能省去 status 与原文核证。引入额外模型还增加费用/延迟并可能带来新错误；是否比 14.09 关键词基线更好要按同一六题和更多未见集比较。[Elasticsearch：RRF](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusio"
+    },
+    {
+      "title": "六、权限和版本要影响候选产生，也要在交付前复核",
+      "words": 3300,
+      "focus": "**查询前**先确定 actor 能访问哪些文档，再让索引在可用范围内找候选；**交付前**再查权威权限与文档状态，防止索引滞后、权限撤销或候选融合/重排漏带元数据。对 `u-b`，`doc-private` 不应进入可见结果、提示或日志正文。若某搜索实现只能先取全库 top2、随后才删无权片段，可能出现“全库两条都无权，删完只剩 0 条，虽然库里另有可读片段”的**候选饥饿**；后过滤仍必须保证无权内容不外泄。具体引擎的前过滤能力与 ANN 召回行为需要按其文档验证，不能以“有 filter 字段”推断所有路径等价。[Elasticsearch：kNN 前/后过滤](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-knn-query) `q-01` 只要 current 答案，不应把 `doc-r9` 的 proposed 数值当现行；`q-02` 同时需要 current/proposed 说明“未生效”。`q-03` 的拒绝可由应用权限元数据直接完成，**不需要检索私有正文**；`q-04` 没有已批准的退群历史规则，返回空候选或类似文档时应说明未知。查询条件因此包含**身份、问题意图、资料版本/状态和适用时间**，不能只从文本猜。权限/状态元数据不应由模型生成的建议覆盖。[09.07 访问控制](../09_backend_security/07_authenticatio"
+    },
+    {
+      "title": "七、把索引质量拆为召回、授权、引用和用户结果",
+      "words": 3300,
+      "focus": "检索实验的输入应沿用 14.09 的 `q-01…q-06` 与权限/版本标签，先跑可解释关键词基线，再比较词项排名、向量、混合与重排。记录每题每路的**候选 ID、名次、score 的含义、过滤原因、片段来源及是否进入提示**。召回计算只放入有预先可访问金证据的问题；`q-03` 是权限拒绝、`q-04` 是规则未定，不把它们当“漏检”来改分母。`q-02` 需要 current 和 proposed **两份**，只找回其中一份不算完整证据召回。[14.09 Recall@k 分母](./09_evaluation_data_engineering.md) **候选召回**不等于**引用支撑**：片段存在、排得高，还要确认答案每个关键主张是否由现行且有权原文支持。**索引吞吐/延迟**也不等于用户成功率。若后续使用生成器，14.07 才把检索、上下文组装和回答连成 RAG；在本章交接的是可追溯片段与失败原因。[14.09 组件与端到端](./09_evaluation_data_engineering.md)"
+    },
+    {
+      "title": "八、22 道分层练习：手排候选，先找第一道坏边界",
+      "words": 3300,
+      "focus": "先做 1–8 的资料/索引概念，再做 9–16 的纸上排名，最后做 17–22 的权限与评测决策。 父文档、稳定片段 ID、原文位置、来源/版本/状态和权限范围。</details> 限定词丢失会把 proposed 错当现行，`q-01` 可能答错。</details> 某词项出现在哪些文档/片段；也可含位置等信息。</details> `c-current-1` 与 `c-r9-1`。</details> 不能。它是词项相关性排序线索，不是状态/权限/事实校验。</details> 距离只在同一可比表示空间与匹配度量下有意义。</details> ANN 用更少搜索工作换取速度/容量，但可能漏真正近邻，还需评估内存与建索引成本。</details> 通常处理已召回的候选；第一阶段没召回的金证据，后续重排也无法找回。</details> 两向量长度为 1，点积为 0.8，余弦为 **0.8**。</details> 余弦为 **1.0**；仍不能，因为 r9 是 proposed。</details> `1/(60+1)+1/(60+2)=1/61+1/62`，约 `0.03252`；这是排名合并值，不是可信度。</details> 两者都是一条路径第 1、另一条第 2，纸上打平；需要固定并列规则和业务状态核证。</details> 本可命中的表达被拆成不同词项而漏检；需记录并统一分析器版本。</details> 不足；需要 `doc-current` 与 `doc-r9` 的"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《14.06 检索与索引》，面向Go初学者，八节丰富理论，虚构IM资料助手由浅入深，22题附答案。沿14.09 q-01…q-06，doc-current(current/public)、doc-r9(proposed/public)、doc-private(u-a-only)、doc-history(24h broker)。当前S2/v1正文非空最多6 UTF-8B、原始HTTP体4096B、重复ID 409、非成员404、200 accepted_in_memory仅本进程；未来S3/v2 stored_in_teaching_db提议仍6B、R9 6→9B待审。先资料来源/权限/状态与切分元数据，再倒排表和BM25，再向量、精确与ANN/HNSW，再混合RRF/重排，最后前后过滤、权限撤销和评测。所有向量/排名为纸上人工数字，不能把相似度/排名当证据或授权；q-01须current 6B、q-02对照proposed与current、q-03 u-b不得检索私有正文、q-04规则未定。静态，不运行Go/Python/IM/索引/模型/站点。\n1. 一、检索要交付的是有权证据，不只是“相似文本”: 14.05 假定应用已把允许的证据交给提示。现在补上**证据如何找到**。用户 `u-a` 问 `q-01`“当前 `/v1` 正文上限？”：`doc-current` 和 `doc-r9` 都含“正文”“上限”，后者还写 9 B，却是 `status=proposed`。若只看词匹配或向量距离，就可能把提议排在前面。`u-b` 问 `q-03` 的私有内容，则 `doc-private(scope=u-a-only)` 根本不应成为可交付候选。检索的目标是按身份、状态、问题找到**可读且足以支持主张**的资料，而不是返回一个大分数。[14.09 六题金标签](./09_evaluation_data_engineering.md) 资料原文 → 标来源/版本/权限 → 切分 → 建词项和向量索引 用户身份/问题 → 访问与状态约束 → 词项/向量候选 → 合并/重排 → 再核访问与原文 → 有权证据或拒绝/不足 这里的“检索”只找候选和证据，不决定 IM 消息是否存库、设备是否 ACK、退群历史规则是否批准。`q-04` 本来没有已批准规则，索引再快也不会凭空产生合法答案；`q-05` 的 S2 200 也不能因搜到“消息成功”就变成送达。[14.05 输出契约](./05_prompt_structured_output.md)\n2. 二、先确定文档单位，再决定如何切分: 检索前先定“**一条可引用资料**”是什么。四份虚构记录各保留 `document_id`、来源、`version`、`status=current/proposed`、`access_scope`、生效时间/废止时间和正文散列；切出来的每个片段再有稳定的 `chunk_id`、父文档 ID、起止位置与切分器版本。这样命中片段后才能回到**哪份原文的哪一段**核证，也能在资料改版时找出应撤掉的旧片段。[《信息检索导论》：文档单位与分词](https://nlp.stanford.edu/IR-book/html/htmledition/the-term-vocabulary-and-postings-lists-1.html) · [14.01 来源 manifest](./01_python_data_work.md) doc-current@v1 [current, public] c-current-1：/v1 正文非空、最多 6 UTF-8 B；请求体最多 4096 B。 c-current-2：同 ID 重复 409；非成员隐藏 404；200 仅内存受理。 doc-r9@draft [proposed, public] c-r9-1：R9 建议把正文上限从 6 B 改为 9 B；尚待审。 doc-private@v1 [current, u-a-only] c-private-1：正文省略；u-b 不得检索或进入模型。 这是**纸上切分**，不是资料系统的实际记录。按\n3. 三、倒排索引让词项检索可解释，BM25 也不懂“待审”: 把文字分成可索引的**词项**，为每个词项保存出现过的文档/片段 ID 列表，这叫**倒排索引**。例如纸上词项表： 查询“正文上限”时可查词项的 posting list 并合并候选；相同词在长短文中出现的次数、全库有多少文档包含它，也可帮助排序。**BM25** 是常见词项排名模型，它考虑词频、文档频率和长度，能让词项检索比简单“出现就加一分”更稳；它的分数仍是**相关性排序线索**，不验证生效状态、引用是否支持结论或用户权限。[《信息检索导论》：倒排表](https://nlp.stanford.edu/IR-book/html/htmledition/a-first-take-at-building-an-inverted-index-1.html) · [BM25 讲解](https://nlp.stanford.edu/IR-book/html/htmledition/okapi-bm25-a-non-binary-model-1.html) 直观地看：在大量文档都出现的“消息”通常不如少见的 `accepted_in_memory` 能区分候选；同一个词出现两次可能比一次更相关，但重复一百次不应机械得到一百倍；很长的片段也不能只因容纳了更多词就无条件占优。这对应**逆文档频率、词频饱和和长度归一化**三种作用。具体 BM25 公式与参数实现会影响名次，本章先要求能解释它们为何存在；调参必须在固定问题和资料版本上观察，不能让权重替代 current/proposed \n4. 四、向量检索找语义近邻，但近邻未必是可用证据: 14.02 已把**嵌入向量**当成把文本映射到数字空间的表示，并手算过余弦。给每个片段和问题用**同一兼容的嵌入模型/版本**得到固定维度向量；查询时按余弦、点积或距离找最近候选。度量方式和向量正规化必须配套，不能把某个模型的距离分数与另一模型或 BM25 原分直接比较。Faiss 的官方说明把它定义为固定维度向量上的近邻搜索；不同索引和距离各有假设。[Faiss：相似检索与索引](https://github.com/facebookresearch/faiss/wiki) · [14.02 余弦](./02_math_ml_intuition.md) 纸上造一个**与真实模型无关**的二维例子：问题 `q=(1,0)`，`c-current-1=(0.8,0.6)`，`c-r9-1=(1,0)`。三者长度都是 1，于是与 q 的余弦分别是 **0.8** 和 **1.0**。向量路径会更偏向 `c-r9-1`，但它仍为 `proposed`，不能答“当前 9 B”。若私有片段恰好更近，距离也不会授予 `u-b` 权限。**相似、相关、可读、现行、能支持主张**是五道不同判断。 **精确近邻**可以在很小集合中逐个比较；数据大时可用近似近邻（ANN）索引减少搜索工作，但可能漏掉真正的最近项。HNSW 是基于分层邻居图的一类方法：从较高层逐步导航到更近候选。它是速度、内存、建索引成本和召回之间的取舍，不保证每次都找全。[HNSW 原论文](https://arxiv.org/a\n5. 五、混合检索和重排解决覆盖与排序，仍需业务硬门: 词项路径对精确编号、`409`、`6 B` 等字面线索有用；向量路径可能捞到改写表达。**混合检索**取两路候选并合并，**重排**则在已得到的少量候选上用额外规则或模型重新比较。可用 RRF（Reciprocal Rank Fusion）示意**按名次**合并：每路中第 `r` 名贡献 `1/(k+r)`，两路贡献相加；`k` 是选定常数，与“取 top k 个片段”的 k 不是同一个参数。RRF 不要求 BM25 分和向量距离落在同一数字尺度，但融合结果仍可能把提议资料排第一。[Elasticsearch：RRF 原理与公式](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion) 若纸上取 `k=60`，两者贡献都为 `1/61+1/62`，**恰好打平**；这不是融合算法“知道两份资料一样可信”，而是人工排名对称。实际还须固定并列排序规则、候选窗口与各路版本。重排器即使偏爱措辞更像问题的 `c-r9-1`，应用也不能省去 status 与原文核证。引入额外模型还增加费用/延迟并可能带来新错误；是否比 14.09 关键词基线更好要按同一六题和更多未见集比较。[Elasticsearch：RRF](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusio\n6. 六、权限和版本要影响候选产生，也要在交付前复核: **查询前**先确定 actor 能访问哪些文档，再让索引在可用范围内找候选；**交付前**再查权威权限与文档状态，防止索引滞后、权限撤销或候选融合/重排漏带元数据。对 `u-b`，`doc-private` 不应进入可见结果、提示或日志正文。若某搜索实现只能先取全库 top2、随后才删无权片段，可能出现“全库两条都无权，删完只剩 0 条，虽然库里另有可读片段”的**候选饥饿**；后过滤仍必须保证无权内容不外泄。具体引擎的前过滤能力与 ANN 召回行为需要按其文档验证，不能以“有 filter 字段”推断所有路径等价。[Elasticsearch：kNN 前/后过滤](https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-knn-query) `q-01` 只要 current 答案，不应把 `doc-r9` 的 proposed 数值当现行；`q-02` 同时需要 current/proposed 说明“未生效”。`q-03` 的拒绝可由应用权限元数据直接完成，**不需要检索私有正文**；`q-04` 没有已批准的退群历史规则，返回空候选或类似文档时应说明未知。查询条件因此包含**身份、问题意图、资料版本/状态和适用时间**，不能只从文本猜。权限/状态元数据不应由模型生成的建议覆盖。[09.07 访问控制](../09_backend_security/07_authenticatio\n7. 七、把索引质量拆为召回、授权、引用和用户结果: 检索实验的输入应沿用 14.09 的 `q-01…q-06` 与权限/版本标签，先跑可解释关键词基线，再比较词项排名、向量、混合与重排。记录每题每路的**候选 ID、名次、score 的含义、过滤原因、片段来源及是否进入提示**。召回计算只放入有预先可访问金证据的问题；`q-03` 是权限拒绝、`q-04` 是规则未定，不把它们当“漏检”来改分母。`q-02` 需要 current 和 proposed **两份**，只找回其中一份不算完整证据召回。[14.09 Recall@k 分母](./09_evaluation_data_engineering.md) **候选召回**不等于**引用支撑**：片段存在、排得高，还要确认答案每个关键主张是否由现行且有权原文支持。**索引吞吐/延迟**也不等于用户成功率。若后续使用生成器，14.07 才把检索、上下文组装和回答连成 RAG；在本章交接的是可追溯片段与失败原因。[14.09 组件与端到端](./09_evaluation_data_engineering.md)\n8. 八、22 道分层练习：手排候选，先找第一道坏边界: 先做 1–8 的资料/索引概念，再做 9–16 的纸上排名，最后做 17–22 的权限与评测决策。 父文档、稳定片段 ID、原文位置、来源/版本/状态和权限范围。</details> 限定词丢失会把 proposed 错当现行，`q-01` 可能答错。</details> 某词项出现在哪些文档/片段；也可含位置等信息。</details> `c-current-1` 与 `c-r9-1`。</details> 不能。它是词项相关性排序线索，不是状态/权限/事实校验。</details> 距离只在同一可比表示空间与匹配度量下有意义。</details> ANN 用更少搜索工作换取速度/容量，但可能漏真正近邻，还需评估内存与建索引成本。</details> 通常处理已召回的候选；第一阶段没召回的金证据，后续重排也无法找回。</details> 两向量长度为 1，点积为 0.8，余弦为 **0.8**。</details> 余弦为 **1.0**；仍不能，因为 r9 是 proposed。</details> `1/(60+1)+1/(60+2)=1/61+1/62`，约 `0.03252`；这是排名合并值，不是可信度。</details> 两者都是一条路径第 1、另一条第 2，纸上打平；需要固定并列规则和业务状态核证。</details> 本可命中的表达被拆成不同词项而漏检；需记录并统一分析器版本。</details> 不足；需要 `doc-current` 与 `doc-r9` 的",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
