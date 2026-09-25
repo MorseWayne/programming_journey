@@ -17,7 +17,7 @@ date: 2026-09-23
 
 ## 已完成的独立章稿
 
-[12.01 运行环境与制品](./01_runtime_artifacts.md)已完成。它承接 01.09 的 Go 模块、10.08–10.10 的依赖/制品/回退及 03.11–03.12 的进程与资源边界，用虚构 IM 网关区分源提交、二进制、OCI 镜像、可变标签、内容摘要、运行配置和外部数据。[12.02 容器机制](./02_container_mechanisms.md)再把镜像层、容器可写层、volume、namespace/cgroup 与 PID 1 关停接到 IM 状态重建。[12.03 本地多服务环境](./03_local_multi_service.md)用服务名、端口、健康与就绪串起纸上 gateway/db/events。[12.04 集群控制模型](./04_cluster_control_model.md)用三副本网关说明 spec/status、控制器、调度与业务自愈边界。[12.05 工作负载与服务发现](./05_workloads_service_discovery.md)按 gateway、transfer、db 和迁移任务的状态责任选择对象及入口。[12.06 资源与持久存储](./06_resources_persistent_storage.md)手算 request/limit，区分 CPU 节流、OOM、Pod 临时卷与 PV/PVC。六章各含 8 节讲解、22 道分层练习；12.07–12.12 仍按下方设计展开。
+[12.01 运行环境与制品](./01_runtime_artifacts.md)已完成。它承接 01.09 的 Go 模块、10.08–10.10 的依赖/制品/回退及 03.11–03.12 的进程与资源边界，用虚构 IM 网关区分源提交、二进制、OCI 镜像、可变标签、内容摘要、运行配置和外部数据。[12.02 容器机制](./02_container_mechanisms.md)再把镜像层、容器可写层、volume、namespace/cgroup 与 PID 1 关停接到 IM 状态重建。[12.03 本地多服务环境](./03_local_multi_service.md)用服务名、端口、健康与就绪串起纸上 gateway/db/events。[12.04 集群控制模型](./04_cluster_control_model.md)用三副本网关说明 spec/status、控制器、调度与业务自愈边界。[12.05 工作负载与服务发现](./05_workloads_service_discovery.md)按 gateway、transfer、db 和迁移任务的状态责任选择对象及入口。[12.06 资源与持久存储](./06_resources_persistent_storage.md)手算 request/limit，区分 CPU 节流、OOM、Pod 临时卷与 PV/PVC。[12.07 配置与权限](./07_config_permissions.md)分清非秘密配置、Secret、SA/RBAC、网络策略与 IM 成员授权。七章各含 8 节讲解、22 道分层练习；12.08–12.12 仍按下方设计展开。
 
 ## IM 主线中的位置
 
@@ -53,7 +53,7 @@ date: 2026-09-23
 
 | 章节 | 要详细讲解的内容 | IM 练习与验收目标 |
 |---|---|---|
-| 12.07 配置与权限 | ConfigMap、Secret、ServiceAccount、RBAC、网络访问边界。 | 按职责限制服务读取配置、凭据与资源的权限，区分身份、配置和网络边界。 |
+| [12.07 配置与权限](./07_config_permissions.md) | ConfigMap、Secret、ServiceAccount、RBAC、网络访问边界。 | 按职责限制服务读取配置、凭据与资源的权限，区分身份、配置和网络边界。 |
 | 12.08 启动、探针与退出 | startup/readiness/liveness、依赖、摘流、排空、终止预算。 | 为长连接网关安排停止接入、摘流、在途处理、关闭与重连的时间线。 |
 | 12.09 发布与回滚 | 滚动、蓝绿、金丝雀、配置灰度、数据兼容与制品追溯。 | 设计滚动升级、观察窗口和停止条件，说明旧客户端与历史数据的兼容。 |
 

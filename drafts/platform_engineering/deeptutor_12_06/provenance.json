@@ -32,9 +32,9 @@
   "original_sha256": "1c7b30bc61b28cdb0dccb6270f7d616d7ce366b3bf68aac926ec5b754df8bc33",
   "original_characters": 30903,
   "generation_request_sha256": "9b827648cc9cb0e7ece5732281bf52ca5c921cafc3150e4d5ed2732303d14c26",
-  "reviewed_sha256": "7b427c85a571b5ed4f1ad365e75231e19eb7cfd0e1b129c1e37d270a5864a1fb",
-  "reviewed_characters": 11023,
-  "reviewed_chinese_characters": 3165,
+  "reviewed_sha256": "03e7e037397071675f707acadc58c54fc88257d437d5f4f94c1dd85cb12b5c0f",
+  "reviewed_characters": 11117,
+  "reviewed_chinese_characters": 3170,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/06_resources_persistent_storage.md",
-  "course_sha256": "4df50024153ef3fe3543b6507c1c217da69cb1b6b787574caad8e753c9f560d3"
+  "course_sha256": "f3e190a9c021e11c126b722ce27475d6463401711e814c6e36a34f662ae3fe9f"
 }

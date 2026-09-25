@@ -197,4 +197,4 @@ Node allocatable/已有 requests、Pod request/limit、运行事件/QoS、emptyD
 
 ## 本章完成标准与后续路径
 
-能手算 N1 CPU 请求为何超出 allocatable，区分 CPU 节流、内存 OOM 与节点驱逐，说明 `emptyDir`、PVC/PV、RWO/RWOP 和数据库事务的不同责任，再把当前 S2 内存状态与未来 S3/B 恢复分开，才算完成第一轮。本章没有运行集群或存储实验。下一章 12.07 将按服务职责设计 ConfigMap、Secret、ServiceAccount、RBAC 与网络访问边界。
+能手算 N1 CPU 请求为何超出 allocatable，区分 CPU 节流、内存 OOM 与节点驱逐，说明 `emptyDir`、PVC/PV、RWO/RWOP 和数据库事务的不同责任，再把当前 S2 内存状态与未来 S3/B 恢复分开，才算完成第一轮。本章没有运行集群或存储实验。下一章[12.07 配置与权限](./07_config_permissions.md)将按服务职责设计 ConfigMap、Secret、ServiceAccount、RBAC 与网络访问边界。

@@ -1,0 +1,32 @@
+{
+  "chapter": "12.07",
+  "stage": "S6",
+  "business_scope": "static beginner-to-advanced Kubernetes configuration and permission lesson for fictional IM platform roles",
+  "prerequisites": [
+    "09.07 application authentication and conversation authorization",
+    "12.01 runtime config and secret provenance",
+    "12.05 workloads, Service discovery and endpoints",
+    "12.06 resource and storage identity",
+    "10.12 pending R9 version policy"
+  ],
+  "first_pass": [
+    "separate non-secret ConfigMap and confidential Secret responsibilities",
+    "explain reversible base64 and actual Secret access controls",
+    "distinguish ServiceAccount and RBAC from DB accounts and IM user membership",
+    "keep current S2/v1 6-byte, 409, 404 and 200 contracts unchanged"
+  ],
+  "second_pass": [
+    "audit direct and indirect Secret access via workload creation",
+    "design supported NetworkPolicy ingress/egress and DNS paths with additive rules",
+    "compare env and projected-volume configuration update behavior",
+    "test allow and deny examples per gateway, transfer and migration role",
+    "limit OpenIM conclusions to inspected fixed source paths"
+  ],
+  "not_yet_prerequisites": [
+    "12.08 startup, readiness, liveness and termination",
+    "learner's actual authorized cluster policy and application verification"
+  ],
+  "next_chapter": "12.08 startup, readiness and exit",
+  "upstream_inspection": "At fixed openimsdk/open-im-server f6411a8a1a31d3df36f4c2b3ad28481a94141e1f, selected send.go paths call MsgToMQ before response and a separate Mongo consumer path calls BatchInsertChat2DB. These paths do not establish actual ServiceAccount, RBAC, Secret, NetworkPolicy or course application authorization.",
+  "shared_integration_pending": []
+}

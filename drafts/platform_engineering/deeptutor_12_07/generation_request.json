@@ -1,0 +1,76 @@
+{
+  "code": "12.07",
+  "title": "配置与权限：ConfigMap、Secret、身份和网络边界",
+  "chapter_id": "ch_config_permission",
+  "summary": "面向Go初学者，用虚构IM平台角色分清Kubernetes配置、秘密、ServiceAccount/RBAC、NetworkPolicy和应用成员授权。",
+  "objectives": [
+    "把非秘密配置和凭据分开",
+    "说明Secret base64与静态加密/RBAC边界",
+    "区分ServiceAccount、K8s RBAC和数据库/IM身份",
+    "理解NetworkPolicy实施前提与双向允许",
+    "审配置更新传播和旧合同版本",
+    "交付按角色最小权限及业务验收卡"
+  ],
+  "sources": [
+    "https://kubernetes.io/docs/concepts/configuration/configmap/",
+    "https://kubernetes.io/docs/concepts/configuration/secret/",
+    "https://kubernetes.io/docs/concepts/security/secrets-good-practices/",
+    "https://kubernetes.io/docs/concepts/security/service-accounts/",
+    "https://kubernetes.io/docs/reference/access-authn-authz/rbac/",
+    "https://kubernetes.io/docs/concepts/security/rbac-good-practices/",
+    "https://kubernetes.io/docs/concepts/services-networking/network-policies/",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/send.go",
+    "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/msgtransfer/online_msg_to_mongo_handler.go"
+  ],
+  "sections": [
+    {
+      "title": "一、配置、身份、授权和网络是四条边界",
+      "words": 3000,
+      "focus": "Go初学者沿未来gateway/transfer/history-migrate与db/events，当前S2/v1静态6 UTF8B正文/4096B原始请求正文/同ID409/非成员404/200内存受理不变，S3 DB提议仍6B、R9待审。不能以K8s RBAC或网络通说明u-c有权读c-a。"
+    },
+    {
+      "title": "二、ConfigMap与Secret内容责任",
+      "words": 3200,
+      "focus": "ConfigMap非秘密如LOG_LEVEL、服务名；Secret用于凭据但base64不是加密、etcd默认未加密需集群配置和RBAC，不能写课程明文/镜像/log。Kubernetes能注入给Pod不要求应用SA有get Secret API权限，创建Pod权限可间接读同namespace Secret。"
+    },
+    {
+      "title": "三、ServiceAccount与RBAC",
+      "words": 3100,
+      "focus": "SA是工作负载Kubernetes API身份，不自动是DB用户或IM用户；Role/ClusterRole许可对K8s API对象verb，RoleBinding/ClusterRoleBinding绑定，权限累加无deny。gateway若不调K8s API可禁自动token，不因要用DB密码给get/list secrets，history Job另有DB最小权限。"
+    },
+    {
+      "title": "四、NetworkPolicy与业务权限",
+      "words": 3200,
+      "focus": "CNI支持才实施NetworkPolicy，默认Pod ingress/egress非隔离，策略按方向累加允许，源egress和目的ingress均允许才通；只能网络L3/L4，不按c-a成员或m-9 ID做应用授权。纸上gateway可达db:5432、transfer可达events和db、migration限DB，DNS/必要出站别漏。"
+    },
+    {
+      "title": "五、配置变更传播/版本",
+      "words": 3100,
+      "focus": "ConfigMap作为env注入不会自动更新已有Pod，需替换/重启；volume投影最终更新但应用需重读，subPath例外。R9待审不能通过变量把v1正文6B改9，秘密轮换需观察旧新客户端/Pod混部。"
+    },
+    {
+      "title": "六、四个错配反例",
+      "words": 3100,
+      "focus": "ConfigMap放base64密码、gateway SA授cluster-admin或list secrets、NetworkPolicy只放入站忘egress/DNS、更新env ConfigMap以为旧Pod自动更新；分别写最小反证、用户影响、修正与回退。"
+    },
+    {
+      "title": "七、按IM角色交权限验收卡",
+      "words": 3200,
+      "focus": "gateway/transfer/migrate/config/secret/SA/RBAC/network表，最小权限与来源版本、secret引用不值、API get范围、网络连接与应用u-c404/重复409，S3权威m-9与B设备确认另验；OpenIM两源码不证明真实集群权限。"
+    },
+    {
+      "title": "八、22题与交接",
+      "words": 3000,
+      "focus": "基础8/推导8/决策6，答案含ConfigMap/Secret base64、SA/RBAC API与DB/成员授权、NetworkPolicy默认/插件/双向/累加、env更新、R9配置漂移、秘密处理与业务正反例。"
+    }
+  ],
+  "request": {
+    "user_intent": "生成完整中文静态教材《12.07 配置与权限》，Go初学者八节理论丰富、IM业务由浅入深22题答案。当前S2/v1静态合同：正文非空最多6 UTF-8 B、原始HTTP请求正文4096B、同ID即同正文重复409、非成员隐藏404、200 accepted_in_memory仅本进程内存受理；未来S3/v2 stored_in_teaching_db提议仍6B，R9待审。纸上未来gateway/transfer/history-migrate/db/events：ConfigMap给非秘密LOG_LEVEL/服务地址，Secret放凭据但base64不是加密，K8s etcd默认Secret不加密且需实际启用静态加密/访问控制；别写明文到课/镜像/日志。Pod挂Secret不意味着应用ServiceAccount要get/list Secret API权限，能创建Pod/Deployment的人也可能间接获取同namespace Secret，谨慎授权。ServiceAccount是K8s工作负载API身份，不自动是DB用户或IM用户u-a/u-c；RBAC Role/ClusterRole+Binding只管K8s API资源/verb且许可累加无deny，gateway若不调用K8s API可不给token权限，DB账户另配置，非成员u-c对c-a仍须应用层404。NetworkPolicy需要支持插件，默认Pod ingress/egress无隔离，规则方向分开且允许累加，源egress和目的ingress都要允许；只管网络L3/L4不判断消息授权。未来gateway→db:5432、transfer→events/db、migrate→限定DB的纸上矩阵，DNS也可能需显式出站。ConfigMap env值旧Pod不会自动更新，投影volume最终更新但应用需重读且subPath例外；不能靠配置把v1 6B放宽为R9 9B。四反例：ConfigMap放base64密码、SA给list secrets/cluster-admin、网络策略只配入站忘egress/DNS、更新env ConfigMap以为旧Pod自动更新。安全验收包括秘密来源/权限/版本、网络连通/拒绝、当前6B/409/404/200、未来S3权威和设备ACK分层；固定OpenIM send.go MsgToMQ与Mongo BatchInsert不证明真实K8s权限。静态不创建K8s对象、不运行Go/IM/部署/站点。\n1. 一、配置、身份、授权和网络是四条边界: Go初学者沿未来gateway/transfer/history-migrate与db/events，当前S2/v1静态6 UTF8B正文/4096B原始请求正文/同ID409/非成员404/200内存受理不变，S3 DB提议仍6B、R9待审。不能以K8s RBAC或网络通说明u-c有权读c-a。\n2. 二、ConfigMap与Secret内容责任: ConfigMap非秘密如LOG_LEVEL、服务名；Secret用于凭据但base64不是加密、etcd默认未加密需集群配置和RBAC，不能写课程明文/镜像/log。Kubernetes能注入给Pod不要求应用SA有get Secret API权限，创建Pod权限可间接读同namespace Secret。\n3. 三、ServiceAccount与RBAC: SA是工作负载Kubernetes API身份，不自动是DB用户或IM用户；Role/ClusterRole许可对K8s API对象verb，RoleBinding/ClusterRoleBinding绑定，权限累加无deny。gateway若不调K8s API可禁自动token，不因要用DB密码给get/list secrets，history Job另有DB最小权限。\n4. 四、NetworkPolicy与业务权限: CNI支持才实施NetworkPolicy，默认Pod ingress/egress非隔离，策略按方向累加允许，源egress和目的ingress均允许才通；只能网络L3/L4，不按c-a成员或m-9 ID做应用授权。纸上gateway可达db:5432、transfer可达events和db、migration限DB，DNS/必要出站别漏。\n5. 五、配置变更传播/版本: ConfigMap作为env注入不会自动更新已有Pod，需替换/重启；volume投影最终更新但应用需重读，subPath例外。R9待审不能通过变量把v1正文6B改9，秘密轮换需观察旧新客户端/Pod混部。\n6. 六、四个错配反例: ConfigMap放base64密码、gateway SA授cluster-admin或list secrets、NetworkPolicy只放入站忘egress/DNS、更新env ConfigMap以为旧Pod自动更新；分别写最小反证、用户影响、修正与回退。\n7. 七、按IM角色交权限验收卡: gateway/transfer/migrate/config/secret/SA/RBAC/network表，最小权限与来源版本、secret引用不值、API get范围、网络连接与应用u-c404/重复409，S3权威m-9与B设备确认另验；OpenIM两源码不证明真实集群权限。\n8. 八、22题与交接: 基础8/推导8/决策6，答案含ConfigMap/Secret base64、SA/RBAC API与DB/成员授权、NetworkPolicy默认/插件/双向/累加、env更新、R9配置漂移、秘密处理与业务正反例。",
+    "language": "zh",
+    "fallback_language": "zh",
+    "depth": "deep",
+    "knowledge_bases": [],
+    "notebook_refs": [],
+    "chat_selections": []
+  }
+}
