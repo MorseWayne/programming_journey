@@ -22,6 +22,7 @@
     "keep S2 per-process acceptance and 25h offline/24h broker business results independent"
   ],
   "next_chapter": "04.12 network troubleshooting and protocol evolution",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_5728aef99c / pg_b5df99b5c3; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against document addresses/NAT mapping, 1500-to-1460 toy arithmetic, separate HTTP/body limits, conditional QUIC migration and S2 retry boundary; the official manually reviewed page remains authoritative."
 }
