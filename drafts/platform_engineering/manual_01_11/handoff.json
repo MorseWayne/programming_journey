@@ -22,6 +22,7 @@
     "require actual profiling before lower-level performance claims"
   ],
   "next_chapter": "02.09 weighted paths and algorithmic deepening",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_d7df23d474 / pg_d055025018; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against official reflect zero Value/Kind semantics, tags, JSON validation and S2 contract layers; the official reviewed page was clarified and remains authoritative."
 }

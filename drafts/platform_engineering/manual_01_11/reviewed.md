@@ -19,7 +19,7 @@ t := reflect.TypeOf(id)  // 定义类型 MessageID
 k := t.Kind()            // reflect.String，底层类别
 ```
 
-这是一段**片段**，需导入 `reflect` 并放进函数；`MessageID` 与 `string` 类型不同，但 `Kind` 都是 string。反射入口也有空值边界：`reflect.TypeOf(nil)` 返回 nil；`reflect.ValueOf(nil)` 返回**无效的零 `Value`**，先用 `IsValid()` 检查，不可对它直接调用 `Type()` 或 `IsNil()`。若接口里装的是 `(*Message)(nil)`，接口本身不等于 nil，`TypeOf` 仍能看到 `*Message`，对应 `Value` 是有效的指针种类且可 `IsNil()`；调用 `IsNil()` 前必须确认 Kind 支持它。[reflect：TypeOf/ValueOf/IsValid/IsNil](https://pkg.go.dev/reflect) · [01.06 typed nil](../../../src/docs/platform_engineering/curriculum/01_go/06_methods_interfaces.md)
+这是一段**片段**，需导入 `reflect` 并放进函数；`MessageID` 与 `string` 类型不同，但 `Kind` 都是 string。反射入口也有空值边界：`reflect.TypeOf(nil)` 返回 nil；`reflect.ValueOf(nil)` 返回**无效的零 `Value`**，先用 `IsValid()` 检查。无效 `Value` 的 `Kind()` 返回 `reflect.Invalid`，但 `Type()`、`IsNil()` 等方法会 panic。若接口里装的是 `(*Message)(nil)`，接口本身不等于 nil，`TypeOf` 仍能看到 `*Message`，对应 `Value` 是有效的指针种类且可 `IsNil()`；调用 `IsNil()` 前必须确认 Kind 支持它。[reflect：TypeOf/ValueOf/IsValid/IsNil](https://pkg.go.dev/reflect) · [01.06 typed nil](../../../src/docs/platform_engineering/curriculum/01_go/06_methods_interfaces.md)
 
 ## 三、可设置性：传值只能观察，传指针再 `Elem` 才能改
 
