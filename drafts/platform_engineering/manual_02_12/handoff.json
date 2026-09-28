@@ -23,6 +23,7 @@
     "record recommendation assumptions and actual learner-run evidence separately"
   ],
   "next_chapter": "04.08-04.12 network and transport deepening",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_97f3a21d3a / pg_6934f20aa7; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against fromSeq lower-bound result, nonmember hidden 404, unordered scan sorting cost, Go notation, benchmarks and S2 history boundary; the official manually reviewed page remains authoritative."
 }
