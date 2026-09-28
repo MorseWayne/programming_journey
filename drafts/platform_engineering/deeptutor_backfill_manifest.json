@@ -4,14 +4,6 @@
   "completion_rule": "Generate an actual DeepTutor original, preserve the existing manual review, compare and correct the official page, verify source hashes, then remove that chapter from this queue.",
   "chapters": [
     {
-      "chapter": "04.09",
-      "course_file": "src/docs/platform_engineering/curriculum/04_networks/09_proxies_load_balancing.md",
-      "archive": "drafts/platform_engineering/manual_04_09",
-      "generation_request_file": "drafts/platform_engineering/manual_04_09/generation_request.json",
-      "state": "awaiting_deeptutor_original",
-      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
-    },
-    {
       "chapter": "04.10",
       "course_file": "src/docs/platform_engineering/curriculum/04_networks/10_http_versions_rpc.md",
       "archive": "drafts/platform_engineering/manual_04_10",

@@ -22,6 +22,7 @@
     "correlate external request ID, chosen backend, response source and business confirmation"
   ],
   "next_chapter": "04.10 HTTP versions and RPC",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_2b9bcf526e / pg_2372bd2c54; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against hop-by-hop TLS/header trust, N1/N2 memory isolation, 1000-ms budget, 504 unknown result and current duplicate-409 contract; the official manually reviewed page remains authoritative."
 }
