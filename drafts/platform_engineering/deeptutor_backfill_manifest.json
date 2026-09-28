@@ -92,14 +92,6 @@
       "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
     },
     {
-      "chapter": "14.08",
-      "course_file": "src/docs/platform_engineering/curriculum/14_ai/08_tools_workflows_agents.md",
-      "archive": "drafts/platform_engineering/manual_14_08",
-      "generation_request_file": "drafts/platform_engineering/manual_14_08/generation_request.json",
-      "state": "awaiting_deeptutor_original",
-      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
-    },
-    {
       "chapter": "14.10",
       "course_file": "src/docs/platform_engineering/curriculum/14_ai/10_optimization_deployment.md",
       "archive": "drafts/platform_engineering/manual_14_10",
