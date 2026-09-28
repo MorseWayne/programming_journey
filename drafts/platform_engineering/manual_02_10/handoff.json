@@ -22,6 +22,7 @@
     "keep permissions, message body bytes, duplicate ID and delivery outside paper value scoring"
   ],
   "next_chapter": "02.11 specialized structures and approximation",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_6e432a54f0 / pg_7fc6a9878b; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against fixed A/B/C knapsack values, full DP table, descending 0/1 update, interval scheduling proof and IM hard constraints; the official manually reviewed page remains authoritative."
 }
