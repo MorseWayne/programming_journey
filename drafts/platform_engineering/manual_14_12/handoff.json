@@ -22,6 +22,7 @@
     "track long-term quality, latency, cost and authorization by slice"
   ],
   "next_chapter": "return to unfinished 01.10-01.11, 02.09-02.12 and 04.08-04.12 units",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_57e082db30 / pg_e80c9afb00; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against separate S2 IM and answer JSON contracts, fixed six-question regression set, R9 current-state incident and offline/shadow/canary boundaries; the official manually reviewed page remains authoritative."
 }

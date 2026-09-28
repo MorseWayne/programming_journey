@@ -90,14 +90,6 @@
       "generation_request_file": "drafts/platform_engineering/manual_04_12/generation_request.json",
       "state": "awaiting_deeptutor_original",
       "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
-    },
-    {
-      "chapter": "14.12",
-      "course_file": "src/docs/platform_engineering/curriculum/14_ai/12_sustainable_delivery.md",
-      "archive": "drafts/platform_engineering/manual_14_12",
-      "generation_request_file": "drafts/platform_engineering/manual_14_12/generation_request.json",
-      "state": "awaiting_deeptutor_original",
-      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses observed, stopped after 90 seconds"
     }
   ],
   "retry_environment": "Run BookEngine inside the running deeptutor container with PYTHONPATH=/app and DEEPTUTOR_HOME=/app. The earlier host-side runner could not resolve the container-only host.docker.internal model gateway, producing HTTP 502."
