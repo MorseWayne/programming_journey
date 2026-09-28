@@ -22,6 +22,7 @@
     "classify DNS, TCP, TLS, frame, deadline and S2 business confirmation failures"
   ],
   "next_chapter": "04.09 proxy and load balancing",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_ddb1ff1737 / pg_ef930e3741; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against fixed 2-byte toy frame, ReadFull EOF states, short writes, deadlines, connection concurrency and current S2 409/unknown-result semantics; the official manually reviewed page remains authoritative."
 }
