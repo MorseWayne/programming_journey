@@ -21,6 +21,7 @@
     "review client/proxy/server support, flow-control budgets and rollback"
   ],
   "next_chapter": "04.11 network and link layer boundaries",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_2d89e2c246 / pg_0c5eb7cbc5; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against numeric gRPC status, HTTP/application version separation, stream flow control, QUIC limits and current S2 duplicate-409 semantics; the official manually reviewed page remains authoritative."
 }
