@@ -2,15 +2,6 @@
   "schema_version": 1,
   "purpose": "Track DeepTutor source drafts still needed for already reviewed static course chapters.",
   "completion_rule": "Generate an actual DeepTutor original, preserve the existing manual review, compare and correct the official page, verify source hashes, then remove that chapter from this queue.",
-  "chapters": [
-    {
-      "chapter": "04.12",
-      "course_file": "src/docs/platform_engineering/curriculum/04_networks/12_network_diagnostics_evolution.md",
-      "archive": "drafts/platform_engineering/manual_04_12",
-      "generation_request_file": "drafts/platform_engineering/manual_04_12/generation_request.json",
-      "state": "awaiting_deeptutor_original",
-      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
-    }
-  ],
-  "retry_environment": "Run BookEngine inside the running deeptutor container with PYTHONPATH=/app and DEEPTUTOR_HOME=/app. The earlier host-side runner could not resolve the container-only host.docker.internal model gateway, producing HTTP 502."
+  "chapters": [],
+  "retry_environment": "All 18 previously missing originals generated inside the deeptutor container on 2026-09-28; no retry remains pending."
 }

@@ -22,6 +22,7 @@
     "stop blind retry after 504, preserve unknown result and complete paper incident response"
   ],
   "next_chapter": "all 168 independent chapters have text; revisit prerequisites and learner-run evidence",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_3b16efca20 / pg_28ca08ac50; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against one-second synthetic timeline, TLS/httptrace capture scope, WebSocket 1006, current S2 duplicate-ID 409 and independent body limits; the official manually reviewed page remains authoritative."
 }
