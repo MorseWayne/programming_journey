@@ -92,14 +92,6 @@
       "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
     },
     {
-      "chapter": "14.06",
-      "course_file": "src/docs/platform_engineering/curriculum/14_ai/06_retrieval_indexing.md",
-      "archive": "drafts/platform_engineering/manual_14_06",
-      "generation_request_file": "drafts/platform_engineering/manual_14_06/generation_request.json",
-      "state": "awaiting_deeptutor_original",
-      "last_attempt": "DeepTutor ideation failed before book creation: 5 HTTP 502 responses, stopped after 90 seconds"
-    },
-    {
       "chapter": "14.07",
       "course_file": "src/docs/platform_engineering/curriculum/14_ai/07_rag_pipeline.md",
       "archive": "drafts/platform_engineering/manual_14_07",
