@@ -22,6 +22,7 @@
     "return to 14.09 component and end-to-end evaluation with the same labels"
   ],
   "next_chapter": "14.09 second-pass evaluation, then 14.08 tools and workflows",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_a6975b8d55 / pg_ce0bb3040e; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against fixed q-01 to q-06 labels, 6 B current limit, 32-token toy budget and q-03 non-disclosure; the official manually reviewed page remains authoritative."
 }
