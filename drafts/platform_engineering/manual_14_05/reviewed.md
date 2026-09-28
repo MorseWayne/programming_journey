@@ -24,7 +24,7 @@
 一份最小提示可拆成四块：**任务指令**说明要做什么；**用户问题**给出本次请求；**经应用筛过的证据**给出可用事实与来源 ID/状态；**输出要求**规定如何返回。边界顺序是“应用决定是否可用 → 模型阅读允许的资料 → 应用核输出”。不同模型 API 的消息角色和优先级细节各异，本章只教这个通用数据流，不能把某个字符串分隔符当成安全隔离。[Google Cloud：Prompt design strategies](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/prompt-design-strategies)
 
 ```text
-任务：仅根据提供的现行且有权资料回答；资料不足时说明不足。
+任务：仅根据提供且有权的资料回答；陈述当前事实时用 current，解释提议时标明 proposed；资料不足时说明不足。
 输出：按本章 JSON 契约返回 status、answer、citations、contract_version。
 用户问题：当前 /v1 正文上限？
 允许证据：doc-current [status=current, scope=public]：正文最多 6 UTF-8 B。

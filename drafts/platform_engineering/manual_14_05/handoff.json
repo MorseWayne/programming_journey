@@ -22,6 +22,7 @@
     "compare on q-01 to q-06 without presenting the six teaching labels as held-out model results"
   ],
   "next_chapter": "14.06 retrieval and indexing",
-  "generation_status": "DeepTutor ideation HTTP 502 after 9 retries; no book or original draft created",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_789b34b1bc / pg_ad911099dc; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original compared to the earlier manual review; fixed q-01 to q-06 labels, message-ID 409 semantics, proposed R9 and one stable JSON response contract remain in the official page."
 }
