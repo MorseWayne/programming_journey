@@ -22,6 +22,7 @@
     "treat Go 1.27 concrete generic methods as version-specific and distinct from generic receiver parameters"
   ],
   "next_chapter": "01.11 reflection and low-level boundaries",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_b6076e4cef / pg_c5cc1ecb22; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against Go 1.27 generic methods, comparable dynamic-value edge, shallow copies and S2 business boundaries; the official manually reviewed page remains authoritative."
 }
