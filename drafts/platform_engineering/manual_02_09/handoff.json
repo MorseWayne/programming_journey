@@ -22,6 +22,7 @@
     "guard map missing values, stale heap entries, arithmetic overflow and IM business claims"
   ],
   "next_chapter": "02.10 dynamic programming and greedy algorithms",
-  "generation_status": "DeepTutor ideation HTTP 502 five times; 90-second timeout before book or original draft",
-  "backfill_pending": "Generate and review a DeepTutor original when the endpoint recovers; preserve the manually reviewed page and compare before changing it"
+  "generation_status": "DeepTutor BookEngine ready: bk_7f69d7613f / pg_f3b8bd8474; 8 of 8 blocks ready",
+  "backfill_pending": false,
+  "source_review": "Generated original checked against the single fixed weighted graph, Dijkstra valid-pop termination, negative-edge counterexample and IM confirmation boundary; the official manually reviewed page remains authoritative."
 }
