@@ -72,95 +72,139 @@ IM 服务可以**另行考虑**把共识系统用于 b1 所有者/路由 epoch �
 
 <details><summary>1. 三节点多数是多少？</summary>
 
-`floor(3/2)+1=2`，须有两节点参与同一合法决定。</details>
+`floor(3/2)+1=2`，须有两节点参与同一合法决定。
+
+</details>
 
 <details><summary>2. R1 独存 term4/index12，可答“Raft 已提交”吗？</summary>
 
-不可。只有 1/3，R1 失败后该未提交后缀可能消失。</details>
+不可。只有 1/3，R1 失败后该未提交后缀可能消失。
+
+</details>
 
 <details><summary>3. R1+R2 持有当前 term4 的 C9，R3 落后，领导者可怎样判断？</summary>
 
-按本题 Raft 规则已在多数，可推进 `commitIndex=12`；R3 不必已收到。</details>
+按本题 Raft 规则已在多数，可推进 `commitIndex=12`；R3 不必已收到。
+
+</details>
 
 <details><summary>4. `index12`、`seq9` 与 P0:42 是同一序号吗？</summary>
 
-不是。分别是 Raft 日志位置、会话业务顺序和另一 broker 分区位置。</details>
+不是。分别是 Raft 日志位置、会话业务顺序和另一 broker 分区位置。
+
+</details>
 
 <details><summary>5. `commitIndex=12` 就说明每个节点 `lastApplied=12` 吗？</summary>
 
-不说明。已知提交与各节点应用进度可不同，R3 还可能缺条目。</details>
+不说明。已知提交与各节点应用进度可不同，R3 还可能缺条目。
+
+</details>
 
 <details><summary>6. 三节点隔离一个后，剩下两个互通仍可能继续服务吗？</summary>
 
-在协议、磁盘、网络和客户端可达等前提成立时，两个节点组成多数。</details>
+在协议、磁盘、网络和客户端可达等前提成立时，两个节点组成多数。
+
+</details>
 
 <details><summary>7. 四节点多数是多少？比三节点多容忍一个停止节点吗？</summary>
 
-多数 3；只能容忍 1 个停止节点，未多容忍一个。</details>
+多数 3；只能容忍 1 个停止节点，未多容忍一个。
+
+</details>
 
 <details><summary>8. 五节点多数与可容忍停止数是多少？</summary>
 
-多数 3；在剩余三节点互通且正常的前提下可容忍 2 个停止。</details>
+多数 3；在剩余三节点互通且正常的前提下可容忍 2 个停止。
+
+</details>
 
 ### 选举与日志 9–16：哪些条目可能丢
 
 <details><summary>9. term5 中落后的 R3 自投一票，持 C9 的 R2应投它吗？</summary>
 
-不应。R3 日志较旧，R2 的 RequestVote 日志新旧检查应拒绝。</details>
+不应。R3 日志较旧，R2 的 RequestVote 日志新旧检查应拒绝。
+
+</details>
 
 <details><summary>10. R2 持 C9，在 term5 得到自己和 R3 两票可否成为领导者？</summary>
 
-可以；满足多数且候选日志不落后于投票者。</details>
+可以；满足多数且候选日志不落后于投票者。
+
+</details>
 
 <details><summary>11. R1 与 R2/R3 隔离后，仅 R1 能继续确认新写吗？</summary>
 
-不能。它拿不到多数，旧 term 身份也不能替外部系统自动取得新写权。</details>
+不能。它拿不到多数，旧 term 身份也不能替外部系统自动取得新写权。
+
+</details>
 
 <details><summary>12. 新领导者怎样发现跟随者后缀冲突？</summary>
 
-用 `AppendEntries` 的前一位置与任期检查；不匹配则回退匹配点并修复未提交后缀。</details>
+用 `AppendEntries` 的前一位置与任期检查；不匹配则回退匹配点并修复未提交后缀。
+
+</details>
 
 <details><summary>13. 日志同一 index 和 term 的条目相同，前缀可随意不同吗？</summary>
 
-不可。Raft 的日志匹配性质要求到该位置的前缀相同。</details>
+不可。Raft 的日志匹配性质要求到该位置的前缀相同。
+
+</details>
 
 <details><summary>14. 新任期领导者只数一个旧任期项现有多数副本，就能直接宣布它提交吗？</summary>
 
-不能。须先按 Raft 规则提交当前任期项，旧前缀再被间接提交。</details>
+不能。须先按 Raft 规则提交当前任期项，旧前缀再被间接提交。
+
+</details>
 
 <details><summary>15. R2 已存 index12，就一定知道 `commitIndex=12` 吗？</summary>
 
-不一定。领导者可能尚未把提交位置传播给它。</details>
+不一定。领导者可能尚未把提交位置传播给它。
+
+</details>
 
 <details><summary>16. 随机选举超时本身能替代投票日志新旧限制吗？</summary>
 
-不能。超时帮助避免活性上的平票，日志新旧检查才保护已提交内容不被落后候选覆盖。</details>
+不能。超时帮助避免活性上的平票，日志新旧检查才保护已提交内容不被落后候选覆盖。
+
+</details>
 
 ### 工程 17–22：把共识放回 IM 合同
 
 <details><summary>17. C9 提交后 A 的响应丢失，A 重试可直接新建一条 `m-10` 吗？</summary>
 
-不应。先用稳定命令/消息 ID 查询或按状态机去重；当前 S2 的重复响应合同另保持 409。</details>
+不应。先用稳定命令/消息 ID 查询或按状态机去重；当前 S2 的重复响应合同另保持 409。
+
+</details>
 
 <details><summary>18. 旧 R1 仍以为自己是领导者，本地读可直接承诺线性化吗？</summary>
 
-不能。须按读协议确认当前领导权和已提交信息，不能只靠旧本地身份。</details>
+不能。须按读协议确认当前领导权和已提交信息，不能只靠旧本地身份。
+
+</details>
 
 <details><summary>19. Raft 多数提交 C9 能证明 SearchIndex、Notify 与 B 都完成吗？</summary>
 
-不能。它只保护该复制日志/状态机范围，外部效果与设备回执另证。</details>
+不能。它只保护该复制日志/状态机范围，外部效果与设备回执另证。
+
+</details>
 
 <details><summary>20. 三节点改五节点可让各节点自行换多数分母吗？</summary>
 
-不能。成员变更需安全的重叠过渡，如 Raft 联合配置中旧新分别满足多数。</details>
+不能。成员变更需安全的重叠过渡，如 Raft 联合配置中旧新分别满足多数。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明它使用本题 R1/R2/R3 吗？</summary>
 
-不能。只核对所述 `MsgToMQ` 返回与另一 MongoDB 消费写入位置。</details>
+不能。只核对所述 `MsgToMQ` 返回与另一 MongoDB 消费写入位置。
+
+</details>
 
 <details><summary>22. 若要把本题日志提交作为新 API 的成功点，仍须补什么？</summary>
 
-明确命令应用、客户端重试/冲突、读取一致性、成员授权、外部副作用和兼容版本，并在真实环境验证；不能暗改当前 S2 或拟议 S3。</details>
+明确命令应用、客户端重试/冲突、读取一致性、成员授权、外部副作用和兼容版本，并在真实环境验证；不能暗改当前 S2 或拟议 S3。
+
+</details>
 
 ## 本章完成标准与后续路径
 

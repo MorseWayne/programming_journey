@@ -99,95 +99,139 @@ B 重连时，客户端可提供自己对 `c-a` 的上次已见 `seq`，服务�
 
 <details><summary>1. 当前 S2 的 200 表示数据库已持久化吗？</summary>
 
-不表示；当前合同为 `accepted_in_memory`。S3 `stored_in_teaching_db` 仍只是纸上提议。</details>
+不表示；当前合同为 `accepted_in_memory`。S3 `stored_in_teaching_db` 仍只是纸上提议。
+
+</details>
 
 <details><summary>2. 相同 ID、相同内容在当前 S2 重发，结果是什么？</summary>
 
-按当前合同仍是 409 冲突，不自动变成幂等 200。</details>
+按当前合同仍是 409 冲突，不自动变成幂等 200。
+
+</details>
 
 <details><summary>3. `m-9`、`seq9`、`evt:m-9:v1`、P0:42 能相互计算吗？</summary>
 
-不能。它们分别是消息身份、会话位置、版本化事件身份与分区日志位置。</details>
+不能。它们分别是消息身份、会话位置、版本化事件身份与分区日志位置。
+
+</details>
 
 <details><summary>4. T1 的同库事务覆盖 SearchIndex 和 B 设备吗？</summary>
 
-不覆盖。只含教学 SQL 中实际纳入该事务的消息、计数和 outbox 记录。</details>
+不覆盖。只含教学 SQL 中实际纳入该事务的消息、计数和 outbox 记录。
+
+</details>
 
 <details><summary>5. SearchIndex 与 Notify 的消费进度是同一个吗？</summary>
 
-不是。它们是本题两个逻辑消费目的，各自确认与追赶。</details>
+不是。它们是本题两个逻辑消费目的，各自确认与追赶。
+
+</details>
 
 <details><summary>6. T3 broker 接纳 E9 可直接证明 B 已读吗？</summary>
 
-不能。搜索、通知、设备接收与阅读还有各自阶段。</details>
+不能。搜索、通知、设备接收与阅读还有各自阶段。
+
+</details>
 
 <details><summary>7. 网关尝试发送提示时 B 已离线，能记为 B 已收吗？</summary>
 
-不能。尝试与设备应用回执不同，离线时应依权威历史补拉。</details>
+不能。尝试与设备应用回执不同，离线时应依权威历史补拉。
+
+</details>
 
 <details><summary>8. `u-c` 登录后知道 `m-9` ID，就能读 `c-a` 吗？</summary>
 
-不能。还须满足对象/会话成员权限，当前隐藏目标政策是 404。</details>
+不能。还须满足对象/会话成员权限，当前隐藏目标政策是 404。
+
+</details>
 
 ### 故障 9–16：先问发生了什么
 
 <details><summary>9. T1 已提交但 A 没收到 HTTP 回应，能断言事务回滚吗？</summary>
 
-不能。结果对 A 未知，按稳定 ID 查权威状态；当前 S2/S3 的响应合同不能互换。</details>
+不能。结果对 A 未知，按稳定 ID 查权威状态；当前 S2/S3 的响应合同不能互换。
+
+</details>
 
 <details><summary>10. `m-9` 已提交而 outbox 仍 `PENDING`，接下来找谁？</summary>
 
-看 relay 领取、租约、发布错误和最老待发年龄；恢复同一 E9 的转发。</details>
+看 relay 领取、租约、发布错误和最老待发年龄；恢复同一 E9 的转发。
+
+</details>
 
 <details><summary>11. broker 接受 E9 后 ACK 丢失，重试可能带来什么？</summary>
 
-可能重复发布同一 `evt:m-9:v1`；消费者目标按稳定 ID/版本幂等处理。</details>
+可能重复发布同一 `evt:m-9:v1`；消费者目标按稳定 ID/版本幂等处理。
+
+</details>
 
 <details><summary>12. SearchIndex 写成功但消费 ACK 丢失，能直接再建一条新 `m-9` 吗？</summary>
 
-不能。应核查目标并条件写/去重，权威消息只有同一 ID 的一条事实。</details>
+不能。应核查目标并条件写/去重，权威消息只有同一 ID 的一条事实。
+
+</details>
 
 <details><summary>13. E-bad=P0:44 是永久坏输入时，可 ACK 当业务成功来降 lag 吗？</summary>
 
-不能。按显式隔离、修复、重放与对账政策记录缺口。</details>
+不能。按显式隔离、修复、重放与对账政策记录缺口。
+
+</details>
 
 <details><summary>14. B 离线 25h，玩具 broker 只留 24h，从哪里补 `m-9`？</summary>
 
-按当前成员权限和 `seq` 游标从权威数据库历史补拉。</details>
+按当前成员权限和 `seq` 游标从权威数据库历史补拉。
+
+</details>
 
 <details><summary>15. 搜索已有 `m-9:v2`，迟到 v1 可以覆盖吗？</summary>
 
-不能。按消息当前版本和目标条件更新防倒退，并核对必要的其他效果。</details>
+不能。按消息当前版本和目标条件更新防倒退，并核对必要的其他效果。
+
+</details>
 
 <details><summary>16. B 在离线期间退群，补拉可跳过权限判断吗？</summary>
 
-不能。要按约定的当前/历史可见政策裁决，不能仅凭旧游标读私有内容。</details>
+不能。要按约定的当前/历史可见政策裁决，不能仅凭旧游标读私有内容。
+
+</details>
 
 ### 综合 17–22：对账、补偿与源码
 
 <details><summary>17. 搜索文档数与权威消息数相等，就说明完全一致吗？</summary>
 
-不能。可能同数错 ID、旧版本、多余已撤回文档或权限错误。</details>
+不能。可能同数错 ID、旧版本、多余已撤回文档或权限错误。
+
+</details>
 
 <details><summary>18. 已发给 B 的错误提示能靠回滚 SQL 事务抹去吗？</summary>
 
-不能。那是外部效果，需新动作纠正/告知并留下审计，而不是假装未发生。</details>
+不能。那是外部效果，需新动作纠正/告知并留下审计，而不是假装未发生。
+
+</details>
 
 <details><summary>19. broker 旧事件已过保留，搜索又有大量缺口，应优先依什么重建？</summary>
 
-从权威消息当前状态及删除/权限规则重建，再按稳定 ID/版本对账。</details>
+从权威消息当前状态及删除/权限规则重建，再按稳定 ID/版本对账。
+
+</details>
 
 <details><summary>20. `PUBLISHED` 能证明 SearchIndex 和 Notify 都无缺口吗？</summary>
 
-不能。它只代表本题选择的 broker 发布确认阶段，两个消费者要各自检查。</details>
+不能。它只代表本题选择的 broker 发布确认阶段，两个消费者要各自检查。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明它部署了教学 SQL outbox 吗？</summary>
 
-不能。已核对的只是所述 `MsgToMQ` 返回位置与另一路 `BatchInsertChat2DB` 调用。</details>
+不能。已核对的只是所述 `MsgToMQ` 返回位置与另一路 `BatchInsertChat2DB` 调用。
+
+</details>
 
 <details><summary>22. “用户搜不到 m-9”这张事故单何时可关闭？</summary>
 
-确认权威事实与权限，定位/修复事件或索引缺口，对账当前 ID/版本/可见性和用户查询结果，并记录验证范围与证据。</details>
+确认权威事实与权限，定位/修复事件或索引缺口，对账当前 ID/版本/可见性和用户查询结果，并记录验证范围与证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

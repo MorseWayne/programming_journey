@@ -100,95 +100,139 @@ t4  kubelet 启动 P4，应用的就绪检查通过，观察到 Ready=3
 
 <details><summary>1. `spec.replicas=3` 能证明现在有三个 Ready 吗？</summary>
 
-不能。spec 是期望，Ready 是另行观察的就绪状态。</details>
+不能。spec 是期望，Ready 是另行观察的就绪状态。
+
+</details>
 
 <details><summary>2. `status` 与 `spec` 分别表达什么？</summary>
 
-spec 描述期望配置，status 汇报控制面/节点观察到的状态。</details>
+spec 描述期望配置，status 汇报控制面/节点观察到的状态。
+
+</details>
 
 <details><summary>3. Deployment 直接把 P1 的进程内存复制到 P4 吗？</summary>
 
-不会。它管理副本/模板，替代 Pod 是新生命周期。</details>
+不会。它管理副本/模板，替代 Pod 是新生命周期。
+
+</details>
 
 <details><summary>4. ReplicaSet 的主要目标是什么？</summary>
 
-按其 selector/模板维持期望的一组 Pod 副本。</details>
+按其 selector/模板维持期望的一组 Pod 副本。
+
+</details>
 
 <details><summary>5. scheduler 和 kubelet 分别做什么？</summary>
 
-scheduler 给未绑定 Pod 选 Node；kubelet在被选 Node 上运行并汇报 Pod。</details>
+scheduler 给未绑定 Pod 选 Node；kubelet在被选 Node 上运行并汇报 Pod。
+
+</details>
 
 <details><summary>6. Pod P1 被替换成 P4，会保留同一 UID 吗？</summary>
 
-不会。新 Pod 是不同对象/UID，可能有新 IP 与进程内存。</details>
+不会。新 Pod 是不同对象/UID，可能有新 IP 与进程内存。
+
+</details>
 
 <details><summary>7. Pod Running 必然已经对有权用户 Ready 吗？</summary>
 
-不必。应用或依赖可能未通过就绪检查；业务正反例还要另验。</details>
+不必。应用或依赖可能未通过就绪检查；业务正反例还要另验。
+
+</details>
 
 <details><summary>8. 三副本必然分布到三台 Node 吗？</summary>
 
-不必。需要明确放置约束及验证故障域。</details>
+不必。需要明确放置约束及验证故障域。
+
+</details>
 
 ### 控制链 9–16：手推 t0–t4
 
 <details><summary>9. t0 期望 3 且 Ready 3，t1 P1 被删除后纸上 Ready 几个？</summary>
 
-在本题观察时刻为 2；状态更新仍是异步的。</details>
+在本题观察时刻为 2；状态更新仍是异步的。
+
+</details>
 
 <details><summary>10. t2 控制器创建 P4 但它 Pending，能说期望已达成吗？</summary>
 
-不能。对象已存在不等于已调度/运行/Ready。</details>
+不能。对象已存在不等于已调度/运行/Ready。
+
+</details>
 
 <details><summary>11. P4 未绑定 Node，优先查哪一类证据？</summary>
 
-调度可行 Node、资源 request 与放置约束，不是重启尚未运行的应用。</details>
+调度可行 Node、资源 request 与放置约束，不是重启尚未运行的应用。
+
+</details>
 
 <details><summary>12. P4 已绑定但镜像拉取失败，是 scheduler 还没选 Node 吗？</summary>
 
-不是。已过绑定阶段，应查 Node/kubelet 与镜像拉取状态。</details>
+不是。已过绑定阶段，应查 Node/kubelet 与镜像拉取状态。
+
+</details>
 
 <details><summary>13. P4 容器 Running、Readiness 失败，应用可被判业务可用吗？</summary>
 
-不能。先查探针覆盖、配置/依赖，再做有权业务样本。</details>
+不能。先查探针覆盖、配置/依赖，再做有权业务样本。
+
+</details>
 
 <details><summary>14. t4 Ready 恢复 3，P1 的 WebSocket 会自动转到 P4 吗？</summary>
 
-不会。旧连接已断，客户端须重连并按合同补拉。</details>
+不会。旧连接已断，客户端须重连并按合同补拉。
+
+</details>
 
 <details><summary>15. 一个 Node 没足够资源，Kubernetes 会保证 P4 仍被调度吗？</summary>
 
-不会。若无可行 Node，P4 可持续 Pending，直到约束/资源变化。</details>
+不会。若无可行 Node，P4 可持续 Pending，直到约束/资源变化。
+
+</details>
 
 <details><summary>16. Pod 名字看起来相同就代表原进程复活吗？</summary>
 
-不代表。要看对象 UID、创建时间及容器进程生命周期。</details>
+不代表。要看对象 UID、创建时间及容器进程生命周期。
+
+</details>
 
 ### 业务 17–22：自愈没有自动补上消息事实
 
 <details><summary>17. P1 本地受理 m-a 后响应丢失，重试落到 P2 会自动返回 409 吗？</summary>
 
-不能保证。纯本地内存判重不跨 Pod；需统一身份裁决/状态方案。</details>
+不能保证。纯本地内存判重不跨 Pod；需统一身份裁决/状态方案。
+
+</details>
 
 <details><summary>18. 只用粘性路由可覆盖 P1 故障后的重复身份吗？</summary>
 
-不足。P1 退出后本地内存事实和原连接仍可能丢失。</details>
+不足。P1 退出后本地内存事实和原连接仍可能丢失。
+
+</details>
 
 <details><summary>19. 当前 S2 200 可以因 Deployment 三副本被称为 DB 存储成功吗？</summary>
 
-不能。仍仅本进程内存受理，S3 是独立未来提议。</details>
+不能。仍仅本进程内存受理，S3 是独立未来提议。
+
+</details>
 
 <details><summary>20. Ready=3 可证明 B 的设备已经处理 m-9 吗？</summary>
 
-不能。设备 ACK/历史缺口有另一证据链。</details>
+不能。设备 ACK/历史缺口有另一证据链。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码可证明真实 Kubernetes 副本数吗？</summary>
 
-不能。它们只提示所读发送与 Mongo 消费异步边界。</details>
+不能。它们只提示所读发送与 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 一张可审控制链至少交什么？</summary>
 
-spec/status、Deployment/ReplicaSet/Pod UID、调度与 Node/kubelet、就绪和有权业务正反例，注明未证的消息恢复。</details>
+spec/status、Deployment/ReplicaSet/Pod UID、调度与 Node/kubelet、就绪和有权业务正反例，注明未证的消息恢复。
+
+</details>
 
 ## 本章完成标准与后续路径
 

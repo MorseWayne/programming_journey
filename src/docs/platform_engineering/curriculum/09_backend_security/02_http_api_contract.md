@@ -182,91 +182,135 @@ Cache-Control: no-store
 
 <details><summary>1. 读历史和提交消息分别选什么方法？</summary>
 
-本章用 GET 读取集合表示、POST 向消息集合提交一条新消息。</details>
+本章用 GET 读取集合表示、POST 向消息集合提交一条新消息。
+
+</details>
 
 <details><summary>2. `/v1` 与本地文件 `version:1` 是同一版本吗？</summary>
 
-不是。前者属于网络 API，后者属于本地文件格式。</details>
+不是。前者属于网络 API，后者属于本地文件格式。
+
+</details>
 
 <details><summary>3. `c-a` 在路径里后，正文还要复制 `conversation_id` 吗？</summary>
 
-本章不复制，避免路径与正文指向两个不同会话。</details>
+本章不复制，避免路径与正文指向两个不同会话。
+
+</details>
 
 <details><summary>4. 客户端 POST 的 `sender_id` 能决定可信作者吗？</summary>
 
-不能。本接口严格拒绝该字段，作者来自可信认证边界。</details>
+不能。本接口严格拒绝该字段，作者来自可信认证边界。
+
+</details>
 
 <details><summary>5. GET 省略 limit 时取多少？</summary>
 
-本课程默认 20 条，合法范围 1–100。</details>
+本课程默认 20 条，合法范围 1–100。
+
+</details>
 
 <details><summary>6. limit=0 与 limit=101 怎样处理？</summary>
 
-都不在合同范围，按本章 400 `BAD_LIMIT` 拒绝。</details>
+都不在合同范围，按本章 400 `BAD_LIMIT` 拒绝。
+
+</details>
 
 <details><summary>7. `messages:[]` 和 `next_cursor:null` 证明从未有历史吗？</summary>
 
-不能。它们只描述本次授权、过滤和游标范围。</details>
+不能。它们只描述本次授权、过滤和游标范围。
+
+</details>
 
 <details><summary>8. 游标为何不让客户端自己当消息 ID 解析？</summary>
 
-服务需能改变内部表示，并绑定会话、排序、过滤与有效期；客户端只应原样传回。</details>
+服务需能改变内部表示，并绑定会话、排序、过滤与有效期；客户端只应原样传回。
+
+</details>
 
 <details><summary>9. 第一页 m-c/m-b 的排他游标后，第二页返回谁？</summary>
 
-在本题固定状态中返回序号更小的 m-a。</details>
+在本题固定状态中返回序号更小的 m-a。
+
+</details>
 
 <details><summary>10. 两页之间新增 m-d，旧游标会自动给一份历史快照吗？</summary>
 
-不会。旧游标的下一页仍按“更早”走，新消息要从最新方向另查。</details>
+不会。旧游标的下一页仍按“更早”走，新消息要从最新方向另查。
+
+</details>
 
 <details><summary>11. 把 `c-a` 的游标拿去查 `c-b` 合适吗？</summary>
 
-不合适。服务应核对游标的会话和过滤约束，不能越权或静默跳项。</details>
+不合适。服务应核对游标的会话和过滤约束，不能越权或静默跳项。
+
+</details>
 
 <details><summary>12. POST JSON 总长 4096 B 与正文上限 6 B 一样吗？</summary>
 
-不一样。前者是 HTTP 原始正文资源限额，后者是解码后文本业务限额。</details>
+不一样。前者是 HTTP 原始正文资源限额，后者是解码后文本业务限额。
+
+</details>
 
 <details><summary>13. 01.12 的 1 MiB 可以直接当这套网络接口上限吗？</summary>
 
-不能。它只属于本地文件 CLI，网络接口有独立合同。</details>
+不能。它只属于本地文件 CLI，网络接口有独立合同。
+
+</details>
 
 <details><summary>14. POST 本章为何返回 200，而非用 202 表示排队？</summary>
 
-本章返回前已完成内存受理；并没有只“接下异步处理任务”的承诺。</details>
+本章返回前已完成内存受理；并没有只“接下异步处理任务”的承诺。
+
+</details>
 
 <details><summary>15. HTTP 201 一定表示磁盘持久化吗？</summary>
 
-不一定。201 表达资源已创建；本章未承诺稳定的新资源 URI，也未选用它。</details>
+不一定。201 表达资源已创建；本章未承诺稳定的新资源 URI，也未选用它。
+
+</details>
 
 <details><summary>16. 同会话重复 m-a 何时返回 409？</summary>
 
-本章只要同键已有消息就拒绝，原消息和列表顺序不变。</details>
+本章只要同键已有消息就拒绝，原消息和列表顺序不变。
+
+</details>
 
 <details><summary>17. 401 与 403 的业务前提相同吗？</summary>
 
-不相同。401 与认证需求相关；403 表示响应方理解请求却拒绝该动作。</details>
+不相同。401 与认证需求相关；403 表示响应方理解请求却拒绝该动作。
+
+</details>
 
 <details><summary>18. 404 一定表示服务器没有 c-a 吗？</summary>
 
-不能。它也可用于不披露被保护资源是否存在；还需确认响应方。</details>
+不能。它也可用于不披露被保护资源是否存在；还需确认响应方。
+
+</details>
 
 <details><summary>19. 本章自定义错误 JSON 自动符合 RFC 9457 吗？</summary>
 
-不符合。Problem Details 有自己的媒体类型与 `type` 等合同。</details>
+不符合。Problem Details 有自己的媒体类型与 `type` 等合同。
+
+</details>
 
 <details><summary>20. 调用方能靠 `message` 文本做稳定分支吗？</summary>
 
-不应如此。按稳定的机器 `code` 分支，文字可本地化或调整。</details>
+不应如此。按稳定的机器 `code` 分支，文字可本地化或调整。
+
+</details>
 
 <details><summary>21. POST 已在内存提交但响应丢失，客户端能记 HTTP 500 吗？</summary>
 
-不能。它没收到状态码，只能记录未知结果；服务端状态可能已变化。</details>
+不能。它没收到状态码，只能记录未知结果；服务端状态可能已变化。
+
+</details>
 
 <details><summary>22. 200 `accepted_in_memory` 能证明 u-b 已收到吗？</summary>
 
-不能。它只覆盖本进程内存受理，设备接收和已读需独立证据。</details>
+不能。它只覆盖本进程内存受理，设备接收和已读需独立证据。
+
+</details>
 
 ## 来源与下一步
 

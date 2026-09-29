@@ -91,95 +91,139 @@ W1 在失去分区归属后仍可能有迟到的索引写入。应用层需以�
 
 <details><summary>1. `conversation_id` 作分片键，主要保住什么局部性？</summary>
 
-同一会话的历史、序号与某些必要同键操作更容易落在一起；代价是单热会话可能形成瓶颈。</details>
+同一会话的历史、序号与某些必要同键操作更容易落在一起；代价是单热会话可能形成瓶颈。
+
+</details>
 
 <details><summary>2. 分片与副本各做什么？</summary>
 
-分片把不同键分给不同位置；副本保存同一分片的冗余拷贝，确认/滞后另需审。</details>
+分片把不同键分给不同位置；副本保存同一分片的冗余拷贝，确认/滞后另需审。
+
+</details>
 
 <details><summary>3. 玩具 `hash(c-a)=5`，四桶时落哪桶？</summary>
 
-`5 % 4 = 1`，落 b1。</details>
+`5 % 4 = 1`，落 b1。
+
+</details>
 
 <details><summary>4. `c-b` 与 `c-g` 分别落哪桶？</summary>
 
-`6 % 4 = 2` 为 b2；`9 % 4 = 1` 为 b1。</details>
+`6 % 4 = 2` 为 b2；`9 % 4 = 1` 为 b1。
+
+</details>
 
 <details><summary>5. epoch7 的 b1 在哪台节点？</summary>
 
-N1；本题 `c-a` 和 `c-g` 都随 b1 在 N1。</details>
+N1；本题 `c-a` 和 `c-g` 都随 b1 在 N1。
+
+</details>
 
 <details><summary>6. 只搬 b1 到 N3，会自动拆开 `c-g` 单热写流吗？</summary>
 
-不会。`c-g` 仍是一个键，只是该桶及同桶 `c-a` 换到 N3。</details>
+不会。`c-g` 仍是一个键，只是该桶及同桶 `c-a` 换到 N3。
+
+</details>
 
 <details><summary>7. Redis Cluster 的 16,384 槽就是一致性哈希环吗？</summary>
 
-不是。官方说明它按 hash slot 分片，而非一致性哈希。</details>
+不是。官方说明它按 hash slot 分片，而非一致性哈希。
+
+</details>
 
 <details><summary>8. Kafka 的 P0 与数据库 b1 是同一个分片吗？</summary>
 
-不是。前者是事件日志分区，后者是本章教学存储桶，路由、位点和迁移独立。</details>
+不是。前者是事件日志分区，后者是本章教学存储桶，路由、位点和迁移独立。
+
+</details>
 
 ### 手算与故障 9–16：看迁移期间的交错
 
 <details><summary>9. 直接 `hash % nodeCount`，三个玩具键由 3 节点变 4 节点会怎样？</summary>
 
-分别从 `2,0,0` 变 `1,2,1`；若编号对应固定节点，都会换归属。</details>
+分别从 `2,0,0` 变 `1,2,1`；若编号对应固定节点，都会换归属。
+
+</details>
 
 <details><summary>10. M1 只记 `c-a H=seq9`，足以覆盖 b1 的完整增量吗？</summary>
 
-不足。b1 还有 `c-g`，需要与一致快照配对的该范围可续读变更位置 `L0`。</details>
+不足。b1 还有 `c-g`，需要与一致快照配对的该范围可续读变更位置 `L0`。
+
+</details>
 
 <details><summary>11. M2 N1 新提交 `m-10/seq10`，N3 只复制旧快照会怎样？</summary>
 
-N3 缺新消息及相关 outbox/版本；切路由前必须追增量并对账。</details>
+N3 缺新消息及相关 outbox/版本；切路由前必须追增量并对账。
+
+</details>
 
 <details><summary>12. 旧客户端持 epoch7 到 N1，M4 后 N1 可继续写吗？</summary>
 
-不可。N1 失去写权后应按版本重定向/拒绝，避免与 N3 分叉。</details>
+不可。N1 失去写权后应按版本重定向/拒绝，避免与 N3 分叉。
+
+</details>
 
 <details><summary>13. 同时写 N1/N3 就得到跨节点原子提交吗？</summary>
 
-没有。任一侧失败或结果未知会分叉，必须明确唯一权威与修复/对账。</details>
+没有。任一侧失败或结果未知会分叉，必须明确唯一权威与修复/对账。
+
+</details>
 
 <details><summary>14. N3 已有消息行，就能直接认定 E9/E10 均已发吗？</summary>
 
-不能。outbox 意图、broker 确认与消费者效果分别核对。</details>
+不能。outbox 意图、broker 确认与消费者效果分别核对。
+
+</details>
 
 <details><summary>15. N3 先发布 E10，旧 N1 的 E9 尚在手中，单靠同键 Kafka 分区能纠正吗？</summary>
 
-不能。分区只按实际收到顺序追加；须在生产侧设顺序闸门或明确改变业务合同。</details>
+不能。分区只按实际收到顺序追加；须在生产侧设顺序闸门或明确改变业务合同。
+
+</details>
 
 <details><summary>16. epoch8 后 N3 接受新写又故障，可无条件把路由改回 epoch7 N1 吗？</summary>
 
-不能。先围栏旧新写权、同步 N3 新事实并核对，再发布下一有效路由版本。</details>
+不能。先围栏旧新写权、同步 N3 新事实并核对，再发布下一有效路由版本。
+
+</details>
 
 ### 评审 17–22：拆开两种再平衡
 
 <details><summary>17. W1→W2 接手 P0，会移动 b1 的权威数据库数据吗？</summary>
 
-不会。消费者组分区归属与存储桶迁移是两件事。</details>
+不会。消费者组分区归属与存储桶迁移是两件事。
+
+</details>
 
 <details><summary>18. E9(P0:42) 未完成，却提交“下次从 44 读”有什么风险？</summary>
 
-恢复者越过 E9 和 E10 的位置，必要索引效果可能丢失。</details>
+恢复者越过 E9 和 E10 的位置，必要索引效果可能丢失。
+
+</details>
 
 <details><summary>19. W1 失去 P0 后迟到写索引，Kafka 自动禁止外部写吗？</summary>
 
-不能依赖。应用要用代际/租约围栏和目标版本条件阻止过期结果。</details>
+不能依赖。应用要用代际/租约围栏和目标版本条件阻止过期结果。
+
+</details>
 
 <details><summary>20. 扩 Kafka 分区数会把同键旧记录自动搬到新分区吗？</summary>
 
-不会。未来记录映射可能变化，旧日志不自动重排，需审顺序和消费策略。</details>
+不会。未来记录映射可能变化，旧日志不自动重排，需审顺序和消费策略。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码能证明最终 Kafka 分区算法吗？</summary>
 
-不能。它们只证明群聊路径把会话相关 key 传给 `MsgToMQ`，后者传给 `SendMessage`。</details>
+不能。它们只证明群聊路径把会话相关 key 传给 `MsgToMQ`，后者传给 `SendMessage`。
+
+</details>
 
 <details><summary>22. M6 清理旧数据前，最少核对什么？</summary>
 
-ID、会话 seq、当前版本、删除/权限、outbox/发布状态、增量追平屏障与旧路由写入是否已围栏，并保留可回退证据。</details>
+ID、会话 seq、当前版本、删除/权限、outbox/发布状态、增量追平屏障与旧路由写入是否已围栏，并保留可回退证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

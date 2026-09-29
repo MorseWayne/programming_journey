@@ -94,95 +94,139 @@ WebSocket 的**正常关闭握手**可含 Close 帧和状态；底层 TCP 突然
 
 <details><summary>1. A 的客户端抓包能直接看见 P→N1 连接吗？</summary>
 
-不能；采集点只见自身链路，需代理/后端证据关联。</details>
+不能；采集点只见自身链路，需代理/后端证据关联。
+
+</details>
 
 <details><summary>2. TLS 下普通抓包能直接读 `message_id=m-9` 吗？</summary>
 
-通常不能；未授权解密前只能见外层连接/记录等，不应伪称看到正文。</details>
+通常不能；未授权解密前只能见外层连接/记录等，不应伪称看到正文。
+
+</details>
 
 <details><summary>3. 纸上 DNS、建连、TLS 分别耗多少？</summary>
 
-20 ms、30 ms、40 ms；全是虚构演练数。</details>
+20 ms、30 ms、40 ms；全是虚构演练数。
+
+</details>
 
 <details><summary>4. P 等上游 90–990 ms 是多久？</summary>
 
-900 ms；不证明 N1 没执行。</details>
+900 ms；不证明 N1 没执行。
+
+</details>
 
 <details><summary>5. 五段相加的总时长是多少？</summary>
 
-`20+30+40+900+10=1000 ms`，纸上预算。</details>
+`20+30+40+900+10=1000 ms`，纸上预算。
+
+</details>
 
 <details><summary>6. Go `httptrace` 客户端 `GotConn` 就是 N1 建连吗？</summary>
 
-不是；可能是复用 A→P 连接，需看每一跳的追踪。</details>
+不是；可能是复用 A→P 连接，需看每一跳的追踪。
+
+</details>
 
 <details><summary>7. 抓包里有 TCP ACK 就表示 B 已收到消息吗？</summary>
 
-不表示；ACK 在某段传输层，不是 IM 设备确认。</details>
+不表示；ACK 在某段传输层，不是 IM 设备确认。
+
+</details>
 
 <details><summary>8. `公告` 正文是多少 UTF-8 B？</summary>
 
-两个汉字各 3 B，共 6 B，正好当前正文上限。</details>
+两个汉字各 3 B，共 6 B，正好当前正文上限。
+
+</details>
 
 ### 推演 9–16：错误和结果未知
 
 <details><summary>9. P 返回 504 最多说明什么？</summary>
 
-P 等上游没有及时收到响应；原写操作可能已发生，也可能未发生。</details>
+P 等上游没有及时收到响应；原写操作可能已发生，也可能未发生。
+
+</details>
 
 <details><summary>10. 第二次同 ID 收到 409 可当幂等成功吗？</summary>
 
-不能；它是冲突，仍需原操作权威结果。</details>
+不能；它是冲突，仍需原操作权威结果。
+
+</details>
 
 <details><summary>11. N1 返回 S2 200 能证明什么？</summary>
 
-只到 N1 本进程内存受理，非 DB/设备 ACK。</details>
+只到 N1 本进程内存受理，非 DB/设备 ACK。
+
+</details>
 
 <details><summary>12. TCP 断开且没见 WebSocket Close 帧，能说对端发了 1006 帧吗？</summary>
 
-不能；1006 可是本端异常关闭观察值，不是发送的 Close 帧。</details>
+不能；1006 可是本端异常关闭观察值，不是发送的 Close 帧。
+
+</details>
 
 <details><summary>13. 502、503、504 可统一记“网络断”吗？</summary>
 
-不应；分别审无效上游响应、暂不可用、代理等上游超时及来源。</details>
+不应；分别审无效上游响应、暂不可用、代理等上游超时及来源。
+
+</details>
 
 <details><summary>14. N1 没日志就证明 N1 没受理吗？</summary>
 
-不能；还需核日志采集、采样、实例与请求 ID，缺日志不是执行证明。</details>
+不能；还需核日志采集、采样、实例与请求 ID，缺日志不是执行证明。
+
+</details>
 
 <details><summary>15. B 离线 25h，只靠 24h broker 能保证补齐吗？</summary>
 
-不能；需真正保留的 DB 和有权历史查询等额外证据。</details>
+不能；需真正保留的 DB 和有权历史查询等额外证据。
+
+</details>
 
 <details><summary>16. 504 后连续自动重试可能造成什么？</summary>
 
-放大负载、跨实例重复副作用；当前 409 也不能说明完成。</details>
+放大负载、跨实例重复副作用；当前 409 也不能说明完成。
+
+</details>
 
 ### 决策 17–22：兼容、限额与复盘
 
 <details><summary>17. 外部 h2 就意味着应用 `/v2` 已上线吗？</summary>
 
-不意味着；HTTP 版本与应用合同版本独立。</details>
+不意味着；HTTP 版本与应用合同版本独立。
+
+</details>
 
 <details><summary>18. 代理升级后 R9 9 B 可自动发了吗？</summary>
 
-不能；R9 仍待审，当前正文 6 UTF-8 B。</details>
+不能；R9 仍待审，当前正文 6 UTF-8 B。
+
+</details>
 
 <details><summary>19. 非成员可因诊断方便改回 403 并泄会话存在吗？</summary>
 
-不可；当前非成员隐藏 404 是业务/安全合同。</details>
+不可；当前非成员隐藏 404 是业务/安全合同。
+
+</details>
 
 <details><summary>20. 真实抓包与私聊正文可随意放课程仓库吗？</summary>
 
-不可；需授权和最小化，本章只用合成元数据。</details>
+不可；需授权和最小化，本章只用合成元数据。
+
+</details>
 
 <details><summary>21. 查明第一坏边界前应先做什么止损？</summary>
 
-停止盲重试/放大，保留请求与尝试证据，按未知结果谨慎对外。</details>
+停止盲重试/放大，保留请求与尝试证据，按未知结果谨慎对外。
+
+</details>
 
 <details><summary>22. 一份排障/协议演进评审至少要列哪些证据？</summary>
 
-逐跳阶段/实例/版本、抓包可见范围、HTTP/RPC/IM 状态、权限/限额、兼容矩阵与回退/复盘。</details>
+逐跳阶段/实例/版本、抓包可见范围、HTTP/RPC/IM 状态、权限/限额、兼容矩阵与回退/复盘。
+
+</details>
 
 ## 本章完成标准与后续路径
 

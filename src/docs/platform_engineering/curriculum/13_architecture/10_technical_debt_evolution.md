@@ -108,95 +108,139 @@ Fowler 的比喻也提醒：若不再频繁碰某块代码，原先估的利息�
 
 <details><summary>1. 技术债“利息”主要在何时付出？</summary>
 
-以后触碰有问题的设计时，多花变更、评审、排障等代价；不自动等于每日固定费用。</details>
+以后触碰有问题的设计时，多花变更、评审、排障等代价；不自动等于每日固定费用。
+
+</details>
 
 <details><summary>2. 当前 S2 只承诺进程内存受理，本身必是技术债吗？</summary>
 
-不必然。它是已明示范围，未来更强需求要另审。</details>
+不必然。它是已明示范围，未来更强需求要另审。
+
+</details>
 
 <details><summary>3. `/v1` 接纳 7 B 应先记为何类？</summary>
 
-违反当前 6 UTF-8 B 合同的缺陷，优先按影响止损/修复。</details>
+违反当前 6 UTF-8 B 合同的缺陷，优先按影响止损/修复。
+
+</details>
 
 <details><summary>4. 当前非成员发送返回 200，可排下季度还债吗？</summary>
 
-不行。违反 404/权限合同，应立即调查影响并修正。</details>
+不行。违反 404/权限合同，应立即调查影响并修正。
+
+</details>
 
 <details><summary>5. 退群后历史可见未定，首先是谁的事？</summary>
 
-产品/安全的业务规则决定阻断，不只是 Go 代码清理。</details>
+产品/安全的业务规则决定阻断，不只是 Go 代码清理。
+
+</details>
 
 <details><summary>6. 未来 S3 的 outbox 尚未实现，就表示当前有技术债吗？</summary>
 
-不能直接推断；它是未来候选方案的待评估恢复机制。</details>
+不能直接推断；它是未来候选方案的待评估恢复机制。
+
+</details>
 
 <details><summary>7. R9 当前是什么状态？</summary>
 
-正文 6→9 B 的待审提议；旧 `/v1` 仍为 6 B。</details>
+正文 6→9 B 的待审提议；旧 `/v1` 仍为 6 B。
+
+</details>
 
 <details><summary>8. ADR-P1 proposed 可当现行架构验收依据吗？</summary>
 
-不能。未接受的候选不能被当作已实施或已验证事实。</details>
+不能。未接受的候选不能被当作已实施或已验证事实。
+
+</details>
 
 ### 推演 9–16：利息与漂移
 
 <details><summary>9. 未来 6 次同类变更各多 3 人时，条件利息多少？</summary>
 
-`6×3=18 人时`，只是纸上预测，不是真实观察。</details>
+`6×3=18 人时`，只是纸上预测，不是真实观察。
+
+</details>
 
 <details><summary>10. 若整治估 12 人时，账面净节省多少？</summary>
 
-`18−12=6 人时`，仍须考虑变更是否发生、回归和事故风险。</details>
+`18−12=6 人时`，仍须考虑变更是否发生、回归和事故风险。
+
+</details>
 
 <details><summary>11. 某块丑代码多年不改，利息一定很高吗？</summary>
 
-不一定；债务隐喻的利息通常随触碰/变更出现。</details>
+不一定；债务隐喻的利息通常随触碰/变更出现。
+
+</details>
 
 <details><summary>12. 同一个 `m-9` 被两个写入者都称权威，先查什么？</summary>
 
-查获批准的数据归属/迁移阶段与实际写入证据；若破坏唯一权威须止损。</details>
+查获批准的数据归属/迁移阶段与实际写入证据；若破坏唯一权威须止损。
+
+</details>
 
 <details><summary>13. Git 期望 K2、旧 Pod 进程仍 K1，属于哪类差异？</summary>
 
-首先是配置交付/生效漂移，要查声明、API、Pod 和进程链。</details>
+首先是配置交付/生效漂移，要查声明、API、Pod 和进程链。
+
+</details>
 
 <details><summary>14. 有意改掉已接受的架构决定，怎样避免“悄悄漂移”？</summary>
 
-写新决定及理由、验证和迁移门，将旧 ADR 标为被替代并保留历史。</details>
+写新决定及理由、验证和迁移门，将旧 ADR 标为被替代并保留历史。
+
+</details>
 
 <details><summary>15. D2 回 D1 后看不到 `/v2` 已确认消息，可记普通债务吗？</summary>
 
-不能。已确认事实不可见是用户正确性/回退缺陷，先保全读取和权威数据。</details>
+不能。已确认事实不可见是用户正确性/回退缺陷，先保全读取和权威数据。
+
+</details>
 
 <details><summary>16. 若预计六次变更结果只发生一次，原 18 人时预测怎样？</summary>
 
-需按真实变更频率重估；不能坚持原预测当收益证据。</details>
+需按真实变更频率重估；不能坚持原预测当收益证据。
+
+</details>
 
 ### 决策 17–22：偿还与验证
 
 <details><summary>17. 越权风险可因“审慎负债”而等待吗？</summary>
 
-不能。象限帮助回顾折中，不豁免现行安全/合同要求。</details>
+不能。象限帮助回顾折中，不豁免现行安全/合同要求。
+
+</details>
 
 <details><summary>18. 技术债卡至少需要哪些输入？</summary>
 
-用户/变更影响、触发频率、额外成本/事故证据、偿还投入、owner、验收与停止门。</details>
+用户/变更影响、触发频率、额外成本/事故证据、偿还投入、owner、验收与停止门。
+
+</details>
 
 <details><summary>19. 小步整治版本映射，首先守哪组行为？</summary>
 
-当前 `/v1` 6 B/409/404/`accepted_in_memory`，R9 与未来 `/v2` 另行评审。</details>
+当前 `/v1` 6 B/409/404/`accepted_in_memory`，R9 与未来 `/v2` 另行评审。
+
+</details>
 
 <details><summary>20. 只看修复后代码行数减少，能证明偿还收益吗？</summary>
 
-不能。要看同类变更成本、故障/人工处置、用户合同和新增复杂度。</details>
+不能。要看同类变更成本、故障/人工处置、用户合同和新增复杂度。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码可证明其真实技术债清单吗？</summary>
 
-不能。只支持所读发送到 MQ 与另一 Mongo 消费路径异步边界。</details>
+不能。只支持所读发送到 MQ 与另一 Mongo 消费路径异步边界。
+
+</details>
 
 <details><summary>22. 债务偿还后若新增抽象使变更更慢，应怎样？</summary>
 
-按预设反馈与停止门调整或撤回方案，重新取证，不为完成工单而继续扩大。</details>
+按预设反馈与停止门调整或撤回方案，重新取证，不为完成工单而继续扩大。
+
+</details>
 
 ## 本章完成标准与后续路径
 

@@ -112,91 +112,135 @@ Go `net` 包的 `Dial` 建立客户端连接，`Listener.Accept` 接受服务端
 
 <details><summary>1. TCP 四元组由哪四项组成？</summary>
 
-源 IP、源端口、目标 IP、目标端口。</details>
+源 IP、源端口、目标 IP、目标端口。
+
+</details>
 
 <details><summary>2. 同一 u-a 的浏览器和手机一定共用 TCP 连接吗？</summary>
 
-不一定。账号身份与网络连接不是同一对象。</details>
+不一定。账号身份与网络连接不是同一对象。
+
+</details>
 
 <details><summary>3. A 发 SYN seq=100，B 为何 ACK=101？</summary>
 
-SYN 占一个序列号，B 下一步期待 101。</details>
+SYN 占一个序列号，B 下一步期待 101。
+
+</details>
 
 <details><summary>4. B 发 SYN seq=500，A 下一 ACK 应指向多少？</summary>
 
-501。</details>
+501。
+
+</details>
 
 <details><summary>5. 三次握手成功证明 A 有权读 c-a 吗？</summary>
 
-不能。应用登录和资源授权在更高层。</details>
+不能。应用登录和资源授权在更高层。
+
+</details>
 
 <details><summary>6. FIN 表示两个方向同时都不再有数据吗？</summary>
 
-不表示。它结束发送者的一个方向，另一方向仍可继续。</details>
+不表示。它结束发送者的一个方向，另一方向仍可继续。
+
+</details>
 
 <details><summary>7. A 关闭写方向后还能读取服务端回应吗？</summary>
 
-在半关闭连接中可以，前提是另一读方向仍开放。</details>
+在半关闭连接中可以，前提是另一读方向仍开放。
+
+</details>
 
 <details><summary>8. FIN 后 A 读到 EOF 就代表数据库提交了吗？</summary>
 
-不能。EOF 是字节流方向结束，业务结果须另核对。</details>
+不能。EOF 是字节流方向结束，业务结果须另核对。
+
+</details>
 
 <details><summary>9. TIME_WAIT 可直接解释为“聊天用户仍在线”吗？</summary>
 
-不能。它是 TCP 关闭状态，不是用户在线证据。</details>
+不能。它是 TCP 关闭状态，不是用户在线证据。
+
+</details>
 
 <details><summary>10. TIME_WAIT 时长对所有操作系统都是固定同一秒数吗？</summary>
 
-不应这样宣称；规范用 2×MSL 描述，实际观察还受实现影响。</details>
+不应这样宣称；规范用 2×MSL 描述，实际观察还受实现影响。
+
+</details>
 
 <details><summary>11. RST 与 FIN 的核心差别是什么？</summary>
 
-RST 中止/重置连接，FIN 表示一个方向有序结束。</details>
+RST 中止/重置连接，FIN 表示一个方向有序结束。
+
+</details>
 
 <details><summary>12. A 看见连接重置能确定 m-a 没被受理吗？</summary>
 
-不能。重置可能发生在服务端处理之后。</details>
+不能。重置可能发生在服务端处理之后。
+
+</details>
 
 <details><summary>13. 对端崩溃后本端立刻一定看到 CLOSED 吗？</summary>
 
-不一定。半开状态可持续到后续读写、超时或探测。</details>
+不一定。半开状态可持续到后续读写、超时或探测。
+
+</details>
 
 <details><summary>14. TCP Keepalive 一次探测无回应即可认定设备永久离线吗？</summary>
 
-不应如此。探测可丢失，结论需按策略与多次证据限定。</details>
+不应如此。探测可丢失，结论需按策略与多次证据限定。
+
+</details>
 
 <details><summary>15. WebSocket Pong 能证明 m-a 已写库吗？</summary>
 
-不能。Pong 是协议端点对 Ping 的回应。</details>
+不能。Pong 是协议端点对 Ping 的回应。
+
+</details>
 
 <details><summary>16. 应用心跳成功能证明人正在读屏幕吗？</summary>
 
-不能，只说明相应应用检查点近期有回应。</details>
+不能，只说明相应应用检查点近期有回应。
+
+</details>
 
 <details><summary>17. 心跳越频繁，是否只有好处？</summary>
 
-不是。它会增加网络、CPU、电量和网关负载。</details>
+不是。它会增加网络、CPU、电量和网关负载。
+
+</details>
 
 <details><summary>18. 新连接建好后，旧连接一定已在服务器清理吗？</summary>
 
-不一定。旧连接可能尚未被察觉断开。</details>
+不一定。旧连接可能尚未被察觉断开。
+
+</details>
 
 <details><summary>19. 重连后的 TCP 序列号能用来查旧 m-a 吗？</summary>
 
-不能。业务消息 ID 应跨连接稳定，TCP 序号只属连接。</details>
+不能。业务消息 ID 应跨连接稳定，TCP 序号只属连接。
+
+</details>
 
 <details><summary>20. 超时后换新 message_id 直接再发安全吗？</summary>
 
-不一定，首次请求可能已经受理，会造成重复业务消息。</details>
+不一定，首次请求可能已经受理，会造成重复业务消息。
+
+</details>
 
 <details><summary>21. Go `context` 取消会自动取消任意 `net.Conn.Read` 吗？</summary>
 
-不能假定。需要连接管理设计通过期限、关闭或任务协作响应取消。</details>
+不能假定。需要连接管理设计通过期限、关闭或任务协作响应取消。
+
+</details>
 
 <details><summary>22. 一条连接在线可代表所有设备已收到 m-a 吗？</summary>
 
-不能。在线粒度、设备交付与已读都需独立定义和证据。</details>
+不能。在线粒度、设备交付与已读都需独立定义和证据。
+
+</details>
 
 ## 来源与下一步
 

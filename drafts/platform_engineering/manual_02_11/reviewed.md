@@ -86,95 +86,139 @@ Trie 的节点数取决于词项与共享前缀；位图空间与**最大编号�
 
 <details><summary>1. Trie 的终止标记为什么必要？</summary>
 
-区分“会话”本身是完整词项，还是只作为更长词的前缀。</details>
+区分“会话”本身是完整词项，还是只作为更长词的前缀。
+
+</details>
 
 <details><summary>2. 查前缀“会话”应列出哪三个纸上词？</summary>
 
-`会话`、`会话历史`、`会话列表`。</details>
+`会话`、`会话历史`、`会话列表`。
+
+</details>
 
 <details><summary>3. Trie 查到关键词就授权读某会话吗？</summary>
 
-不授权；词项和成员/资料权限是不同边界。</details>
+不授权；词项和成员/资料权限是不同边界。
+
+</details>
 
 <details><summary>4. 位图适合怎样的 ID？</summary>
 
-稠密、稳定的非负整数范围；稀疏大 ID 可能浪费。</details>
+稠密、稳定的非负整数范围；稀疏大 ID 可能浪费。
+
+</details>
 
 <details><summary>5. Bloom 的“所有位为 1”是什么意思？</summary>
 
-可能插入过，也可能是假阳性；需精确确认。</details>
+可能插入过，也可能是假阳性；需精确确认。
+
+</details>
 
 <details><summary>6. Bloom 有任一位为 0 可以推什么？</summary>
 
-在正确插入、哈希一致、未错误删位/损坏前提下，肯定没插入过。</details>
+在正确插入、哈希一致、未错误删位/损坏前提下，肯定没插入过。
+
+</details>
 
 <details><summary>7. 并查集 Find 和 Union 各做什么？</summary>
 
-Find 查集合代表；Union 合并两集合。</details>
+Find 查集合代表；Union 合并两集合。
+
+</details>
 
 <details><summary>8. 并查集能给两点间的具体路径吗？</summary>
 
-不能；只给同组/连通判断，路径用图遍历等方法。</details>
+不能；只给同组/连通判断，路径用图遍历等方法。
+
+</details>
 
 ### 推演 9–16：bit、假阳性与连通
 
 <details><summary>9. bit1、bit3、bit6 为 1 的字节值是多少？</summary>
 
-`2+8+64=74`，从高位到低位写 `01001010`。</details>
+`2+8+64=74`，从高位到低位写 `01001010`。
+
+</details>
 
 <details><summary>10. 未插过的 m-x 哈希到 {1,6}，当前两位均 1，属于什么结果？</summary>
 
-假阳性：Bloom 说“可能在”，真实未插入。</details>
+假阳性：Bloom 说“可能在”，真实未插入。
+
+</details>
 
 <details><summary>11. m-y 哈希到 {0,6} 且 bit0=0，结果是什么？</summary>
 
-在本章前提下可判肯定没插入。</details>
+在本章前提下可判肯定没插入。
+
+</details>
 
 <details><summary>12. 见“可能在”可直接给新 m-x 返回重复 ID 409 吗？</summary>
 
-不能；先查权威精确 ID/操作记录，避免假阳性错拒。</details>
+不能；先查权威精确 ID/操作记录，避免假阳性错拒。
+
+</details>
 
 <details><summary>13. 普通 Bloom 删除 m-1 时可直接清它的两位吗？</summary>
 
-不可随意清；别的 ID 可能共享位，会制造假阴性。</details>
+不可随意清；别的 ID 可能共享位，会制造假阴性。
+
+</details>
 
 <details><summary>14. Union(0,1)、Union(1,2) 后 0 与 2 同组吗？</summary>
 
-同组，Find 结果相同。</details>
+同组，Find 结果相同。
+
+</details>
 
 <details><summary>15. 另 Union(3,4) 后 0 与 4 同组吗？</summary>
 
-不同组，除非再有跨组 Union。</details>
+不同组，除非再有跨组 Union。
+
+</details>
 
 <details><summary>16. 并查集根编号固定能代表某真实用户吗？</summary>
 
-不能；根随合并策略变化，只是结构代表。</details>
+不能；根随合并策略变化，只是结构代表。
+
+</details>
 
 ### 决策 17–22：删除、更新与硬门
 
 <details><summary>17. 关系撤销后普通并查集会自动拆组吗？</summary>
 
-不会；需重建或换能处理动态删除的方案，不能当实时授权源。</details>
+不会；需重建或换能处理动态删除的方案，不能当实时授权源。
+
+</details>
 
 <details><summary>18. 字符串设备 ID 映射到位图编号，要维护什么？</summary>
 
-唯一、稳定且版本明确的映射，清理/复用时避免旧 bit 串身份。</details>
+唯一、稳定且版本明确的映射，清理/复用时避免旧 bit 串身份。
+
+</details>
 
 <details><summary>19. Trie 边按 UTF-8 任意字节截断，能保证汉字完整吗？</summary>
 
-不能；本章按码点建边，实现需选择一致的文本单位。</details>
+不能；本章按码点建边，实现需选择一致的文本单位。
+
+</details>
 
 <details><summary>20. Bloom 假阳性只多一次精确查询，与直接丢消息等价吗？</summary>
 
-不等价；前者是性能成本，后者是业务错误。</details>
+不等价；前者是性能成本，后者是业务错误。
+
+</details>
 
 <details><summary>21. 位图显示 B 在线能证明 S2 200 后 B 设备收到吗？</summary>
 
-不能；当前 200 只到本进程内存受理。</details>
+不能；当前 200 只到本进程内存受理。
+
+</details>
 
 <details><summary>22. 为一个小词表和少量 ID 必须上四种结构吗？</summary>
 
-不必。先用清楚的 map/切片基线，再按规模、查询、删除、误判成本选择。</details>
+不必。先用清楚的 map/切片基线，再按规模、查询、删除、误判成本选择。
+
+</details>
 
 ## 本章完成标准与后续路径
 

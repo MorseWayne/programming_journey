@@ -231,83 +231,123 @@ func writeExport(path string, data []byte, replace bool) error {
 
 <details><summary>1. 本章支持哪些子命令？</summary>
 
-`check`、`list`、`export`。没有第四个隐含的 `import` 命令；从文件读取到内存属于三者共用的导入步骤。</details>
+`check`、`list`、`export`。没有第四个隐含的 `import` 命令；从文件读取到内存属于三者共用的导入步骤。
+
+</details>
 
 <details><summary>2. `-file` 未给出时从哪里取值？</summary>
 
-先看 `IMHISTORY_FILE`，没有才用教学默认路径；显式 flag 优先。</details>
+先看 `IMHISTORY_FILE`，没有才用教学默认路径；显式 flag 优先。
+
+</details>
 
 <details><summary>3. `flag.FlagSet` 为什么按子命令分别创建？</summary>
 
-各命令接受的参数、帮助和解析错误彼此隔离，`check` 不应接受 `export` 的 `-replace`。</details>
+各命令接受的参数、帮助和解析错误彼此隔离，`check` 不应接受 `export` 的 `-replace`。
+
+</details>
 
 <details><summary>4. `-max-bytes=0` 能因“没有消息”而合法么？</summary>
 
-不能。它是非法资源上限，应在读取文件前以用法错误拒绝。</details>
+不能。它是非法资源上限，应在读取文件前以用法错误拒绝。
+
+</details>
 
 <details><summary>5. 显式 `-help` 与没有子命令分别返回什么？</summary>
 
-帮助是正常查询，向 `stdout` 写用法并返回 0；缺少操作向 `stderr` 提示并返回 2。</details>
+帮助是正常查询，向 `stdout` 写用法并返回 0；缺少操作向 `stderr` 提示并返回 2。
+
+</details>
 
 <details><summary>6. 为什么 `os.Exit` 只放在最外层？</summary>
 
-它不运行尚未执行的 `defer`。内层先完成关闭、清理与返回，再由入口退出。</details>
+它不运行尚未执行的 `defer`。内层先完成关闭、清理与返回，再由入口退出。
+
+</details>
 
 <details><summary>7. 为什么读取上限使用 `maxBytes+1`？</summary>
 
-多读一个字节才可区分恰好到上限与实际超限；多出的字节只用于拒绝判断。</details>
+多读一个字节才可区分恰好到上限与实际超限；多出的字节只用于拒绝判断。
+
+</details>
 
 <details><summary>8. JSON 解码成功就能显示消息吗？</summary>
 
-不能。还要检查版本、必需字段、数组形状、时间和会话内重复 ID。</details>
+不能。还要检查版本、必需字段、数组形状、时间和会话内重复 ID。
+
+</details>
 
 <details><summary>9. `messages` 缺失和 `[]` 的合同一样吗？</summary>
 
-不一样。v1 要求字段是数组；缺失或 `null` 拒绝，空数组表示合法空历史。</details>
+不一样。v1 要求字段是数组；缺失或 `null` 拒绝，空数组表示合法空历史。
+
+</details>
 
 <details><summary>10. 一次 `Decode` 成功还需检查什么？</summary>
 
-再解码一次，只有得到 `io.EOF` 才能确认没有第二个 JSON 值或损坏尾部。</details>
+再解码一次，只有得到 `io.EOF` 才能确认没有第二个 JSON 值或损坏尾部。
+
+</details>
 
 <details><summary>11. 为什么 `list` 先完成整份文件校验？</summary>
 
-避免输出前几条后在坏记录处失败，让下游误把部分列表当完整结果。</details>
+避免输出前几条后在坏记录处失败，让下游误把部分列表当完整结果。
+
+</details>
 
 <details><summary>12. `list` 默认输出正文吗？</summary>
 
-不输出。只显示本章约定的 ID 和时间；全文展示需要另立显式需求与权限边界。</details>
+不输出。只显示本章约定的 ID 和时间；全文展示需要另立显式需求与权限边界。
+
+</details>
 
 <details><summary>13. 哪个通道写成功结果，哪个写诊断？</summary>
 
-`stdout` 写成功结果，`stderr` 写参数或文件错误，便于脚本按退出码处理。</details>
+`stdout` 写成功结果，`stderr` 写参数或文件错误，便于脚本按退出码处理。
+
+</details>
 
 <details><summary>14. 历史 JSON 损坏与文件不存在分别返回什么类别？</summary>
 
-前者为 3（输入历史无效），后者为 4（I/O 失败）；它们是本课程约定的数字。</details>
+前者为 3（输入历史无效），后者为 4（I/O 失败）；它们是本课程约定的数字。
+
+</details>
 
 <details><summary>15. 导出目标已存在且没有 `-replace` 会怎样？</summary>
 
-排他创建失败，返回 4，旧目标不应被覆盖。</details>
+排他创建失败，返回 4，旧目标不应被覆盖。
+
+</details>
 
 <details><summary>16. 显式 `-replace` 是否保证崩溃原子更新？</summary>
 
-不保证；覆盖模式可能先截断旧文件，中途失败留下部分内容。</details>
+不保证；覆盖模式可能先截断旧文件，中途失败留下部分内容。
+
+</details>
 
 <details><summary>17. 写入成功、关闭失败还能返回导出成功吗？</summary>
 
-不能。当前导出合同要求两步均成功，关闭错误也应交还。</details>
+不能。当前导出合同要求两步均成功，关闭错误也应交还。
+
+</details>
 
 <details><summary>18. 源文件与目标路径不同就一定不是同一对象吗？</summary>
 
-不一定。链接或路径别名可指向同一文件；还需检查对象身份，且教学预检查不消除并发修改竞态。</details>
+不一定。链接或路径别名可指向同一文件；还需检查对象身份，且教学预检查不消除并发修改竞态。
+
+</details>
 
 <details><summary>19. `t.TempDir()` 的文件测试能证明线上消息已送达吗？</summary>
 
-不能。它只验证本地文件与当前命令的协作。</details>
+不能。它只验证本地文件与当前命令的协作。
+
+</details>
 
 <details><summary>20. 交付说明要区分哪两类结果？</summary>
 
-静态教材的预期与学习者自己执行后的实际结果；未运行就明确写未运行。</details>
+静态教材的预期与学习者自己执行后的实际结果；未运行就明确写未运行。
+
+</details>
 
 ## 来源与下一步
 

@@ -93,95 +93,139 @@ HPA 调整的是**Pod 期望数**，调度器还得找到各新 Pod 的 Node 空
 
 <details><summary>1. 10,000 连接、2% 活跃，每活跃 0.1 条/s，入站多少？</summary>
 
-`10,000×0.02×0.1=20 条/秒`，只是纸上条件值。</details>
+`10,000×0.02×0.1=20 条/秒`，只是纸上条件值。
+
+</details>
 
 <details><summary>2. 每条恰好 50 目标成员×2 设备，无过滤重试，任务多少？</summary>
 
-`20×50×2=2,000 项/秒`，不是 2,000 条权威消息或设备 ACK。</details>
+`20×50×2=2,000 项/秒`，不是 2,000 条权威消息或设备 ACK。
+
+</details>
 
 <details><summary>3. HPA CPU 利用率的分母通常是什么？</summary>
 
-相应 Pod/容器的 CPU request，不是宿主全部核或 CPU limit。</details>
+相应 Pod/容器的 CPU request，不是宿主全部核或 CPU limit。
+
+</details>
 
 <details><summary>4. HPA 期望五 Pod 就等于五个 Ready 吗？</summary>
 
-不等。还要有 Node 空间、调度、启动与就绪时间。</details>
+不等。还要有 Node 空间、调度、启动与就绪时间。
+
+</details>
 
 <details><summary>5. 新 Pod 会迁移旧 Pod 上的 WebSocket 吗？</summary>
 
-不会。既有连接留在旧 Pod 直到断开/有界摘流。</details>
+不会。既有连接留在旧 Pod 直到断开/有界摘流。
+
+</details>
 
 <details><summary>6. PDB 可保证 Node 意外断电时仍两个 Pod 可用吗？</summary>
 
-不能。PDB 主要约束自愿驱逐。</details>
+不能。PDB 主要约束自愿驱逐。
+
+</details>
 
 <details><summary>7. 三个副本一定在三个 Node/zone 吗？</summary>
 
-不一定。要定义并验证放置约束与实际映射。</details>
+不一定。要定义并验证放置约束与实际映射。
+
+</details>
 
 <details><summary>8. 当前 S2 200 能说明 B 设备收到吗？</summary>
 
-不能，只表示本进程内存受理。</details>
+不能，只表示本进程内存受理。
+
+</details>
 
 ### 计算 9–16：指标、故障与重连
 
 <details><summary>9. 每 Pod request 500m、使用 400m，CPU 利用率多少？</summary>
 
-`400/500=80%`。</details>
+`400/500=80%`。
+
+</details>
 
 <details><summary>10. 现三 Pod、目标 50%，按简化公式期望多少副本？</summary>
 
-`ceil(3×80/50)=ceil(4.8)=5`；真实 HPA 还有采样/容忍等规则。</details>
+`ceil(3×80/50)=ceil(4.8)=5`；真实 HPA 还有采样/容忍等规则。
+
+</details>
 
 <details><summary>11. HPA 要五 Pod、Node 只能放三 Pod，其余两 Pod 怎样？</summary>
 
-可能 Pending，实际 Ready 不因此自动变五。</details>
+可能 Pending，实际 Ready 不因此自动变五。
+
+</details>
 
 <details><summary>12. 每 Pod 稳100入站/s，目标峰150，失一 Pod 后余量多少？</summary>
 
-剩 200/s，名义多 50/s，前提是其它资源同负载可用。</details>
+剩 200/s，名义多 50/s，前提是其它资源同负载可用。
+
+</details>
 
 <details><summary>13. N1 有两 Pod、N2 一 Pod，失 N1 后剩多少？</summary>
 
-只剩一 Pod 100/s，小于 150/s，Node N−1 不通过。</details>
+只剩一 Pod 100/s，小于 150/s，Node N−1 不通过。
+
+</details>
 
 <details><summary>14. 三 Pod 各在三 Node，失任一 Node 后名义多少？</summary>
 
-两 Pod 合计 200/s，仍要查 zone/DB/重连和调度替代容量。</details>
+两 Pod 合计 200/s，仍要查 zone/DB/重连和调度替代容量。
+
+</details>
 
 <details><summary>15. 1,000 设备理想分散 10 秒，平均重连多少/s？</summary>
 
-100/s；实际峰值未知。</details>
+100/s；实际峰值未知。
+
+</details>
 
 <details><summary>16. 硬拓扑分散约束无法满足时 Pod 会怎样？</summary>
 
-可能 Pending，不能为“均匀”无条件牺牲可调度性。</details>
+可能 Pending，不能为“均匀”无条件牺牲可调度性。
+
+</details>
 
 ### 决策 17–22：平台与业务验收
 
 <details><summary>17. PDB `minAvailable=2` 与 maxUnavailable 是一回事吗？</summary>
 
-不是。PDB 约束符合条件的自愿 eviction，maxUnavailable 管 Deployment 受控滚动预算。</details>
+不是。PDB 约束符合条件的自愿 eviction，maxUnavailable 管 Deployment 受控滚动预算。
+
+</details>
 
 <details><summary>18. HPA 扩容后平均 CPU 降、DB 积压涨，可宣布修复吗？</summary>
 
-不能。共享瓶颈/用户补拉可能更差，要看完整用户结果。</details>
+不能。共享瓶颈/用户补拉可能更差，要看完整用户结果。
+
+</details>
 
 <details><summary>19. 旧 `/v1` 9 B 被某新 Pod 接纳，可当扩容成功吗？</summary>
 
-不能。违反当前 6 B 合同，R9 尚待审。</details>
+不能。违反当前 6 B 合同，R9 尚待审。
+
+</details>
 
 <details><summary>20. B 离线 25h、broker 留 24h，五网关 Ready 如何补历史？</summary>
 
-未来须按成员权限从权威 DB 历史查 `seq9` 缺口；网关副本数不替代数据来源。</details>
+未来须按成员权限从权威 DB 历史查 `seq9` 缺口；网关副本数不替代数据来源。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明真实 HPA/PDB 或 N−1 吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费异步边界。</details>
+不能。只支持所读发送与 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 可审扩缩容卡至少交什么？</summary>
 
-业务工作量、指标窗口、HPA/Node 当前与期望、Pod/Node/zone 映射、PDB/共享依赖、当前/未来确认点与停止回退门。</details>
+业务工作量、指标窗口、HPA/Node 当前与期望、Pod/Node/zone 映射、PDB/共享依赖、当前/未来确认点与停止回退门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

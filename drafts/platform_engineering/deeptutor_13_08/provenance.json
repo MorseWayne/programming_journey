@@ -29,9 +29,9 @@
   "original_sha256": "06351d9965d231d71e40ff2f7ff940717482a8b4d9f5ea0002036ea1fa205190",
   "original_characters": 29809,
   "generation_request_sha256": "3f8292a2552499a014125c19551031e402ff04811046b7d8612c700f52bf8fe6",
-  "reviewed_sha256": "1214a62630e902c5af3e5d630d6525a279ca4ebf00d9ad84d65c4fb7d9e33f64",
-  "reviewed_characters": 10415,
+  "reviewed_sha256": "6fedd2d3991d1af98e4f28be5b7b097b364c31503f92cb1f2f684e631b2b6caf",
+  "reviewed_characters": 10459,
   "reviewed_chinese_characters": 3985,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/08_migration_compatibility.md",
-  "course_sha256": "bca354bd9f66bf1a247af9a21bfbcaac7301df00e2451b0e27396076ba5a016e"
+  "course_sha256": "391272b6a3fc4de0ee7d2238aaf7d77ce435af5784878471c5df9f6d16405847"
 }

@@ -169,91 +169,135 @@ rebase 发生冲突时，按 `git status` 指示编辑、`git add`，再 `git re
 
 <details><summary>1. `git diff` 默认看哪两个位置？</summary>
 
-工作区与暂存区；它显示尚未暂存的改动。</details>
+工作区与暂存区；它显示尚未暂存的改动。
+
+</details>
 
 <details><summary>2. `git diff --cached` 的用途是什么？</summary>
 
-检查索引与当前提交的差异，即下一次普通提交准备记录的内容。</details>
+检查索引与当前提交的差异，即下一次普通提交准备记录的内容。
+
+</details>
 
 <details><summary>3. 为什么还要看整条主题分支差异？</summary>
 
-单个提交可能只是一小步；合并评审需要看所有主题提交组合后的净变化。</details>
+单个提交可能只是一小步；合并评审需要看所有主题提交组合后的净变化。
+
+</details>
 
 <details><summary>4. `git diff main...topic` 从哪里开始比较？</summary>
 
-从两分支的共同祖先到 `topic` 端点，适合看主题分支带来的内容变化。</details>
+从两分支的共同祖先到 `topic` 端点，适合看主题分支带来的内容变化。
+
+</details>
 
 <details><summary>5. `git diff --check` 通过证明业务规则正确吗？</summary>
 
-不能。它只检查部分格式问题；仍需独立需求和边界证据。</details>
+不能。它只检查部分格式问题；仍需独立需求和边界证据。
+
+</details>
 
 <details><summary>6. 正文上限从 6 改 9，会连带改变 `-max-bytes` 吗？</summary>
 
-不会。前者是单条正文教学规则，后者是整份文件的读取资源限制。</details>
+不会。前者是单条正文教学规则，后者是整份文件的读取资源限制。
 
-<details><summary>7. `len(body) >= 9` 为什么不符合 R9？</summary>
+</details>
 
-它拒绝恰好 9 字节；R9 规定等于上限合法，应在 `len(body) > 9` 时拒绝。</details>
+<details><summary>7. `len(body) &gt;= 9` 为什么不符合 R9？</summary>
+
+它拒绝恰好 9 字节；R9 规定等于上限合法，应在 `len(body) > 9` 时拒绝。
+
+</details>
 
 <details><summary>8. 审查意见怎样比“这里有问题”更有效？</summary>
 
-给出位置、具体输入、规则依据和预期，例如 9 字节 `你好呀` 应通过。</details>
+给出位置、具体输入、规则依据和预期，例如 9 字节 `你好呀` 应通过。
+
+</details>
 
 <details><summary>9. PR 是 Git 的提交对象吗？</summary>
 
-不是。PR 是托管平台的协作记录；Git 的提交与分支可以独立存在。</details>
+不是。PR 是托管平台的协作记录；Git 的提交与分支可以独立存在。
+
+</details>
 
 <details><summary>10. 有审批就能宣称所有边界已验证吗？</summary>
 
-不能。审批针对一定范围，需另查实际测试、运行环境和未覆盖风险。</details>
+不能。审批针对一定范围，需另查实际测试、运行环境和未覆盖风险。
+
+</details>
 
 <details><summary>11. 三方合并是哪三份状态？</summary>
 
-共同祖先、当前分支端点和待并入分支端点。</details>
+共同祖先、当前分支端点和待并入分支端点。
+
+</details>
 
 <details><summary>12. 两边都把同一行从 6 改成不同值，Git 能决定哪份需求更优先吗？</summary>
 
-不能。文本冲突要追查 R9、R12 的批准和生效范围。</details>
+不能。文本冲突要追查 R9、R12 的批准和生效范围。
+
+</details>
 
 <details><summary>13. 没有冲突标记就没有业务冲突吗？</summary>
 
-不是。不同文件中的实现和测试可能语义矛盾，Git 仍能自动合并文本。</details>
+不是。不同文件中的实现和测试可能语义矛盾，Git 仍能自动合并文本。
+
+</details>
 
 <details><summary>14. 为什么解决冲突后还要检查文件前后状态？</summary>
 
-改动可能影响导出覆盖、失败后的原文件或部分输出，这些不能从冲突标记消失推出。</details>
+改动可能影响导出覆盖、失败后的原文件或部分输出，这些不能从冲突标记消失推出。
+
+</details>
 
 <details><summary>15. `git add` 冲突文件表示什么？</summary>
 
-把编辑后的解决结果放入索引，告诉 Git 此路径已处理；它不证明业务结果正确。</details>
+把编辑后的解决结果放入索引，告诉 Git 此路径已处理；它不证明业务结果正确。
+
+</details>
 
 <details><summary>16. `git merge --abort` 的作用是什么？</summary>
 
-尝试撤销正在进行的合并并回到合并前状态；开始合并前应先整理工作区。</details>
+尝试撤销正在进行的合并并回到合并前状态；开始合并前应先整理工作区。
+
+</details>
 
 <details><summary>17. merge 和 rebase 对原提交身份的区别是什么？</summary>
 
-普通合并保留两侧原提交；rebase 重放主题提交并生成新提交身份。</details>
+普通合并保留两侧原提交；rebase 重放主题提交并生成新提交身份。
+
+</details>
 
 <details><summary>18. 为什么不能随手 rebase 他人正基于其开发的共享分支？</summary>
 
-它会改写提交身份，使他人的旧历史与新历史分叉，增加整合成本。</details>
+它会改写提交身份，使他人的旧历史与新历史分叉，增加整合成本。
+
+</details>
 
 <details><summary>19. `git rebase --skip` 为什么危险？</summary>
 
-它跳过当前正在重放的提交，可能遗漏这次需求的改动。</details>
+它跳过当前正在重放的提交，可能遗漏这次需求的改动。
+
+</details>
 
 <details><summary>20. 合并后只看两个分支各自的测试结果够吗？</summary>
 
-不够。新 HEAD 是两组变更的组合，还要核对组合后的业务合同。</details>
+不够。新 HEAD 是两组变更的组合，还要核对组合后的业务合同。
+
+</details>
 
 <details><summary>21. 推送成功等于代码已发布给用户吗？</summary>
 
-不等于。推送、合并、制品构建和发布是不同步骤。</details>
+不等于。推送、合并、制品构建和发布是不同步骤。
+
+</details>
 
 <details><summary>22. 本章静态冲突示例能证明远端 IM 送达吗？</summary>
 
-不能。本章只讨论虚构本地规则与协作流程，远端行为需要独立系统证据。</details>
+不能。本章只讨论虚构本地规则与协作流程，远端行为需要独立系统证据。
+
+</details>
 
 ## 来源与下一步
 

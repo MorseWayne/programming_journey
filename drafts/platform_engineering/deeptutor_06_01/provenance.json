@@ -28,9 +28,9 @@
   "original_sha256": "2f2940811cbe63b7107bd869c3d1081ffcb81805c11e88ae0611f49bd175afd6",
   "original_characters": 36257,
   "generation_request_sha256": "3624c83c26d632213f804a0392069430937d02219576c3ab4c8179ed42959ae8",
-  "reviewed_sha256": "3c3da8f4acd64ab6cacaaffb44bb9d4302039363e51a6eef6160dd9382542faa",
-  "reviewed_characters": 10345,
+  "reviewed_sha256": "1f9e00b21cf984bf4e5eb09f1cffd2f9378d0e1234f9a34d404daf851eaf343b",
+  "reviewed_characters": 10392,
   "reviewed_chinese_characters": 4283,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/01_relational_identity.md",
-  "course_sha256": "ff82671fba172aaf709f9a789f18a7109f3a5bb37c492b8f25273c4c2ee16fcf"
+  "course_sha256": "dda1995c900ce01e06ff187195d15742468decb7a49640e202c7882dd827738c"
 }

@@ -114,95 +114,139 @@ doc-private@v1 [current, u-a-only]
 
 <details><summary>1. 一条可引用片段至少要能追到哪些信息？</summary>
 
-父文档、稳定片段 ID、原文位置、来源/版本/状态和权限范围。</details>
+父文档、稳定片段 ID、原文位置、来源/版本/状态和权限范围。
+
+</details>
 
 <details><summary>2. 为何不能只截取“9 B”而丢“尚待审”？</summary>
 
-限定词丢失会把 proposed 错当现行，`q-01` 可能答错。</details>
+限定词丢失会把 proposed 错当现行，`q-01` 可能答错。
+
+</details>
 
 <details><summary>3. 倒排索引的 posting list 保存什么？</summary>
 
-某词项出现在哪些文档/片段；也可含位置等信息。</details>
+某词项出现在哪些文档/片段；也可含位置等信息。
+
+</details>
 
 <details><summary>4. `正文` 的纸上 posting list 有哪两个片段？</summary>
 
-`c-current-1` 与 `c-r9-1`。</details>
+`c-current-1` 与 `c-r9-1`。
+
+</details>
 
 <details><summary>5. BM25 分数能证明某资料已生效吗？</summary>
 
-不能。它是词项相关性排序线索，不是状态/权限/事实校验。</details>
+不能。它是词项相关性排序线索，不是状态/权限/事实校验。
+
+</details>
 
 <details><summary>6. 向量检索的片段和问题为何需要兼容模型/维度？</summary>
 
-距离只在同一可比表示空间与匹配度量下有意义。</details>
+距离只在同一可比表示空间与匹配度量下有意义。
+
+</details>
 
 <details><summary>7. ANN 与精确逐个比较的主要取舍是什么？</summary>
 
-ANN 用更少搜索工作换取速度/容量，但可能漏真正近邻，还需评估内存与建索引成本。</details>
+ANN 用更少搜索工作换取速度/容量，但可能漏真正近邻，还需评估内存与建索引成本。
+
+</details>
 
 <details><summary>8. 重排器处理的是全部原始资料吗？</summary>
 
-通常处理已召回的候选；第一阶段没召回的金证据，后续重排也无法找回。</details>
+通常处理已召回的候选；第一阶段没召回的金证据，后续重排也无法找回。
+
+</details>
 
 ### 推演 9–16：从余弦到混合结果
 
 <details><summary>9. q=(1,0)、current=(0.8,0.6) 的余弦是多少？</summary>
 
-两向量长度为 1，点积为 0.8，余弦为 **0.8**。</details>
+两向量长度为 1，点积为 0.8，余弦为 **0.8**。
+
+</details>
 
 <details><summary>10. 同一 q 与 r9=(1,0) 的余弦是多少，能因此答当前 9 B 吗？</summary>
 
-余弦为 **1.0**；仍不能，因为 r9 是 proposed。</details>
+余弦为 **1.0**；仍不能，因为 r9 是 proposed。
+
+</details>
 
 <details><summary>11. RRF 中两路第 1/2 名，取 k=60，总贡献是多少？</summary>
 
-`1/(60+1)+1/(60+2)=1/61+1/62`，约 `0.03252`；这是排名合并值，不是可信度。</details>
+`1/(60+1)+1/(60+2)=1/61+1/62`，约 `0.03252`；这是排名合并值，不是可信度。
+
+</details>
 
 <details><summary>12. 表中 current 与 r9 的 RRF 谁更高？</summary>
 
-两者都是一条路径第 1、另一条第 2，纸上打平；需要固定并列规则和业务状态核证。</details>
+两者都是一条路径第 1、另一条第 2，纸上打平；需要固定并列规则和业务状态核证。
+
+</details>
 
 <details><summary>13. 查询词与文档词正规化不一致可能怎样？</summary>
 
-本可命中的表达被拆成不同词项而漏检；需记录并统一分析器版本。</details>
+本可命中的表达被拆成不同词项而漏检；需记录并统一分析器版本。
+
+</details>
 
 <details><summary>14. `q-02` 只召回 `doc-r9`，足以答是否生效吗？</summary>
 
-不足；需要 `doc-current` 与 `doc-r9` 的状态对照。</details>
+不足；需要 `doc-current` 与 `doc-r9` 的状态对照。
+
+</details>
 
 <details><summary>15. 全库 top2 都无权、后过滤删光，说明库里必无可读资料吗？</summary>
 
-不说明；可读片段可能被全库 top2 挤出，需考虑前过滤与候选窗口，同时绝不交付无权内容。</details>
+不说明；可读片段可能被全库 top2 挤出，需考虑前过滤与候选窗口，同时绝不交付无权内容。
+
+</details>
 
 <details><summary>16. 分块改版后可直接沿用旧 chunk_id 和旧引用吗？</summary>
 
-不能假定；要核新位置、来源与版本，必要时重建索引及引用映射。</details>
+不能假定；要核新位置、来源与版本，必要时重建索引及引用映射。
+
+</details>
 
 ### 决策 17–22：权限、版本与用户验收
 
 <details><summary>17. `u-b` 的 q-03 要先检索私有正文再让模型拒绝吗？</summary>
 
-不要。应用先用权限元数据拒绝，无权正文不进入候选、提示或输出。</details>
+不要。应用先用权限元数据拒绝，无权正文不进入候选、提示或输出。
+
+</details>
 
 <details><summary>18. `q-01` 与 `q-02` 可统一排除 proposed 资料吗？</summary>
 
-不能。q-01 不能用 proposed 作当前依据；q-02 正要比较提议与现行，但要保留状态。</details>
+不能。q-01 不能用 proposed 作当前依据；q-02 正要比较提议与现行，但要保留状态。
+
+</details>
 
 <details><summary>19. 索引中的 scope 比当前权威资料旧时，以谁为准？</summary>
 
-以当前权威权限为准；交付前再校验并推动索引/缓存失效。</details>
+以当前权威权限为准；交付前再校验并推动索引/缓存失效。
+
+</details>
 
 <details><summary>20. `q-03/q-04` 能纳入“有可读金证据”的 Recall@k 分母吗？</summary>
 
-不能。前者是拒权门，后者规则未定；它们仍须单独评估业务结果。</details>
+不能。前者是拒权门，后者规则未定；它们仍须单独评估业务结果。
+
+</details>
 
 <details><summary>21. 命中 `doc-history` 就能答“24h broker 保证补齐 25h 离线”吗？</summary>
 
-不能；该资料支持的是**不能仅凭 broker 保证**，未来 DB 还要真实保留且有权读取。</details>
+不能；该资料支持的是**不能仅凭 broker 保证**，未来 DB 还要真实保留且有权读取。
+
+</details>
 
 <details><summary>22. 新向量/混合检索比关键词基线快，应直接替换吗？</summary>
 
-不能只看快；同条件检查有权召回、状态、引用、拒答、用户结果及成本。</details>
+不能只看快；同条件检查有权召回、状态、引用、拒答、用户结果及成本。
+
+</details>
 
 ## 本章完成标准与后续路径
 

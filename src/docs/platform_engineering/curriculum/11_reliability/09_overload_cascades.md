@@ -108,95 +108,139 @@ T0 的“DB 慢”是症状，不一定是**第一根因**：也可能先有连�
 
 <details><summary>1. B 历史补拉变慢，当前 S2 的 200 能证明 B 已恢复吗？</summary>
 
-不能。S2 只承诺 A 侧本进程内存受理；B 恢复是未来另一链路。</details>
+不能。S2 只承诺 A 侧本进程内存受理；B 恢复是未来另一链路。
+
+</details>
 
 <details><summary>2. 100 个用户补拉意图等于 100 次 DB 尝试吗？</summary>
 
-不一定。客户端、网关和下游重试可能让尝试数更高。</details>
+不一定。客户端、网关和下游重试可能让尝试数更高。
+
+</details>
 
 <details><summary>3. 什么是本题的正反馈？</summary>
 
-DB 慢使等待/超时增多，重试提高 DB 到达量，进一步加剧 DB 慢。</details>
+DB 慢使等待/超时增多，重试提高 DB 到达量，进一步加剧 DB 慢。
+
+</details>
 
 <details><summary>4. Go `context` 取消可自动撤销已内存受理的消息吗？</summary>
 
-不能。它通知后续工作停止，已发生业务事实需另按合同核对。</details>
+不能。它通知后续工作停止，已发生业务事实需另按合同核对。
+
+</details>
 
 <details><summary>5. 当前 S2 同 ID、同正文重复 POST 返回什么？</summary>
 
-409，既有消息/顺序不覆盖；客户端应有权查询结果而非改 ID 猛发。</details>
+409，既有消息/顺序不覆盖；客户端应有权查询结果而非改 ID 猛发。
+
+</details>
 
 <details><summary>6. 坏 JSON 的 400 值得立即原样重试吗？</summary>
 
-不值得。输入错误是永久性候选，先修正请求。</details>
+不值得。输入错误是永久性候选，先修正请求。
+
+</details>
 
 <details><summary>7. 为什么重连设备加随机抖动？</summary>
 
-避免所有设备按同一固定间隔同时补拉，形成同步尖峰。</details>
+避免所有设备按同一固定间隔同时补拉，形成同步尖峰。
+
+</details>
 
 <details><summary>8. 队列长度下降一定表示 B 已恢复历史吗？</summary>
 
-不一定。也可能请求被拒绝/取消；仍要看有权历史结果与设备 ACK。</details>
+不一定。也可能请求被拒绝/取消；仍要看有权历史结果与设备 ACK。
+
+</details>
 
 ### 推导 9–16：尝试和积压的条件算式
 
 <details><summary>9. 客户端与网关各最多 2 次重试，单用户意图最多几次 DB 尝试？</summary>
 
-各层共 3 次尝试，最坏 `3×3=9` 次。</details>
+各层共 3 次尝试，最坏 `3×3=9` 次。
+
+</details>
 
 <details><summary>10. 每秒 100 个意图，最坏下游尝试率多少？</summary>
 
-`100×9=900 次/秒`，不是 900 个新用户需求。</details>
+`100×9=900 次/秒`，不是 900 个新用户需求。
+
+</details>
 
 <details><summary>11. DB 完成 120/s，900/s 全入同队列且无其他流向，5 秒净增多少？</summary>
 
-`（900−120）×5=3,900 次尝试`。</details>
+`（900−120）×5=3,900 次尝试`。
+
+</details>
 
 <details><summary>12. 队列容量只有 200 时还能说实际排着 3,900 吗？</summary>
 
-不能。其余必须被阻塞、拒绝或走其他流向，须重新对账。</details>
+不能。其余必须被阻塞、拒绝或走其他流向，须重新对账。
+
+</details>
 
 <details><summary>13. 1,000 台设备理想均匀分散 10 秒，平均多少次重连/秒？</summary>
 
-约 100/s；真实峰值仍未知。</details>
+约 100/s；真实峰值仍未知。
+
+</details>
 
 <details><summary>14. 每层各给完整 2 秒 deadline，会保证端到端只等 2 秒吗？</summary>
 
-不能。要传播同一个绝对期限或合理剩余时间，避免层层叠加。</details>
+不能。要传播同一个绝对期限或合理剩余时间，避免层层叠加。
+
+</details>
 
 <details><summary>15. 限流让完成者 P95 降低，是否等于用户结果改善？</summary>
 
-不一定。拒绝/超时和未补拉者可能增加，须看完整分母。</details>
+不一定。拒绝/超时和未补拉者可能增加，须看完整分母。
+
+</details>
 
 <details><summary>16. B 离线 25 小时、教学 broker 只保留 24 小时，靠什么补？</summary>
 
-从有权权威 DB 历史按会话序号缺口补，不能只靠 broker E9。</details>
+从有权权威 DB 历史按会话序号缺口补，不能只靠 broker E9。
+
+</details>
 
 ### 决策 17–22：限载、隔离与恢复
 
 <details><summary>17. 历史读过载时可以丢权威 `m-9/seq9` 吗？</summary>
 
-不能。可恢复通知可按明确政策降级，权威消息与成员权限必须守住。</details>
+不能。可恢复通知可按明确政策降级，权威消息与成员权限必须守住。
+
+</details>
 
 <details><summary>18. 熔断器 open/half-open/closed 分别做什么？</summary>
 
-open 快速失败，half-open 少量试探恢复，closed 正常通过；状态转换须依真实依赖结果。</details>
+open 快速失败，half-open 少量试探恢复，closed 正常通过；状态转换须依真实依赖结果。
+
+</details>
 
 <details><summary>19. 扩大 DB 连接池能无条件解除过载吗？</summary>
 
-不能。可能把排队从池转到数据库，需先查 DB 容量和连接占用。</details>
+不能。可能把排队从池转到数据库，需先查 DB 容量和连接占用。
+
+</details>
 
 <details><summary>20. 清零重试、队列和 CPU 后还需验证什么？</summary>
 
-权威 m-9/seq9、outbox/E9 责任、B 有权历史缺口/应用 ACK，以及用户坏事件回落。</details>
+权威 m-9/seq9、outbox/E9 责任、B 有权历史缺口/应用 ACK，以及用户坏事件回落。
+
+</details>
 
 <details><summary>21. 两处 OpenIM 固定源码能证明真实重试风暴或熔断策略吗？</summary>
 
-不能。只看到选定发送与 Mongo 消费的异步边界。</details>
+不能。只看到选定发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一份可审故障矩阵至少列哪些项？</summary>
 
-用户确认点、意图/尝试与到达完成、各层 deadline/重试预算、队列/拒绝、权威保护、止损和慢放恢复门。</details>
+用户确认点、意图/尝试与到达完成、各层 deadline/重试预算、队列/拒绝、权威保护、止损和慢放恢复门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

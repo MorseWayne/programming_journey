@@ -125,95 +125,139 @@ data race 是两个并发执行者无适当同步地访问同一内存位置，�
 
 <details><summary>1. `"你好"` 与 `"你好呀"` 分别占多少 UTF-8 字节？</summary>
 
-通常分别为 6 B 和 9 B；当前 S2 前者合法，后者超过 6 B 上限。</details>
+通常分别为 6 B 和 9 B；当前 S2 前者合法，后者超过 6 B 上限。
+
+</details>
 
 <details><summary>2. 当前 S2 正文上限是 6 个汉字吗？</summary>
 
-不是。按 UTF-8 字节计，非空且最多 6 B。</details>
+不是。按 UTF-8 字节计，非空且最多 6 B。
+
+</details>
 
 <details><summary>3. 原始 HTTP 请求体 4097 B 与正文 7 B 应分别检查什么？</summary>
 
-前者超过总请求 4096 B，后者超过解码后正文字节上限；两层限额和错误类别不同。</details>
+前者超过总请求 4096 B，后者超过解码后正文字节上限；两层限额和错误类别不同。
+
+</details>
 
 <details><summary>4. 同一 `message_id=m-9`、相同正文再 POST，当前预期是什么？</summary>
 
-409，旧消息与顺序不变；不是幂等 200。</details>
+409，旧消息与顺序不变；不是幂等 200。
+
+</details>
 
 <details><summary>5. `u-c` 登录后知道 `c-a` ID，能绕过成员权限吗？</summary>
 
-不能。当前隐藏目标合同为 404。</details>
+不能。当前隐藏目标合同为 404。
+
+</details>
 
 <details><summary>6. Go fuzz 的 `f.Add` 用来做什么？</summary>
 
-提供种子语料，既供普通回归执行，也帮助生成更多输入。</details>
+提供种子语料，既供普通回归执行，也帮助生成更多输入。
+
+</details>
 
 <details><summary>7. fuzz 目标只需断言“没有 panic”就够吗？</summary>
 
-不够。还要按独立合同检查接受值合法、拒绝时状态/错误边界和资源预算。</details>
+不够。还要按独立合同检查接受值合法、拒绝时状态/错误边界和资源预算。
+
+</details>
 
 <details><summary>8. `-race` 一次通过能证明所有业务交错都正确吗？</summary>
 
-不能。它只检查实际运行路径里的内存数据竞争，不验证业务唯一性。</details>
+不能。它只检查实际运行路径里的内存数据竞争，不验证业务唯一性。
+
+</details>
 
 ### 并发与状态 9–16：没有 data race 仍会重
 
 <details><summary>9. T1/T2 的每次 map 访问都加锁，为何仍可能双发 E9？</summary>
 
-“查缺”和“插入”分两段，二者都可先看到不存在，再各自执行外部效果。</details>
+“查缺”和“插入”分两段，二者都可先看到不存在，再各自执行外部效果。
+
+</details>
 
 <details><summary>10. 最小修复要把哪一步放进同一原子裁决？</summary>
 
-同一业务 ID 的检查/占用/插入；未来数据库可用唯一约束/事务作最终裁决。</details>
+同一业务 ID 的检查/占用/插入；未来数据库可用唯一约束/事务作最终裁决。
+
+</details>
 
 <details><summary>11. 最终 map 只有一个 `m-9` 就证明只发过一次吗？</summary>
 
-不能。两个 goroutine 可能各自已尝试派生或推送 E9。</details>
+不能。两个 goroutine 可能各自已尝试派生或推送 E9。
+
+</details>
 
 <details><summary>12. 用 `time.Sleep` 等 10ms 能稳定强制 T1 先查缺吗？</summary>
 
-不能。用门闩/可控阶段明确交错，并给有限超时。</details>
+不能。用门闩/可控阶段明确交错，并给有限超时。
+
+</details>
 
 <details><summary>13. gen42 已是 owner，迟到 `OnClose(gen41)` 能删除 gen42 吗？</summary>
 
-不能。旧代次只能清理旧连接，不得回退当前归属。</details>
+不能。旧代次只能清理旧连接，不得回退当前归属。
+
+</details>
 
 <details><summary>14. 拒绝 gen41 状态写能证明旧 G1 没发出 TCP 字节吗？</summary>
 
-不能。目标状态围栏与网络已发生效果是不同证据。</details>
+不能。目标状态围栏与网络已发生效果是不同证据。
+
+</details>
 
 <details><summary>15. Go context 取消能撤销提供方已接受的通知吗？</summary>
 
-不能。它是本进程协作停止信号，不是远端回滚。</details>
+不能。它是本进程协作停止信号，不是远端回滚。
+
+</details>
 
 <details><summary>16. fuzz 的非法 UTF-8 输入应直接假设 `encoding/json` 总会报错吗？</summary>
 
-不应。按具体解析器和教学输入合同核对，不能凭想象写断言。</details>
+不应。按具体解析器和教学输入合同核对，不能凭想象写断言。
+
+</details>
 
 ### 证据评审 17–22：失败怎样留在课程里
 
 <details><summary>17. fuzz 找到失败输入后，下一步最重要的可复核材料是什么？</summary>
 
-最小脱敏失败样本、触发性质、环境/版本及修复后的回归入口。</details>
+最小脱敏失败样本、触发性质、环境/版本及修复后的回归入口。
+
+</details>
 
 <details><summary>18. `decode(encode(x))==x` 可对 ProtoJSON 中未知字段原字节无条件成立吗？</summary>
 
-不可。先定义规范化字段/输入域，JSON 转换可能丢未知字段。</details>
+不可。先定义规范化字段/输入域，JSON 转换可能丢未知字段。
+
+</details>
 
 <details><summary>19. fake 时钟测出 lease 到期，就证明真实 etcd 已删键吗？</summary>
 
-不能。那只验证本地模型；真实协调状态须在隔离环境另核对。</details>
+不能。那只验证本地模型；真实协调状态须在隔离环境另核对。
+
+</details>
 
 <details><summary>20. 门闩复现双受理的测试可证明真实网络端到端安全吗？</summary>
 
-不能。它证明指定本机交错及模型行为，真实 I/O/跨节点另验。</details>
+不能。它证明指定本机交错及模型行为，真实 I/O/跨节点另验。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码等于已对其运行 `go test -race` 吗？</summary>
 
-不等于。本章只读源码，未执行上游测试。</details>
+不等于。本章只读源码，未执行上游测试。
+
+</details>
 
 <details><summary>22. 一份完整的本章练习证据应怎样限定结论？</summary>
 
-写明被测性质、提交/Go版本、命令、种子、初态/交错、实际结果/失败样本和未覆盖范围；不能把一项绿写成全系统保证。</details>
+写明被测性质、提交/Go版本、命令、种子、初态/交错、实际结果/失败样本和未覆盖范围；不能把一项绿写成全系统保证。
+
+</details>
 
 ## 本章完成标准与下一步
 

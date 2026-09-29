@@ -164,91 +164,135 @@ cmd/imhistory ──→ internal/historyfile ──→ history
 
 <details><summary>1. 重构首先要保持什么？</summary>
 
-保持已定义的外部可观察行为；先列出谁观察命令、错误、文件或公开 Go API。</details>
+保持已定义的外部可观察行为；先列出谁观察命令、错误、文件或公开 Go API。
+
+</details>
 
 <details><summary>2. 把 6 字节上限改 9 是重构吗？</summary>
 
-不是。合法输入集合变化了，这是需求变更。</details>
+不是。合法输入集合变化了，这是需求变更。
+
+</details>
 
 <details><summary>3. 修复旧版拒绝恰好 6 字节的 bug 算纯重构吗？</summary>
 
-不算。它改变了错误结果；应以需求和测试单独记录修复。</details>
+不算。它改变了错误结果；应以需求和测试单独记录修复。
+
+</details>
 
 <details><summary>4. 为何先列 `stdout`、`stderr` 和退出码？</summary>
 
-脚本和用户能直接观察它们；函数返回正确但通道或退出码改变，CLI 合同仍被破坏。</details>
+脚本和用户能直接观察它们；函数返回正确但通道或退出码改变，CLI 合同仍被破坏。
+
+</details>
 
 <details><summary>5. 内部局部变量改名一定要逐字保持吗？</summary>
 
-不必，只要它不属于公开 API，且行为不变。</details>
+不必，只要它不属于公开 API，且行为不变。
+
+</details>
 
 <details><summary>6. `messages:[]` 与缺失字段在 v1 中一样吗？</summary>
 
-不一样。前者表示合法空数组，后者应按输入历史无效拒绝。</details>
+不一样。前者表示合法空数组，后者应按输入历史无效拒绝。
+
+</details>
 
 <details><summary>7. 为什么多重无效输入要测错误优先级？</summary>
 
-条件检查顺序改变会改变用户看到的具体拒绝原因。</details>
+条件检查顺序改变会改变用户看到的具体拒绝原因。
+
+</details>
 
 <details><summary>8. 特征测试的预期从哪里来？</summary>
 
-来自对旧版的观察；它用于记录现状，还要与独立需求核对是否应保留。</details>
+来自对旧版的观察；它用于记录现状，还要与独立需求核对是否应保留。
+
+</details>
 
 <details><summary>9. 只在 `run` 中抽出十个 `stepN` 函数就更好吗？</summary>
 
-不一定。若函数只传递同一堆参数，变化原因和责任仍未分开。</details>
+不一定。若函数只传递同一堆参数，变化原因和责任仍未分开。
+
+</details>
 
 <details><summary>10. 纯 `history` 包为什么不导入 `flag`？</summary>
 
-消息规则不应依赖命令行解析；这会把外部界面知识带进领域边界。</details>
+消息规则不应依赖命令行解析；这会把外部界面知识带进领域边界。
+
+</details>
 
 <details><summary>11. `internal` 是否能阻止本机其他进程读取文件？</summary>
 
-不能。它限制 Go 包的导入范围，不提供操作系统权限隔离。</details>
+不能。它限制 Go 包的导入范围，不提供操作系统权限隔离。
+
+</details>
 
 <details><summary>12. 为什么 `historyfile` 要依赖 `history` 而非反向？</summary>
 
-文件适配器用领域规则解释记录；领域规则不必知道 JSON 或路径。</details>
+文件适配器用领域规则解释记录；领域规则不必知道 JSON 或路径。
+
+</details>
 
 <details><summary>13. 导出方法改名可以无条件视作内部整理吗？</summary>
 
-若它是公开 API，外部 Go 调用者会受影响，需要兼容评估。</details>
+若它是公开 API，外部 Go 调用者会受影响，需要兼容评估。
+
+</details>
 
 <details><summary>14. 返回内部切片后调用者改了元素，说明什么？</summary>
 
-模块的可变状态泄漏了；需要明确所有权，并按需要复制切片及其可变元素。</details>
+模块的可变状态泄漏了；需要明确所有权，并按需要复制切片及其可变元素。
+
+</details>
 
 <details><summary>15. 什么时候注释比直接命名更有用？</summary>
 
-解释约束缘由、失败承诺和非显然取舍时；重复代码表面动作的注释帮助有限。</details>
+解释约束缘由、失败承诺和非显然取舍时；重复代码表面动作的注释帮助有限。
+
+</details>
 
 <details><summary>16. 为什么错误包装用 `%w`？</summary>
 
-保留可由 `errors.Is` 判断的身份，让命令层能稳定映射退出类别。</details>
+保留可由 `errors.Is` 判断的身份，让命令层能稳定映射退出类别。
+
+</details>
 
 <details><summary>17. 文件打开失败能归为 JSON 内容无效吗？</summary>
 
-不能。前者是 I/O 类别，后者才是输入内容类别；课程 CLI 分别映射退出 4 与 3。</details>
+不能。前者是 I/O 类别，后者才是输入内容类别；课程 CLI 分别映射退出 4 与 3。
+
+</details>
 
 <details><summary>18. fake 保存成功能证明 `-replace` 安全覆盖吗？</summary>
 
-不能。路径、排他创建、写入和关闭需要真实文件边界证据。</details>
+不能。路径、排他创建、写入和关闭需要真实文件边界证据。
+
+</details>
 
 <details><summary>19. 为什么保留 `list` 的原消息顺序？</summary>
 
-01.12 已把文件顺序定义为输出合同；改成按时间排序会改变可观察结果。</details>
+01.12 已把文件顺序定义为输出合同；改成按时间排序会改变可观察结果。
+
+</details>
 
 <details><summary>20. 一个步骤失败时怎样限制返工范围？</summary>
 
-每步只改一种责任，核对差异和对应行为，可单独撤销或修正该步。</details>
+每步只改一种责任，核对差异和对应行为，可单独撤销或修正该步。
+
+</details>
 
 <details><summary>21. 为 v2 预先建立庞大插件框架总是更易维护吗？</summary>
 
-不是。先观察真实变化方向；无使用者的大接口增加成本和误用空间。</details>
+不是。先观察真实变化方向；无使用者的大接口增加成本和误用空间。
+
+</details>
 
 <details><summary>22. 重构后还有哪些事实不能宣称？</summary>
 
-不能宣称已经实现 v2、崩溃原子导出、线上持久化或消息送达；这些都需要新的设计与证据。</details>
+不能宣称已经实现 v2、崩溃原子导出、线上持久化或消息送达；这些都需要新的设计与证据。
+
+</details>
 
 ## 来源与下一步
 

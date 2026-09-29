@@ -133,95 +133,139 @@ Python 环境会影响代码和依赖如何工作。官方 `venv` 可为一个�
 
 <details><summary>1. Python 的 `list` 与 `dict` 可变吗？</summary>
 
-可变；多个名字指向同一对象时一处修改会影响其它别名看到的内容。</details>
+可变；多个名字指向同一对象时一处修改会影响其它别名看到的内容。
+
+</details>
 
 <details><summary>2. `a == b` 与 `a is b` 问的是同一件事吗？</summary>
 
-不是。前者比较值，后者比较对象身份；消息 ID 文字相等一般用 `==`。</details>
+不是。前者比较值，后者比较对象身份；消息 ID 文字相等一般用 `==`。
+
+</details>
 
 <details><summary>3. `body: str` 注解会自动拒绝 JSON 数字吗？</summary>
 
-不会。Python 运行时不自动强制注解，要显式验证字段类型。</details>
+不会。Python 运行时不自动强制注解，要显式验证字段类型。
+
+</details>
 
 <details><summary>4. `json.loads` 解析坏行可能抛什么？</summary>
 
-`json.JSONDecodeError`；报告行号和类别，不能裸 `except` 吞掉。</details>
+`json.JSONDecodeError`；报告行号和类别，不能裸 `except` 吞掉。
+
+</details>
 
 <details><summary>5. `Path.open(..., encoding="utf-8")` 的 `with` 做什么？</summary>
 
-按指定编码读文本，并在作用域结束/异常时关闭文件。</details>
+按指定编码读文本，并在作用域结束/异常时关闭文件。
+
+</details>
 
 <details><summary>6. 一个 JSONL 文件应直接整体交给一次 `json.loads` 吗？</summary>
 
-通常不应；本章约定每行一份 JSON 值，逐行解析和定位错误。</details>
+通常不应；本章约定每行一份 JSON 值，逐行解析和定位错误。
+
+</details>
 
 <details><summary>7. `.venv` 应当作为可复制制品提交进 Git 吗？</summary>
 
-不应。记录版本与依赖，在目标环境重建。</details>
+不应。记录版本与依赖，在目标环境重建。
+
+</details>
 
 <details><summary>8. SHA256 能证明数据已获聊天成员授权吗？</summary>
 
-不能。它只帮助标识内容版本，不证明来源、权限或脱敏。</details>
+不能。它只帮助标识内容版本，不证明来源、权限或脱敏。
+
+</details>
 
 ### 推演 9–16：字节、拒绝与身份
 
 <details><summary>9. `len("你好")` 与 UTF-8 编码后长度各是多少？</summary>
 
-分别为 2 个字符和 6 B；当前 `/v1` 限制按 UTF-8 字节。</details>
+分别为 2 个字符和 6 B；当前 `/v1` 限制按 UTF-8 字节。
+
+</details>
 
 <details><summary>10. 若纸上 `/v1` 消息正文 7 B，应怎样？</summary>
 
-按当前 6 B 合同拒绝，不截断；R9 尚待审。</details>
+按当前 6 B 合同拒绝，不截断；R9 尚待审。
+
+</details>
 
 <details><summary>11. JSONL `body` 为 `null`，有类型提示就够了吗？</summary>
 
-不够。显式检查其为非空 `str`，否则记拒绝原因。</details>
+不够。显式检查其为非空 `str`，否则记拒绝原因。
+
+</details>
 
 <details><summary>12. 导出的 `body` 为 6 B，能证明原始 HTTP 请求体≤4096 B 吗？</summary>
 
-不能。body 字段不含当初完整原始 HTTP 请求正文。</details>
+不能。body 字段不含当初完整原始 HTTP 请求正文。
+
+</details>
 
 <details><summary>13. 两行都有 `message_id=m-a`，能断言线上曾返回 409 吗？</summary>
 
-不能。先保留两原始行并查来源/版本，数据重复不等于请求响应证据。</details>
+不能。先保留两原始行并查来源/版本，数据重复不等于请求响应证据。
+
+</details>
 
 <details><summary>14. 文件第 1 行、`request_id=r-1`、`message_id=m-a` 可互换吗？</summary>
 
-不能；分别是文件位置、请求尝试和消息意图。</details>
+不能；分别是文件位置、请求尝试和消息意图。
+
+</details>
 
 <details><summary>15. 文件不存在时若只捕获 `JSONDecodeError` 会怎样？</summary>
 
-文件访问的 `OSError` 会交给上层；应清楚报告路径/失败类型，不能误记脏行。</details>
+文件访问的 `OSError` 会交给上层；应清楚报告路径/失败类型，不能误记脏行。
+
+</details>
 
 <details><summary>16. `records[:]` 是安全的原始数据深拷贝吗？</summary>
 
-不是；只复制外层列表，内层可变字典仍可能共享。</details>
+不是；只复制外层列表，内层可变字典仍可能共享。
+
+</details>
 
 ### 决策 17–22：权限与可复现
 
 <details><summary>17. 文档没 `access_scope`，可以默认公开给所有会话吗？</summary>
 
-不能。先排除公开检索并请来源/权限负责人定义规则。</details>
+不能。先排除公开检索并请来源/权限负责人定义规则。
+
+</details>
 
 <details><summary>18. `sender_id=u-a` 字段能证明 `u-a` 有权发送到 `c-a` 吗？</summary>
 
-不能。字段是数据声称，成员授权需独立证据。</details>
+不能。字段是数据声称，成员授权需独立证据。
+
+</details>
 
 <details><summary>19. 拒绝行直接丢弃且不计数，有什么问题？</summary>
 
-无法复核覆盖率和错误类型，可能把清洗失败冒称成功。</details>
+无法复核覆盖率和错误类型，可能把清洗失败冒称成功。
+
+</details>
 
 <details><summary>20. 一份最小复现 manifest 应至少记录什么？</summary>
 
-Python/程序与规则版本、原始输入 SHA256、schema/权限范围、参数、接受/拒绝数及输出排序/哈希。</details>
+Python/程序与规则版本、原始输入 SHA256、schema/权限范围、参数、接受/拒绝数及输出排序/哈希。
+
+</details>
 
 <details><summary>21. `q-02` 缺成员可见规则，可以预填“B 能看”吗？</summary>
 
-不能。标待定问题，不能把猜测做成评测金标准。</details>
+不能。标待定问题，不能把猜测做成评测金标准。
+
+</details>
 
 <details><summary>22. 本章为什么不先调用模型回答问题？</summary>
 
-尚需先固定虚构数据来源、校验、权限、问题集和基线；模型输出不能修复不可信输入。</details>
+尚需先固定虚构数据来源、校验、权限、问题集和基线；模型输出不能修复不可信输入。
+
+</details>
 
 ## 本章完成标准与后续路径
 

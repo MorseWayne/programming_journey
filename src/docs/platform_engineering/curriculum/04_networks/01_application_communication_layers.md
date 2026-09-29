@@ -186,91 +186,135 @@ u-a 点击发送
 
 <details><summary>1. 客户端一定是手机，服务端一定是一台固定物理机器吗？</summary>
 
-不一定。它们是一次交互中的软件角色，部署形态可以变化。</details>
+不一定。它们是一次交互中的软件角色，部署形态可以变化。
+
+</details>
 
 <details><summary>2. `u-b` 是网络地址吗？</summary>
 
-不是。它是应用用户身份；地址和端口在 04.02 另讲。</details>
+不是。它是应用用户身份；地址和端口在 04.02 另讲。
+
+</details>
 
 <details><summary>3. A 的 Go 变量里有 `m-a`，能说明服务端读到了吗？</summary>
 
-不能。变量仍在 A 进程的本地地址空间。</details>
+不能。变量仍在 A 进程的本地地址空间。
+
+</details>
 
 <details><summary>4. 协议除了字段名还要约定什么？</summary>
 
-字节编码、边界、版本、字段语义、交互顺序与失败表示。</details>
+字节编码、边界、版本、字段语义、交互顺序与失败表示。
+
+</details>
 
 <details><summary>5. 本地 JSON v1 自动就是线上消息格式吗？</summary>
 
-不是。它是 01.12 的文件合同，联网协议必须另外定义。</details>
+不是。它是 01.12 的文件合同，联网协议必须另外定义。
+
+</details>
 
 <details><summary>6. `你好` 的长度字段若按 UTF-8 字节，值是多少？</summary>
 
-6 字节；它通常看作两个汉字，但协议必须说明单位。</details>
+6 字节；它通常看作两个汉字，但协议必须说明单位。
+
+</details>
 
 <details><summary>7. 为什么只信 `sender_id` 字段不够？</summary>
 
-客户端可自行填写字段；真实身份与会话授权需服务端独立验证。</details>
+客户端可自行填写字段；真实身份与会话授权需服务端独立验证。
+
+</details>
 
 <details><summary>8. 一次应用 `Write` 一定对应一个 TCP 段吗？</summary>
 
-不一定。TCP 是字节流，不保留应用写入或消息边界。</details>
+不一定。TCP 是字节流，不保留应用写入或消息边界。
+
+</details>
 
 <details><summary>9. 一条业务消息与一个 IP 包总是一一对应吗？</summary>
 
-不是。分层封装与传输分段可改变承载单位的数量。</details>
+不是。分层封装与传输分段可改变承载单位的数量。
+
+</details>
 
 <details><summary>10. 什么叫封装？</summary>
 
-下层为履行自己的职责，在承载上层数据时加入相应控制信息。</details>
+下层为履行自己的职责，在承载上层数据时加入相应控制信息。
+
+</details>
 
 <details><summary>11. 1200 B 是多少 bit？</summary>
 
-`1200×8=9600 bit`。</details>
+`1200×8=9600 bit`。
+
+</details>
 
 <details><summary>12. 9600 bit 在 1,000,000 bit/s 链路上的传输时间？</summary>
 
-`9600/1,000,000=0.0096 s=9.6 ms`。</details>
+`9600/1,000,000=0.0096 s=9.6 ms`。
+
+</details>
 
 <details><summary>13. 1200 km、传播速度 2×10⁸ m/s 的传播时间？</summary>
 
-`1,200,000/200,000,000=0.006 s=6 ms`。</details>
+`1,200,000/200,000,000=0.006 s=6 ms`。
+
+</details>
 
 <details><summary>14. 本题单跳四项合计多少？</summary>
 
-`2+5+9.6+6=22.6 ms`，只在题设条件下成立。</details>
+`2+5+9.6+6=22.6 ms`，只在题设条件下成立。
+
+</details>
 
 <details><summary>15. 速率提升十倍，传播时间也会降为 0.6 ms 吗？</summary>
 
-不会。在距离与传播速度不变时仍是 6 ms；传输降为 0.96 ms。</details>
+不会。在距离与传播速度不变时仍是 6 ms；传输降为 0.96 ms。
+
+</details>
 
 <details><summary>16. `1 MB/s` 与 `1 Mb/s` 数值相同吗？</summary>
 
-不同。本题十进制单位下前者约为后者的 8 倍。</details>
+不同。本题十进制单位下前者约为后者的 8 倍。
+
+</details>
 
 <details><summary>17. 单链路 22.6 ms 能作为 A 到 B 的实测端到端延迟吗？</summary>
 
-不能。它没有计入多跳、反向回答、握手、应用处理和 B 显示。</details>
+不能。它没有计入多跳、反向回答、握手、应用处理和 B 显示。
+
+</details>
 
 <details><summary>18. 超时就证明服务端没有保存 `m-a` 吗？</summary>
 
-不能。超时只说明期限内没有收到等待的回答；结果可能未知。</details>
+不能。超时只说明期限内没有收到等待的回答；结果可能未知。
+
+</details>
 
 <details><summary>19. TCP 的传输确认就等于服务端业务接受吗？</summary>
 
-不等于。服务端的解析、权限、存储和回答各有独立确认点。</details>
+不等于。服务端的解析、权限、存储和回答各有独立确认点。
+
+</details>
 
 <details><summary>20. B 的设备收到了消息，便证明 `u-b` 已读吗？</summary>
 
-不能。设备接收和用户打开阅读是不同事件。</details>
+不能。设备接收和用户打开阅读是不同事件。
+
+</details>
 
 <details><summary>21. 排队时间变长，能立刻断定是运营商链路拥塞吗？</summary>
 
-不能。网络节点、服务端应用队列和存储都可能排队，需要阶段证据。</details>
+不能。网络节点、服务端应用队列和存储都可能排队，需要阶段证据。
+
+</details>
 
 <details><summary>22. 当前课程本地 `imhistory check` 能证明在线消息成功吗？</summary>
 
-不能。它只核对本机文件格式与领域规则，不联网。</details>
+不能。它只核对本机文件格式与领域规则，不联网。
+
+</details>
 
 ## 来源与下一步
 

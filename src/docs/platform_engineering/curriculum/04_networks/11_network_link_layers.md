@@ -89,95 +89,139 @@ NAT 后的外侧地址、代理的 `Forwarded` 头和移动切换前后的 IP �
 
 <details><summary>1. A 发远端 IP 包时，本地链路先找服务 MAC 还是网关链路地址？</summary>
 
-本章远端不在本地链路，先把帧交给默认网关的链路地址。</details>
+本章远端不在本地链路，先把帧交给默认网关的链路地址。
+
+</details>
 
 <details><summary>2. 路由器转发后链路层封装会一直不变吗？</summary>
 
-不会；每一跳按下一段链路重新封装。</details>
+不会；每一跳按下一段链路重新封装。
+
+</details>
 
 <details><summary>3. NAT 将 `10.0.0.2:53000` 映射成什么纸上外侧端点？</summary>
 
-`198.51.100.7:62000`；只是虚构示意。</details>
+`198.51.100.7:62000`；只是虚构示意。
+
+</details>
 
 <details><summary>4. 公网 IP 与端口能唯一证明 actor 是 `u-a` 吗？</summary>
 
-不能；可共享、改变或受代理/NAT 影响，应用身份须另验证。</details>
+不能；可共享、改变或受代理/NAT 影响，应用身份须另验证。
+
+</details>
 
 <details><summary>5. NAT 会自动复制 N1 的本进程消息到 N2 吗？</summary>
 
-不会；地址转换与数据复制/持久是不同机制。</details>
+不会；地址转换与数据复制/持久是不同机制。
+
+</details>
 
 <details><summary>6. IPv4 的 ARP/IPv6 邻居发现主要解决哪一段？</summary>
 
-本地链路上的邻居/下一跳寻址，不是远端 IM 用户授权。</details>
+本地链路上的邻居/下一跳寻址，不是远端 IM 用户授权。
+
+</details>
 
 <details><summary>7. 路由可达就说明 TLS 名称正确吗？</summary>
 
-不说明；网络路由与服务身份验证分层。</details>
+不说明；网络路由与服务身份验证分层。
+
+</details>
 
 <details><summary>8. IP 目的地址 `203.0.113.10` 是本章真实服务吗？</summary>
 
-不是，是文档保留的示例地址。</details>
+不是，是文档保留的示例地址。
+
+</details>
 
 ### 推演 9–16：MTU 与移动
 
 <details><summary>9. 纸上 MTU1500、IPv4/TCP 最小头各20，剩多少 TCP 数据 B？</summary>
 
-`1500−20−20=1460 B`，忽略选项/隧道/其它开销。</details>
+`1500−20−20=1460 B`，忽略选项/隧道/其它开销。
+
+</details>
 
 <details><summary>10. 1460 B 就是当前 IM 正文上限吗？</summary>
 
-不是；当前正文仍最多 6 UTF-8 B，MTU 是单包路径条件。</details>
+不是；当前正文仍最多 6 UTF-8 B，MTU 是单包路径条件。
+
+</details>
 
 <details><summary>11. 原始 HTTP body 4096 B 能保证装进一个 IP 包吗？</summary>
 
-不能；可能被传输层分段并有各层头部。</details>
+不能；可能被传输层分段并有各层头部。
+
+</details>
 
 <details><summary>12. 小请求可过、大请求超时就必是路径 MTU 黑洞吗？</summary>
 
-不必；还要排 body 限额、代理、应用解析、重传与负载。</details>
+不必；还要排 body 限额、代理、应用解析、重传与负载。
+
+</details>
 
 <details><summary>13. Wi‑Fi 切蜂窝时旧 TCP/WebSocket 常需什么？</summary>
 
-按实际路径重新建连、鉴权、恢复/补拉，不能假定旧连接仍有效。</details>
+按实际路径重新建连、鉴权、恢复/补拉，不能假定旧连接仍有效。
+
+</details>
 
 <details><summary>14. QUIC 有迁移机制就保证任何实现无感换网吗？</summary>
 
-不能；需连接 ID、路径验证、端点允许与应用状态配合。</details>
+不能；需连接 ID、路径验证、端点允许与应用状态配合。
+
+</details>
 
 <details><summary>15. 外侧 NAT 端口变化就说明 B 设备收到了 m-9 吗？</summary>
 
-不能；映射变化只提供路径线索，与 B 设备 ACK 不同。</details>
+不能；映射变化只提供路径线索，与 B 设备 ACK 不同。
+
+</details>
 
 <details><summary>16. IPv6 路由器会任意替源端分片解决所有大包问题吗？</summary>
 
-不会；需要按协议处理路径 MTU 和源端分段/发现。</details>
+不会；需要按协议处理路径 MTU 和源端分段/发现。
+
+</details>
 
 ### 决策 17–22：诊断与业务边界
 
 <details><summary>17. 连接拒绝后先怪 R9 未生效吗？</summary>
 
-不应；先查地址、路由、NAT、端口/连接层，再回应用合同。</details>
+不应；先查地址、路由、NAT、端口/连接层，再回应用合同。
+
+</details>
 
 <details><summary>18. 同一用户换 IP 后可继续用旧 IP 作永久身份主键吗？</summary>
 
-不可；按可信身份/请求 ID 关联并控制隐私。</details>
+不可；按可信身份/请求 ID 关联并控制隐私。
+
+</details>
 
 <details><summary>19. S2 `200 accepted_in_memory` 能证明跨重启历史吗？</summary>
 
-不能；只到受理进程内存。</details>
+不能；只到受理进程内存。
+
+</details>
 
 <details><summary>20. B 离线 25h，可只凭 24h broker 保证完整补拉吗？</summary>
 
-不能；未来 DB 要真实保留且 B 有权可读才可能补。</details>
+不能；未来 DB 要真实保留且 B 有权可读才可能补。
+
+</details>
 
 <details><summary>21. 网络迁移后连接恢复，旧消息自动全补齐吗？</summary>
 
-不保证；还需权威历史、游标、权限与设备确认协议。</details>
+不保证；还需权威历史、游标、权限与设备确认协议。
+
+</details>
 
 <details><summary>22. “延迟 100ms”若没起止点/单位窗口，可用于排障结论吗？</summary>
 
-不充分；要标哪一跳、阶段、时间窗口与关联请求。</details>
+不充分；要标哪一跳、阶段、时间窗口与关联请求。
+
+</details>
 
 ## 本章完成标准与后续路径
 

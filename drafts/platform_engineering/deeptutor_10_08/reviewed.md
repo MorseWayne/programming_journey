@@ -87,95 +87,139 @@ Go 的漏洞数据库汇集已知报告，`govulncheck` 结合项目依赖和可
 
 <details><summary>1. 玩具主模块要求 protocol v1.4.0，transport 又要求 v1.6.0，MVS 选谁？</summary>
 
-同一模块路径选 v1.6.0，满足整张要求图。</details>
+同一模块路径选 v1.6.0，满足整张要求图。
+
+</details>
 
 <details><summary>2. `go.mod` 的 v1.4.0 是最终锁死的构建版本吗？</summary>
 
-不是。它是最低要求之一，要看 MVS build list 与工作区。</details>
+不是。它是最低要求之一，要看 MVS build list 与工作区。
+
+</details>
 
 <details><summary>3. `go.sum` 有两个 protocol 版本哈希，就表示二者都被链接进同一构建？</summary>
 
-不表示。它保存内容校验记录，可含多版本；build list 回答选中版本。</details>
+不表示。它保存内容校验记录，可含多版本；build list 回答选中版本。
+
+</details>
 
 <details><summary>4. `go mod tidy` 可以不看差异就当纯排版操作吗？</summary>
 
-不能。它可能增删 `go.mod/go.sum` 条目，要审实际变更与选中版本。</details>
+不能。它可能增删 `go.mod/go.sum` 条目，要审实际变更与选中版本。
+
+</details>
 
 <details><summary>5. `go mod verify` 检查的主要对象是什么？</summary>
 
-模块缓存中已下载的依赖是否自下载后被改，非漏洞/业务正确性。</details>
+模块缓存中已下载的依赖是否自下载后被改，非漏洞/业务正确性。
+
+</details>
 
 <details><summary>6. `gofmt` clean 能证明同 ID 第二次提交返回 409 吗？</summary>
 
-不能。它只管 Go 格式，不执行 IM 合同。</details>
+不能。它只管 Go 格式，不执行 IM 合同。
+
+</details>
 
 <details><summary>7. `go vet` 会证明所有 Go bug 都不存在吗？</summary>
 
-不会。它启发式报告支持的可疑构造，可能误报/漏报。</details>
+不会。它启发式报告支持的可疑构造，可能误报/漏报。
+
+</details>
 
 <details><summary>8. 当前 S2 正文上限是几个 UTF-8 字节？</summary>
 
-非空且最多 6 B；总请求正文另有 4096 B 上限。</details>
+非空且最多 6 B；总请求正文另有 4096 B 上限。
+
+</details>
 
 ### 生成代码与工具 9–16：别把一个绿勾当全部
 
 <details><summary>9. 只手改 `.pb.go` 而不改 `.proto`，能构成可复现协议升级吗？</summary>
 
-不能。生成源、插件版本、命令和产物要配套，生成代码不应手改冒充 schema。</details>
+不能。生成源、插件版本、命令和产物要配套，生成代码不应手改冒充 schema。
+
+</details>
 
 <details><summary>10. 新增 `optional visible=5` 后旧二进制可解析，旧索引就一定不会泄露吗？</summary>
 
-不一定。旧业务逻辑可能忽略可见性，需混部/权限负例验证。</details>
+不一定。旧业务逻辑可能忽略可见性，需混部/权限负例验证。
+
+</details>
 
 <details><summary>11. 已发布字段号删除后可用新含义重用吗？</summary>
 
-不可随意重用，应按 Protobuf 规则保留旧编号防历史字节误解。</details>
+不可随意重用，应按 Protobuf 规则保留旧编号防历史字节误解。
+
+</details>
 
 <details><summary>12. proto3 `optional` 对“缺字段”有什么帮助？</summary>
 
-可区分未提供与明确设置默认值，供旧事件安全分支使用。</details>
+可区分未提供与明确设置默认值，供旧事件安全分支使用。
+
+</details>
 
 <details><summary>13. `govulncheck` 没报告，就能宣布所有依赖永远安全？</summary>
 
-不能。它限于当时已知报告、所选构建/调用分析范围。</details>
+不能。它限于当时已知报告、所选构建/调用分析范围。
+
+</details>
 
 <details><summary>14. `go mod verify` 与 govulncheck 可互相替代吗？</summary>
 
-不能。前者看缓存内容未改，后者分析已知漏洞与调用路径。</details>
+不能。前者看缓存内容未改，后者分析已知漏洞与调用路径。
+
+</details>
 
 <details><summary>15. 只要新 protocol 模块版本更高，S2 6 B/409/404 会自动保持吗？</summary>
 
-不会。要按接口/授权负例和新旧协议矩阵验证。</details>
+不会。要按接口/授权负例和新旧协议矩阵验证。
+
+</details>
 
 <details><summary>16. ProtoJSON/逐字段复制会无条件保留未知字段吗？</summary>
 
-不会，可能有损；要核对真实中间层。</details>
+不会，可能有损；要核对真实中间层。
+
+</details>
 
 ### 评审 17–22：把来源与实际结果分开
 
 <details><summary>17. `go list -m all` 能直接证明 B 设备收到了 m-9 吗？</summary>
 
-不能。它只列当前命令环境的模块选择。</details>
+不能。它只列当前命令环境的模块选择。
+
+</details>
 
 <details><summary>18. `go vet` 报 `copylocks`，下一步是什么？</summary>
 
-核对诊断与代码语义，修复后按并发性质/回归验证，不只压掉告警。</details>
+核对诊断与代码语义，修复后按并发性质/回归验证，不只压掉告警。
+
+</details>
 
 <details><summary>19. govulncheck 有可达已知漏洞，升级后还需什么？</summary>
 
-复扫并核对接口、协议混部、权限/重放与回退证据。</details>
+复扫并核对接口、协议混部、权限/重放与回退证据。
+
+</details>
 
 <details><summary>20. 固定 OpenIM 的两处源码能给出其 protocol 模块确切选中版本吗？</summary>
 
-不能。需在固定检出审 `go.mod`、build list/工作区与依赖仓库。</details>
+不能。需在固定检出审 `go.mod`、build list/工作区与依赖仓库。
+
+</details>
 
 <details><summary>21. 没运行 Go 命令时，课程可写“govulncheck 已通过”吗？</summary>
 
-不能。这里只提供未来实践的检查矩阵，没有实际扫描结果。</details>
+不能。这里只提供未来实践的检查矩阵，没有实际扫描结果。
+
+</details>
 
 <details><summary>22. 一份可复核的依赖升级记录至少有什么？</summary>
 
-业务需求/合同、源码与工具链版本、选中 build list、原始命令/差异/诊断、生成链、兼容与回退证据、剩余未知。</details>
+业务需求/合同、源码与工具链版本、选中 build list、原始命令/差异/诊断、生成链、兼容与回退证据、剩余未知。
+
+</details>
 
 ## 本章完成标准与下一步
 

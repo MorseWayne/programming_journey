@@ -104,91 +104,135 @@ MongoDB 多文档事务也可能读到相对于其他已提交写入**过时**�
 
 <details><summary>1. `v0 active=true` 与 `v1 active=false` 是两名成员吗？</summary>
 
-不是，是同一教学成员身份在变更前后的两个状态版本。</details>
+不是，是同一教学成员身份在变更前后的两个状态版本。
+
+</details>
 
 <details><summary>2. `Tleave` 写了 `v1` 但尚未提交，别的普通事务能把它当已退群吗？</summary>
 
-不能。未提交版本不应成为别的普通读的已提交事实。</details>
+不能。未提交版本不应成为别的普通读的已提交事实。
+
+</details>
 
 <details><summary>3. PostgreSQL Read Committed 下同一事务两次普通 SELECT 可以不同吗？</summary>
 
-可以。每条语句取得自己的已提交快照，第二次可能看到其间已提交的 `v1`。</details>
+可以。每条语句取得自己的已提交快照，第二次可能看到其间已提交的 `v1`。
+
+</details>
 
 <details><summary>4. Repeatable Read 中仍看见 `v0`，就说明 `u-a` 此刻可发送吗？</summary>
 
-不说明。稳定旧快照只说明本事务读视图；业务先后还需共同冲突/约束，冲突写或锁定读可能失败。</details>
+不说明。稳定旧快照只说明本事务读视图；业务先后还需共同冲突/约束，冲突写或锁定读可能失败。
+
+</details>
 
 <details><summary>5. 普通 `SELECT` 与 `SELECT ... FOR UPDATE` 在本题差什么？</summary>
 
-后者对返回的成员行取得行锁，能与退群对同一行的冲突更新协调；普通读取主要依赖可见性快照。</details>
+后者对返回的成员行取得行锁，能与退群对同一行的冲突更新协调；普通读取主要依赖可见性快照。
+
+</details>
 
 <details><summary>6. `FOR UPDATE` 能锁住一条根本不存在的成员行吗？</summary>
 
-不能直接锁到不存在的当前行。插入竞争、唯一性和条件范围需另设约束或共同保护对象。</details>
+不能直接锁到不存在的当前行。插入竞争、唯一性和条件范围需另设约束或共同保护对象。
+
+</details>
 
 <details><summary>7. MVCC 是否表示 PostgreSQL 完全不用锁？</summary>
 
-不是。更新、锁定读、表级操作等仍使用锁；普通读与行写的冲突方式不同。</details>
+不是。更新、锁定读、表级操作等仍使用锁；普通读与行写的冲突方式不同。
+
+</details>
 
 <details><summary>8. 数据库 Commit 成功就能说 B 的设备已读吗？</summary>
 
-不能。数据库提交、网络响应、设备展示/阅读是不同确认点。</details>
+不能。数据库提交、网络响应、设备展示/阅读是不同确认点。
+
+</details>
 
 <details><summary>9. 发送先锁住活跃成员行，退群更新同一行会怎样？</summary>
 
-退群的冲突更新等待；发送在同一事务插入并提交后，退群才继续，形成“发→退”。</details>
+退群的冲突更新等待；发送在同一事务插入并提交后，退群才继续，形成“发→退”。
+
+</details>
 
 <details><summary>10. 退群先把成员改为 inactive 并提交，等待的 Read Committed 锁定读还应放行吗？</summary>
 
-不应。PostgreSQL 会按更新后的版本重检 `left_at IS NULL`（教学简称 `active=true`），条件不成立便无合格行，发送拒绝。</details>
+不应。PostgreSQL 会按更新后的版本重检 `left_at IS NULL`（教学简称 `active=true`），条件不成立便无合格行，发送拒绝。
+
+</details>
 
 <details><summary>11. 若发送在取得锁后改用另一连接的 `db.Exec` 插消息，原先的 Tx 还覆盖该写入吗？</summary>
 
-不覆盖。要用同一 `*sql.Tx` 做相关数据库操作，否则共同决策边界被拆开。</details>
+不覆盖。要用同一 `*sql.Tx` 做相关数据库操作，否则共同决策边界被拆开。
+
+</details>
 
 <details><summary>12. T1 持 R1 等 R2，T2 持 R2 等 R1，画出等待环。</summary>
 
-`T1→T2→T1`。两者都等对方释放资源，是死锁而非单纯慢查询。</details>
+`T1→T2→T1`。两者都等对方释放资源，是死锁而非单纯慢查询。
+
+</details>
 
 <details><summary>13. PostgreSQL 检测死锁时能预先指定哪笔事务被撤销吗？</summary>
 
-不能依赖具体牺牲者。应用须按返回错误识别并在边界内重试整笔事务。</details>
+不能依赖具体牺牲者。应用须按返回错误识别并在边界内重试整笔事务。
+
+</details>
 
 <details><summary>14. 统一多行锁获取顺序能解决哪类问题？</summary>
 
-可避免相同资源集因相反顺序形成的等待环；并不解决所有长等待或跨行不变量。</details>
+可避免相同资源集因相反顺序形成的等待环；并不解决所有长等待或跨行不变量。
+
+</details>
 
 <details><summary>15. 两管理员各只锁自己要退出的那一行，能保证至少留一人吗？</summary>
 
-不能。两笔事务改不同的行，可能都依据旧快照认为“另一人还在”，最终零管理员。</details>
+不能。两笔事务改不同的行，可能都依据旧快照认为“另一人还在”，最终零管理员。
+
+</details>
 
 <details><summary>16. PostgreSQL Serializable 下发生冲突失败，应只重试最后一条 UPDATE 吗？</summary>
 
-不应。要从新事务开始重读条件并重算全部相关决定，且限制次数/总期限。</details>
+不应。要从新事务开始重读条件并重算全部相关决定，且限制次数/总期限。
+
+</details>
 
 <details><summary>17. Serializable 成功提交意味着哪种顺序保证？</summary>
 
-数据库内这些成功事务的效果能等效某个串行执行顺序；不等于客户端点击或设备响应的绝对时间顺序。</details>
+数据库内这些成功事务的效果能等效某个串行执行顺序；不等于客户端点击或设备响应的绝对时间顺序。
+
+</details>
 
 <details><summary>18. PostgreSQL 谓词依赖检测可以简单解释成读范围时总阻塞插入吗？</summary>
 
-不能。Serializable 可通过冲突监测与事务失败避免不一致，不等同传统阻塞式间隙锁。</details>
+不能。Serializable 可通过冲突监测与事务失败避免不一致，不等同传统阻塞式间隙锁。
+
+</details>
 
 <details><summary>19. 长事务为什么可能使旧版本积压？</summary>
 
-旧快照仍可能需要旧行版本，清理不能任意移除；要同时核对其他事务、复制槽和 autovacuum 证据。</details>
+旧快照仍可能需要旧行版本，清理不能任意移除；要同时核对其他事务、复制槽和 autovacuum 证据。
+
+</details>
 
 <details><summary>20. 在事务持行锁期间等待远端设备回复有什么代价？</summary>
 
-延长锁和连接占用、让退群等待，可能保留旧快照并推高请求时延；设备结果也不会被数据库事务原子控制。</details>
+延长锁和连接占用、让退群等待，可能保留旧快照并推高请求时延；设备结果也不会被数据库事务原子控制。
+
+</details>
 
 <details><summary>21. 可把 PostgreSQL `FOR UPDATE` 直接复制到 MongoDB 的事务接口吗？</summary>
 
-不能。MongoDB 的文档写冲突、快照读和事务 API 有自己的机制与语法，要按该引擎文档和业务操作重新设计。</details>
+不能。MongoDB 的文档写冲突、快照读和事务 API 有自己的机制与语法，要按该引擎文档和业务操作重新设计。
+
+</details>
 
 <details><summary>22. 给“退群后仍发出一条消息”列最少三份证据。</summary>
 
-核对两请求可信身份与业务决定时间线、实际事务语句/隔离与成员行冲突、消息提交及稳定 ID；再区分 HTTP 回答和设备尝试，不能把客户端时间戳当数据库排序证据。</details>
+核对两请求可信身份与业务决定时间线、实际事务语句/隔离与成员行冲突、消息提交及稳定 ID；再区分 HTTP 回答和设备尝试，不能把客户端时间戳当数据库排序证据。
+
+</details>
 
 ## 本章完成标准与下一步
 

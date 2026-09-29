@@ -26,9 +26,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "8f9a4503d79556329810c44bcfdaa4379a4f95c86c767adbeb218fc961b9a2bc",
-  "reviewed_sha256": "7c007cf9c0d50e9cb9090442b9729055e693d841acf424b98811af3a559796ce",
-  "reviewed_characters": 10635,
+  "reviewed_sha256": "f5dfe0a49afed3241e748a08d03c85eebf48d5727729a721a002a687603bf7bc",
+  "reviewed_characters": 10679,
   "reviewed_chinese_characters": 4508,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/03_program_organization.md",
-  "course_sha256": "f86a496d991e753b004f1196fef4c6a3a916ee475febf753b51ea5eac33bc15b"
+  "course_sha256": "ee8d519c0250aca14a5e1b5908826da31e4f7df95b7f8be286eeadf14fa2151e"
 }

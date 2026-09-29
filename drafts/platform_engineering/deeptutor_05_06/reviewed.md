@@ -104,91 +104,135 @@ Go 官方 GC 指南给出未来学习者查看编译器逃逸分析的入口；�
 
 <details><summary>1. `full[:8]` 会复制前 8 字节吗？</summary>
 
-不会。它创建引用同一底层数组的新切片值。</details>
+不会。它创建引用同一底层数组的新切片值。
+
+</details>
 
 <details><summary>2. `full` 的 len/cap 各是多少？</summary>
 
-本章固定 `make([]byte,64*1024)`，两者均为 65536。</details>
+本章固定 `make([]byte,64*1024)`，两者均为 65536。
+
+</details>
 
 <details><summary>3. `preview := full[:8]` 的 len/cap 各是多少？</summary>
 
-len=8，cap=65536，起点仍在原数组开头。</details>
+len=8，cap=65536，起点仍在原数组开头。
+
+</details>
 
 <details><summary>4. `full[:8:8]` 的 cap 变 8 后，是否拥有独立数组？</summary>
 
-没有。完整切片表达式限制容量，不复制底层数组。</details>
+没有。完整切片表达式限制容量，不复制底层数组。
+
+</details>
 
 <details><summary>5. 改 `preview[0]` 会影响 `full[0]` 吗？</summary>
 
-会。二者共享同一数组元素。</details>
+会。二者共享同一数组元素。
+
+</details>
 
 <details><summary>6. 从 nil 目标 `append` 前 8 字节的目的是什么？</summary>
 
-制作独立底层字节副本，避免新预览继续引用原大数组。</details>
+制作独立底层字节副本，避免新预览继续引用原大数组。
+
+</details>
 
 <details><summary>7. 独立副本的 `cap` 一定恰好 8 吗？</summary>
 
-不能从教学片段保证；运行时可能按分配粒度处理。</details>
+不能从教学片段保证；运行时可能按分配粒度处理。
+
+</details>
 
 <details><summary>8. `full=nil` 后 queue 仍存 preview，大数组可被回收吗？</summary>
 
-不能仅凭 full 这个变量变 nil 判断；queue 的引用链仍在。</details>
+不能仅凭 full 这个变量变 nil 判断；queue 的引用链仍在。
+
+</details>
 
 <details><summary>9. 两个对象互指但都从根不可达，会永远保留吗？</summary>
 
-不因互指本身而永远保留；追踪 GC 以从根是否可达为准。</details>
+不因互指本身而永远保留；追踪 GC 以从根是否可达为准。
+
+</details>
 
 <details><summary>10. 1024 个**不同**的 64 KiB 数组共多少数据字节？</summary>
 
-64 MiB，这是底层数组逻辑规模，不是进程 RSS。</details>
+64 MiB，这是底层数组逻辑规模，不是进程 RSS。
+
+</details>
 
 <details><summary>11. 1024 个 8 字节副本的纯数据字节是多少？</summary>
 
-8192 B，即 8 KiB；还要另计对象与分配器开销。</details>
+8192 B，即 8 KiB；还要另计对象与分配器开销。
+
+</details>
 
 <details><summary>12. 1024 个预览若都来自同一个大数组，还能乘出 64 MiB 吗？</summary>
 
-不能。原数组只有一份，先数独立底层对象。</details>
+不能。原数组只有一份，先数独立底层对象。
+
+</details>
 
 <details><summary>13. 局部变量一定在栈、取地址一定在堆吗？</summary>
 
-都不是必然。具体布局看逃逸分析、使用情境和编译器版本。</details>
+都不是必然。具体布局看逃逸分析、使用情境和编译器版本。
+
+</details>
 
 <details><summary>14. goroutine 栈和 Go GC 堆在指标上完全相同吗？</summary>
 
-不同；例如 `StackInuse` 与 `HeapAlloc` 代表不同类别。</details>
+不同；例如 `StackInuse` 与 `HeapAlloc` 代表不同类别。
+
+</details>
 
 <details><summary>15. `TotalAlloc` 随 GC 下降吗？</summary>
 
-不会。它是累计分配量，不代表当前存活对象。</details>
+不会。它是累计分配量，不代表当前存活对象。
+
+</details>
 
 <details><summary>16. `HeapAlloc` 精确等于当前业务仍需的字节吗？</summary>
 
-不等于。它也可能包含尚未清扫的不可达堆对象，且不含全部进程内存。</details>
+不等于。它也可能包含尚未清扫的不可达堆对象，且不含全部进程内存。
+
+</details>
 
 <details><summary>17. `[]*Message` 缩到 len=1 后，旧尾槽引用一定已清掉吗？</summary>
 
-不一定。仍可达的底层数组可能保留旧指针，需按所有权处理。</details>
+不一定。仍可达的底层数组可能保留旧指针，需按所有权处理。
+
+</details>
 
 <details><summary>18. 清尾部槽前要确认什么？</summary>
 
-数组所有权、其他切片是否还需要这些元素，以及并发同步。</details>
+数组所有权、其他切片是否还需要这些元素，以及并发同步。
+
+</details>
 
 <details><summary>19. 队列移除最后引用后，RSS 必须马上下降吗？</summary>
 
-不必。GC、分配器复用和物理页归还是不同阶段。</details>
+不必。GC、分配器复用和物理页归还是不同阶段。
+
+</details>
 
 <details><summary>20. 复用接收缓冲前，消费者仍持有旧视图会怎样？</summary>
 
-旧内容可能被覆盖；并发读写时还可能形成数据竞争。</details>
+旧内容可能被覆盖；并发读写时还可能形成数据竞争。
+
+</details>
 
 <details><summary>21. 队列最多 1024 项就能不管每项的底层容量吗？</summary>
 
-不能。项数上限和每项牵连的存储规模都要算。</details>
+不能。项数上限和每项牵连的存储规模都要算。
+
+</details>
 
 <details><summary>22. 纸上 64 MiB 对 8 KiB 能证明真实程序复制更快吗？</summary>
 
-不能。它只比较逻辑数据所有权；性能和 RSS 需运行证据。</details>
+不能。它只比较逻辑数据所有权；性能和 RSS 需运行证据。
+
+</details>
 
 ## 来源与下一步
 

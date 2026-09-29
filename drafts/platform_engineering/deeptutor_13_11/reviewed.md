@@ -89,95 +89,139 @@ B 离线 **25h>24h** 教学 broker 保留，未来若产品确实批准“B 可�
 
 <details><summary>1. 当前 S2 `/v1` 200 到哪层？</summary>
 
-只到本进程内存受理，不证明 DB 已存或 B 设备收到。</details>
+只到本进程内存受理，不证明 DB 已存或 B 设备收到。
+
+</details>
 
 <details><summary>2. 未来 `/v2` 提议的正文上限是多少？</summary>
 
-仍为 6 UTF-8 B，R9 6→9 B 待独立评审。</details>
+仍为 6 UTF-8 B，R9 6→9 B 待独立评审。
+
+</details>
 
 <details><summary>3. 当前同 ID 重复与非成员发送各怎样？</summary>
 
-同 ID 重复 409，非成员目标隐藏为 404。</details>
+同 ID 重复 409，非成员目标隐藏为 404。
+
+</details>
 
 <details><summary>4. 一万设备连接、2% 活跃，活跃连接多少？</summary>
 
-200，不能无映射证据说成 200 个独立用户。</details>
+200，不能无映射证据说成 200 个独立用户。
+
+</details>
 
 <details><summary>5. 每活跃连接平均 0.1 入站/s，合计多少？</summary>
 
-`200×0.1=20 入站消息/s`，纸上条件值。</details>
+`200×0.1=20 入站消息/s`，纸上条件值。
+
+</details>
 
 <details><summary>6. 50 成员×2 设备，未来 20 入站/s 的任务多少？</summary>
 
-`20×50×2=2,000 设备任务/s`，不是设备 ACK。</details>
+`20×50×2=2,000 设备任务/s`，不是设备 ACK。
+
+</details>
 
 <details><summary>7. B 离线 25h、broker 留 24h，仅凭 broker 可补齐吗？</summary>
 
-不能保证。未来需确实保留、按权限可读的权威历史；当前 S2 无此承诺。</details>
+不能保证。未来需确实保留、按权限可读的权威历史；当前 S2 无此承诺。
+
+</details>
 
 <details><summary>8. 旧 `/v1` 客户端发 7 B 能因未来大群需求被接纳吗？</summary>
 
-不能。当前仍为 6 UTF-8 B，R9 未批。</details>
+不能。当前仍为 6 UTF-8 B，R9 未批。
+
+</details>
 
 ### 计算 9–16：群、内存、故障与恢复
 
 <details><summary>9. 仅群从 50 变 500、20 入站/s 不变，任务多少？</summary>
 
-`20×500×2=20,000 任务/s`，是单变量情景。</details>
+`20×500×2=20,000 任务/s`，是单变量情景。
+
+</details>
 
 <details><summary>10. 热群占 10 入站/s，500 人×2 设备，单群多少任务/s？</summary>
 
-`10×500×2=10,000 任务/s`，可能集中单顺序链。</details>
+`10×500×2=10,000 任务/s`，可能集中单顺序链。
+
+</details>
 
 <details><summary>11. 10,000 连接×32 KiB，进程连接分量多少？</summary>
 
-`312.5 MiB`，不是网关总内存。</details>
+`312.5 MiB`，不是网关总内存。
+
+</details>
 
 <details><summary>12. 假设未来 20/s 全天、1 KiB 记录、另批 30 天，逻辑原始历史约多少？</summary>
 
-约 49.44 GiB，不含索引/WAL/副本/备份，不是已批留存。</details>
+约 49.44 GiB，不含索引/WAL/副本/备份，不是已批留存。
+
+</details>
 
 <details><summary>13. 三 Pod 各稳100/s、峰150，失一 Pod 名义剩多少？</summary>
 
-`2×100=200/s`，前提同负载和依赖仍成立。</details>
+`2×100=200/s`，前提同负载和依赖仍成立。
+
+</details>
 
 <details><summary>14. N1 放两 Pod、N2 一 Pod，失 N1 后呢？</summary>
 
-只剩一 Pod 100/s，小于峰 150/s，Node N−1 名义不通过。</details>
+只剩一 Pod 100/s，小于峰 150/s，Node N−1 名义不通过。
+
+</details>
 
 <details><summary>15. E9 消费停 10 分钟、仍入20/s，积多少？</summary>
 
-`20×600=12,000 条`，假设一入站一事件且未拒绝。</details>
+`20×600=12,000 条`，假设一入站一事件且未拒绝。
+
+</details>
 
 <details><summary>16. 恢复处理30/s、仍入20/s，理想多久清空？</summary>
 
-净清10/s，`12,000/10=1,200 秒=20 分钟`，不是 B 120秒目标。</details>
+净清10/s，`12,000/10=1,200 秒=20 分钟`，不是 B 120秒目标。
+
+</details>
 
 ### 答辩 17–22：选项与反证
 
 <details><summary>17. 写时派生与读时补拉各把压力放哪？</summary>
 
-前者放大发送/队列/任务，后者增加重连/历史查询与授权负载；都须守权威与游标。</details>
+前者放大发送/队列/任务，后者增加重连/历史查询与授权负载；都须守权威与游标。
+
+</details>
 
 <details><summary>18. B 先见9缺8、此前连续到7，游标能到9吗？</summary>
 
-不能，仍为7；待8取得且满足确认条件才可连续前进。</details>
+不能，仍为7；待8取得且满足确认条件才可连续前进。
+
+</details>
 
 <details><summary>19. DB 已有 `m-9/seq9`、E9 未发，可回滚删DB记录吗？</summary>
 
-不可否定未来已给 A 的 stored 确认；须保全权威并恢复/对账派生。</details>
+不可否定未来已给 A 的 stored 确认；须保全权威并恢复/对账派生。
+
+</details>
 
 <details><summary>20. 方案 C 独立扩 Transfer 就一定解决单热群吗？</summary>
 
-不一定。单分区顺序、共享 DB、网络和重连可能仍是瓶颈，需同负载实验。</details>
+不一定。单分区顺序、共享 DB、网络和重连可能仍是瓶颈，需同负载实验。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明其写时/读时扇出选型吗？</summary>
 
-不能，只证明所读发送到 MQ 与另一 Mongo 消费异步边界。</details>
+不能，只证明所读发送到 MQ 与另一 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 考官改条件后最少要更新哪几项？</summary>
 
-用户目标/合同状态、工作量算式、权威和确认点、故障/权限/旧端反例、验证停止门及决定人。</details>
+用户目标/合同状态、工作量算式、权威和确认点、故障/权限/旧端反例、验证停止门及决定人。
+
+</details>
 
 ## 本章完成标准与后续路径
 

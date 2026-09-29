@@ -176,91 +176,135 @@ HTTP 请求的 `r.Context()` 可传到应用层与 `QueryContext/ExecContext`，
 
 <details><summary>1. `database/sql` 会自己实现 PostgreSQL 网络协议吗？</summary>
 
-不会；它提供通用接口，仍需具体驱动。</details>
+不会；它提供通用接口，仍需具体驱动。
+
+</details>
 
 <details><summary>2. `sql.Open` 成功就代表数据库此刻可连吗？</summary>
 
-不能保证。可在有期限的上下文中用 `PingContext` 主动验证当时的连通性。</details>
+不能保证。可在有期限的上下文中用 `PingContext` 主动验证当时的连通性。
+
+</details>
 
 <details><summary>3. `*sql.DB` 是单个 TCP 连接吗？</summary>
 
-不是，它是并发安全的数据库句柄和连接池管理者。</details>
+不是，它是并发安全的数据库句柄和连接池管理者。
+
+</details>
 
 <details><summary>4. 为什么不在每个 HTTP 请求都 Open/Close 一个 DB？</summary>
 
-这样破坏池复用并增加连接成本；应用生命周期应复用句柄。</details>
+这样破坏池复用并增加连接成本；应用生命周期应复用句柄。
+
+</details>
 
 <details><summary>5. 当前成员资格查询找不到行，`QueryRowContext` 何时给错误？</summary>
 
-在 `Scan` 时返回 `sql.ErrNoRows`。</details>
+在 `Scan` 时返回 `sql.ErrNoRows`。
+
+</details>
 
 <details><summary>6. `ErrNoRows` 与连接失败可一律映射为无权限吗？</summary>
 
-不能。前者可按本章合同解释为无成员，后者是访问故障。</details>
+不能。前者可按本章合同解释为无成员，后者是访问故障。
+
+</details>
 
 <details><summary>7. `Rows.Next()` 返回 false 就一定没有错误吗？</summary>
 
-不一定。遍历后还要检查 `rows.Err()`。</details>
+不一定。遍历后还要检查 `rows.Err()`。
+
+</details>
 
 <details><summary>8. 多行查询何时设置 `defer rows.Close()`？</summary>
 
-在 `QueryContext` 成功并得到非 nil Rows 后立刻安排关闭。</details>
+在 `QueryContext` 成功并得到非 nil Rows 后立刻安排关闭。
+
+</details>
 
 <details><summary>9. 为什么尽量不用 `SELECT *` 给客户端历史接口？</summary>
 
-模式增列会改变结果与 Scan 列数，也可能暴露不应返回的字段。</details>
+模式增列会改变结果与 Scan 列数，也可能暴露不应返回的字段。
+
+</details>
 
 <details><summary>10. SQL NULL 快照与没有 m-a 这一行有何不同？</summary>
 
-NULL 表示行在但该字段未知；没有行由 `sql.ErrNoRows` 表达。</details>
+NULL 表示行在但该字段未知；没有行由 `sql.ErrNoRows` 表达。
+
+</details>
 
 <details><summary>11. `sql.NullString.Valid=false` 表示什么？</summary>
 
-该扫描列为 SQL NULL，不能把它当真实空字符串。</details>
+该扫描列为 SQL NULL，不能把它当真实空字符串。
+
+</details>
 
 <details><summary>12. PostgreSQL `$1` 参数可以替客户端任意选择表名吗？</summary>
 
-不能。它绑定值；表名、列名、排序方向等结构应由服务端白名单选择。</details>
+不能。它绑定值；表名、列名、排序方向等结构应由服务端白名单选择。
+
+</details>
 
 <details><summary>13. `fmt.Sprintf` 拼入聊天正文或会话 ID 有何问题？</summary>
 
-会把输入变成 SQL 结构的一部分，带来注入和审计风险；值应参数化。</details>
+会把输入变成 SQL 结构的一部分，带来注入和审计风险；值应参数化。
+
+</details>
 
 <details><summary>14. `RowsAffected` 一定每个驱动都支持吗？</summary>
 
-不能假定。调用它也可能返回错误，须按驱动语义核对。</details>
+不能假定。调用它也可能返回错误，须按驱动语义核对。
+
+</details>
 
 <details><summary>15. PostgreSQL 插入并返回 message_id 可用什么入口？</summary>
 
-可用 `INSERT ... RETURNING message_id` 配合 `QueryRowContext(...).Scan(...)`。</details>
+可用 `INSERT ... RETURNING message_id` 配合 `QueryRowContext(...).Scan(...)`。
+
+</details>
 
 <details><summary>16. Context 超时能证明写入绝未发生吗？</summary>
 
-不能。超时可能发生在服务端处理后、客户端拿到结果前。</details>
+不能。超时可能发生在服务端处理后、客户端拿到结果前。
+
+</details>
 
 <details><summary>17. 进入 Tx 后又用 `db.ExecContext` 执行相关语句有何风险？</summary>
 
-它可能走另一连接，不属于这次 Tx；相关操作应通过同一 Tx。</details>
+它可能走另一连接，不属于这次 Tx；相关操作应通过同一 Tx。
+
+</details>
 
 <details><summary>18. 有 Tx 就必然没有并发异常吗？</summary>
 
-不能。还要定义隔离、锁、冲突重试和业务不变量。</details>
+不能。还要定义隔离、锁、冲突重试和业务不变量。
+
+</details>
 
 <details><summary>19. MongoDB 的 Client 应每请求新建吗？</summary>
 
-不应。它含连接池，通常由进程复用，退出时 Disconnect。</details>
+不应。它含连接池，通常由进程复用，退出时 Disconnect。
+
+</details>
 
 <details><summary>20. MongoDB Cursor 需要哪些遍历与关闭动作？</summary>
 
-Next/Decode、遍历后 Err，并在用完或出错时 Close。</details>
+Next/Decode、遍历后 Err，并在用完或出错时 Close。
+
+</details>
 
 <details><summary>21. 无界消息历史可直接 Cursor.All 吗？</summary>
 
-不应。它可能把大量文档装入内存；先限页并迭代。</details>
+不应。它可能把大量文档装入内存；先限页并迭代。
+
+</details>
 
 <details><summary>22. SQL 或文档查询返回 m-a 就能证明设备收到吗？</summary>
 
-不能。查询结果与设备交付确认是不同业务检查点。</details>
+不能。查询结果与设备交付确认是不同业务检查点。
+
+</details>
 
 ## 来源与下一步
 

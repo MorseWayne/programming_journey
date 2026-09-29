@@ -104,95 +104,139 @@ R9 仍是**待审**的 6→9 字节正文需求：若新客户端先发 `"你好
 
 <details><summary>1. 当前 S2 的 200 表示什么？</summary>
 
-`accepted_in_memory`，不是数据库提交、broker 接受或设备送达。</details>
+`accepted_in_memory`，不是数据库提交、broker 接受或设备送达。
+
+</details>
 
 <details><summary>2. R9 的 9 UTF-8 字节上限现在生效了吗？</summary>
 
-未生效。当前正文最多 6 B；R9 待审并需明确目标接口版本。</details>
+未生效。当前正文最多 6 B；R9 待审并需明确目标接口版本。
+
+</details>
 
 <details><summary>3. `m-9:v2` 与 `event_v2` 指同一版本吗？</summary>
 
-不是。前者是业务消息内容/权限版本，后者是教学事件线格式版本。</details>
+不是。前者是业务消息内容/权限版本，后者是教学事件线格式版本。
+
+</details>
 
 <details><summary>4. Protobuf 已使用字段号可以为了整齐重新排序吗？</summary>
 
-不能。字段号是线格式身份，改号等于不同字段；删除后不应重用。</details>
+不能。字段号是线格式身份，改号等于不同字段；删除后不应重用。
+
+</details>
 
 <details><summary>5. `optional message_version` 比隐式标量多了什么判断？</summary>
 
-可区分字段缺席与明确传入默认值 0，有助于旧事件安全分支。</details>
+可区分字段缺席与明确传入默认值 0，有助于旧事件安全分支。
+
+</details>
 
 <details><summary>6. 旧二进制程序能解析新增字段，旧业务一定理解 `visible` 吗？</summary>
 
-不一定。它可能忽略字段，权限语义仍可能错误。</details>
+不一定。它可能忽略字段，权限语义仍可能错误。
+
+</details>
 
 <details><summary>7. ProtoJSON 一定原样保留旧程序不认识的二进制字段吗？</summary>
 
-不一定。二进制未知字段经 JSON 或逐字段复制可能丢失。</details>
+不一定。二进制未知字段经 JSON 或逐字段复制可能丢失。
+
+</details>
 
 <details><summary>8. broker P0:42 能说明 E9 的消息版本是 42 吗？</summary>
 
-不能。它仅是该分区的日志位置。</details>
+不能。它仅是该分区的日志位置。
+
+</details>
 
 ### RPC 与兼容 9–16：状态码不替业务判断
 
 <details><summary>9. gRPC `DEADLINE_EXCEEDED` 能断言服务端未提交吗？</summary>
 
-不能。官方说明改变状态的操作可能已完成而响应迟到。</details>
+不能。官方说明改变状态的操作可能已完成而响应迟到。
+
+</details>
 
 <details><summary>10. gRPC 文档里的 RPC committed 等于教学 SQL Commit 吗？</summary>
 
-不等于。它指收到响应头后不再自动进行该 RPC 的传输重试。</details>
+不等于。它指收到响应头后不再自动进行该 RPC 的传输重试。
+
+</details>
 
 <details><summary>11. 当前 S2 相同 `message_id`、相同正文重复 POST 是多少？</summary>
 
-409，旧消息不覆盖；不能因 RPC 有重试便改为 200。</details>
+409，旧消息不覆盖；不能因 RPC 有重试便改为 200。
+
+</details>
 
 <details><summary>12. 内部 `PERMISSION_DENIED` 可无脑透出私有 `c-a` 存在性吗？</summary>
 
-不能。边缘按当前隐藏目标合同对非成员统一 404，错误体不泄密。</details>
+不能。边缘按当前隐藏目标合同对非成员统一 404，错误体不泄密。
+
+</details>
 
 <details><summary>13. 新客户端给旧 S2 发 9 B 正文，旧服务该怎样？</summary>
 
-按当前 6 B 限额拒绝，不装作 R9 已批准。</details>
+按当前 6 B 限额拒绝，不装作 R9 已批准。
+
+</details>
 
 <details><summary>14. 新生产者向旧 SearchIndex 发含 `visibility` 的新二进制事件，可只看解析通过吗？</summary>
 
-不可。旧消费者可能忽略可见性，必须先升级/隔离或给安全默认和回源门。</details>
+不可。旧消费者可能忽略可见性，必须先升级/隔离或给安全默认和回源门。
+
+</details>
 
 <details><summary>15. 新消费者重放缺 `message_version` 的旧事件，应直接覆盖当前 v2 吗？</summary>
 
-不能。查权威当前版本/权限或保守拒绝并留修复责任。</details>
+不能。查权威当前版本/权限或保守拒绝并留修复责任。
+
+</details>
 
 <details><summary>16. gRPC 与 HTTP 错误码会自动完成 404/409 安全映射吗？</summary>
 
-不会。网关/应用需按已固定的身份、资源和错误合同明确映射。</details>
+不会。网关/应用需按已固定的身份、资源和错误合同明确映射。
+
+</details>
 
 ### 上线评审 17–22：能回退才算演进
 
 <details><summary>17. 为什么先升级新消费者再让生产者发教学 event_v2？</summary>
 
-避免仍在运行的旧消费者忽略关键版本/可见性字段造成错误索引或泄露。</details>
+避免仍在运行的旧消费者忽略关键版本/可见性字段造成错误索引或泄露。
+
+</details>
 
 <details><summary>18. 只看新旧程序都“不报 parse 错”足以删旧读取分支吗？</summary>
 
-不足。还需存量回放、DLQ、目标版本/权限差集和客户端覆盖证据。</details>
+不足。还需存量回放、DLQ、目标版本/权限差集和客户端覆盖证据。
+
+</details>
 
 <details><summary>19. 新事件已持久后，把服务镜像回滚旧版就安全了吗？</summary>
 
-不一定。旧版可能丢关键字段或误处理新事件，须停止新写并保留兼容读/修复门。</details>
+不一定。旧版可能丢关键字段或误处理新事件，须停止新写并保留兼容读/修复门。
+
+</details>
 
 <details><summary>20. `evt:m-9:v1` 在新 event_v2 容器里回放，会变成业务 m-9:v2 吗？</summary>
 
-不会。事件 ID 的 v1 仍是原消息版本，容器线格式改变不修改权威业务事实。</details>
+不会。事件 ID 的 v1 仍是原消息版本，容器线格式改变不修改权威业务事实。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明它已有本章教学字段 4/5 和协商策略吗？</summary>
 
-不能。需另查固定依赖的 `.proto`、配置、客户端/消费者和运行证据。</details>
+不能。需另查固定依赖的 `.proto`、配置、客户端/消费者和运行证据。
+
+</details>
 
 <details><summary>22. 一份可审的协议升级报告至少列什么？</summary>
 
-版本/字段矩阵、生产/消费混部、旧事件回放、错误/权限负例、启用与收缩门、回退限制、真实测试和剩余未知。</details>
+版本/字段矩阵、生产/消费混部、旧事件回放、错误/权限负例、启用与收缩门、回退限制、真实测试和剩余未知。
+
+</details>
 
 ## 本章完成标准与后续路径
 

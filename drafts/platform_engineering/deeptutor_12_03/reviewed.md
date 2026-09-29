@@ -104,95 +104,139 @@ Compose 的 `docker compose logs` 可显示服务输出，帮助把 gateway 的�
 
 <details><summary>1. gateway 内的 `127.0.0.1` 指向 db 容器吗？</summary>
 
-不指向。它是 gateway 所在网络 namespace 的回环。</details>
+不指向。它是 gateway 所在网络 namespace 的回环。
+
+</details>
 
 <details><summary>2. 同网络 gateway 访问 db 应用哪个纸上地址？</summary>
 
-`db:5432`，按服务名与容器端口。</details>
+`db:5432`，按服务名与容器端口。
+
+</details>
 
 <details><summary>3. 宿主映射 `15432:5432` 时，有权宿主工具用哪个端口？</summary>
 
-宿主的 `127.0.0.1:15432`，不是 gateway 内部的 db 地址。</details>
+宿主的 `127.0.0.1:15432`，不是 gateway 内部的 db 地址。
+
+</details>
 
 <details><summary>4. 服务间通信一定要把 db 端口暴露到宿主吗？</summary>
 
-不一定。同 Compose 网络可以使用服务名和容器端口。</details>
+不一定。同 Compose 网络可以使用服务名和容器端口。
+
+</details>
 
 <details><summary>5. db 容器重建后旧 IP 一定不变吗？</summary>
 
-不一定。名称可保持，IP 可变；旧连接要重连并重新解析。</details>
+不一定。名称可保持，IP 可变；旧连接要重连并重新解析。
+
+</details>
 
 <details><summary>6. `depends_on` 普通启动顺序能证明 DB 已执行 SQL 吗？</summary>
 
-不能。它可能只保证容器已 started。</details>
+不能。它可能只保证容器已 started。
+
+</details>
 
 <details><summary>7. `service_healthy` 等的是什么？</summary>
 
-依赖服务声明的 healthcheck 通过；能力只到 healthcheck 实际覆盖范围。</details>
+依赖服务声明的 healthcheck 通过；能力只到 healthcheck 实际覆盖范围。
+
+</details>
 
 <details><summary>8. 当前 S2 的 200 能证明纸上 db 或 events 已运行吗？</summary>
 
-不能。它仅代表本进程内存受理。</details>
+不能。它仅代表本进程内存受理。
+
+</details>
 
 ### 定位 9–16：四个故障变式
 
 <details><summary>9. gateway 配 `localhost:15432` 被拒绝，第一步查什么？</summary>
 
-查发起进程网络视图和有效 `DB_ADDR`；gateway 同网络应连 `db:5432`。</details>
+查发起进程网络视图和有效 `DB_ADDR`；gateway 同网络应连 `db:5432`。
+
+</details>
 
 <details><summary>10. db 容器 running、gateway 首个 SQL 失败，可以直接判网络坏吗？</summary>
 
-不能。还可能是 DB 初始化、认证、模式或权限未就绪。</details>
+不能。还可能是 DB 初始化、认证、模式或权限未就绪。
+
+</details>
 
 <details><summary>11. healthcheck 只测 TCP 端口绿，能证明 m-9/outbox 事务可写吗？</summary>
 
-不能。还要有权业务样本和数据库模式/事务证据。</details>
+不能。还要有权业务样本和数据库模式/事务证据。
+
+</details>
 
 <details><summary>12. db 重建后 gateway 缓存旧 IP，应怎样恢复？</summary>
 
-检测旧连接断开，重新解析服务名并有界重连，核对新 db 状态。</details>
+检测旧连接断开，重新解析服务名并有界重连，核对新 db 状态。
+
+</details>
 
 <details><summary>13. `.env` 定义变量就一定进入容器环境吗？</summary>
 
-不一定。它可先用于 Compose 模型插值，容器环境还取决于 environment/env_file 等设置。</details>
+不一定。它可先用于 Compose 模型插值，容器环境还取决于 environment/env_file 等设置。
+
+</details>
 
 <details><summary>14. Compose 配置工具输出可以原样贴进课程排障记录吗？</summary>
 
-不应。可能含秘密或敏感值，只保留脱敏的有效配置来源/版本。</details>
+不应。可能含秘密或敏感值，只保留脱敏的有效配置来源/版本。
+
+</details>
 
 <details><summary>15. `docker compose logs gateway` 中“发送成功”能证明 B 已读吗？</summary>
 
-不能。日志仅是某服务输出，设备应用 ACK/已读另需证据。</details>
+不能。日志仅是某服务输出，设备应用 ACK/已读另需证据。
+
+</details>
 
 <details><summary>16. `service_completed_successfully` 可直接证明 S3 已上线吗？</summary>
 
-不能。它只表达某依赖任务成功结束的启动条件，S3 合同/迁移/运行另验。</details>
+不能。它只表达某依赖任务成功结束的启动条件，S3 合同/迁移/运行另验。
+
+</details>
 
 ### 验收 17–22：从健康到业务
 
 <details><summary>17. named volume 存在等于 m-9/seq9 权威事务已提交吗？</summary>
 
-不等于。还需同一卷身份、数据库提交/恢复与权限证据。</details>
+不等于。还需同一卷身份、数据库提交/恢复与权限证据。
+
+</details>
 
 <details><summary>18. B 离线 25h、教学 broker 留 24h，靠什么补历史？</summary>
 
-靠有权权威 DB 历史按 `seq9` 缺口补，不能只靠 events 健康。</details>
+靠有权权威 DB 历史按 `seq9` 缺口补，不能只靠 events 健康。
+
+</details>
 
 <details><summary>19. 某 `.env` 让旧 `/v1` 接纳 9 B，合理吗？</summary>
 
-不合理。当前合同仍最多 6 B，R9 待审。</details>
+不合理。当前合同仍最多 6 B，R9 待审。
+
+</details>
 
 <details><summary>20. 只看到三个容器 healthy，足以发布“IM 已可用”吗？</summary>
 
-不足。要按当前/未来确认点做有权请求正反例、事务和设备结果验证。</details>
+不足。要按当前/未来确认点做有权请求正反例、事务和设备结果验证。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码可证明本题 Compose 服务名或端口吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费的异步边界。</details>
+不能。只支持所读发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一张可复核多服务环境卡至少交什么？</summary>
 
-制品 digest、服务名/端口/网络、启动/health 定义、有效配置/秘密引用、卷/权威数据、有权业务结果及未证项。</details>
+制品 digest、服务名/端口/网络、启动/health 定义、有效配置/秘密引用、卷/权威数据、有权业务结果及未证项。
+
+</details>
 
 ## 本章完成标准与后续路径
 

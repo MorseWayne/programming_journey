@@ -86,95 +86,139 @@ date: 2026-09-25
 
 <details><summary>1. `q-01` 答 9 B 且 r9 被误标 current，先微调吗？</summary>
 
-不。先修资料状态/检索，恢复 `doc-current` 的现行 6 B 依据。</details>
+不。先修资料状态/检索，恢复 `doc-current` 的现行 6 B 依据。
+
+</details>
 
 <details><summary>2. 微调与推理的区别是什么？</summary>
 
-微调用训练样本更新可训练参数；推理用现有权重产生输出。</details>
+微调用训练样本更新可训练参数；推理用现有权重产生输出。
+
+</details>
 
 <details><summary>3. 微调样本只要问题/答案两列就够吗？</summary>
 
-不够；还需来源/许可、授权、资料版本、标注理由、划分等。</details>
+不够；还需来源/许可、授权、资料版本、标注理由、划分等。
+
+</details>
 
 <details><summary>4. LoRA 中基础模型权重通常怎样处理？</summary>
 
-冻结基础权重，训练新增的低秩适配矩阵。</details>
+冻结基础权重，训练新增的低秩适配矩阵。
+
+</details>
 
 <details><summary>5. 量化与 LoRA 是同一件事吗？</summary>
 
-不是；量化改数值表示，LoRA 改可训练更新的结构。</details>
+不是；量化改数值表示，LoRA 改可训练更新的结构。
+
+</details>
 
 <details><summary>6. QLoRA 可以先理解成哪两项结合？</summary>
 
-量化的冻结基础模型与可训练低秩适配器。</details>
+量化的冻结基础模型与可训练低秩适配器。
+
+</details>
 
 <details><summary>7. 多模态输入可能包括哪些？</summary>
 
-文本加图像、音频或视频等；不同模型需相应处理器和输入约定。</details>
+文本加图像、音频或视频等；不同模型需相应处理器和输入约定。
+
+</details>
 
 <details><summary>8. 截图写“9 B”就是现行合同吗？</summary>
 
-不是；要核媒体来源，再查 current/proposed 权威资料，R9 仍待审。</details>
+不是；要核媒体来源，再查 current/proposed 权威资料，R9 仍待审。
+
+</details>
 
 ### 推演 9–16：参数、位宽和证据
 
 <details><summary>9. 纸上 `W` 为 4×4，有多少数？</summary>
 
-`4×4=16` 个。</details>
+`4×4=16` 个。
+
+</details>
 
 <details><summary>10. LoRA 秩 1 的 4×1 与 1×4 新增多少可训练数？</summary>
 
-`4+4=8`，乘积维度仍是 4×4；这不等于真实模型总内存减半。</details>
+`4+4=8`，乘积维度仍是 4×4；这不等于真实模型总内存减半。
+
+</details>
 
 <details><summary>11. 16 bit 原始权重改 4 bit，理论权重位数变为多少？</summary>
 
-同样参数数目下为四分之一；整套系统内存不会必然四分之一。</details>
+同样参数数目下为四分之一；整套系统内存不会必然四分之一。
+
+</details>
 
 <details><summary>12. 量化后 `q-03` 仍要测什么？</summary>
 
-无权正文不进模型、正确拒答/无泄露；省内存不替代权限。</details>
+无权正文不进模型、正确拒答/无泄露；省内存不替代权限。
+
+</details>
 
 <details><summary>13. 六题被放入训练后还可称“未见六题评测”吗？</summary>
 
-不能；标签已泄漏，需独立按来源/会话/时间划分的未见集。</details>
+不能；标签已泄漏，需独立按来源/会话/时间划分的未见集。
+
+</details>
 
 <details><summary>14. 截图裁掉“尚待审”但保留“9 B”，能答当前 9 B 吗？</summary>
 
-不能；媒体证据不完整，须查权威 current 与 proposed。</details>
+不能；媒体证据不完整，须查权威 current 与 proposed。
+
+</details>
 
 <details><summary>15. 图片文件字节、图像 token 和 IM 正文 6 B 是同一量吗？</summary>
 
-不是；各自属于媒体/模型输入/当前 IM 消息正文的不同边界。</details>
+不是；各自属于媒体/模型输入/当前 IM 消息正文的不同边界。
+
+</details>
 
 <details><summary>16. 训练集删一张已撤权图片，就能保证模型遗忘吗？</summary>
 
-不能直接保证；需追踪版本和影响，权重遗忘须单独评估。</details>
+不能直接保证；需追踪版本和影响，权重遗忘须单独评估。
+
+</details>
 
 ### 决策 17–22：投入、授权与评测
 
 <details><summary>17. `q-04` 规则未定，微调能给出批准的退群天数吗？</summary>
 
-不能；业务规则需正式决定，模型不能创造权威事实。</details>
+不能；业务规则需正式决定，模型不能创造权威事实。
+
+</details>
 
 <details><summary>18. 没有合规数据许可但有大量真实私聊，可直接训练吗？</summary>
 
-不能；先解决来源、授权、最小化、删除与标注前提。</details>
+不能；先解决来源、授权、最小化、删除与标注前提。
+
+</details>
 
 <details><summary>19. 图文模型识别出私有截图内容，`u-b` 就能看吗？</summary>
 
-不能；媒体授权与输出权限仍由应用判断。</details>
+不能；媒体授权与输出权限仍由应用判断。
+
+</details>
 
 <details><summary>20. LoRA 的实验只看训练集分数足够吗？</summary>
 
-不足；要独立未见集、业务桶、拒答/权限硬门和成本/版本记录。</details>
+不足；要独立未见集、业务桶、拒答/权限硬门和成本/版本记录。
+
+</details>
 
 <details><summary>21. 量化后模型更省内存但 q-02 误说 R9 生效，能采用吗？</summary>
 
-不能按当前业务门采用；先查质量回归并在同题集验证。</details>
+不能按当前业务门采用；先查质量回归并在同题集验证。
+
+</details>
 
 <details><summary>22. 何时可暂不做微调/多模态？</summary>
 
-当现有缺口由资料、权限、提示或检索解决，或缺合规数据/未见评测/真实图文需求时。</details>
+当现有缺口由资料、权限、提示或检索解决，或缺合规数据/未见评测/真实图文需求时。
+
+</details>
 
 ## 本章完成标准与后续路径
 

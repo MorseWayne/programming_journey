@@ -173,91 +173,135 @@ HTTP/WS 边界：限量读入、解析 DTO、得到可信主体、映射外部�
 
 <details><summary>1. 用例等于一个 URL 吗？</summary>
 
-不等于。用例从用户目标、输入、前提、结果与失败承诺出发；URL 是后续传输表示。</details>
+不等于。用例从用户目标、输入、前提、结果与失败承诺出发；URL 是后续传输表示。
+
+</details>
 
 <details><summary>2. `u-a` 写在 JSON 中，就完成认证了吗？</summary>
 
-没有。客户端字段可伪造，可信主体需由服务端认证边界给出。</details>
+没有。客户端字段可伪造，可信主体需由服务端认证边界给出。
+
+</details>
 
 <details><summary>3. 认证与授权分别问什么？</summary>
 
-认证问请求主体是谁；授权问它能否对 `c-a` 执行读取或发送。</details>
+认证问请求主体是谁；授权问它能否对 `c-a` 执行读取或发送。
+
+</details>
 
 <details><summary>4. 知道 `c-a` 的 ID 就可以读其历史吗？</summary>
 
-不能。还需该主体对该会话的对象级读取权限。</details>
+不能。还需该主体对该会话的对象级读取权限。
+
+</details>
 
 <details><summary>5. 读取权限和发送权限一定一样吗？</summary>
 
-不一定；禁言、离开会话和历史可见范围都可能使它们不同。</details>
+不一定；禁言、离开会话和历史可见范围都可能使它们不同。
+
+</details>
 
 <details><summary>6. `SendDTO` 为什么不直接包含可信 `ActorID`？</summary>
 
-可信主体应由服务端边界填入领域命令，不从客户端 JSON 获得。</details>
+可信主体应由服务端边界填入领域命令，不从客户端 JSON 获得。
+
+</details>
 
 <details><summary>7. 路径写 `c-a`、正文又写 `c-b` 会怎样？</summary>
 
-产生两个冲突目标；本教学接口只在路径给会话 ID，或另行定义一致性校验。</details>
+产生两个冲突目标；本教学接口只在路径给会话 ID，或另行定义一致性校验。
+
+</details>
 
 <details><summary>8. 本地 JSON v1 自动是未来网络 DTO 吗？</summary>
 
-不是。文件合同和网络表示分别版本化、校验与演进。</details>
+不是。文件合同和网络表示分别版本化、校验与演进。
+
+</details>
 
 <details><summary>9. 原始请求上限等于正文 6 字节上限吗？</summary>
 
-不等于。JSON、路径等也占字节；两项规则的对象和目的不同。</details>
+不等于。JSON、路径等也占字节；两项规则的对象和目的不同。
+
+</details>
 
 <details><summary>10. `你好` 在本教学正文规则下合法吗？</summary>
 
-合法。UTF-8 为 6 字节，等于上限允许。</details>
+合法。UTF-8 为 6 字节，等于上限允许。
+
+</details>
 
 <details><summary>11. `你好呀` 的 9 字节正文会怎样？</summary>
 
-超出 6 字节上限，被拒，内存消息状态不应改变。</details>
+超出 6 字节上限，被拒，内存消息状态不应改变。
+
+</details>
 
 <details><summary>12. 客户端时间能直接当作服务端受理顺序吗？</summary>
 
-不能。它是客户端声明，服务端顺序需按自己的规则定义。</details>
+不能。它是客户端声明，服务端顺序需按自己的规则定义。
+
+</details>
 
 <details><summary>13. 为何先认证再解释 `c-a` 是否存在的外部错误？</summary>
 
-资源存在性可能是敏感信息；外部错误披露顺序要有安全合同。</details>
+资源存在性可能是敏感信息；外部错误披露顺序要有安全合同。
+
+</details>
 
 <details><summary>14. 两任务同时送 `c-a/m-a`，只在锁外判重够吗？</summary>
 
-不够。判重和内存写入必须在同一临界区，否则两者可同时通过检查。</details>
+不够。判重和内存写入必须在同一临界区，否则两者可同时通过检查。
+
+</details>
 
 <details><summary>15. 同一消息 ID 在不同会话一定冲突吗？</summary>
 
-本题唯一性以会话为作用域，若两个会话都授权，可以各有 `m-a`。</details>
+本题唯一性以会话为作用域，若两个会话都授权，可以各有 `m-a`。
+
+</details>
 
 <details><summary>16. 内存已受理说明磁盘写入成功了吗？</summary>
 
-不说明。本章没有持久层，进程退出还可能失去内存状态。</details>
+不说明。本章没有持久层，进程退出还可能失去内存状态。
+
+</details>
 
 <details><summary>17. 服务已受理但响应丢失，A 能断言“没保存”吗？</summary>
 
-不能。外部结果未知，需要后续查询、重试和幂等合同。</details>
+不能。外部结果未知，需要后续查询、重试和幂等合同。
+
+</details>
 
 <details><summary>18. 业务拒绝后原消息应怎样？</summary>
 
-保持原正文和列表顺序，不交付半份受理状态。</details>
+保持原正文和列表顺序，不交付半份受理状态。
+
+</details>
 
 <details><summary>19. HTTP 200 一定等于 B 设备收到 `m-a` 吗？</summary>
 
-不一定。HTTP 状态要按哪次请求与应用确认点解释。</details>
+不一定。HTTP 状态要按哪次请求与应用确认点解释。
+
+</details>
 
 <details><summary>20. 只有源码里的 `SendMsg` 名称能证明送达吗？</summary>
 
-不能。已核对范围仅有部分输入处理和会话类型分支，后续路径需另查。</details>
+不能。已核对范围仅有部分输入处理和会话类型分支，后续路径需另查。
+
+</details>
 
 <details><summary>21. S2 用固定虚构主体的测试桩可以公开部署吗？</summary>
 
-不可以。它只支持隔离教学练习，真实认证与授权在 S3 完成。</details>
+不可以。它只支持隔离教学练习，真实认证与授权在 S3 完成。
+
+</details>
 
 <details><summary>22. 本章状态图能证明已读吗？</summary>
 
-不能。它只到本进程内存受理，设备接收与用户阅读均需独立证据。</details>
+不能。它只到本进程内存受理，设备接收与用户阅读均需独立证据。
+
+</details>
 
 ## 来源与下一步
 

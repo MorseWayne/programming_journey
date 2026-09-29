@@ -30,9 +30,9 @@
   "original_sha256": "7e2ca14e55ab7b7ea5098dd8798593b2eb5a1400710870c6aca23e853cd0601f",
   "original_characters": 31227,
   "generation_request_sha256": "fdaa0aa35372fe60b51669191ad5f9869eaac616ebf967a1d4b5212a0d4f50c4",
-  "reviewed_sha256": "db31417e5156f4d6584571ecfe74787e102fbbe5955205b956bce77c43a315f5",
-  "reviewed_characters": 10190,
+  "reviewed_sha256": "5fbffe631163d1d034f998bba41c96d1abb4416dd257a175d98df1df52ad64da",
+  "reviewed_characters": 10234,
   "reviewed_chinese_characters": 3842,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/12_engineer_long_term_responsibility.md",
-  "course_sha256": "d7259c3228e415848f3b3418cf6a9901c5106ca589870cf2dd6cb8d75bc97a53"
+  "course_sha256": "08819ba51dadd1e2ce4ad6644de79c1fdb34cb12c0cf7e1ff45b4d9820dd68fa"
 }

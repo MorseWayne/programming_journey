@@ -110,95 +110,139 @@ JSON 编解码会按类型和标签处理常见字段，仍不知道 `u-b` 是�
 
 <details><summary>1. `var x any = Message{}` 的静态类型与动态类型各是什么？</summary>
 
-静态类型是 `any`，动态类型是 `Message`。</details>
+静态类型是 `any`，动态类型是 `Message`。
+
+</details>
 
 <details><summary>2. `reflect.TypeOf(x)` 主要告诉你什么？</summary>
 
-接口中动态值的具体类型信息。</details>
+接口中动态值的具体类型信息。
+
+</details>
 
 <details><summary>3. 定义类型 `MessageID` 的 Type 与 Kind 必相同吗？</summary>
 
-不是；Type 可区分 MessageID，Kind 是更粗的 string 类别。</details>
+不是；Type 可区分 MessageID，Kind 是更粗的 string 类别。
+
+</details>
 
 <details><summary>4. `reflect.TypeOf(nil)` 返回什么？</summary>
 
-nil 的 `reflect.Type`。</details>
+nil 的 `reflect.Type`。
+
+</details>
 
 <details><summary>5. `reflect.ValueOf(nil)` 可直接调用 `Type()` 吗？</summary>
 
-不可；先看 `IsValid()`，它给无效零 Value。</details>
+不可；先看 `IsValid()`，它给无效零 Value。
+
+</details>
 
 <details><summary>6. 接口装 `(*Message)(nil)` 时接口本身等于 nil 吗？</summary>
 
-不等于；有动态类型 *Message，但其动态指针值为 nil。</details>
+不等于；有动态类型 *Message，但其动态指针值为 nil。
+
+</details>
 
 <details><summary>7. `IsNil()` 对任何 Value 都可调用吗？</summary>
 
-不可；只对支持 nil 的 Kind 且有效 Value 调用。</details>
+不可；只对支持 nil 的 Kind 且有效 Value 调用。
+
+</details>
 
 <details><summary>8. `reflect.ValueOf(m).CanSet()` 在示例中为何为 false？</summary>
 
-它拿到传入接口的值副本，不能改原变量。</details>
+它拿到传入接口的值副本，不能改原变量。
+
+</details>
 
 ### 推演 9–16：指针、标签与 JSON
 
 <details><summary>9. 要修改 m.Body，反射入口应怎样取？</summary>
 
-`reflect.ValueOf(&m).Elem()`，再取导出字段并检查有效性/Kind/CanSet。</details>
+`reflect.ValueOf(&m).Elem()`，再取导出字段并检查有效性/Kind/CanSet。
+
+</details>
 
 <details><summary>10. `FieldByName("Missing")` 没找到后先检查什么？</summary>
 
-`IsValid()`；无效值继续取类型或设置会失败/panic。</details>
+`IsValid()`；无效值继续取类型或设置会失败/panic。
+
+</details>
 
 <details><summary>11. 有 m 的指针就能设置未导出 note 吗？</summary>
 
-不能按普通反射这样做；未导出字段不可直接作为可设置公开字段。</details>
+不能按普通反射这样做；未导出字段不可直接作为可设置公开字段。
+
+</details>
 
 <details><summary>12. `Tag.Get("json")` 对 `json:"body,omitempty"` 得到什么？</summary>
 
-`body,omitempty` 整个字符串，解析选项是使用者的工作。</details>
+`body,omitempty` 整个字符串，解析选项是使用者的工作。
+
+</details>
 
 <details><summary>13. Get 返回空串能区分标签缺失与显式空值吗？</summary>
 
-不能；需要 `Lookup` 的第二个布尔结果。</details>
+不能；需要 `Lookup` 的第二个布尔结果。
+
+</details>
 
 <details><summary>14. `json.Unmarshal(data, m)` 与 `json.Unmarshal(data, &m)` 哪个可写目标？</summary>
 
-通常后者；解码需要可修改的目标，并检查错误。</details>
+通常后者；解码需要可修改的目标，并检查错误。
+
+</details>
 
 <details><summary>15. JSON 缺 body 字段后 m.Body 为空，能断言用户显式发了空串吗？</summary>
 
-不能；缺失与零值可能合流，要按协议另记字段存在性。</details>
+不能；缺失与零值可能合流，要按协议另记字段存在性。
+
+</details>
 
 <details><summary>16. `DisallowUnknownFields` 可代替成员授权和 6 B 校验吗？</summary>
 
-不能；它只处理未识别的 JSON 结构体字段，业务检查仍独立。</details>
+不能；它只处理未识别的 JSON 结构体字段，业务检查仍独立。
+
+</details>
 
 ### 决策 17–22：性能与业务边界
 
 <details><summary>17. `SetString("公告")` 成功是否说明正文已通过所有 S2 校验？</summary>
 
-不是；还要检查字节、ID、权限、请求体等，且只是在内存中赋值。</details>
+不是；还要检查字节、ID、权限、请求体等，且只是在内存中赋值。
+
+</details>
 
 <details><summary>18. `unsafe.Sizeof(m)` 等于 JSON 请求体字节数吗？</summary>
 
-不等于；它观察内存布局，不是序列化长度。</details>
+不等于；它观察内存布局，不是序列化长度。
+
+</details>
 
 <details><summary>19. `len([]byte("公告"))` 是多少？</summary>
 
-UTF-8 编码两个汉字各 3 B，共 **6 B**。</details>
+UTF-8 编码两个汉字各 3 B，共 **6 B**。
+
+</details>
 
 <details><summary>20. 只有 Message 一种结构时，应先自己写反射编码器吗？</summary>
 
-不应；先用标准库和明确字段/业务校验，动态需求确立后再考虑。</details>
+不应；先用标准库和明确字段/业务校验，动态需求确立后再考虑。
+
+</details>
 
 <details><summary>21. 反射能让无权 u-b 看 doc-private 吗？</summary>
 
-不能；访问授权由应用规则决定，不随反射/unsafe 改变。</details>
+不能；访问授权由应用规则决定，不随反射/unsafe 改变。
+
+</details>
 
 <details><summary>22. 想说反射性能差，先要什么证据？</summary>
 
-在明确负载下的剖析/对照，确认瓶颈和改动前后质量/资源变化。</details>
+在明确负载下的剖析/对照，确认瓶颈和改动前后质量/资源变化。
+
+</details>
 
 ## 本章完成标准与后续路径
 

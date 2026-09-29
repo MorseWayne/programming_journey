@@ -29,9 +29,9 @@
   "original_sha256": "5e951398d7108f54d4f0d938ca27ae9b2bd022a0c66c754d899fd80b3575789a",
   "original_characters": 31870,
   "generation_request_sha256": "82a294dcfb62fbf8a75915c533a31accd0cbe9196e97646d91ee86ac94129fcf",
-  "reviewed_sha256": "dc0a868614307c29b69ed0609e93224f59c81f5a93afc020de9b7e7296b1c7f9",
-  "reviewed_characters": 10609,
+  "reviewed_sha256": "282d6f4a96d4f04790c5bd0107ef00f733bfcc4faa22b1d281b5ae1ac52ab1e8",
+  "reviewed_characters": 10653,
   "reviewed_chinese_characters": 3603,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/11_complex_im_defense.md",
-  "course_sha256": "05a810c9f1e1d0a9b592f2604f3bb1f1c8063e12104b6da5f74acd30c17a0eae"
+  "course_sha256": "34ea5be1e286fa90c2a9b87d3333e742bafd8a0f5092593b0e14175b50a3ef95"
 }

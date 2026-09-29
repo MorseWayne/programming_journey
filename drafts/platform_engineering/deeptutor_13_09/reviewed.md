@@ -106,95 +106,139 @@
 
 <details><summary>1. 各团队 PR 都合并能证明 B 25h 补拉吗？</summary>
 
-不能。还需批准的历史规则、真实保留/权威、客户端能力和端到端结果证据。</details>
+不能。还需批准的历史规则、真实保留/权威、客户端能力和端到端结果证据。
+
+</details>
 
 <details><summary>2. `/v1` 当前 200 到哪一层？</summary>
 
-`accepted_in_memory` 只表示本进程内存受理。</details>
+`accepted_in_memory` 只表示本进程内存受理。
+
+</details>
 
 <details><summary>3. 未来 `/v2` 即使获批，正文上限是多少？</summary>
 
-仍为 6 UTF-8 B；R9 6→9 B 独立待审。</details>
+仍为 6 UTF-8 B；R9 6→9 B 独立待审。
+
+</details>
 
 <details><summary>4. 契约卡至少写哪两方？</summary>
 
-提供者和使用者，还要版本、输入/输出、失败/重试、确认点与验证责任。</details>
+提供者和使用者，还要版本、输入/输出、失败/重试、确认点与验证责任。
+
+</details>
 
 <details><summary>5. `E9=evt:m-9:v1` 是第二条权威消息吗？</summary>
 
-不是，是未来由权威消息派生的稳定事件身份。</details>
+不是，是未来由权威消息派生的稳定事件身份。
+
+</details>
 
 <details><summary>6. 当前同 ID 重复提交应怎样？</summary>
 
-按 `/v1` 合同返回 409，即使正文相同。</details>
+按 `/v1` 合同返回 409，即使正文相同。
+
+</details>
 
 <details><summary>7. 成员历史规则由单个 Go 工程师直接拍板吗？</summary>
 
-不能。产品/安全要确定规则与例子，Go/History 实现并验证。</details>
+不能。产品/安全要确定规则与例子，Go/History 实现并验证。
+
+</details>
 
 <details><summary>8. 三副本 Ready 就代表跨团队交付完成吗？</summary>
 
-不能。它不证明消息确认、权限、设备补拉或回退。</details>
+不能。它不证明消息确认、权限、设备补拉或回退。
+
+</details>
 
 ### 推演 9–16：前置关系与反例
 
 <details><summary>9. DB schema 可在历史可见规则未定时设计吗？</summary>
 
-可准备兼容草案；不能因此启用 B 历史读取或声称里程碑 2 过门。</details>
+可准备兼容草案；不能因此启用 B 历史读取或声称里程碑 2 过门。
+
+</details>
 
 <details><summary>10. 哪项证据先于 `/v2` 返回 stored？</summary>
 
-经批准的权威 DB 写入确认、稳定 ID/唯一规则和 DB 故障/超时查证合同。</details>
+经批准的权威 DB 写入确认、稳定 ID/唯一规则和 DB 故障/超时查证合同。
+
+</details>
 
 <details><summary>11. 新客户端能解析 seq，就可随机把同一会话一半请求送旧 Pod 吗？</summary>
 
-不能。还需单一权威与 cohort/会话路由，避免同 ID 的两套确认与历史。</details>
+不能。还需单一权威与 cohort/会话路由，避免同 ID 的两套确认与历史。
+
+</details>
 
 <details><summary>12. DB 已有 `m-9/seq9`，E9 未发，谁负责什么？</summary>
 
-DB 权威不能被否认；Go/数据/Transfer/值班按已定义恢复与告警责任补事件，不冒称 B 已收到。</details>
+DB 权威不能被否认；Go/数据/Transfer/值班按已定义恢复与告警责任补事件，不冒称 B 已收到。
+
+</details>
 
 <details><summary>13. B 连续到 7、先见 9 缺 8，谁的合同被考验？</summary>
 
-History 的有序补拉与客户端每设备连续游标；不能推进为 9。</details>
+History 的有序补拉与客户端每设备连续游标；不能推进为 9。
+
+</details>
 
 <details><summary>14. B 离线 25h、broker 仅留 24h，谁还要协作？</summary>
 
-产品/安全定有权窗口，数据保证真实保留，History/客户端补拉，值班观察恢复。</details>
+产品/安全定有权窗口，数据保证真实保留，History/客户端补拉，值班观察恢复。
+
+</details>
 
 <details><summary>15. 旧客户端发 7 B，新 Go 版本可直接接纳吗？</summary>
 
-不能。`/v1` 仍为 6 B，R9 尚待独立批准。</details>
+不能。`/v1` 仍为 6 B，R9 尚待独立批准。
+
+</details>
 
 <details><summary>16. `/v2` 已确认 stored 后回滚 D2→D1 并关 DB 读，会怎样？</summary>
 
-已确认消息对用户不可见；须保留兼容读、暂停新写或前进修复，不能删除权威数据。</details>
+已确认消息对用户不可见；须保留兼容读、暂停新写或前进修复，不能删除权威数据。
+
+</details>
 
 ### 决策 17–22：里程碑和故障交接
 
 <details><summary>17. 历史可见规则未定，可把 B 补拉测试记已完成吗？</summary>
 
-不能。是权限验收阻断项，可继续其它独立准备。</details>
+不能。是权限验收阻断项，可继续其它独立准备。
+
+</details>
 
 <details><summary>18. 一份消费者/提供者契约测试能证明 DB 故障可恢复吗？</summary>
 
-不能。它可验证交互期望，还需 DB/事件/客户端故障和业务观察证据。</details>
+不能。它可验证交互期望，还需 DB/事件/客户端故障和业务观察证据。
+
+</details>
 
 <details><summary>19. 未来 E9 重投，谁保证不变第二条权威消息？</summary>
 
-Go/数据守稳定消息 ID 与权威唯一性，Transfer 消费规则处理重复，值班可观察差异。</details>
+Go/数据守稳定消息 ID 与权威唯一性，Transfer 消费规则处理重复，值班可观察差异。
+
+</details>
 
 <details><summary>20. 里程碑 3 扩量前至少关闭哪类风险？</summary>
 
-当前合同、DB 强确认、权限/旧端能力、重投/补拉与已存数据的回退兼容读阻断项。</details>
+当前合同、DB 强确认、权限/旧端能力、重投/补拉与已存数据的回退兼容读阻断项。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明其团队分工和交付流程吗？</summary>
 
-不能；只支持所读发送到 MQ 与另一 Mongo 消费路径的异步边界。</details>
+不能；只支持所读发送到 MQ 与另一 Mongo 消费路径的异步边界。
+
+</details>
 
 <details><summary>22. 交付板一项真正完成需附什么？</summary>
 
-owner、输入依赖、版本化契约与产物、可复核证据、决定人、停止/升级条件和共同用户结果。</details>
+owner、输入依赖、版本化契约与产物、可复核证据、决定人、停止/升级条件和共同用户结果。
+
+</details>
 
 ## 本章完成标准与后续路径
 

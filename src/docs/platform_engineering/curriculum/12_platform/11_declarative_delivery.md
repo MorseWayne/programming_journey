@@ -117,95 +117,139 @@ Kubernetes **API 审计**可记录集群 API 请求，具体事件取决于审�
 
 <details><summary>1. `LOG_LEVEL=info→debug` 改的是哪类对象？</summary>
 
-非秘密运行配置；本例不改 Go 源、镜像 D1、消息数据或 `/v1` 合同。</details>
+非秘密运行配置；本例不改 Go 源、镜像 D1、消息数据或 `/v1` 合同。
+
+</details>
 
 <details><summary>2. 为什么要记录镜像 digest D1，而不只记录标签？</summary>
 
-标签可改指向；digest 才标识这次引用的内容。</details>
+标签可改指向；digest 才标识这次引用的内容。
+
+</details>
 
 <details><summary>3. `spec` 与 `status` 在此例各表达什么？</summary>
 
-`spec` 是期望工作负载形状；`status` 是平台观察到的状态。二者都不等于业务成功。</details>
+`spec` 是期望工作负载形状；`status` 是平台观察到的状态。二者都不等于业务成功。
+
+</details>
 
 <details><summary>4. Git 合并 G2 能证明三个网关进程均为 debug 吗？</summary>
 
-不能。还要渲染、同步、受理、替换/重载并逐 Pod 核对生效值。</details>
+不能。还要渲染、同步、受理、替换/重载并逐 Pod 核对生效值。
+
+</details>
 
 <details><summary>5. 当前 S2 `/v1` 成功 200 证明什么？</summary>
 
-`accepted_in_memory` 只证明本进程内存受理，不证明 DB 权威、事件保留或 B 设备收到。</details>
+`accepted_in_memory` 只证明本进程内存受理，不证明 DB 权威、事件保留或 B 设备收到。
+
+</details>
 
 <details><summary>6. ConfigMap 可装数据库密码明文并公开入 Git 吗？</summary>
 
-不能。ConfigMap 面向非秘密数据；凭据按受控 Secret/外部机制和权限管理，明文不入库。</details>
+不能。ConfigMap 面向非秘密数据；凭据按受控 Secret/外部机制和权限管理，明文不入库。
+
+</details>
 
 <details><summary>7. 相同输入渲染出同 M2，表示两个环境的 Pod UID 相同吗？</summary>
 
-不表示；可重复的是目标清单内容，运行状态和外部数据独立变化。</details>
+不表示；可重复的是目标清单内容，运行状态和外部数据独立变化。
+
+</details>
 
 <details><summary>8. OpenGitOps 四原则是什么？</summary>
 
-目标声明式、版本化且保留不可变历史、代理自动拉取、持续观察并尝试调谐。</details>
+目标声明式、版本化且保留不可变历史、代理自动拉取、持续观察并尝试调谐。
+
+</details>
 
 ### 推演 9–16：沿边界找首个失配
 
 <details><summary>9. G2 是 debug、M2 仍 info，先查什么？</summary>
 
-先查环境覆盖顺序、模板输入、默认值和渲染版本；集群尚非首个失配点。</details>
+先查环境覆盖顺序、模板输入、默认值和渲染版本；集群尚非首个失配点。
+
+</details>
 
 <details><summary>10. M2 正确、API ConfigMap 仍 info，先查什么？</summary>
 
-查交付代理是否取得 G2、同步失败/冲突、目标命名空间和 API 写权限。</details>
+查交付代理是否取得 G2、同步失败/冲突、目标命名空间和 API 写权限。
+
+</details>
 
 <details><summary>11. API ConfigMap 已 debug，三个旧 Pod 环境变量为何仍 info？</summary>
 
-环境变量在 Pod/容器启动时形成快照；更新 ConfigMap 不会自动改旧进程环境。</details>
+环境变量在 Pod/容器启动时形成快照；更新 ConfigMap 不会自动改旧进程环境。
+
+</details>
 
 <details><summary>12. 此时 HPA 新建 P4，可能出现什么混跑？</summary>
 
-P4 读到 debug，旧 P1–P3 仍 info；要逐 Pod 核对而非只看 ConfigMap/Ready 数。</details>
+P4 读到 debug，旧 P1–P3 仍 info；要逐 Pod 核对而非只看 ConfigMap/Ready 数。
+
+</details>
 
 <details><summary>13. 本例纸上方案如何让旧 Pod 加载 K2？</summary>
 
-同时改变 Pod 模板版本标记以触发受控滚动替换，按预算摘流并验证新 Pod 生效 K2。</details>
+同时改变 Pod 模板版本标记以触发受控滚动替换，按预算摘流并验证新 Pod 生效 K2。
+
+</details>
 
 <details><summary>14. 若用 ConfigMap 卷投影，文件变化是否等于 Go 进程变量变化？</summary>
 
-不是。传播有延迟，进程需约定重载；`subPath` 挂载不会收到 ConfigMap 更新。</details>
+不是。传播有延迟，进程需约定重载；`subPath` 挂载不会收到 ConfigMap 更新。
+
+</details>
 
 <details><summary>15. 目标三副本、status 两 Ready，必然是手工漂移吗？</summary>
 
-不必然；资源不足、调度、拉镜像、探针或启动失败都可能造成控制循环未收敛。</details>
+不必然；资源不足、调度、拉镜像、探针或启动失败都可能造成控制循环未收敛。
+
+</details>
 
 <details><summary>16. 活 ConfigMap 被手改 trace，下一步先核对什么？</summary>
 
-核对受管理字段、写入者、审计记录、字段所有权与预期调谐/应急授权，再决定纠回或回写。</details>
+核对受管理字段、写入者、审计记录、字段所有权与预期调谐/应急授权，再决定纠回或回写。
+
+</details>
 
 ### 决策 17–22：权限、审计、回退
 
 <details><summary>17. `kubectl apply` 一次就能宣称完整 GitOps 吗？</summary>
 
-不能。还需版本化目标由代理自动拉取并持续观察/调谐。</details>
+不能。还需版本化目标由代理自动拉取并持续观察/调谐。
+
+</details>
 
 <details><summary>18. Server-Side Apply 遇字段冲突，直接强制覆盖好吗？</summary>
 
-先查 `managedFields`、HPA/控制器和配置所有权；只有明确移交或纠错方案后才选操作，不能盲盖。</details>
+先查 `managedFields`、HPA/控制器和配置所有权；只有明确移交或纠错方案后才选操作，不能盲盖。
+
+</details>
 
 <details><summary>19. API 审计能替代 IM 成员授权或设备 ACK 吗？</summary>
 
-不能。API 审计记录集群 API 操作；成员权限和设备确认属于应用业务层。</details>
+不能。API 审计记录集群 API 操作；成员权限和设备确认属于应用业务层。
+
+</details>
 
 <details><summary>20. 全部 Pod K2 生效却发现旧 9 B `/v1` 被接纳，能关单吗？</summary>
 
-不能。R9 未批准，当前 6 B 合同被破坏；按业务停止门调查/回退相应变更。</details>
+不能。R9 未批准，当前 6 B 合同被破坏；按业务停止门调查/回退相应变更。
+
+</details>
 
 <details><summary>21. 本次 D1 从未变，只回滚镜像能恢复 info 吗？</summary>
 
-不能。应回滚配置 K2→K1 并按受控流程更新 Pod，随后核对逐 Pod 生效值和业务结果。</details>
+不能。应回滚配置 K2→K1 并按受控流程更新 Pod，随后核对逐 Pod 生效值和业务结果。
+
+</details>
 
 <details><summary>22. 一张可审交付卡至少列哪些证据？</summary>
 
-评审与 Git 修订、环境输入和渲染散列、镜像 digest、API 写入/字段管理者、Pod UID 与生效版本、旧合同观察、停止与回退责任。</details>
+评审与 Git 修订、环境输入和渲染散列、镜像 digest、API 写入/字段管理者、Pod UID 与生效版本、旧合同观察、停止与回退责任。
+
+</details>
 
 ## 本章完成标准与后续路径
 

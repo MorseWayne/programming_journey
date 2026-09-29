@@ -95,91 +95,135 @@ Pool.Get → 当前工作者独占借用 → 重置/编码 → 确认所有异�
 
 <details><summary>1. 10000 目标各复制 1 KiB，纯数据约多少 MiB？</summary>
 
-10000 KiB≈9.77 MiB，未计其他内存和协议开销。</details>
+10000 KiB≈9.77 MiB，未计其他内存和协议开销。
+
+</details>
 
 <details><summary>2. 每目标 32 B 元数据共多少 KiB？</summary>
 
-320000 B=312.5 KiB。</details>
+320000 B=312.5 KiB。
+
+</details>
 
 <details><summary>3. 再加一份共享 1 KiB 正文，总纯数据是多少？</summary>
 
-313.5 KiB；不是 HeapAlloc 或 RSS。</details>
+313.5 KiB；不是 HeapAlloc 或 RSS。
+
+</details>
 
 <details><summary>4. 可把每目标权限与设备封套也无条件共享吗？</summary>
 
-不能。与目标身份/可见性相关的数据必须分别校验和保存。</details>
+不能。与目标身份/可见性相关的数据必须分别校验和保存。
+
+</details>
 
 <details><summary>5. 共享可变 `[]byte` 让两个 worker 一读一写会怎样？</summary>
 
-可能数据竞争与内容串改；共享部分应不可变或另外同步。</details>
+可能数据竞争与内容串改；共享部分应不可变或另外同步。
+
+</details>
 
 <details><summary>6. `sync.Pool.Put` 后还可继续使用对象吗？</summary>
 
-不应。所有权已归还，其他调用者可能取得并修改它。</details>
+不应。所有权已归还，其他调用者可能取得并修改它。
+
+</details>
 
 <details><summary>7. `Pool.Get` 保证取回刚才放的对象吗？</summary>
 
-不保证。运行时可丢弃池项，Get 也可按 API 规则返回别的值。</details>
+不保证。运行时可丢弃池项，Get 也可按 API 规则返回别的值。
+
+</details>
 
 <details><summary>8. `sync.Pool` 能当稳定的容量为 100 的缓存吗？</summary>
 
-不能。它不提供固定保留数量或持久业务状态。</details>
+不能。它不提供固定保留数量或持久业务状态。
+
+</details>
 
 <details><summary>9. `Reset` 缓冲逻辑长度就保证旧用户字节被清零吗？</summary>
 
-不保证。按敏感数据的实际可见范围清理并验证所有权。</details>
+不保证。按敏感数据的实际可见范围清理并验证所有权。
+
+</details>
 
 <details><summary>10. 异步写入还在用缓冲时能 Put 回池吗？</summary>
 
-不能，须等最后使用者结束或改用独立副本。</details>
+不能，须等最后使用者结束或改用独立副本。
+
+</details>
 
 <details><summary>11. 批大小 100、目标 10000，纸上需要多少批？</summary>
 
-100 批，前提是同一个后台接口支持这种批量操作。</details>
+100 批，前提是同一个后台接口支持这种批量操作。
+
+</details>
 
 <details><summary>12. 10000 个不同 socket 能由一次普通 write 全部发送吗？</summary>
 
-不能。每个连接有自己的 FD、流控与结果边界。</details>
+不能。每个连接有自己的 FD、流控与结果边界。
+
+</details>
 
 <details><summary>13. 一批 100 项中有 1 项失败，可以只返回“批成功”吗？</summary>
 
-不应。须能把目标身份和部分失败逐项对应。</details>
+不应。须能把目标身份和部分失败逐项对应。
+
+</details>
 
 <details><summary>14. 凑批可能增加哪类时延？</summary>
 
-等待批次形成的排队时延，尤其低负载或慢目标时。</details>
+等待批次形成的排队时延，尤其低负载或慢目标时。
+
+</details>
 
 <details><summary>15. 连续切片扫描一定比 map 点查快吗？</summary>
 
-不能一概而论。访问模式、规模、更新与局部性都要同负载测量。</details>
+不能一概而论。访问模式、规模、更新与局部性都要同负载测量。
+
+</details>
 
 <details><summary>16. `unsafe.Pointer` 让 go vet 安静就证明有效吗？</summary>
 
-不能。官方文档明确说无警告不是正确性的保证。</details>
+不能。官方文档明确说无警告不是正确性的保证。
+
+</details>
 
 <details><summary>17. CAS 一个标志能同时提交成员表、消息和队列吗？</summary>
 
-不能。CAS 只管理目标原子位置，跨对象/持久副作用另有协议。</details>
+不能。CAS 只管理目标原子位置，跨对象/持久副作用另有协议。
+
+</details>
 
 <details><summary>18. GOMAXPROCS 或无锁改写可替代未证明的锁热点吗？</summary>
 
-不能先假定有效。应先找出真实瓶颈和更简单的保护范围改法。</details>
+不能先假定有效。应先找出真实瓶颈和更简单的保护范围改法。
+
+</details>
 
 <details><summary>19. 旧方案 P95=300 ms、候选“待测”，能报告改善比例吗？</summary>
 
-不能。没有候选实际结果，不能编造收益。</details>
+不能。没有候选实际结果，不能编造收益。
+
+</details>
 
 <details><summary>20. 分配下降但队列、RSS 和 P99 同时上升，就可宣布优化成功吗？</summary>
 
-不能。可能把短命分配换成了长期积压或等待。</details>
+不能。可能把短命分配换成了长期积压或等待。
+
+</details>
 
 <details><summary>21. 一次改变共享、池化和批量三处，有何解释困难？</summary>
 
-无法把收益或退化可靠归因于哪项变化，应逐项对照。</details>
+无法把收益或退化可靠归因于哪项变化，应逐项对照。
+
+</details>
 
 <details><summary>22. 本章纸上 313.5 KiB 能证明真实 OpenIM 内存吗？</summary>
 
-不能。它只在虚构目标大小与共享策略前提下成立。</details>
+不能。它只在虚构目标大小与共享策略前提下成立。
+
+</details>
 
 ## 来源与下一步
 

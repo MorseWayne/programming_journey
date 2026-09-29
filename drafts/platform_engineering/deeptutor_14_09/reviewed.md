@@ -91,95 +91,139 @@ ARES 等原始 RAG 评测研究将检索相关性、回答忠实度等层分开�
 
 <details><summary>1. `q-01` 的当前正确答案是什么，金资料是哪份？</summary>
 
-当前 `/v1` 正文上限 6 UTF-8 B，金资料是 current 状态的 `doc-current`。</details>
+当前 `/v1` 正文上限 6 UTF-8 B，金资料是 current 状态的 `doc-current`。
+
+</details>
 
 <details><summary>2. `doc-r9` 写 9 B 就意味着当前可发 9 B 吗？</summary>
 
-不意味着；它是 proposed，R9 6→9 B 待审。</details>
+不意味着；它是 proposed，R9 6→9 B 待审。
+
+</details>
 
 <details><summary>3. `u-b` 问 `doc-private` 内容，能先把正文送模型再要求别泄露吗？</summary>
 
-不能。scope 为 `u-a-only`，在检索/提示前拒绝，且不泄正文/存在细节。</details>
+不能。scope 为 `u-a-only`，在检索/提示前拒绝，且不泄正文/存在细节。
+
+</details>
 
 <details><summary>4. `q-04` 的退群历史规则未定，应猜“能看”吗？</summary>
 
-不能。标规则待产品/安全决定，按现有授权边界拒答或说明未知。</details>
+不能。标规则待产品/安全决定，按现有授权边界拒答或说明未知。
+
+</details>
 
 <details><summary>5. `q-05` 当前 200 可证明 B 设备收到吗？</summary>
 
-不能；`accepted_in_memory` 只到本进程内存受理。</details>
+不能；`accepted_in_memory` 只到本进程内存受理。
+
+</details>
 
 <details><summary>6. `q-06` 的 25h/24h 说明什么？</summary>
 
-不能仅靠留 24h 的教学 broker 补全 25h 离线；未来 DB 需真实保留且有权可读。</details>
+不能仅靠留 24h 的教学 broker 补全 25h 离线；未来 DB 需真实保留且有权可读。
+
+</details>
 
 <details><summary>7. 基线为何在关键词匹配前先过滤 scope？</summary>
 
-避免无权资料进入候选/提示；相似度或关键词命中不授予访问权。</details>
+避免无权资料进入候选/提示；相似度或关键词命中不授予访问权。
+
+</details>
 
 <details><summary>8. 六题可代表真实用户问题比例吗？</summary>
 
-不能。它们是人为挑出的教学问题桶，小样本不支持总体产品指标。</details>
+不能。它们是人为挑出的教学问题桶，小样本不支持总体产品指标。
+
+</details>
 
 ### 组件 9–16：召回、证据与泄漏
 
 <details><summary>9. 哪四题放入本章有金证据的检索召回分母？</summary>
 
-`q-01/q-02/q-05/q-06`；`q-03` 是权限拒绝，`q-04` 规则未定。</details>
+`q-01/q-02/q-05/q-06`；`q-03` 是权限拒绝，`q-04` 规则未定。
+
+</details>
 
 <details><summary>10. `q-02` 只检到 `doc-r9`，能算完整命中吗？</summary>
 
-不能。它还需要当前 `doc-current` 才能说明提议未替代现行合同。</details>
+不能。它还需要当前 `doc-current` 才能说明提议未替代现行合同。
+
+</details>
 
 <details><summary>11. 纸上 top2 四题中三题命中完整证据，Recall@2 是多少？</summary>
 
-`3/4=0.75`，只是假设排名，不是实际运行结果。</details>
+`3/4=0.75`，只是假设排名，不是实际运行结果。
+
+</details>
 
 <details><summary>12. 某题 top2 只有一份相关且有权资料，Precision@2 多少？</summary>
 
-`1/2=0.5`；先有明确相关性标注。</details>
+`1/2=0.5`；先有明确相关性标注。
+
+</details>
 
 <details><summary>13. 无权文档进了提示，但最终回答没引用它，可算权限通过吗？</summary>
 
-不能。权限硬门在提示输入之前已失败。</details>
+不能。权限硬门在提示输入之前已失败。
+
+</details>
 
 <details><summary>14. 答案末尾有引用链接，就能证明每句被支持吗？</summary>
 
-不能。需逐个关键主张与有权、当前原文核对。</details>
+不能。需逐个关键主张与有权、当前原文核对。
+
+</details>
 
 <details><summary>15. 同一 `c-a` 片段改写后分别进开发与最终集，有何风险？</summary>
 
-近重复泄漏使最终结果过分乐观；按目标分组并保留去重记录。</details>
+近重复泄漏使最终结果过分乐观；按目标分组并保留去重记录。
+
+</details>
 
 <details><summary>16. 看了最终集错题再改关键词，仍可称独立最终测试吗？</summary>
 
-不能。最终集参与调参后已被“磨损”，需另留未见样本。</details>
+不能。最终集参与调参后已被“磨损”，需另留未见样本。
+
+</details>
 
 ### 决策 17–22：端到端与裁判
 
 <details><summary>17. `q-03/q-04` 正确拒答应一律记失败吗？</summary>
 
-不应。分别是权限拒绝与规则未定，按其各自标签记成功。</details>
+不应。分别是权限拒绝与规则未定，按其各自标签记成功。
+
+</details>
 
 <details><summary>18. q-01 答 9 B 时先查哪条边界？</summary>
 
-先查 current/proposed 资料状态和版本过滤，再看排序与生成。</details>
+先查 current/proposed 资料状态和版本过滤，再看排序与生成。
+
+</details>
 
 <details><summary>19. 自动裁判偏爱长回答可能造成什么？</summary>
 
-冗长但无证据/无权的回答获高分；应换序盲评并人工抽检。</details>
+冗长但无证据/无权的回答获高分；应换序盲评并人工抽检。
+
+</details>
 
 <details><summary>20. 可用其它五题的高分抵消 q-03 泄私有资料吗？</summary>
 
-不能。权限是独立硬门，须单列失败和影响。</details>
+不能。权限是独立硬门，须单列失败和影响。
+
+</details>
 
 <details><summary>21. 换模型后怎样才有可比较结果？</summary>
 
-固定问题/资料/权限/基线及版本，记录模型/提示/索引/窗口与同口径输出和成本。</details>
+固定问题/资料/权限/基线及版本，记录模型/提示/索引/窗口与同口径输出和成本。
+
+</details>
 
 <details><summary>22. 一张可复核评测卡至少留什么？</summary>
 
-actor、问题桶/标签、资料与权限版本、gold 证据、基线/候选输出、引用支持、分层错误、人工复核与不可比原因。</details>
+actor、问题桶/标签、资料与权限版本、gold 证据、基线/候选输出、引用支持、分层错误、人工复核与不可比原因。
+
+</details>
 
 ## 本章完成标准与后续路径
 

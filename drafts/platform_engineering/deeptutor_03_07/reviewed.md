@@ -110,91 +110,135 @@ close(fd8) 后：旧对象不再由这些 FD 持有，可由文件系统回收
 
 <details><summary>1. `/logs/chat.log` 是 inode 本身吗？</summary>
 
-不是。它是经目录解析找到文件对象的路径名。</details>
+不是。它是经目录解析找到文件对象的路径名。
+
+</details>
 
 <details><summary>2. inode 通常保存哪几类信息？</summary>
 
-文件类型、权限、大小、时间、硬链接数等元数据及数据定位信息。</details>
+文件类型、权限、大小、时间、硬链接数等元数据及数据定位信息。
+
+</details>
 
 <details><summary>3. 不同文件系统里的相同 inode 数字能证明同一文件吗？</summary>
 
-不能。inode 号只在所属文件系统内有标识意义，还要看设备身份。</details>
+不能。inode 号只在所属文件系统内有标识意义，还要看设备身份。
+
+</details>
 
 <details><summary>4. 两个硬链接名字指向同一 inode，删一个名字会删除另一个吗？</summary>
 
-不会。另一个目录项仍指向这个 inode。</details>
+不会。另一个目录项仍指向这个 inode。
+
+</details>
 
 <details><summary>5. 符号链接和硬链接等同吗？</summary>
 
-不等同。符号链接按保存的目标路径另行解析，可成为悬空链接。</details>
+不等同。符号链接按保存的目标路径另行解析，可成为悬空链接。
+
+</details>
 
 <details><summary>6. FD 是路径字符串吗？</summary>
 
-不是。FD 是进程 FD 表中的整数索引，指向打开文件描述。</details>
+不是。FD 是进程 FD 表中的整数索引，指向打开文件描述。
+
+</details>
 
 <details><summary>7. 打开文件描述主要保存什么状态？</summary>
 
-当前文件偏移、状态标志及关联的打开文件对象等。</details>
+当前文件偏移、状态标志及关联的打开文件对象等。
+
+</details>
 
 <details><summary>8. 旧日志的 `m-a\n` 和 `m-b\n` 各多少字节？</summary>
 
-按本章 ASCII 教学数据，`m-a\n` 和 `m-b\n` 各 4 字节，共 8 字节。</details>
+按本章 ASCII 教学数据，`m-a\n` 和 `m-b\n` 各 4 字节，共 8 字节。
+
+</details>
 
 <details><summary>9. `fd7` 从偏移 0 完整读 4 字节后，O1 偏移是多少？</summary>
 
-4，读到 `m-a\n`。</details>
+4，读到 `m-a\n`。
+
+</details>
 
 <details><summary>10. `dup(fd7)` 得 fd8 后，fd8 是否从 0 开始？</summary>
 
-不是。它与 fd7 共享 O1，开始时偏移为 4。</details>
+不是。它与 fd7 共享 O1，开始时偏移为 4。
+
+</details>
 
 <details><summary>11. fd8 再完整读 4 字节后，fd7 所见偏移是多少？</summary>
 
-8；两 FD 共享 O1 的偏移。</details>
+8；两 FD 共享 O1 的偏移。
+
+</details>
 
 <details><summary>12. 独立 `open` 同一路径得 fd9，初始偏移是多少？</summary>
 
-0；它创建独立的 O2，即使仍指向 I1。</details>
+0；它创建独立的 O2，即使仍指向 I1。
+
+</details>
 
 <details><summary>13. `rename chat.log→chat.log.1` 后，fd7 指向哪个 inode？</summary>
 
-仍是 I1，改名不会重定向已打开的 FD。</details>
+仍是 I1，改名不会重定向已打开的 FD。
+
+</details>
 
 <details><summary>14. 新建 `chat.log→I2` 后，旧 fd7 写入会写到 I2 吗？</summary>
 
-不会。fd7 仍沿 O1 写 I1；要写 I2 需打开并切换新 FD。</details>
+不会。fd7 仍沿 O1 写 I1；要写 I2 需打开并切换新 FD。
+
+</details>
 
 <details><summary>15. 旧 fd7 从偏移 8 完整写 `m-c\n` 后，I1 的长度是多少？</summary>
 
-12 字节，O1 偏移变成 12；这是没有并发修改与错误的纸上假设。</details>
+12 字节，O1 偏移变成 12；这是没有并发修改与错误的纸上假设。
+
+</details>
 
 <details><summary>16. `rename` 旧名再创建新名，两步之间原路径一直存在吗？</summary>
 
-不一定。本章顺序中两步之间 `/logs/chat.log` 暂不存在。</details>
+不一定。本章顺序中两步之间 `/logs/chat.log` 暂不存在。
+
+</details>
 
 <details><summary>17. `unlink(chat.log.1)` 后，fd7/fd8 会立即失效吗？</summary>
 
-不会。它们仍通过 O1 引用 I1。</details>
+不会。它们仍通过 O1 引用 I1。
+
+</details>
 
 <details><summary>18. 只关闭 fd7 后 I1 一定可回收吗？</summary>
 
-不能；fd8 还引用 O1，其他链接或引用也需核对。</details>
+不能；fd8 还引用 O1，其他链接或引用也需核对。
+
+</details>
 
 <details><summary>19. 相对路径按什么位置解析？</summary>
 
-按当前工作目录等路径解析规则；同一字符串在不同 cwd 下可指向不同对象。</details>
+按当前工作目录等路径解析规则；同一字符串在不同 cwd 下可指向不同对象。
+
+</details>
 
 <details><summary>20. `read(4)` 成功就必然返回 4 字节吗？</summary>
 
-不必然。应检查实际 n，少读可能由 EOF 等原因造成。</details>
+不必然。应检查实际 n，少读可能由 EOF 等原因造成。
+
+</details>
 
 <details><summary>21. `O_APPEND` 能保证由三次 write 组成的一条消息整体原子吗？</summary>
 
-不能。它只涉及每次 write 的末尾定位与写入语义，业务记录边界仍需设计。</details>
+不能。它只涉及每次 write 的末尾定位与写入语义，业务记录边界仍需设计。
+
+</details>
 
 <details><summary>22. `write` 成功和 `rename` 成功能直接证明掉电后日志完整吗？</summary>
 
-不能。数据和目录项的同步、崩溃点与文件系统条件在 03.08 才系统说明。</details>
+不能。数据和目录项的同步、崩溃点与文件系统条件在 03.08 才系统说明。
+
+</details>
 
 ## 来源与下一步
 

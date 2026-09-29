@@ -237,91 +237,135 @@ if int64(len(data)) > maxBytes {
 
 <details><summary>1. 可执行文件与进程是一回事吗？</summary>
 
-不是。前者是磁盘上的程序文件；后者是一次运行实例及其状态。</details>
+不是。前者是磁盘上的程序文件；后者是一次运行实例及其状态。
+
+</details>
 
 <details><summary>2. 同一份程序能同时有两个进程吗？</summary>
 
-能。两次启动可得到各自的运行状态与资源。</details>
+能。两次启动可得到各自的运行状态与资源。
+
+</details>
 
 <details><summary>3. 进程 A 的普通 Go 变量会自动变成进程 B 的变量吗？</summary>
 
-不会。要交换状态须使用明确的文件、进程间通信或网络机制。</details>
+不会。要交换状态须使用明确的文件、进程间通信或网络机制。
+
+</details>
 
 <details><summary>4. goroutine 是一个操作系统进程吗？</summary>
 
-不是。它是 Go 运行时管理的并发任务，和进程、线程不一一对应。</details>
+不是。它是 Go 运行时管理的并发任务，和进程、线程不一一对应。
+
+</details>
 
 <details><summary>5. 只看 `main` 一个函数能推断进程只有一个线程吗？</summary>
 
-不能。Go 运行时可能使用多个线程，源码函数数目不是线程数。</details>
+不能。Go 运行时可能使用多个线程，源码函数数目不是线程数。
+
+</details>
 
 <details><summary>6. 进程里的虚拟地址一定是物理内存位置吗？</summary>
 
-不是。它属于进程看到的地址视图，实际转换与驻留在 03.05 深化。</details>
+不是。它属于进程看到的地址视图，实际转换与驻留在 03.05 深化。
+
+</details>
 
 <details><summary>7. 内存地址等于文件偏移吗？</summary>
 
-不等于。前者定位进程地址空间中的数据，后者定位文件字节序列中的位置。</details>
+不等于。前者定位进程地址空间中的数据，后者定位文件字节序列中的位置。
+
+</details>
 
 <details><summary>8. `len(body)` 一定要通过系统调用吗？</summary>
 
-不必。它可由进程内已有数据完成，不应把每个 Go 函数都叫系统调用。</details>
+不必。它可由进程内已有数据完成，不应把每个 Go 函数都叫系统调用。
+
+</details>
 
 <details><summary>9. 系统调用和远端 IM RPC 相同吗？</summary>
 
-不同。系统调用跨应用与本机内核的权限边界；RPC 还涉及进程或网络协议边界。</details>
+不同。系统调用跨应用与本机内核的权限边界；RPC 还涉及进程或网络协议边界。
+
+</details>
 
 <details><summary>10. `os.Open` 在所有平台都对应同名 `open` 系统调用一次吗？</summary>
 
-不能这样保证。Go 标准库封装和各平台实现细节可能不同。</details>
+不能这样保证。Go 标准库封装和各平台实现细节可能不同。
+
+</details>
 
 <details><summary>11. `*os.File` 就是 JSON 内容吗？</summary>
 
-不是。它是 Go 对打开文件资源的句柄，读取后才得到字节。</details>
+不是。它是 Go 对打开文件资源的句柄，读取后才得到字节。
+
+</details>
 
 <details><summary>12. 为什么限量读取用 `maxBytes+1`？</summary>
 
-多读一个字节才能区分恰好达到上限与实际超限；可接受上限不变。</details>
+多读一个字节才能区分恰好达到上限与实际超限；可接受上限不变。
+
+</details>
 
 <details><summary>13. 打开成功但 JSON 语法坏了，是哪个层次拒绝？</summary>
 
-内核允许读取；本地工具的解码规则拒绝，属于输入历史无效。</details>
+内核允许读取；本地工具的解码规则拒绝，属于输入历史无效。
+
+</details>
 
 <details><summary>14. 文件不存在和 `messages:null` 使用相同退出类别吗？</summary>
 
-不相同。前者是 I/O 类别 4；后者是 v1 内容无效类别 3。</details>
+不相同。前者是 I/O 类别 4；后者是 v1 内容无效类别 3。
+
+</details>
 
 <details><summary>15. `messages:[]` 在本课程 v1 中合法吗？</summary>
 
-合法；它明确表达空消息数组。缺失字段或 `null` 不合法。</details>
+合法；它明确表达空消息数组。缺失字段或 `null` 不合法。
+
+</details>
 
 <details><summary>16. 操作系统允许打开文件就证明有 IM 会话权限吗？</summary>
 
-不能。文件权限与线上会话成员授权属于不同层次。</details>
+不能。文件权限与线上会话成员授权属于不同层次。
+
+</details>
 
 <details><summary>17. 为什么 `os.Exit` 放在资源处理函数外层？</summary>
 
-它不会运行尚未执行的 `defer`；先让内层完成关闭并返回，再由入口退出。</details>
+它不会运行尚未执行的 `defer`；先让内层完成关闭并返回，再由入口退出。
+
+</details>
 
 <details><summary>18. `check` 退出 0 证明文件一定能抗断电恢复吗？</summary>
 
-不能。它是当前进程接受本地文件的结果；崩溃耐久要另行设计和验证。</details>
+不能。它是当前进程接受本地文件的结果；崩溃耐久要另行设计和验证。
+
+</details>
 
 <details><summary>19. 读文件时等待 I/O，必然让整个机器 CPU 很忙吗？</summary>
 
-不能推断。等待与占用 CPU 是不同状态，调度和 I/O 模型后续学习。</details>
+不能推断。等待与占用 CPU 是不同状态，调度和 I/O 模型后续学习。
+
+</details>
 
 <details><summary>20. `os.Open` 失败时能直接写“JSON 无效”吗？</summary>
 
-不能。还没读到 JSON，先保留打开文件的 I/O 错误身份和上下文。</details>
+不能。还没读到 JSON，先保留打开文件的 I/O 错误身份和上下文。
+
+</details>
 
 <details><summary>21. 若 `list` 第三条记录损坏，能先输出前两条再返回错误吗？</summary>
 
-不符合 01.12 合同。先完整校验，再输出第一行，避免部分列表被误当成功。</details>
+不符合 01.12 合同。先完整校验，再输出第一行，避免部分列表被误当成功。
+
+</details>
 
 <details><summary>22. 进程退出后找不到内存消息，能直接归因于 Go GC 吗？</summary>
 
-不能。进程生命周期和是否设计持久化才是首要问题。</details>
+不能。进程生命周期和是否设计持久化才是首要问题。
+
+</details>
 
 ## 来源与下一步
 

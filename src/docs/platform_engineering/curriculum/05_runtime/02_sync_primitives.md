@@ -214,91 +214,135 @@ T2：持有 B ──等待 A
 
 <details><summary>1. 什么叫共享可变状态？</summary>
 
-多个任务能访问同一份数据，且至少一个任务会修改它，例如本题的 `byID` 与 `order`。</details>
+多个任务能访问同一份数据，且至少一个任务会修改它，例如本题的 `byID` 与 `order`。
+
+</details>
 
 <details><summary>2. 本题的业务不变量有哪些？</summary>
 
-同会话 ID 唯一、重复不覆盖，以及列表每个 ID 对应 map 中一条消息。</details>
+同会话 ID 唯一、重复不覆盖，以及列表每个 ID 对应 map 中一条消息。
+
+</details>
 
 <details><summary>3. 普通 map 可无保护地由多个 goroutine 并发读写吗？</summary>
 
-不能。需互斥或其他明确协调方式。</details>
+不能。需互斥或其他明确协调方式。
+
+</details>
 
 <details><summary>4. 只给 `byID[m.ID]=m` 这一行加锁够吗？</summary>
 
-不够。查重与 `order` 更新也属于同一次状态变化。</details>
+不够。查重与 `order` 更新也属于同一次状态变化。
+
+</details>
 
 <details><summary>5. 两个任务都先看到 `m-a` 不存在，可能怎样？</summary>
 
-它们随后都尝试写入，导致覆盖或重复列表项；这是一条业务竞争交错。</details>
+它们随后都尝试写入，导致覆盖或重复列表项；这是一条业务竞争交错。
+
+</details>
 
 <details><summary>6. 先读锁查重、释放后取写锁插入是否消除间隙？</summary>
 
-没有。中间另一任务仍可插入；取写锁后必须重新检查，或从开始就用同一写锁。</details>
+没有。中间另一任务仍可插入；取写锁后必须重新检查，或从开始就用同一写锁。
+
+</details>
 
 <details><summary>7. `Mutex` 的零值能用吗？</summary>
 
-能。`History` 的锁不需额外初始化。</details>
+能。`History` 的锁不需额外初始化。
+
+</details>
 
 <details><summary>8. 已使用的含 Mutex 结构体适合按值复制吗？</summary>
 
-不适合。锁与被保护状态应保持同一对象归属。</details>
+不适合。锁与被保护状态应保持同一对象归属。
+
+</details>
 
 <details><summary>9. T1、T2 同时 Append 同一 ID，必然 T1 赢吗？</summary>
 
-不必然。谁先获得写锁不由源码中给任务命名的顺序保证。</details>
+不必然。谁先获得写锁不由源码中给任务命名的顺序保证。
+
+</details>
 
 <details><summary>10. 重复 ID 被拒后 map 与 order 应怎样？</summary>
 
-都保持先前值；不覆盖，也不追加第二个同 ID。</details>
+都保持先前值；不覆盖，也不追加第二个同 ID。
+
+</details>
 
 <details><summary>11. `List` 为什么在锁内创建新切片？</summary>
 
-避免返回正在被内部更新的切片，并得到一份一致的列表快照。</details>
+避免返回正在被内部更新的切片，并得到一份一致的列表快照。
+
+</details>
 
 <details><summary>12. 若 Message 加入 `Body []byte`，复制外层切片就足够吗？</summary>
 
-不够。字节切片底层数据可共享，需重新定义所有权并按需逐层复制。</details>
+不够。字节切片底层数据可共享，需重新定义所有权并按需逐层复制。
+
+</details>
 
 <details><summary>13. `RLock` 允许多个只读者时，写者可同时修改 map 吗？</summary>
 
-不能。`Lock` 需要独占，且所有访问必须遵守同一锁合同。</details>
+不能。`Lock` 需要独占，且所有访问必须遵守同一锁合同。
+
+</details>
 
 <details><summary>14. 持有 `RLock` 时可直接调用 `Lock` 升级吗？</summary>
 
-不应这样做；可能自己等待自己。需要写锁的完整操作应重新设计并复查条件。</details>
+不应这样做；可能自己等待自己。需要写锁的完整操作应重新设计并复查条件。
+
+</details>
 
 <details><summary>15. `RWMutex` 必然比 `Mutex` 快吗？</summary>
 
-不必然。正确性先行，具体开销须在真实负载下测量。</details>
+不必然。正确性先行，具体开销须在真实负载下测量。
+
+</details>
 
 <details><summary>16. `WaitGroup.Wait` 返回能证明共享 map 没有竞争吗？</summary>
 
-不能。它只等待登记任务结束，不保护执行中的共享访问。</details>
+不能。它只等待登记任务结束，不保护执行中的共享访问。
+
+</details>
 
 <details><summary>17. `Once.Do` 里的初始化失败会自动重试吗？</summary>
 
-不会。是否缓存失败或允许重试需要另立设计。</details>
+不会。是否缓存失败或允许重试需要另立设计。
+
+</details>
 
 <details><summary>18. `Cond.Wait` 等待时一直持有关联锁吗？</summary>
 
-不是。它在等待时释放锁，返回前重新获得锁。</details>
+不是。它在等待时释放锁，返回前重新获得锁。
+
+</details>
 
 <details><summary>19. Cond 被 Signal 唤醒后为何仍用 `for` 检查队列？</summary>
 
-其他消费者可能先取走了条件对应的消息，唤醒不保证条件仍为真。</details>
+其他消费者可能先取走了条件对应的消息，唤醒不保证条件仍为真。
+
+</details>
 
 <details><summary>20. T1 持 A 等 B、T2 持 B 等 A 属于什么？</summary>
 
-循环等待，可能死锁；统一锁顺序可减少此类设计。</details>
+循环等待，可能死锁；统一锁顺序可减少此类设计。
+
+</details>
 
 <details><summary>21. race detector 无报告就证明业务唯一性正确吗？</summary>
 
-不能。它只覆盖执行过的数据竞争路径，业务交错和不变量需独立断言。</details>
+不能。它只覆盖执行过的数据竞争路径，业务交错和不变量需独立断言。
+
+</details>
 
 <details><summary>22. `Append` 返回成功就证明 `m-a` 已送达 `u-b` 吗？</summary>
 
-不能。本章只保存教学内存状态，网络、持久化和设备确认均未验证。</details>
+不能。本章只保存教学内存状态，网络、持久化和设备确认均未验证。
+
+</details>
 
 ## 来源与下一步
 

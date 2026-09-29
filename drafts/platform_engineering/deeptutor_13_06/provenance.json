@@ -30,9 +30,9 @@
   "original_sha256": "6d537334ccb087eb09108d180f36a8bc0cf32364adb4e22ae718305df2492318",
   "original_characters": 30534,
   "generation_request_sha256": "946fdfe146b2967b27d69de510337d0135288ce6d4385672ddf1cccb15d84d44",
-  "reviewed_sha256": "31b32b880c1cd6fdd64d1c9bb3a484a02aaf75c0642336ec1c1cc269ece79f2d",
-  "reviewed_characters": 10821,
+  "reviewed_sha256": "41174cf3e8ec83e0b18ddd936bceca8a24a2a3468830d7bc5b61b7aecdb50c1c",
+  "reviewed_characters": 10865,
   "reviewed_chinese_characters": 4238,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/06_quality_attribute_tradeoffs.md",
-  "course_sha256": "4a9c8651982c979f98169ee8d64d49ed917c1d0c481cd1f0c4991d199a0fc110"
+  "course_sha256": "50fb87c016a6493f9e33c244a22caa2904e0c46ff76ce00d1158dd439e438899"
 }

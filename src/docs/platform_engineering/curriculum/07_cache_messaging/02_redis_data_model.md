@@ -104,91 +104,135 @@ Redis Pub/Sub 是在线订阅通道，官方明确其发送后不重投的至多
 
 <details><summary>1. Redis 类型是否自动决定某份数据为权威？</summary>
 
-不决定。角色来自业务合同、丢失政策和重建来源。</details>
+不决定。角色来自业务合同、丢失政策和重建来源。
+
+</details>
 
 <details><summary>2. 单键在线提示 `presence:u-a:dev-1` 可以先用哪种形状？</summary>
 
-本题可用 String；TTL 到期/缺键也不能证明用户真正离线。</details>
+本题可用 String；TTL 到期/缺键也不能证明用户真正离线。
+
+</details>
 
 <details><summary>3. 两字段 `last_id,seq` 的小预览为什么可选 Hash？</summary>
 
-它们同属一个派生对象，可按字段读/更新；Hash 不自动赋予权限或持久事实地位。</details>
+它们同属一个派生对象，可按字段读/更新；Hash 不自动赋予权限或持久事实地位。
+
+</details>
 
 <details><summary>4. `INCR rate:*` 与数据库同事务分配 `next_seq` 等价吗？</summary>
 
-不等价。Redis 单命令计数不与 SQL 消息插入自动共同提交/回滚。</details>
+不等价。Redis 单命令计数不与 SQL 消息插入自动共同提交/回滚。
+
+</details>
 
 <details><summary>5. Set 与 Sorted Set 最直接的差别是什么？</summary>
 
-Set 用于不重复成员与包含判断、不提供业务排序；Sorted Set 另有成员分数用于有序读取。</details>
+Set 用于不重复成员与包含判断、不提供业务排序；Sorted Set 另有成员分数用于有序读取。
+
+</details>
 
 <details><summary>6. List 弹出一项就证明 B 设备收到了吗？</summary>
 
-不能。弹出只改变 Redis List，消费者后续可能失败。</details>
+不能。弹出只改变 Redis List，消费者后续可能失败。
+
+</details>
 
 <details><summary>7. Redis Bitmap 是独立于 String 的底层数据类型吗？</summary>
 
-不是；它是在 String 上的一组位操作。</details>
+不是；它是在 String 上的一组位操作。
+
+</details>
 
 <details><summary>8. Stream 的 `XACK` 默认等于删除整条 Stream 记录吗？</summary>
 
-不等于。它确认该消费组的处理引用；条目保留/删除是另一件事，且不证明设备交付。</details>
+不等于。它确认该消费组的处理引用；条目保留/删除是另一件事，且不证明设备交付。
+
+</details>
 
 <details><summary>9. `candidate_members:c-a` 中有哪些用户？`u-c` 命中吗？</summary>
 
-Set 有 `u-a,u-b`，`u-c` 不命中；这只是缓存候选结果。</details>
+Set 有 `u-a,u-b`，`u-c` 不命中；这只是缓存候选结果。
+
+</details>
 
 <details><summary>10. `u-a` 的 ZSET 中 `c-a:100,c-b:90` 降序怎样排？</summary>
 
-`c-a` 在前、`c-b` 在后。分数是本题派生量，不是跨设备实测时间。</details>
+`c-a` 在前、`c-b` 在后。分数是本题派生量，不是跨设备实测时间。
+
+</details>
 
 <details><summary>11. 最近窗口 `[m-9,m-8,m-7]` 左进 m-10 后只保留三项是什么？</summary>
 
-`[m-10,m-9,m-8]`；旧 `m-7` 可在权威历史中仍存在。</details>
+`[m-10,m-9,m-8]`；旧 `m-7` 可在权威历史中仍存在。
+
+</details>
 
 <details><summary>12. 位 0、1、2 中只有 bit2=1，`BITCOUNT` 是多少？</summary>
 
-1；只数本题受控的三个位。</details>
+1；只数本题受控的三个位。
+
+</details>
 
 <details><summary>13. 可直接把字符串 `u-c` 当作 Bitmap 位偏移吗？</summary>
 
-不能。须有稳定、受限的整数偏移映射，防稀疏巨大偏移和身份重排。</details>
+不能。须有稳定、受限的整数偏移映射，防稀疏巨大偏移和身份重排。
+
+</details>
 
 <details><summary>14. G1 读 N1/N2，只 ACK N1，哪项仍 pending？</summary>
 
-N2 在该消费组仍待确认；N1 的 ACK 不证明 B 收到。</details>
+N2 在该消费组仍待确认；N1 的 ACK 不证明 B 收到。
+
+</details>
 
 <details><summary>15. `preview:c-a` 命中 seq8，数据库已到 seq9，是新鲜命中吗？</summary>
 
-不是。它是有值但过时，是否违约要按预览一致性合同判断。</details>
+不是。它是有值但过时，是否违约要按预览一致性合同判断。
+
+</details>
 
 <details><summary>16. Set 中还残留已退群 A，可允许 A 发 `m-10` 吗？</summary>
 
-不能凭此 Set 放行。成员资格须按受控权威/版本状态重新判断。</details>
+不能凭此 Set 放行。成员资格须按受控权威/版本状态重新判断。
+
+</details>
 
 <details><summary>17. 为何不能把完整 `c-a` 历史无限追加到一个 List？</summary>
 
-会无界增长，老页范围、编辑/撤回、权限与恢复都不自然；权威历史仍由数据库合同承担。</details>
+会无界增长，老页范围、编辑/撤回、权限与恢复都不自然；权威历史仍由数据库合同承担。
+
+</details>
 
 <details><summary>18. Stream N1 已 ACK 就能返回“B 已读”吗？</summary>
 
-不能。消费组处理、设备接收、展示和已读是不同确认点。</details>
+不能。消费组处理、设备接收、展示和已读是不同确认点。
+
+</details>
 
 <details><summary>19. Redis `EXPIRE` 尚未到期，能保证预览仍是最新 seq9 吗？</summary>
 
-不能。源可在 TTL 期间变化，需失效或版本检查。</details>
+不能。源可在 TTL 期间变化，需失效或版本检查。
+
+</details>
 
 <details><summary>20. 缓存键因 `maxmemory` 被逐出，权威消息也被删除了吗？</summary>
 
-不因此删除。被淘汰的是 Redis 副本；权威消息按自身数据库/恢复合同判断。</details>
+不因此删除。被淘汰的是 Redis 副本；权威消息按自身数据库/恢复合同判断。
+
+</details>
 
 <details><summary>21. SQL 插入 `m-9` 成功、Redis XADD 失败，Stream 类型会自动补齐跨系统事务吗？</summary>
 
-不会。两系统不是同一原子提交；需 07.10 的 outbox/重试/对账等方案。</details>
+不会。两系统不是同一原子提交；需 07.10 的 outbox/重试/对账等方案。
+
+</details>
 
 <details><summary>22. 为 `candidate_members:c-a` 选 Set 前，至少还要写哪三项边界？</summary>
 
-权威权限来源、退群后的失效/版本政策、键的最大规模与重建方式；不能只会 `SISMEMBER`。</details>
+权威权限来源、退群后的失效/版本政策、键的最大规模与重建方式；不能只会 `SISMEMBER`。
+
+</details>
 
 ## 本章完成标准与下一步
 

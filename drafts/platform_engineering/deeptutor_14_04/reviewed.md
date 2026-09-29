@@ -92,95 +92,139 @@ Transformer 机制说明**为什么某些候选实现会快/慢、为何上下�
 
 <details><summary>1. Q、K、V 可先各理解为什么？</summary>
 
-Q 表当前匹配需求，K 表各位置可匹配线索，V 表被权重聚合的内容；都不是权限证明。</details>
+Q 表当前匹配需求，K 表各位置可匹配线索，V 表被权重聚合的内容；都不是权限证明。
+
+</details>
 
 <details><summary>2. 注意力权重高就表示资料真实/有权吗？</summary>
 
-不表示；真实性与授权需应用和资料来源核对。</details>
+不表示；真实性与授权需应用和资料来源核对。
+
+</details>
 
 <details><summary>3. 为什么要给 token 顺序/位置信息？</summary>
 
-同样 token 以不同顺序出现可能改变含义，只看无序集合不够。</details>
+同样 token 以不同顺序出现可能改变含义，只看无序集合不够。
+
+</details>
 
 <details><summary>4. 因果 decoder 的第 t 位可看未来 t+1 吗？</summary>
 
-不可；它只用本位及以前位置，生成下一 token 时未来尚不存在。</details>
+不可；它只用本位及以前位置，生成下一 token 时未来尚不存在。
+
+</details>
 
 <details><summary>5. 所有 Transformer 都是因果 decoder-only 吗？</summary>
 
-不是，还有 encoder-only、encoder-decoder 等变体。</details>
+不是，还有 encoder-only、encoder-decoder 等变体。
+
+</details>
 
 <details><summary>6. 一个注意力头可被硬称为“权限判官”吗？</summary>
 
-不能。头可学不同关系，但访问许可由应用策略决定。</details>
+不能。头可学不同关系，但访问许可由应用策略决定。
+
+</details>
 
 <details><summary>7. prefill 和 decode 各主要处理哪段？</summary>
 
-prefill 处理给定输入并建后续状态；decode 随输出逐 token 继续预测/更新。</details>
+prefill 处理给定输入并建后续状态；decode 随输出逐 token 继续预测/更新。
+
+</details>
 
 <details><summary>8. KV cache 是持久 IM 历史库吗？</summary>
 
-不是，只是推理时复用过去 token 的 K/V 计算状态。</details>
+不是，只是推理时复用过去 token 的 K/V 计算状态。
+
+</details>
 
 ### 推演 9–16：权重、窗口与资源
 
 <details><summary>9. 纸上前数 1:3 简单正规化成什么？</summary>
 
-`0.25:0.75`；不是完整 Transformer softmax 算法。</details>
+`0.25:0.75`；不是完整 Transformer softmax 算法。
+
+</details>
 
 <details><summary>10. V1=(1,0)、V2=(0,2) 按 0.25/0.75 聚合得什么？</summary>
 
-`(0.25,1.5)`。</details>
+`(0.25,1.5)`。
+
+</details>
 
 <details><summary>11. 真实缩放点积注意力在 QKᵀ 后还有什么？</summary>
 
-按 Key 维度缩放、遮罩、softmax，再对 V 加权。</details>
+按 Key 维度缩放、遮罩、softmax，再对 V 加权。
+
+</details>
 
 <details><summary>12. 32 token 窗口、指令6/证据18/问题4，理想余多少输出？</summary>
 
-`32−6−18−4=4`，真实接口另计特殊标记等开销。</details>
+`32−6−18−4=4`，真实接口另计特殊标记等开销。
+
+</details>
 
 <details><summary>13. 纸上 2 层×2 KV头×4维×32 token×2 B×K/V 两份，占多少？</summary>
 
-`2×2×2×4×32×2=2,048 B=2 KiB`，仅该项 toy 缓存。</details>
+`2×2×2×4×32×2=2,048 B=2 KiB`，仅该项 toy 缓存。
+
+</details>
 
 <details><summary>14. 同样独立序列并发 10 条，纸上这项约多少？</summary>
 
-约 20 KiB，不含模型权重/碎片/其它激活。</details>
+约 20 KiB，不含模型权重/碎片/其它激活。
+
+</details>
 
 <details><summary>15. 更长输入主要先增加哪个阶段的工作？</summary>
 
-更长的授权/分词/prefill 输入与 KV 长度；实际 TTFT 还受排队/网络影响。</details>
+更长的授权/分词/prefill 输入与 KV 长度；实际 TTFT 还受排队/网络影响。
+
+</details>
 
 <details><summary>16. 输出从 4 token 改很长，哪个阶段持续增加？</summary>
 
-逐 token 的 decode 工作和 KV 长度；总时延需实测。</details>
+逐 token 的 decode 工作和 KV 长度；总时延需实测。
+
+</details>
 
 ### 决策 17–22：权限、缓存与验收
 
 <details><summary>17. 可把含 u-a 私有文档的缓存前缀复用给 u-b 吗？</summary>
 
-不能。模型/提示/资料版本和授权上下文必须匹配，资料进入模型前先过滤。</details>
+不能。模型/提示/资料版本和授权上下文必须匹配，资料进入模型前先过滤。
+
+</details>
 
 <details><summary>18. q-01 答 9 B，先怪某个注意力头吗？</summary>
 
-先核 current/proposed 资料状态、截断是否丢“待审”、引用与现行 6 B 合同。</details>
+先核 current/proposed 资料状态、截断是否丢“待审”、引用与现行 6 B 合同。
+
+</details>
 
 <details><summary>19. q-03 私有正文已进提示但输出未引用，权限门过了吗？</summary>
 
-没有。无权资料进入模型输入时硬门已失败。</details>
+没有。无权资料进入模型输入时硬门已失败。
+
+</details>
 
 <details><summary>20. 首 token 慢可只归因 KV cache 吗？</summary>
 
-不可。拆应用检索/授权、排队/网络、prefill 与模型服务观察。</details>
+不可。拆应用检索/授权、排队/网络、prefill 与模型服务观察。
+
+</details>
 
 <details><summary>21. 纸上 2 KiB 能当真实模型 KV 内存配置吗？</summary>
 
-不能；头数/层数/精度/滑窗/分页/并发和其它内存均未测。</details>
+不能；头数/层数/精度/滑窗/分页/并发和其它内存均未测。
+
+</details>
 
 <details><summary>22. 推理资源卡与用户验收卡为何要一起看？</summary>
 
-更快/更省若答错当前 6 B 或泄私有资料，就没有达到资料助手的业务目标。</details>
+更快/更省若答错当前 6 B 或泄私有资料，就没有达到资料助手的业务目标。
+
+</details>
 
 ## 本章完成标准与后续路径
 

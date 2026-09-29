@@ -96,95 +96,139 @@ date: 2026-09-25
 
 <details><summary>1. A、B、C 的预算消耗各是多少？</summary>
 
-A=3，B=2，C=2；总预算 4。</details>
+A=3，B=2，C=2；总预算 4。
+
+</details>
 
 <details><summary>2. 三项各自的纸上价值是多少？</summary>
 
-A=5，B=3，C=3。</details>
+A=5，B=3，C=3。
+
+</details>
 
 <details><summary>3. A+B 是否合法，为什么？</summary>
 
-不合法；消耗 3+2=5，超过预算 4。</details>
+不合法；消耗 3+2=5，超过预算 4。
+
+</details>
 
 <details><summary>4. B+C 的消耗与价值是多少？</summary>
 
-消耗 4、价值 6，为本例最优。</details>
+消耗 4、价值 6，为本例最优。
+
+</details>
 
 <details><summary>5. 按价值/消耗先挑谁，最终多少价值？</summary>
 
-A 的比值 5/3 最高，先挑 A 后余 1，最终值 5。</details>
+A 的比值 5/3 最高，先挑 A 后余 1，最终值 5。
+
+</details>
 
 <details><summary>6. 比值贪心为什么不能声称本例最优？</summary>
 
-因为可行的 B+C 值 6，大于它得到的 5。</details>
+因为可行的 B+C 值 6，大于它得到的 5。
+
+</details>
 
 <details><summary>7. 0/1 中的“1”限定了什么？</summary>
 
-每项最多取一次，不可拆份或无限重复。</details>
+每项最多取一次，不可拆份或无限重复。
+
+</details>
 
 <details><summary>8. 纸上价值能直接当真实 IM 优先级吗？</summary>
 
-不能；它是人为教学分数，真实规则和硬约束需另定义/批准。</details>
+不能；它是人为教学分数，真实规则和硬约束需另定义/批准。
+
+</details>
 
 ### 推演 9–16：状态、表格与复杂度
 
 <details><summary>9. `dp[i][b]` 表示什么？</summary>
 
-前 i 项中在预算不超过 b 时可得的最大价值。</details>
+前 i 项中在预算不超过 b 时可得的最大价值。
+
+</details>
 
 <details><summary>10. 无任务时 `dp[0][b]` 为多少？</summary>
 
-0。</details>
+0。
+
+</details>
 
 <details><summary>11. `dp[3][4]` 不选 C 与选 C 各得多少？</summary>
 
-不选为 5；选为 `dp[2][2]+3=3+3=6`。</details>
+不选为 5；选为 `dp[2][2]+3=3+3=6`。
+
+</details>
 
 <details><summary>12. 为何选 C 的分支引用 `i−1` 而非同一 i？</summary>
 
-防止本轮重复选 C，保持每项最多一次。</details>
+防止本轮重复选 C，保持每项最多一次。
+
+</details>
 
 <details><summary>13. 只处理 B 时，一维正序更新到预算 4 会错算多少？</summary>
 
-会得 6，等于 B 取两次；合法的 0/1 值应为 3。</details>
+会得 6，等于 B 取两次；合法的 0/1 值应为 3。
+
+</details>
 
 <details><summary>14. 一维 0/1 DP 每项预算从哪边遍历？</summary>
 
-从预算上限 M 向该项消耗值倒序，让读到的余预算仍是上一轮结果。</details>
+从预算上限 M 向该项消耗值倒序，让读到的余预算仍是上一轮结果。
+
+</details>
 
 <details><summary>15. 二维 DP 与一维压缩各需多少格量级？</summary>
 
-二维 `O(nM)`，只求值的一维 `O(M)`；时间仍为 `O(nM)`。</details>
+二维 `O(nM)`，只求值的一维 `O(M)`；时间仍为 `O(nM)`。
+
+</details>
 
 <details><summary>16. 预算上限 M 数值极大却用二进制写入，`O(nM)` 是输入长度的普通多项式吗？</summary>
 
-不是；这是伪多项式，上界仍可能无法承受。</details>
+不是；这是伪多项式，上界仍可能无法承受。
+
+</details>
 
 ### 决策 17–22：贪心条件与业务边界
 
 <details><summary>17. 区间 A=[1,4)、B=[2,3)、C=[3,5)，最早结束先选谁？</summary>
 
-先 B，再 C；二者端点相接可兼容，共 2 项。</details>
+先 B，再 C；二者端点相接可兼容，共 2 项。
+
+</details>
 
 <details><summary>18. 区间贪心证明为什么能把最优第一项换成 B？</summary>
 
-B 结束不晚于原第一项，不妨碍原后续从那个结束时刻可做的任务。</details>
+B 结束不晚于原第一项，不妨碍原后续从那个结束时刻可做的任务。
+
+</details>
 
 <details><summary>19. 给区间加不同价值后可照搬“最早结束最多项”的最优保证吗？</summary>
 
-不能；目标已改成最大价值，需重审条件和算法。</details>
+不能；目标已改成最大价值，需重审条件和算法。
+
+</details>
 
 <details><summary>20. DP 选 B+C 就证明两项消息已送达吗？</summary>
 
-不能；这是纸上选择，当前 S2 200 仍只到本进程内存受理。</details>
+不能；这是纸上选择，当前 S2 200 仍只到本进程内存受理。
+
+</details>
 
 <details><summary>21. 成员授权和正文 6 B 能变成可牺牲的价值分吗？</summary>
 
-不能；它们是硬合同，先校验，不允许用更高价值抵消越权或超限。</details>
+不能；它们是硬合同，先校验，不允许用更高价值抵消越权或超限。
+
+</details>
 
 <details><summary>22. 设计下一张预算 DP 表前先问哪些前提？</summary>
 
-预算单位、可加性、任务是否可拆/重复、价值/权限、依赖/截止、n/M 规模和错误边界。</details>
+预算单位、可加性、任务是否可拆/重复、价值/权限、依赖/截止、n/M 规模和错误边界。
+
+</details>
 
 ## 本章完成标准与后续路径
 

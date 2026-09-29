@@ -119,91 +119,135 @@ PostgreSQL 官方文档把其 btree 索引描述为**多路平衡树**，支持�
 
 <details><summary>1. 根节点有什么特征？</summary>
 
-它没有父节点，是搜索的起点。</details>
+它没有父节点，是搜索的起点。
+
+</details>
 
 <details><summary>2. 本章树高按节点数还是边数算？</summary>
 
-按最长根到叶路径的边数；单节点高度 0。</details>
+按最长根到叶路径的边数；单节点高度 0。
+
+</details>
 
 <details><summary>3. BST 中 5 与根 4 比较后往哪边？</summary>
 
-右边，因为 5 大于 4。</details>
+右边，因为 5 大于 4。
+
+</details>
 
 <details><summary>4. 在本章主树中查 5 经过哪些键？</summary>
 
-4→6→5。</details>
+4→6→5。
+
+</details>
 
 <details><summary>5. 找 8 走到 7 的右侧空指针，表示什么？</summary>
 
-按该树的不变量，这条比较路径没有 8。</details>
+按该树的不变量，这条比较路径没有 8。
+
+</details>
 
 <details><summary>6. 两个会话都能有 seq=1 吗？</summary>
 
-可以。seq 只在会话内唯一，全局应带 conversation_id 形成复合身份。</details>
+可以。seq 只在会话内唯一，全局应带 conversation_id 形成复合身份。
+
+</details>
 
 <details><summary>7. 这棵 BST 的中序遍历结果是什么？</summary>
 
-1、2、3、4、5、6、7。</details>
+1、2、3、4、5、6、7。
+
+</details>
 
 <details><summary>8. 闭区间 [2,5] 应返回哪些 seq？</summary>
 
-2、3、4、5。</details>
+2、3、4、5。
+
+</details>
 
 <details><summary>9. 在范围 [2,5] 下，节点 6 的右子树为何可剪？</summary>
 
-右侧都大于 6，更不可能小于等于上界 5。</details>
+右侧都大于 6，更不可能小于等于上界 5。
+
+</details>
 
 <details><summary>10. 输出 k 条结果能完全不花与 k 相称的工作吗？</summary>
 
-不能。至少需要产生这 k 条输出。</details>
+不能。至少需要产生这 k 条输出。
+
+</details>
 
 <details><summary>11. 1..7 顺序插入普通 BST 的形状是什么？</summary>
 
-一路向右的链，不会自动平衡。</details>
+一路向右的链，不会自动平衡。
+
+</details>
 
 <details><summary>12. 按边数计，这条七节点右链高度是多少？</summary>
 
-6。</details>
+6。
+
+</details>
 
 <details><summary>13. 主例平衡形状的高度是多少？</summary>
 
-2。</details>
+2。
+
+</details>
 
 <details><summary>14. 普通 BST 最坏搜索是否一定 O(log n)？</summary>
 
-不是。退化链时最坏 O(n)。</details>
+不是。退化链时最坏 O(n)。
+
+</details>
 
 <details><summary>15. 1→2→3 左旋为 2 根后中序会变吗？</summary>
 
-不会，仍为 1、2、3；旋转示例不等于完整平衡算法。</details>
+不会，仍为 1、2、3；旋转示例不等于完整平衡算法。
+
+</details>
 
 <details><summary>16. 64 键、每叶 4 键需要几个叶页？</summary>
 
-16 个。</details>
+16 个。
+
+</details>
 
 <details><summary>17. 内部页最多 4 路，16 个叶页上一层要几页？</summary>
 
-4 页，再上一层可用 1 个根页，合计三层。</details>
+4 页，再上一层可用 1 个根页，合计三层。
+
+</details>
 
 <details><summary>18. 找到首个叶页后，返回大范围一定只读三页吗？</summary>
 
-不一定。还要沿后续叶页读出结果。</details>
+不一定。还要沿后续叶页读出结果。
+
+</details>
 
 <details><summary>19. `map[seq]Message` 自动按 seq 升序遍历吗？</summary>
 
-不会。它不提供这种顺序合同。</details>
+不会。它不提供这种顺序合同。
+
+</details>
 
 <details><summary>20. `(conversation_id,seq)` 索引适合哪个 IM 查询？</summary>
 
-先限定会话，再按 seq 范围和顺序读取一页历史。</details>
+先限定会话，再按 seq 范围和顺序读取一页历史。
+
+</details>
 
 <details><summary>21. 有索引就能断定数据库一定选它吗？</summary>
 
-不能。规划还看规模、选择率、排序和成本，需执行计划核对。</details>
+不能。规划还看规模、选择率、排序和成本，需执行计划核对。
+
+</details>
 
 <details><summary>22. 本章的三层玩具 B+ 树就是 OpenIM 或 PostgreSQL 实际页布局吗？</summary>
 
-不是。它只建立多路页与有序范围的机制直觉。</details>
+不是。它只建立多路页与有序范围的机制直觉。
+
+</details>
 
 ## 来源与下一步
 

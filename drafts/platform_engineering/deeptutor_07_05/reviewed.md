@@ -83,91 +83,135 @@ Redis 官方说明复制默认是**异步**的。假设 Redis 主节点已有 `p
 
 <details><summary>1. Redis 选择无持久后重启，派生预览还能重建吗？</summary>
 
-在未来 S3 权威消息与规则完整且可读的前提下可重建；过程要有回源预算。</details>
+在未来 S3 权威消息与规则完整且可读的前提下可重建；过程要有回源预算。
+
+</details>
 
 <details><summary>2. 当前 S2 的消息能凭未来 S3 DB 表恢复吗？</summary>
 
-不能。S2 只承诺当前进程内存受理，不能借尚未实现的 S3 持久路径补证明。</details>
+不能。S2 只承诺当前进程内存受理，不能借尚未实现的 S3 持久路径补证明。
+
+</details>
 
 <details><summary>3. RDB 与 AOF 最基本的记录方式分别是什么？</summary>
 
-RDB 是某时点数据集快照；AOF 记录修改数据的命令以供回放。</details>
+RDB 是某时点数据集快照；AOF 记录修改数据的命令以供回放。
+
+</details>
 
 <details><summary>4. `appendfsync everysec` 等同每次命令都同步刷盘吗？</summary>
 
-不等同。它按周期同步，近期写入仍有掉电丢失窗口，实际范围受配置/故障条件影响。</details>
+不等同。它按周期同步，近期写入仍有掉电丢失窗口，实际范围受配置/故障条件影响。
+
+</details>
 
 <details><summary>5. AOF 恢复出 seq8，权威 DB 为 seq9，这个缓存因“已持久”就新鲜吗？</summary>
 
-不新鲜。持久只说明 Redis 找回曾保存的值，不证明与源版本一致。</details>
+不新鲜。持久只说明 Redis 找回曾保存的值，不证明与源版本一致。
+
+</details>
 
 <details><summary>6. Redis 复制默认同步等待每次副本持久吗？</summary>
 
-不是。官方说明默认异步复制，额外等待/配置也须限定保证范围。</details>
+不是。官方说明默认异步复制，额外等待/配置也须限定保证范围。
+
+</details>
 
 <details><summary>7. Sentinel 自动切换能保证所有已确认缓存写都保留吗？</summary>
 
-不能。被提升副本可能落后，Redis 官方明确存在确认写丢失窗口。</details>
+不能。被提升副本可能落后，Redis 官方明确存在确认写丢失窗口。
+
+</details>
 
 <details><summary>8. `WAIT` 返回指定副本数确认，就等于强一致零丢失吗？</summary>
 
-不等于。它确认复制阶段，不把集群变成强一致切换协议；持久配置/故障仍有关。</details>
+不等于。它确认复制阶段，不把集群变成强一致切换协议；持久配置/故障仍有关。
+
+</details>
 
 <details><summary>9. t0 RDB 保存什么版本？</summary>
 
-`preview:c-a=seq8`。</details>
+`preview:c-a=seq8`。
+
+</details>
 
 <details><summary>10. t1 权威 DB 到 seq9，但未产生新 RDB，t2 恢复会得到什么？</summary>
 
-若旧键未按 TTL 过期，可能恢复 RDB 中的 seq8；不能未经校验当最新。</details>
+若旧键未按 TTL 过期，可能恢复 RDB 中的 seq8；不能未经校验当最新。
+
+</details>
 
 <details><summary>11. RDB 恢复了“u-a 在线”，为何不能直接展示当前在线？</summary>
 
-原进程连接已断，旧心跳不证明新运行代次里的设备仍可达；需新连接/心跳。</details>
+原进程连接已断，旧心跳不证明新运行代次里的设备仍可达；需新连接/心跳。
+
+</details>
 
 <details><summary>12. Redis 主节点预览 seq9、落后副本 seq8，切到副本后预览怎样？</summary>
 
-可能退回 seq8；若只是派生预览，可从权威 DB 核对并重建。</details>
+可能退回 seq8；若只是派生预览，可从权威 DB 核对并重建。
+
+</details>
 
 <details><summary>13. 若 Redis 只保存派生预览，副本丢了一次更新能直接证明 SQL 消息丢了吗？</summary>
 
-不能。缓存副本与数据库消息权威是不同状态层。</details>
+不能。缓存副本与数据库消息权威是不同状态层。
+
+</details>
 
 <details><summary>14. 1000/s 冷缓存回源、DB 预算 200/s，持续无拒绝时积压每秒增长多少？</summary>
 
-`1000−200=800` 次/秒，纸上没有其他负载/合并/拒绝。</details>
+`1000−200=800` 次/秒，纸上没有其他负载/合并/拒绝。
+
+</details>
 
 <details><summary>15. 只有一批 1000 次，理想 200/s 需约多久处理完？</summary>
 
-约五秒；不是持续每秒增加 800 的同一个条件。</details>
+约五秒；不是持续每秒增加 800 的同一个条件。
+
+</details>
 
 <details><summary>16. 增加 Redis Cluster 节点就把单个 `preview:c-g` 热键均分了吗？</summary>
 
-不会自动。该键仍有自己的槽和负责节点，需另评估热点访问。</details>
+不会自动。该键仍有自己的槽和负责节点，需另评估热点访问。
+
+</details>
 
 <details><summary>17. 候选成员 Set 含 10000 人，每次全取会产生哪类问题？</summary>
 
-大键/大结果的网络、内存与迁移成本；它也不能单独替权威权限判断。</details>
+大键/大结果的网络、内存与迁移成本；它也不能单独替权威权限判断。
+
+</details>
 
 <details><summary>18. 限流计数重启后归零，可以一律当无风险吗？</summary>
 
-不能。可能短时放宽请求，须按业务/安全风险选择 fail-open 或 fail-closed。</details>
+不能。可能短时放宽请求，须按业务/安全风险选择 fail-open 或 fail-closed。
+
+</details>
 
 <details><summary>19. `conversation_counters.next_seq` 能因 Redis 空了就重置为 1 吗？</summary>
 
-不能。它是 06.12 的受控事务序号状态，不应只放可逐出缓存，也不能任意归零。</details>
+不能。它是 06.12 的受控事务序号状态，不应只放可逐出缓存，也不能任意归零。
+
+</details>
 
 <details><summary>20. Redis 已恢复监听端口，就达到业务 RTO 了吗？</summary>
 
-未必。热键、权限、预览版本、DB 回源压力和用户结果都要达成约定目标。</details>
+未必。热键、权限、预览版本、DB 回源压力和用户结果都要达成约定目标。
+
+</details>
 
 <details><summary>21. 冷缓存可返回旧成员许可换可用性吗？</summary>
 
-不能。退群后旧许可可能越权；缓存故障时关键授权需权威/受控版本证据。</details>
+不能。退群后旧许可可能越权；缓存故障时关键授权需权威/受控版本证据。
+
+</details>
 
 <details><summary>22. 若产品决定把 Redis 用作唯一权威，首先补哪几类证明？</summary>
 
-至少持久/复制/备份、逐出与容量、切换一致性、故障恢复演练和对外确认点；不能只写“开 AOF”。</details>
+至少持久/复制/备份、逐出与容量、切换一致性、故障恢复演练和对外确认点；不能只写“开 AOF”。
+
+</details>
 
 ## 本章完成标准与下一步
 

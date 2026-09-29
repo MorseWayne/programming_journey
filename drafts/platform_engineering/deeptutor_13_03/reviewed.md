@@ -116,95 +116,139 @@ Go 的 `context.Context` 能把取消/截止时间信号传给调用链，但调
 
 <details><summary>1. 公开接口与内部实现分别回答什么？</summary>
 
-接口说调用输入、可观察结果和错误；实现说内部如何履约。</details>
+接口说调用输入、可观察结果和错误；实现说内部如何履约。
+
+</details>
 
 <details><summary>2. 信息隐藏应隐藏当前 200 的 `accepted_in_memory` 吗？</summary>
 
-不应。它是调用者必须知道的业务确认边界。</details>
+不应。它是调用者必须知道的业务确认边界。
+
+</details>
 
 <details><summary>3. Parnas 建议按什么考虑模块划分？</summary>
 
-按可能独立变化的设计决定，尽量把这些决定及其复杂性藏在合适边界内。</details>
+按可能独立变化的设计决定，尽量把这些决定及其复杂性藏在合适边界内。
+
+</details>
 
 <details><summary>4. 深模块是否等于方法和文件越多越好？</summary>
 
-不是。关键是简明接口吸收了多少有价值的内部复杂性。</details>
+不是。关键是简明接口吸收了多少有价值的内部复杂性。
+
+</details>
 
 <details><summary>5. Go 接口一般应由哪一侧的需要驱动？</summary>
 
-通常由使用行为的消费侧定义，不为每个具体类型或 mock 预造大接口。</details>
+通常由使用行为的消费侧定义，不为每个具体类型或 mock 预造大接口。
+
+</details>
 
 <details><summary>6. 客户端应把 `P0 offset42` 当历史游标吗？</summary>
 
-不应。那是传输位置；业务补拉用有权限的会话历史位置。</details>
+不应。那是传输位置；业务补拉用有权限的会话历史位置。
+
+</details>
 
 <details><summary>7. 当前 `/v1` 同 ID 重复如何映射？</summary>
 
-按合同返回 409，即使正文相同。</details>
+按合同返回 409，即使正文相同。
+
+</details>
 
 <details><summary>8. 未来 S3 `/v2` 可未经评审让旧 200 变成 DB 已存吗？</summary>
 
-不能。成功边界变更要版本、兼容与权威证据。</details>
+不能。成功边界变更要版本、兼容与权威证据。
+
+</details>
 
 ### 推演 9–16：坏接口与不确定结果
 
 <details><summary>9. HTTP 层调用 `AllocateSeq` 后再 `InsertMongo` 泄漏了什么？</summary>
 
-泄漏序号分配、存储选型与执行顺序，让调用方承担一致性/失败处理。</details>
+泄漏序号分配、存储选型与执行顺序，让调用方承担一致性/失败处理。
+
+</details>
 
 <details><summary>10. DB 已写而 E9 发布失败，调用方只得 `error` 有什么缺口？</summary>
 
-不知权威是否已形成，无法正确给 A 确认或决定恢复；需区分状态轴与结果证据。</details>
+不知权威是否已形成，无法正确给 A 确认或决定恢复；需区分状态轴与结果证据。
+
+</details>
 
 <details><summary>11. 当前非成员发送被一个泛化 `Forbidden` 暴露，会破坏什么？</summary>
 
-当前合同要求隐藏为 404；HTTP 映射必须守业务权限边界。</details>
+当前合同要求隐藏为 404；HTTP 映射必须守业务权限边界。
+
+</details>
 
 <details><summary>12. 客户端超时可断言 DB 写入已回滚吗？</summary>
 
-不能。网络/`context` 取消之后提交结果可能未知，未来须有稳定 ID 和查证/重试规则。</details>
+不能。网络/`context` 取消之后提交结果可能未知，未来须有稳定 ID 和查证/重试规则。
+
+</details>
 
 <details><summary>13. 用 `map[string]any` 传送者、会话和正文为何不一定更简单？</summary>
 
-它遮掉身份、校验与确认点，调用者和审阅者难知哪些条件必需。</details>
+它遮掉身份、校验与确认点，调用者和审阅者难知哪些条件必需。
+
+</details>
 
 <details><summary>14. 每层仅转发一次的方法越多，信息隐藏越好吗？</summary>
 
-未必。若调用方仍知道所有步骤与先后关系，只是把泄漏换了包装。</details>
+未必。若调用方仍知道所有步骤与先后关系，只是把泄漏换了包装。
+
+</details>
 
 <details><summary>15. B 离线 25h、broker 留 24h，FetchHistory 可只传 offset 吗？</summary>
 
-不能。未来要按成员权限从权威历史补会话序号缺口，当前 S2 尚无此承诺。</details>
+不能。未来要按成员权限从权威历史补会话序号缺口，当前 S2 尚无此承诺。
+
+</details>
 
 <details><summary>16. 改 broker 实现时，哪些消息语义仍要保持？</summary>
 
-稳定消息意图、权威顺序/去重、授权和对外确认点；变了就要显式评审。</details>
+稳定消息意图、权威顺序/去重、授权和对外确认点；变了就要显式评审。
+
+</details>
 
 ### 决策 17–22：变更冲击与证据
 
 <details><summary>17. R9 若获批，可只改存储适配器吗？</summary>
 
-不能。输入校验、协议版本、旧端兼容与合同测试都要审，`/v1` 仍为 6 B。</details>
+不能。输入校验、协议版本、旧端兼容与合同测试都要审，`/v1` 仍为 6 B。
+
+</details>
 
 <details><summary>18. 成员历史规则改变，算内部实现细节吗？</summary>
 
-不算。用户可见权限合同变了，产品/安全与 FetchHistory 验收必须同步。</details>
+不算。用户可见权限合同变了，产品/安全与 FetchHistory 验收必须同步。
+
+</details>
 
 <details><summary>19. 未来 DB 换索引，是否每个调用方都要知道新索引名？</summary>
 
-若语义不变，可由存储模块吸收；仍须验证身份、查询顺序与性能。</details>
+若语义不变，可由存储模块吸收；仍须验证身份、查询顺序与性能。
+
+</details>
 
 <details><summary>20. 为了 mock 而预设 20 方法的大仓库接口，有什么问题？</summary>
 
-消费方背上无关能力和维护负担；应按真实用例定义小而明确的行为。</details>
+消费方背上无关能力和维护负担；应按真实用例定义小而明确的行为。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明其所有模块接口都很好吗？</summary>
 
-不能。只能说明选定发送路径与另一 Mongo 消费路径存在所读异步边界。</details>
+不能。只能说明选定发送路径与另一 Mongo 消费路径存在所读异步边界。
+
+</details>
 
 <details><summary>22. 模块评审卡至少包含什么？</summary>
 
-调用者、公开语义/错误、内部变化决定、依赖方向、失败后确认点、变更冲击及业务反例证据。</details>
+调用者、公开语义/错误、内部变化决定、依赖方向、失败后确认点、变更冲击及业务反例证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

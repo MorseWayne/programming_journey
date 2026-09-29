@@ -12,15 +12,15 @@
   "generation_request_file": "generation_request.json",
   "generation_request_sha256": "f1251ab8757cfc2443dde8a0dea32da657ba04d6f8cbdd56ac7d622e517f3afd",
   "original_sha256": "33af902616e91e80d562fec08c0862a0284a2680af2751b9075ca5d392862087",
-  "reviewed_sha256": "2509ea921b0290e2ac7184b717102288017a29e3f6794029ea60e08e8c4bb592",
+  "reviewed_sha256": "e1ce631781a9c9f639c91cb93f0b119a6b604790e894daab9d4de96597fd8309",
   "original_characters": 42485,
-  "reviewed_characters": 11440,
+  "reviewed_characters": 11480,
   "reviewed_chinese_characters": 4225,
   "code_execution": false,
   "site_build": false,
   "publication_status": "integrated into local course source",
   "course_file": "src/docs/platform_engineering/curriculum/01_go/12_cli_capstone.md",
-  "course_sha256": "0d2b1ac2d956c1a674afd05c642dc8bba54b64b478e70e1d165911504d1cc740",
+  "course_sha256": "e0f7a371bedbb93ceae865436f2ec9b921b4fc6f2564fa98d4d762fb854842f1",
   "source_reference": {
     "primary_sources": [
       "https://pkg.go.dev/flag#FlagSet",

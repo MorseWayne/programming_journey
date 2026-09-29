@@ -393,83 +393,123 @@ go 1.25
 
 <details><summary>1. `history/` 目录与 `package history` 是同一件事吗？</summary>
 
-不是。目录定位文件，`package` 声明编译单元的名字；保持一致是降低阅读成本的约定。</details>
+不是。目录定位文件，`package` 声明编译单元的名字；保持一致是降低阅读成本的约定。
+
+</details>
 
 <details><summary>2. `go.mod` 写 `module example.com/imhistory`，`history/` 的导入路径是什么？</summary>
 
-`example.com/imhistory/history`；导入一个包，不导入 `history.go` 文件。</details>
+`example.com/imhistory/history`；导入一个包，不导入 `history.go` 文件。
+
+</details>
 
 <details><summary>3. `messages` 小写字段为何外部包不能直接赋值？</summary>
 
-它是未导出标识符。调用者只能通过公开方法操作，因而不能绕开 `Add` 的检查。</details>
+它是未导出标识符。调用者只能通过公开方法操作，因而不能绕开 `Add` 的检查。
+
+</details>
 
 <details><summary>4. `Messages()` 返回切片副本，是否保证未来任何嵌套数据都独立？</summary>
 
-不保证。当前元素由值字段组成；若后来含指针、map 或切片，还需重新审查复制深度。</details>
+不保证。当前元素由值字段组成；若后来含指针、map 或切片，还需重新审查复制深度。
+
+</details>
 
 <details><summary>5. `history` 可以导入 `encoding/json` 吗？</summary>
 
-语言上可以；本章的职责设计不需要。JSON 字段属于文件格式，应由 `historyfile` 负责。</details>
+语言上可以；本章的职责设计不需要。JSON 字段属于文件格式，应由 `historyfile` 负责。
+
+</details>
 
 <details><summary>6. `history` 导入 `historyfile`，后者又导入 `history`，拆成四个文件能解决吗？</summary>
 
-不能。循环发生在包依赖图上。将文件调用移到入口，恢复单向依赖。</details>
+不能。循环发生在包依赖图上。将文件调用移到入口，恢复单向依赖。
+
+</details>
 
 <details><summary>7. `internal/historyfile` 能被本模块的命令导入吗？</summary>
 
-能，命令位于 `internal` 父目录树内；外部目录树不在允许范围内。</details>
+能，命令位于 `internal` 父目录树内；外部目录树不在允许范围内。
+
+</details>
 
 <details><summary>8. `internal` 是否能阻止用户读取 JSON 文件？</summary>
 
-不能。它只限制源码导入，不是运行时访问控制；文件权限另行决定。</details>
+不能。它只限制源码导入，不是运行时访问控制；文件权限另行决定。
+
+</details>
 
 <details><summary>9. 什么时候值得给文件存储定义接口？</summary>
 
-当某个调用者确实要依赖一组能力，并有明确实现替换或隔离需求时；接口在使用方按所需方法保持小。</details>
+当某个调用者确实要依赖一组能力，并有明确实现替换或隔离需求时；接口在使用方按所需方法保持小。
+
+</details>
 
 <details><summary>10. `History` 私有切片能直接交给 `json.Marshal` 得到全部消息吗？</summary>
 
-不能依赖这一点。私有字段不会按默认 JSON 规则输出；文件适配器应构造明确的可导出文件结构。</details>
+不能依赖这一点。私有字段不会按默认 JSON 规则输出；文件适配器应构造明确的可导出文件结构。
+
+</details>
 
 <details><summary>11. `Load` 返回文件不存在时，哪一层决定“新会话”？</summary>
 
-本例由命令入口决定。文件适配器保留 `fs.ErrNotExist` 原因，其他入口可作不同决定。</details>
+本例由命令入口决定。文件适配器保留 `fs.ErrNotExist` 原因，其他入口可作不同决定。
+
+</details>
 
 <details><summary>12. `Add` 拒绝重复后，已有切片怎样？</summary>
 
-本章实现先检查再追加，因此原切片不变；这只覆盖同一内存对象内的会话键。</details>
+本章实现先检查再追加，因此原切片不变；这只覆盖同一内存对象内的会话键。
+
+</details>
 
 <details><summary>13. `go.mod` 的模块版本能替代 JSON 的 `version` 吗？</summary>
 
-不能。前者管理代码与导入兼容，后者管理磁盘记录的字段和含义。</details>
+不能。前者管理代码与导入兼容，后者管理磁盘记录的字段和含义。
+
+</details>
 
 <details><summary>14. 两个依赖分别要求同一模块至少 v1.3 和 v1.6，会选哪一个？</summary>
 
-在这个简化图里选 v1.6；这是依赖要求中的最高最低版本，不是自动选网络上的最新版本。</details>
+在这个简化图里选 v1.6；这是依赖要求中的最高最低版本，不是自动选网络上的最新版本。
+
+</details>
 
 <details><summary>15. 新增公开结构体字段一定源码兼容吗？</summary>
 
-不一定。命名字段字面量通常继续可用，位置式字面量可能因字段数量改变而无法编译。</details>
+不一定。命名字段字面量通常继续可用，位置式字面量可能因字段数量改变而无法编译。
+
+</details>
 
 <details><summary>16. 新程序能读旧文件，就能安全回退旧程序吗？</summary>
 
-不能推断。若新程序已写出 v2，旧程序可能不认识它；要审查新旧读写矩阵和发布顺序。</details>
+不能推断。若新程序已写出 v2，旧程序可能不认识它；要审查新旧读写矩阵和发布顺序。
+
+</details>
 
 <details><summary>17. 只改错误文字，会影响 `errors.Is` 吗？</summary>
 
-若保留同一个错误身份，`errors.Is` 仍可匹配；依赖原文字的脚本或展示则可能受影响。</details>
+若保留同一个错误身份，`errors.Is` 仍可匹配；依赖原文字的脚本或展示则可能受影响。
+
+</details>
 
 <details><summary>18. `Save` 返回 nil，是否代表崩溃后旧文件仍完整？</summary>
 
-不代表。`os.WriteFile` 的覆盖过程不承诺原子替换或稳定介质；这要另设计。</details>
+不代表。`os.WriteFile` 的覆盖过程不承诺原子替换或稳定介质；这要另设计。
+
+</details>
 
 <details><summary>19. 本地文件缺少 `m-a`，能否断言服务端也没有？</summary>
 
-不能。文件只是当前教学工具的一份本地记录；未定义服务端同步范围。</details>
+不能。文件只是当前教学工具的一份本地记录；未定义服务端同步范围。
+
+</details>
 
 <details><summary>20. 要支持另一种文件格式，先修改哪个包？</summary>
 
-先在适配层定义新格式及兼容读取，再由入口选择；领域消息规则只在业务含义变化时调整。</details>
+先在适配层定义新格式及兼容读取，再由入口选择；领域消息规则只在业务含义变化时调整。
+
+</details>
 
 ## 来源与下一步
 

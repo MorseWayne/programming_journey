@@ -113,91 +113,135 @@ Linux `/proc/<pid>/status` 可看到 `VmSize`（虚拟范围）与 `VmRSS`（驻
 
 <details><summary>1. “消息慢”缺少哪三个关键信息？</summary>
 
-至少要明确操作/确认点、时间窗和时延或错误的量化口径。</details>
+至少要明确操作/确认点、时间窗和时延或错误的量化口径。
+
+</details>
 
 <details><summary>2. 这次合成业务指标是哪一个？</summary>
 
-`c-a` 历史查询的 5 分钟窗口 P95，60 ms→240 ms。</details>
+`c-a` 历史查询的 5 分钟窗口 P95，60 ms→240 ms。
+
+</details>
 
 <details><summary>3. P95 增加了多少毫秒？</summary>
 
-180 ms；这是两个给定合成数的差，不是设备 `await`。</details>
+180 ms；这是两个给定合成数的差，不是设备 `await`。
+
+</details>
 
 <details><summary>4. USE 的三类检查是什么？</summary>
 
-资源使用、饱和/排队和错误；它是组织问题的检查表。</details>
+资源使用、饱和/排队和错误；它是组织问题的检查表。
+
+</details>
 
 <details><summary>5. PID 4102 可当作永久进程身份吗？</summary>
 
-不能。PID 会复用，还要记录时间、主机/容器和进程实例。</details>
+不能。PID 会复用，还要记录时间、主机/容器和进程实例。
+
+</details>
 
 <details><summary>6. `ps` 的 R 能证明正在占用一个 CPU 吗？</summary>
 
-不能。R 可包含正在运行或可运行等待 CPU。</details>
+不能。R 可包含正在运行或可运行等待 CPU。
+
+</details>
 
 <details><summary>7. `vmstat r` 与 `b` 各代表什么？</summary>
 
-r 是可运行任务数；b 是等待 I/O 完成的阻塞任务数。</details>
+r 是可运行任务数；b 是等待 I/O 完成的阻塞任务数。
+
+</details>
 
 <details><summary>8. `vmstat wa=22%` 是历史请求时延 22% 吗？</summary>
 
-不是。它是系统 CPU 时间的 I/O 等待分类份额。</details>
+不是。它是系统 CPU 时间的 I/O 等待分类份额。
+
+</details>
 
 <details><summary>9. `vmstat` 第一行活动统计能直接代表事故五分钟吗？</summary>
 
-不能。通常覆盖开机以来；要读与事故窗对齐的间隔样本。</details>
+不能。通常覆盖开机以来；要读与事故窗对齐的间隔样本。
+
+</details>
 
 <details><summary>10. `si/so=0` 能证明没有任何内存问题吗？</summary>
 
-不能。只说明本观测窗未见交换速率，仍需看对象、限制和其他指标。</details>
+不能。只说明本观测窗未见交换速率，仍需看对象、限制和其他指标。
+
+</details>
 
 <details><summary>11. `VmRSS` 从 200 到 220 MiB 能证明 Go 堆泄漏吗？</summary>
 
-不能。RSS 含多类驻留页，要对照 Go 堆、映射、连接与时间窗。</details>
+不能。RSS 含多类驻留页，要对照 Go 堆、映射、连接与时间窗。
+
+</details>
 
 <details><summary>12. `iostat await=38 ms` 与 HTTP P95=240 ms 分母一样吗？</summary>
 
-不一样。前者是该设备 I/O 请求均值，后者是业务请求分位数。</details>
+不一样。前者是该设备 I/O 请求均值，后者是业务请求分位数。
+
+</details>
 
 <details><summary>13. `aqu-sz=3` 表示三条 IM 消息排队吗？</summary>
 
-不是。它是设备 I/O 请求的平均队列长度。</details>
+不是。它是设备 I/O 请求的平均队列长度。
+
+</details>
 
 <details><summary>14. 并行 SSD 的 `%util` 接近 100% 就可直接断言饱和吗？</summary>
 
-不能。该值对并行设备不直接反映性能上限，需结合延迟、队列、吞吐和设备能力。</details>
+不能。该值对并行设备不直接反映性能上限，需结合延迟、队列、吞吐和设备能力。
+
+</details>
 
 <details><summary>15. 本机 d0 `await` 上升就证明远端数据库慢吗？</summary>
 
-不能。先核对请求实际数据路径、远端主机与耗时段。</details>
+不能。先核对请求实际数据路径、远端主机与耗时段。
+
+</details>
 
 <details><summary>16. `ss` 的 ESTABLISHED 数等于在线用户数吗？</summary>
 
-不等于。一个用户可有多设备，连接状态与业务认证/在线状态不同。</details>
+不等于。一个用户可有多设备，连接状态与业务认证/在线状态不同。
+
+</details>
 
 <details><summary>17. 一个 socket 发送队列近零能排除所有慢设备吗？</summary>
 
-不能。样本太窄，也看不到应用有界队列与瞬时峰值。</details>
+不能。样本太窄，也看不到应用有界队列与瞬时峰值。
+
+</details>
 
 <details><summary>18. 本案例先检查本机 I/O 的理由是什么？</summary>
 
-同窗 `b/wa` 和 d0 `await/aqu-sz` 上升使它成为候选，但还缺业务路径证据。</details>
+同窗 `b/wa` 和 d0 `await/aqu-sz` 上升使它成为候选，但还缺业务路径证据。
+
+</details>
 
 <details><summary>19. 下一项能区分本机盘与远端等待的证据是什么？</summary>
 
-请求 Trace/数据访问阶段计时，并核对实际存储设备和远端服务指标。</details>
+请求 Trace/数据访问阶段计时，并核对实际存储设备和远端服务指标。
+
+</details>
 
 <details><summary>20. 可以把真实 IP、令牌和完整环境变量粘进练习报告吗？</summary>
 
-不应。只记录必要汇总，脱敏并注明看不到的范围。</details>
+不应。只记录必要汇总，脱敏并注明看不到的范围。
+
+</details>
 
 <details><summary>21. CPU 总体不满能排除单核热点和容器配额吗？</summary>
 
-不能。系统平均值会遮蔽局部约束，03.11 再深化容器限制。</details>
+不能。系统平均值会遮蔽局部约束，03.11 再深化容器限制。
+
+</details>
 
 <details><summary>22. 这张合成表能证明唯一根因吗？</summary>
 
-不能。它只帮助排列候选和选择下一项有区分力的证据。</details>
+不能。它只帮助排列候选和选择下一项有区分力的证据。
+
+</details>
 
 ## 来源与下一步
 

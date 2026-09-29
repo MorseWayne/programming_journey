@@ -115,91 +115,135 @@ MongoDB 也要固定查询结构，只从受控字段构造过滤条件；不能
 
 <details><summary>1. 为什么一条消息正文没有“通用清洗一次”就够了的规则？</summary>
 
-它会进入 SQL、HTML、日志等不同解释器，各自要求不同处理。</details>
+它会进入 SQL、HTML、日志等不同解释器，各自要求不同处理。
+
+</details>
 
 <details><summary>2. 请求体、正文和附件上限是同一个数字吗？</summary>
 
-不是。整体编码开销、文本字节和文件大小各有独立边界。</details>
+不是。整体编码开销、文本字节和文件大小各有独立边界。
+
+</details>
 
 <details><summary>3. 只检查 `Content-Length` 足以保证实际体积吗？</summary>
 
-不够。真正读取请求体时仍需有界限制。</details>
+不够。真正读取请求体时仍需有界限制。
+
+</details>
 
 <details><summary>4. `len("你好")` 在本题 UTF-8 Go 字符串中是多少？</summary>
 
-6 字节，不是 2 字节。</details>
+6 字节，不是 2 字节。
+
+</details>
 
 <details><summary>5. 前端输入框限制 6 个字符就满足 6 字节上限吗？</summary>
 
-不能。字符与 UTF-8 字节数不同，服务端须重新检查。</details>
+不能。字符与 UTF-8 字节数不同，服务端须重新检查。
+
+</details>
 
 <details><summary>6. 会话 ID 含引号时，参数化 SQL 会把它当额外 WHERE 条件吗？</summary>
 
-不会。它仍是一个数据值。</details>
+不会。它仍是一个数据值。
+
+</details>
 
 <details><summary>7. `$1` 可以代替任意客户端提供的 ORDER BY 字段名吗？</summary>
 
-不能。SQL 结构由服务端白名单选择。</details>
+不能。SQL 结构由服务端白名单选择。
+
+</details>
 
 <details><summary>8. SQL 已参数化，u-c 就可以读 c-a 了吗？</summary>
 
-不能。注入防护与对象授权是不同检查。</details>
+不能。注入防护与对象授权是不同检查。
+
+</details>
 
 <details><summary>9. 原样把客户端 JSON 当 MongoDB 查询过滤器合适吗？</summary>
 
-不合适。服务端应固定允许的字段和运算结构。</details>
+不合适。服务端应固定允许的字段和运算结构。
 
-<details><summary>10. 普通消息 `"<b>你好</b>"` 应在 HTML 文本位置怎样显示？</summary>
+</details>
 
-作为文本字符，经上下文转义后展示，不作为可执行/任意页面标记。</details>
+<details><summary>10. 普通消息 `"&lt;b&gt;你好&lt;/b&gt;"` 应在 HTML 文本位置怎样显示？</summary>
+
+作为文本字符，经上下文转义后展示，不作为可执行/任意页面标记。
+
+</details>
 
 <details><summary>11. `template.HTML` 能默认包装不可信正文吗？</summary>
 
-不能。它会绕开普通字符串的模板转义保护。</details>
+不能。它会绕开普通字符串的模板转义保护。
+
+</details>
 
 <details><summary>12. 前端写 DOM 文本应优先用 `textContent` 还是 `innerHTML`？</summary>
 
-普通正文优先 `textContent`。</details>
+普通正文优先 `textContent`。
+
+</details>
 
 <details><summary>13. URL 被放进 `href` 只做 HTML 转义就够吗？</summary>
 
-不够。还要检查允许的 URL scheme 等业务协议和目标属性语境。</details>
+不够。还要检查允许的 URL scheme 等业务协议和目标属性语境。
+
+</details>
 
 <details><summary>14. 用户文件名可直接拼进服务器目录吗？</summary>
 
-不能。使用服务器生成对象键，原名仅作受控展示字段。</details>
+不能。使用服务器生成对象键，原名仅作受控展示字段。
+
+</details>
 
 <details><summary>15. 附件 `Content-Type` 可作为唯一类型证据吗？</summary>
 
-不能。它由客户端提供，可伪造，还需业务允许类型与内容检查。</details>
+不能。它由客户端提供，可伪造，还需业务允许类型与内容检查。
+
+</details>
 
 <details><summary>16. 上传大小合格就保证解压/转码不会耗尽资源吗？</summary>
 
-不能。处理后的大小、CPU、内存和时间也要设边界。</details>
+不能。处理后的大小、CPU、内存和时间也要设边界。
+
+</details>
 
 <details><summary>17. URL 只在页面展示，服务器一定有 SSRF 吗？</summary>
 
-不一定。SSRF 风险出现在服务器按用户影响的 URL 主动发请求时。</details>
+不一定。SSRF 风险出现在服务器按用户影响的 URL 主动发请求时。
+
+</details>
 
 <details><summary>18. 预览 URL 首跳安全，重定向后可免检吗？</summary>
 
-不能。每跳目标和解析地址都需要重新核对。</details>
+不能。每跳目标和解析地址都需要重新核对。
+
+</details>
 
 <details><summary>19. 字符串不含 `127.0.0.1` 就能断定目标不是内网吗？</summary>
 
-不能。域名、地址解析、编码、重定向仍可能指向内部目标。</details>
+不能。域名、地址解析、编码、重定向仍可能指向内部目标。
+
+</details>
 
 <details><summary>20. 错误日志可以原样保存聊天正文和访问 Token 吗？</summary>
 
-不应。用受控字段和有限错误类别，保护凭据与私有内容。</details>
+不应。用受控字段和有限错误类别，保护凭据与私有内容。
+
+</details>
 
 <details><summary>21. 外部错误体应返回完整 SQL 和本地存储路径吗？</summary>
 
-不应。返回稳定业务/错误码，内部按访问控制留诊断证据。</details>
+不应。返回稳定业务/错误码，内部按访问控制留诊断证据。
+
+</details>
 
 <details><summary>22. 哪个检查能同时替代大小、授权、参数化和输出编码？</summary>
 
-没有单一检查能替代它们；各自在不同边界承担责任。</details>
+没有单一检查能替代它们；各自在不同边界承担责任。
+
+</details>
 
 ## 来源与下一步
 

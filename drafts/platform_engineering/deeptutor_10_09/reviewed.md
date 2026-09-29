@@ -132,91 +132,135 @@ publish: none
 
 <details><summary>1. CI 的输入至少要能指向什么？</summary>
 
-指向被检查的确切提交和声明过的工具链、依赖与数据。</details>
+指向被检查的确切提交和声明过的工具链、依赖与数据。
+
+</details>
 
 <details><summary>2. 本地一次测试通过能直接证明 PR 提交通过吗？</summary>
 
-不能；本地文件、工具链或数据可能与提交/独立环境不同。</details>
+不能；本地文件、工具链或数据可能与提交/独立环境不同。
+
+</details>
 
 <details><summary>3. 工作流、job、step 的包含关系是什么？</summary>
 
-事件触发工作流；工作流含任务；任务在 runner 中按序运行步骤。</details>
+事件触发工作流；工作流含任务；任务在 runner 中按序运行步骤。
+
+</details>
 
 <details><summary>4. 同一工作流里的两个 job 自动共用磁盘吗？</summary>
 
-通常不共用，需明确上传下载或重建输入。</details>
+通常不共用，需明确上传下载或重建输入。
+
+</details>
 
 <details><summary>5. 为什么绿色状态必须连到提交 SHA？</summary>
 
-新提交可能改变代码；旧检查不能证明新内容。</details>
+新提交可能改变代码；旧检查不能证明新内容。
+
+</details>
 
 <details><summary>6. `go test ./...` 通过证明 B 设备收到消息了吗？</summary>
 
-不能，只证明所选包中的测试在该环境完成；设备确认另需真实链路证据。</details>
+不能，只证明所选包中的测试在该环境完成；设备确认另需真实链路证据。
+
+</details>
 
 <details><summary>7. 9 个 ASCII 字符与 3 个常见汉字在本题为什么都要测？</summary>
 
-本题上限按 UTF-8 字节数；两者可都是 9 字节，字符数不同。</details>
+本题上限按 UTF-8 字节数；两者可都是 9 字节，字符数不同。
+
+</details>
 
 <details><summary>8. 第 10 字节的请求被拒绝后，还要检查什么状态？</summary>
 
-内存消息列表不应因失败而改变。</details>
+内存消息列表不应因失败而改变。
+
+</details>
 
 <details><summary>9. `go build ./...` 成功便说明已有指定路径的二进制吗？</summary>
 
-不能。要指定主包与 `-o` 输出路径，并确认该次构建的文件。</details>
+不能。要指定主包与 `-o` 输出路径，并确认该次构建的文件。
+
+</details>
 
 <details><summary>10. `go.mod` 与 `go.sum` 各解决什么问题？</summary>
 
-前者描述模块及版本要求；后者保存依赖内容的校验值。两者都不固定整个运行环境。</details>
+前者描述模块及版本要求；后者保存依赖内容的校验值。两者都不固定整个运行环境。
+
+</details>
 
 <details><summary>11. 相同 Git SHA 为什么不保证产物字节相同？</summary>
 
-工具链、目标、CGO、构建参数或生成输入可能不同。</details>
+工具链、目标、CGO、构建参数或生成输入可能不同。
+
+</details>
 
 <details><summary>12. 缓存命中等于测试通过吗？</summary>
 
-不等于。缓存只是省时，检查仍须执行。</details>
+不等于。缓存只是省时，检查仍须执行。
+
+</details>
 
 <details><summary>13. 冷缓存失败、热缓存通过应先查什么？</summary>
 
-依赖下载、遗漏的生成步骤或未声明的本地输入。</details>
+依赖下载、遗漏的生成步骤或未声明的本地输入。
+
+</details>
 
 <details><summary>14. 为什么不能用真实聊天记录作本章测试数据？</summary>
 
-它会引入隐私、权限与不可重建状态；虚构受控数据已足够验证规则。</details>
+它会引入隐私、权限与不可重建状态；虚构受控数据已足够验证规则。
+
+</details>
 
 <details><summary>15. 同一提交首次失败、重跑变绿能说修好了代码吗？</summary>
 
-不能。代码未变，须比较环境、数据和日志以定位不稳定来源。</details>
+不能。代码未变，须比较环境、数据和日志以定位不稳定来源。
+
+</details>
 
 <details><summary>16. 测试报告与模块缓存，哪一个是这次运行的证据制品？</summary>
 
-报告可作为制品；模块缓存是可删除的加速输入。</details>
+报告可作为制品；模块缓存是可删除的加速输入。
+
+</details>
 
 <details><summary>17. 文件 SHA-256 相同证明业务功能正确吗？</summary>
 
-不能。摘要只能比较文件内容，功能仍需对应测试和验收。</details>
+不能。摘要只能比较文件内容，功能仍需对应测试和验收。
+
+</details>
 
 <details><summary>18. 跨 job 交接二进制要记住哪两个动作？</summary>
 
-显式上传与下载，并保留运行及提交身份。</details>
+显式上传与下载，并保留运行及提交身份。
+
+</details>
 
 <details><summary>19. 外部 PR 为什么不应拿发布密钥运行改动后的脚本？</summary>
 
-提交代码可能是不受信输入；高权限凭据会被执行的代码读取或滥用。</details>
+提交代码可能是不受信输入；高权限凭据会被执行的代码读取或滥用。
+
+</details>
 
 <details><summary>20. PR 构建出文件就算发布了吗？</summary>
 
-不算。构建与上传候选制品不等于批准和部署。</details>
+不算。构建与上传候选制品不等于批准和部署。
+
+</details>
 
 <details><summary>21. 只有单元测试时，接口合同的状态怎样写？</summary>
 
-写“尚无可运行接口测试”；不能虚构其通过记录。</details>
+写“尚无可运行接口测试”；不能虚构其通过记录。
+
+</details>
 
 <details><summary>22. P2 CI 绿色，哪些 IM 业务结果仍未知？</summary>
 
-持久化、设备送达、多设备同步和真实客户端体验等尚无对应检查与观测。</details>
+持久化、设备送达、多设备同步和真实客户端体验等尚无对应检查与观测。
+
+</details>
 
 ## 来源与下一步
 

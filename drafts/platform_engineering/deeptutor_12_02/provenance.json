@@ -32,9 +32,9 @@
   "original_sha256": "7f482fc9517c1d67ceef2a1cb02ce0b1b48451898d770ca0f280a494363f2de5",
   "original_characters": 30288,
   "generation_request_sha256": "bb4cf5e561b6ec6ebabf48649219cdfd733832f75a7d0f7b7483be14e553b931",
-  "reviewed_sha256": "c1bd431255db855cd95bbd9b3ed8c73ce918a2177db1b6e41b401cdf50630c85",
-  "reviewed_characters": 10617,
+  "reviewed_sha256": "63a5e570413119bb9b0fda0ba5df8760eb1204c9b108281d6831721eb3d4305f",
+  "reviewed_characters": 10661,
   "reviewed_chinese_characters": 3906,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/02_container_mechanisms.md",
-  "course_sha256": "301d08a91b27cfeb6a67f26978104c38f3206cf478302865084a1c6ed98e61c9"
+  "course_sha256": "d0a3709e2e52a3708587731c7cce21305918c1427e01a3fd7f43c924bfc8cdab"
 }

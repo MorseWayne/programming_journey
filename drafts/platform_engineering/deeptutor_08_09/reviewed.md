@@ -80,95 +80,139 @@ READY → LEASED(owner=W1, token=41, attempt=A1, lease=5s)
 
 <details><summary>1. N9 是新的聊天消息吗？</summary>
 
-不是。它是围绕权威 `m-9` 对设备 `d-b1` 的一个通知工作意图。</details>
+不是。它是围绕权威 `m-9` 对设备 `d-b1` 的一个通知工作意图。
+
+</details>
 
 <details><summary>2. W2 重试 N9 时应换随机 `task_id` 吗？</summary>
 
-不应。逻辑任务仍是 N9；另用 `attempt_id=A2` 记录新尝试。</details>
+不应。逻辑任务仍是 N9；另用 `attempt_id=A2` 记录新尝试。
+
+</details>
 
 <details><summary>3. `PROVIDER_ACCEPTED` 能证明 B 已读吗？</summary>
 
-不能。它最多证明所选提供方按其合同接受请求；设备收到/阅读另证。</details>
+不能。它最多证明所选提供方按其合同接受请求；设备收到/阅读另证。
+
+</details>
 
 <details><summary>4. 任务行只记录 `message_ref` 而非私有正文，权威正文在哪里？</summary>
 
-在受保护的权威消息存储；执行时按当前权限和版本读取必要内容。</details>
+在受保护的权威消息存储；执行时按当前权限和版本读取必要内容。
+
+</details>
 
 <details><summary>5. `SELECT FOR UPDATE SKIP LOCKED` 会跨提供方网络调用持锁吗？</summary>
 
-不会。教学方案只在短领取事务内使用，后续靠持久 owner/token/lease 协调。</details>
+不会。教学方案只在短领取事务内使用，后续靠持久 owner/token/lease 协调。
+
+</details>
 
 <details><summary>6. W1 的 token41 与 W2 的 token42 由谁保证顺序？</summary>
 
-由持久任务协调状态的原子条件更新分配，不能只靠工作者本地计数。</details>
+由持久任务协调状态的原子条件更新分配，不能只靠工作者本地计数。
+
+</details>
 
 <details><summary>7. 当前 S2 的内存 200 已保证 N9 和权威历史持久吗？</summary>
 
-没有。S2 只 `accepted_in_memory`；S3 DB 提交还是拟议教学合同。</details>
+没有。S2 只 `accepted_in_memory`；S3 DB 提交还是拟议教学合同。
+
+</details>
 
 <details><summary>8. SearchIndex 完成能代替 N9 的通知结果吗？</summary>
 
-不能。搜索与设备提示是独立派生目的。</details>
+不能。搜索与设备提示是独立派生目的。
+
+</details>
 
 ### 故障 9–16：结果未知与接管
 
 <details><summary>9. W1 先标 `PROVIDER_ACCEPTED`，再调用前崩溃，风险是什么？</summary>
 
-调度器误以为已尝试，实际可能一次也未调用，形成漏提示。</details>
+调度器误以为已尝试，实际可能一次也未调用，形成漏提示。
+
+</details>
 
 <details><summary>10. W1 外部调用已被接受、标记前崩溃，W2 接管有什么风险？</summary>
 
-同一 N9 可被再次调用，若提供方/设备无幂等处理可能重复提示。</details>
+同一 N9 可被再次调用，若提供方/设备无幂等处理可能重复提示。
+
+</details>
 
 <details><summary>11. 提供方回应丢失，W1 能断言没发送吗？</summary>
 
-不能。结果未知，先查可得目标记录，受控重试同一任务身份。</details>
+不能。结果未知，先查可得目标记录，受控重试同一任务身份。
+
+</details>
 
 <details><summary>12. W2 token42 已接管，W1 token41 可以更新任务为完成吗？</summary>
 
-不能。任务行条件更新须拒绝过期 token；已发生外部动作仍要另查。</details>
+不能。任务行条件更新须拒绝过期 token；已发生外部动作仍要另查。
+
+</details>
 
 <details><summary>13. Go `context.WithTimeout` 能撤销远端已接纳推送吗？</summary>
 
-不能。它让本地放弃/取消协作工作，不是远端效果的 rollback。</details>
+不能。它让本地放弃/取消协作工作，不是远端效果的 rollback。
+
+</details>
 
 <details><summary>14. 本题“三次总尝试”包含首次吗？</summary>
 
-包含。超过预算进入可追踪修复状态；领取后未调用也应在尝试记录中标清。</details>
+包含。超过预算进入可追踪修复状态；领取后未调用也应在尝试记录中标清。
+
+</details>
 
 <details><summary>15. 永久坏目标可无限快速重试等待自愈吗？</summary>
 
-不应。隔离/取消并修目标或规则，避免占用容量且保留责任。</details>
+不应。隔离/取消并修目标或规则，避免占用容量且保留责任。
+
+</details>
 
 <details><summary>16. B 离线 25h，玩具 broker 仅留 24h，N9 无法弹窗会让消息消失吗？</summary>
 
-不会。B 仍应按当前权限从权威消息历史按 `seq` 补拉。</details>
+不会。B 仍应按当前权限从权威消息历史按 `seq` 补拉。
+
+</details>
 
 ### 评审 17–22：版本、容量与源码
 
 <details><summary>17. `m-9` 已编辑为 v2，旧 v1 任务可无条件推正文吗？</summary>
 
-不可。执行前按当前版本、撤回/删除和授权规则核对。</details>
+不可。执行前按当前版本、撤回/删除和授权规则核对。
+
+</details>
 
 <details><summary>18. B 已非 `c-a` 可见成员，旧 N9 能绕过对象授权吗？</summary>
 
-不能。任务生成时的旧资格不替代执行时的当前业务裁决。</details>
+不能。任务生成时的旧资格不替代执行时的当前业务裁决。
+
+</details>
 
 <details><summary>19. `c-g` 热任务使 N9 最老年龄持续变大，只增 worker 就必然解决吗？</summary>
 
-不必然。还要看单键顺序、提供方限流、重试占用和公平/在途预算。</details>
+不必然。还要看单键顺序、提供方限流、重试占用和公平/在途预算。
+
+</details>
 
 <details><summary>20. 把 N9 标 `CANCELED` 能收回已发到设备的字节吗？</summary>
 
-不能。已发生外部效果需新更正/撤回与设备侧收敛证据。</details>
+不能。已发生外部效果需新更正/撤回与设备侧收敛证据。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明它实现 N9 任务表与 token42 吗？</summary>
 
-不能。它们只证明所述发送入队返回与另一 MongoDB 消费路径。</details>
+不能。它们只证明所述发送入队返回与另一 MongoDB 消费路径。
+
+</details>
 
 <details><summary>22. 值班如何证明“通知链已修复”，而非只清掉队列？</summary>
 
-按 `m-9/E9/N9/A1/A2` 关联权威消息、任务状态、提供方结果、设备回执和授权补拉；记录剩余未知、缺口与修复证据。</details>
+按 `m-9/E9/N9/A1/A2` 关联权威消息、任务状态、提供方结果、设备回执和授权补拉；记录剩余未知、缺口与修复证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

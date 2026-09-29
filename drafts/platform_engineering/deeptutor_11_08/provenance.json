@@ -30,9 +30,9 @@
   "original_sha256": "383f74481fb7752627ec53bef4698fbd83ab7738772df8cffc14ee3028b21302",
   "original_characters": 28397,
   "generation_request_sha256": "4cd11b2fc2bb252a94d720c0c82dcab0a314d04668d1a801570f8d2413feb7e5",
-  "reviewed_sha256": "3a1a5adc6165b1ff7215d9c4b9551d0d424013bf9f4ef1548e0dd62783851f66",
-  "reviewed_characters": 10149,
+  "reviewed_sha256": "ff0586479a009f18e61a803ce2a4d396df4d5fe735231d2791e1faef98788311",
+  "reviewed_characters": 10193,
   "reviewed_chinese_characters": 3871,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/08_slo_alerting.md",
-  "course_sha256": "9e0e9074571a0775f8438196e48a610efe92602959ac59908ce0fa25a4d7532e"
+  "course_sha256": "03fd1657e3fc18d9b14040f53719c1717898b5ec003e0b3263e5889bff04832c"
 }

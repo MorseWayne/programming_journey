@@ -104,95 +104,139 @@ Nygard 的 ADR 模板保留背景、决定、状态和正负后果。高级工�
 
 <details><summary>1. 高级能力可由“会部署十个服务”直接证明吗？</summary>
 
-不能。要看用户承诺、可复核决定、故障恢复、协作和持续改进证据。</details>
+不能。要看用户承诺、可复核决定、故障恢复、协作和持续改进证据。
+
+</details>
 
 <details><summary>2. 当前 S2 200 到哪一层？</summary>
 
-`accepted_in_memory` 只表示本进程内存受理。</details>
+`accepted_in_memory` 只表示本进程内存受理。
+
+</details>
 
 <details><summary>3. 未来 `/v2` 和 R9 已获批准吗？</summary>
 
-没有。`/v2` DB stored 仍提议且仍 6 B，R9 6→9 B 单独待审。</details>
+没有。`/v2` DB stored 仍提议且仍 6 B，R9 6→9 B 单独待审。
+
+</details>
 
 <details><summary>4. 当前同 ID 重复和非成员发送各怎样？</summary>
 
-同 ID 重复 409，非成员目标隐藏 404。</details>
+同 ID 重复 409，非成员目标隐藏 404。
+
+</details>
 
 <details><summary>5. ADR-P1 proposed 能驱动当前 `/v1` 改合同吗？</summary>
 
-不能。未获接受，更未被实现/验收。</details>
+不能。未获接受，更未被实现/验收。
+
+</details>
 
 <details><summary>6. D1/D2 与 K1/K2 各标识什么？</summary>
 
-前者是纸上制品/镜像版本，后者是配置版本；都不代表数据可回滚。</details>
+前者是纸上制品/镜像版本，后者是配置版本；都不代表数据可回滚。
+
+</details>
 
 <details><summary>7. 交接卡可把真实令牌和消息正文写进去吗？</summary>
 
-不应。只保存必要的脱敏身份、版本、权限和证据入口。</details>
+不应。只保存必要的脱敏身份、版本、权限和证据入口。
+
+</details>
 
 <details><summary>8. 读完第十三卷就可记为已运营真实 IM 吗？</summary>
 
-不能。静态推导与个人实现、测试、压测和运行证据要分别保存。</details>
+不能。静态推导与个人实现、测试、压测和运行证据要分别保存。
+
+</details>
 
 ### 推演 9–16：虚构事件与指导
 
 <details><summary>9. 未来 DB 有 `m-9/seq9`、E9 未发，消息是否不存在？</summary>
 
-不是。权威可已存、事件待恢复；不能删 DB 来让状态一致。</details>
+不是。权威可已存、事件待恢复；不能删 DB 来让状态一致。
+
+</details>
 
 <details><summary>10. E9 重投两次意味着两条权威消息吗？</summary>
 
-不应。稳定事件可重投，权威消息意图仍须唯一。</details>
+不应。稳定事件可重投，权威消息意图仍须唯一。
+
+</details>
 
 <details><summary>11. B 离线 25h、broker 留 24h，补拉前还查什么？</summary>
 
-未来 DB 历史是否确实保留、成员规则是否允许和查询能力是否足够；当前 S2 不承诺。</details>
+未来 DB 历史是否确实保留、成员规则是否允许和查询能力是否足够；当前 S2 不承诺。
+
+</details>
 
 <details><summary>12. B 连续到 7、先见 9 缺 8，游标应停哪里？</summary>
 
-停 7，不能因最大已见为 9 就跳过 8。</details>
+停 7，不能因最大已见为 9 就跳过 8。
+
+</details>
 
 <details><summary>13. 旧 `/v1` 7 B 被接纳，先归类为什么？</summary>
 
-违反当前 6 UTF-8 B 合同的缺陷，应按影响止损，不是可延后的债。</details>
+违反当前 6 UTF-8 B 合同的缺陷，应按影响止损，不是可延后的债。
+
+</details>
 
 <details><summary>14. Pod Ready 可宣布 B 缺口已补齐吗？</summary>
 
-不能。还需权威历史、授权、事件/设备进度和用户结果证据。</details>
+不能。还需权威历史、授权、事件/设备进度和用户结果证据。
+
+</details>
 
 <details><summary>15. 学习者尚不懂 UTF-8 就让他调 R9，缺哪层前置？</summary>
 
-先补 Go 文本/字节、HTTP 输入边界和 6 B 正反例，再讨论协议升级。</details>
+先补 Go 文本/字节、HTTP 输入边界和 6 B 正反例，再讨论协议升级。
+
+</details>
 
 <details><summary>16. D2 回 D1 后新 DB 已确认消息不可读，可称“回滚成功”吗？</summary>
 
-不能。须保全权威与兼容读，或经审阅前进修复。</details>
+不能。须保全权威与兼容读，或经审阅前进修复。
+
+</details>
 
 ### 决策 17–22：评审、复盘与交接
 
 <details><summary>17. 产品/安全未决定退群旧历史，工程师可先默认全可见吗？</summary>
 
-不能。标阻断，继续不依赖该决定的独立准备。</details>
+不能。标阻断，继续不依赖该决定的独立准备。
+
+</details>
 
 <details><summary>18. “改善监控”怎样变可验收行动项？</summary>
 
-指定 owner、明确 `m-9` 已存/E9 待发的检测条件、演练与误报/漏报复测。</details>
+指定 owner、明确 `m-9` 已存/E9 待发的检测条件、演练与误报/漏报复测。
+
+</details>
 
 <details><summary>19. 复盘时应把“某人忘重试”当终点吗？</summary>
 
-不应。还要问为何系统未自动发现/恢复、哪些防线缺失及具体行动项。</details>
+不应。还要问为何系统未自动发现/恢复、哪些防线缺失及具体行动项。
+
+</details>
 
 <details><summary>20. 何时可把 proposed ADR 标 accepted？</summary>
 
-获相应决定者同意其范围、前提与后果后；实施/发布仍要另验。</details>
+获相应决定者同意其范围、前提与后果后；实施/发布仍要另验。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码能证明本卷虚构事故发生过吗？</summary>
 
-不能，只支持所读发送到 MQ 与另一 Mongo 消费路径的异步边界。</details>
+不能，只支持所读发送到 MQ 与另一 Mongo 消费路径的异步边界。
+
+</details>
 
 <details><summary>22. 一个可接手的高级工程答辩包应包含什么？</summary>
 
-用户目标/现行合同、身份/权威、候选与反例、容量和质量取舍、版本/迁移/回退、评审决定、运行复盘与下一位 owner 的验证入口。</details>
+用户目标/现行合同、身份/权威、候选与反例、容量和质量取舍、版本/迁移/回退、评审决定、运行复盘与下一位 owner 的验证入口。
+
+</details>
 
 ## 本章完成标准与后续路径
 

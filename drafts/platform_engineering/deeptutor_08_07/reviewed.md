@@ -83,95 +83,139 @@ G1 要抢占时，先取得租约，再在**同一 etcd `Txn`**里比较键缺�
 
 <details><summary>1. 注册 owner 键应存聊天正文吗？</summary>
 
-不应。本题只存必要的网关/连接脱敏路由信息；权威正文另在受保护的消息存储。</details>
+不应。本题只存必要的网关/连接脱敏路由信息；权威正文另在受保护的消息存储。
+
+</details>
 
 <details><summary>2. G1 获得 lease ID 就已经抢到 owner 吗？</summary>
 
-没有。还须带租约通过服务端原子 CAS 写入 owner 键。</details>
+没有。还须带租约通过服务端原子 CAS 写入 owner 键。
+
+</details>
 
 <details><summary>3. `Version(key)==0` 在本题表示什么？</summary>
 
-owner 键当前不存在，可作为 Txn 的抢占比较条件。</details>
+owner 键当前不存在，可作为 Txn 的抢占比较条件。
+
+</details>
 
 <details><summary>4. `version=1` 能跨删除重建用作单调 owner 代次吗？</summary>
 
-不能。键删除会重置版本；本题用新建键的 `create_revision` 101/111。</details>
+不能。键删除会重置版本；本题用新建键的 `create_revision` 101/111。
+
+</details>
 
 <details><summary>5. lease ID 大小能直接证明 G2 比 G1 更新吗？</summary>
 
-不能。它标识租约，不是给外部目标比较先后的单调 fencing token。</details>
+不能。它标识租约，不是给外部目标比较先后的单调 fencing token。
+
+</details>
 
 <details><summary>6. etcd revision111 是 `c-a` 会话 seq111 吗？</summary>
 
-不是。前者是协调存储逻辑修订号，后者若存在才是业务会话序号。</details>
+不是。前者是协调存储逻辑修订号，后者若存在才是业务会话序号。
+
+</details>
 
 <details><summary>7. watch 没收到删除事件，就证明 G1 lease 没过期吗？</summary>
 
-不能。watch 可能断开、延迟或历史被压缩，关键判断要重新查权威键。</details>
+不能。watch 可能断开、延迟或历史被压缩，关键判断要重新查权威键。
+
+</details>
 
 <details><summary>8. etcd 锁能自动原子保护另一个 SQL 库的写入吗？</summary>
 
-不能。外部目标需版本验证/围栏或共享的原子仲裁方案。</details>
+不能。外部目标需版本验证/围栏或共享的原子仲裁方案。
+
+</details>
 
 ### 时间线 9–16：让旧 G1 醒过来
 
 <details><summary>9. T0 G1 的 owner 创建 revision 是多少？</summary>
 
-纸上设为 101，附 L1；它不是墙钟秒数。</details>
+纸上设为 101，附 L1；它不是墙钟秒数。
+
+</details>
 
 <details><summary>10. T1 G1 停顿 20 秒、TTL 15 秒，就可只凭算术断言键已删吗？</summary>
 
-不可。本题额外假设 etcd 已确认过期，真实结果要查协调存储状态。</details>
+不可。本题额外假设 etcd 已确认过期，真实结果要查协调存储状态。
+
+</details>
 
 <details><summary>11. T2 租约过期删除事件的玩具 revision 是多少？</summary>
 
-110；这表示 etcd 键变化，不表示旧 TCP 已物理关闭。</details>
+110；这表示 etcd 键变化，不表示旧 TCP 已物理关闭。
+
+</details>
 
 <details><summary>12. T3 G2 取得的新 owner 创建 revision 是多少？</summary>
 
-111，经 `Version(key)==0` 的 Txn 抢占成功后由存储分配。</details>
+111，经 `Version(key)==0` 的 Txn 抢占成功后由存储分配。
+
+</details>
 
 <details><summary>13. G1 恢复时还握着 conn1，可以继续按 101 无条件发 E9 吗？</summary>
 
-不能。旧内存不等于当前资格；重验 owner，目标也要拒绝旧代次效果。</details>
+不能。旧内存不等于当前资格；重验 owner，目标也要拒绝旧代次效果。
+
+</details>
 
 <details><summary>14. 目标端已安装 111，收到 G1 的 101 应怎样处理？</summary>
 
-在与副作用同一原子判断里拒绝旧代次，记录脱敏拒绝原因。</details>
+在与副作用同一原子判断里拒绝旧代次，记录脱敏拒绝原因。
+
+</details>
 
 <details><summary>15. 目标端尚未见 111，单靠“最终会有 fencing”能保证此刻拒绝 101 吗？</summary>
 
-不能。仍有空窗；严格切换要同一原子仲裁或明确屏障/排空规则。</details>
+不能。仍有空窗；严格切换要同一原子仲裁或明确屏障/排空规则。
+
+</details>
 
 <details><summary>16. G1 直接把字节写入旧 WebSocket，SQL 目标已拒绝能撤回这些字节吗？</summary>
 
-不能。连接层/设备协议另需代次检查、关闭与稳定消息去重，设备收/读另证。</details>
+不能。连接层/设备协议另需代次检查、关闭与稳定消息去重，设备收/读另证。
+
+</details>
 
 ### 评审 17–22：恢复 watch 与 IM 业务
 
 <details><summary>17. 先线性化 Get 得到 revision R，应从哪个修订号开始 watch 增量？</summary>
 
-从 `R+1` 开始；watch 的 `start_revision` 是包含指定修订号的。</details>
+从 `R+1` 开始；watch 的 `start_revision` 是包含指定修订号的。
+
+</details>
 
 <details><summary>18. watch 的旧起点已被 compact，还能静默从当前事件继续吗？</summary>
 
-不能。重新取当前快照与 revision，重建缓存，再从新 `R+1` watch。</details>
+不能。重新取当前快照与 revision，重建缓存，再从新 `R+1` watch。
+
+</details>
 
 <details><summary>19. 续租超时能确定“G1 仍 owner”或“G1 已失去 owner”吗？</summary>
 
-都不能。结果未知时停相关危险副作用，重新核对键/代次。</details>
+都不能。结果未知时停相关危险副作用，重新核对键/代次。
+
+</details>
 
 <details><summary>20. 设备 UI 只显示一次 E9，就证明网络只推送了一次吗？</summary>
 
-不能。设备去重可隐藏重复传输；记录网关尝试与设备确认。</details>
+不能。设备去重可隐藏重复传输；记录网关尝试与设备确认。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段发送/落库源码可证明它用了本章 owner 租约吗？</summary>
 
-不能。需进一步追固定提交的 gateway、路由和通知目标代码与配置。</details>
+不能。需进一步追固定提交的 gateway、路由和通知目标代码与配置。
+
+</details>
 
 <details><summary>22. B 离线错过 E9，owner 注册最终正常后怎样核对业务恢复？</summary>
 
-按当前成员权限从权威历史用 `seq` 游标补拉 `m-9`，并把设备接收/阅读与通知尝试分别记录。</details>
+按当前成员权限从权威历史用 `seq` 游标补拉 `m-9`，并把设备接收/阅读与通知尝试分别记录。
+
+</details>
 
 ## 本章完成标准与下一步
 

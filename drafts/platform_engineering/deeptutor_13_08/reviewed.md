@@ -106,95 +106,139 @@
 
 <details><summary>1. S2 进程已消失的旧消息可由回填脚本凭空找回吗？</summary>
 
-不能。没有可靠旧来源，就没有可证明的完整回填。</details>
+不能。没有可靠旧来源，就没有可证明的完整回填。
+
+</details>
 
 <details><summary>2. P1 建了新表就表示 S3 `/v2` 已开放吗？</summary>
 
-不表示。模式准备与权威切换/接口批准是不同阶段。</details>
+不表示。模式准备与权威切换/接口批准是不同阶段。
+
+</details>
 
 <details><summary>3. Parallel Change 的三步是什么？</summary>
 
-扩展、迁移、收缩；收缩须等旧依赖解除且可验证。</details>
+扩展、迁移、收缩；收缩须等旧依赖解除且可验证。
+
+</details>
 
 <details><summary>4. 当前 `/v1` 成功 200 到哪层？</summary>
 
-`accepted_in_memory` 仅本进程内存受理。</details>
+`accepted_in_memory` 仅本进程内存受理。
+
+</details>
 
 <details><summary>5. 未来 `/v2` 提议的正文上限是多少？</summary>
 
-仍是 6 UTF-8 B；R9 的 9 B 尚待独立评审。</details>
+仍是 6 UTF-8 B；R9 的 9 B 尚待独立评审。
+
+</details>
 
 <details><summary>6. “双写”时可以有两个互相矛盾的权威吗？</summary>
 
-不应。要明确一处权威和另一份派生/影子数据的失败及对账规则。</details>
+不应。要明确一处权威和另一份派生/影子数据的失败及对账规则。
+
+</details>
 
 <details><summary>7. broker 24h 事件可自动补 B 离线 25h 的全部历史吗？</summary>
 
-不能保证；未来需要确实保留且有权的权威历史。</details>
+不能保证；未来需要确实保留且有权的权威历史。
+
+</details>
 
 <details><summary>8. P0–P5 是本系列 S2/S3 阶段号吗？</summary>
 
-不是，只是本章纸上迁移步骤，不能重定义既有 S2/S3。</details>
+不是，只是本章纸上迁移步骤，不能重定义既有 S2/S3。
+
+</details>
 
 ### 推演 9–16：对账、路由与回退
 
 <details><summary>9. 旧 S2 内存读不到 `/v2` DB 的 `m-9`，就能判 DB 错吗？</summary>
 
-不能。两路没有等价历史/确认合同，先标样本不可比。</details>
+不能。两路没有等价历史/确认合同，先标样本不可比。
+
+</details>
 
 <details><summary>10. `/v2` DB 已有 `m-9/seq9`、E9 未发，谁是权威？</summary>
 
-若 P2 已批准 DB 写入，则 DB 是权威；事件待恢复，不可否定已确认消息。</details>
+若 P2 已批准 DB 写入，则 DB 是权威；事件待恢复，不可否定已确认消息。
+
+</details>
 
 <details><summary>11. 影子读用管理员身份，而 B 是普通成员，能证明权限等价吗？</summary>
 
-不能。需同 actor、同成员/历史可见规则版本和相同范围。</details>
+不能。需同 actor、同成员/历史可见规则版本和相同范围。
+
+</details>
 
 <details><summary>12. B 先见 9 缺 8、此前连续到 7，游标应为多少？</summary>
 
-仍为 7；不能用最大已见 9 跳过缺口。</details>
+仍为 7；不能用最大已见 9 跳过缺口。
+
+</details>
 
 <details><summary>13. 同一意图随机到旧 S2 与新 `/v2` Pod，可能怎样？</summary>
 
-不同权威/回执/重复判定相冲突；须按明确版本/会话组和统一规则路由。</details>
+不同权威/回执/重复判定相冲突；须按明确版本/会话组和统一规则路由。
+
+</details>
 
 <details><summary>14. 旧 `/v1` 客户端发 7 B，未来 S3 上线后可接纳吗？</summary>
 
-不能。旧合同仍为 6 B；R9 独立待批。</details>
+不能。旧合同仍为 6 B；R9 独立待批。
+
+</details>
 
 <details><summary>15. `/v2` 已确认 DB 存储，切回只懂内存的 D1 并关 DB 读合法吗？</summary>
 
-不行。会让已确认新历史消失于用户视图；须保留兼容读/暂停新写或前进修复。</details>
+不行。会让已确认新历史消失于用户视图；须保留兼容读/暂停新写或前进修复。
+
+</details>
 
 <details><summary>16. 回滚配置 K2→K1 会自动撤销已发 E9 吗？</summary>
 
-不会。配置、事件与权威数据是不同轴，要分别处理已有副作用。</details>
+不会。配置、事件与权威数据是不同轴，要分别处理已有副作用。
+
+</details>
 
 ### 决策 17–22：阶段门与责任
 
 <details><summary>17. P2 之前必须确认哪处是新消息唯一权威？</summary>
 
-限定 cohort 的 `/v2` 消息由经批准的教学 DB 确认；其它派生写不得成为第二权威。</details>
+限定 cohort 的 `/v2` 消息由经批准的教学 DB 确认；其它派生写不得成为第二权威。
+
+</details>
 
 <details><summary>18. 影读报告“100% 一致”还缺什么口径？</summary>
 
-可比样本分母、时间窗、actor/权限版本、字段规范化、不可比/待收敛分类与差异样本。</details>
+可比样本分母、时间窗、actor/权限版本、字段规范化、不可比/待收敛分类与差异样本。
+
+</details>
 
 <details><summary>19. P5 可按日历日期直接删旧读路径吗？</summary>
 
-不能。要看旧端/历史/回退依赖是否消除及真实证据。</details>
+不能。要看旧端/历史/回退依赖是否消除及真实证据。
+
+</details>
 
 <details><summary>20. 数据模式回退与代码 D2→D1 一定同样可逆吗？</summary>
 
-不一定。已确认新数据/字段可能不被旧代码理解，必须演练兼容读或前进修复。</details>
+不一定。已确认新数据/字段可能不被旧代码理解，必须演练兼容读或前进修复。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明它用本章迁移阶段吗？</summary>
 
-不能，只支持所读发送到 MQ 与另一 Mongo 消费异步边界。</details>
+不能，只支持所读发送到 MQ 与另一 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 一张可审迁移卡每阶段至少要交什么？</summary>
 
-唯一权威、D/K/DB/事件/客户端版本、写读路由、可比对账、用户确认点、停止门、保全已有数据的回退和决定人。</details>
+唯一权威、D/K/DB/事件/客户端版本、写读路由、可比对账、用户确认点、停止门、保全已有数据的回退和决定人。
+
+</details>
 
 ## 本章完成标准与后续路径
 

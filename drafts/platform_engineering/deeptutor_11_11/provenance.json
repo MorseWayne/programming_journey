@@ -29,9 +29,9 @@
   "original_sha256": "640840e881e3f45e6a74a96f37f4d1dbd978ea593afe4fc424a8c545b041e23b",
   "original_characters": 30087,
   "generation_request_sha256": "3ecc26d4d9f29f6c556c3a011417826fe4ac365eb2091fd23d6295db5971b011",
-  "reviewed_sha256": "bcc75b3323000fc1f7aec4f0078ab93b40c59d71ce3583b3f6793f20c42a85e0",
-  "reviewed_characters": 9574,
+  "reviewed_sha256": "150e101cc12a9edd1f4bcd8e8d2cba1139c085f1eabbf26b0c2d26a5b6f8d24b",
+  "reviewed_characters": 9618,
   "reviewed_chinese_characters": 4127,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/11_postmortem_improvement.md",
-  "course_sha256": "00b53dd6bd4837c59df72c1839edb23f455aeae138f7cfdc5c2b3669d64e473c"
+  "course_sha256": "71b213a95d386766593a971a6d1cd30313296d78884169d7a59da74b3109f6a8"
 }

@@ -99,95 +99,139 @@ IM 网关有几项**不可被通用模板抹平**的责任：旧 WebSocket 不�
 
 <details><summary>1. 平台直接用户与 IM 终端用户分别是谁？</summary>
 
-直接用户是应用开发者、发布者和值班者；`u-a/u-b` 是应用终端用户。平台价值最终仍须联系后者结果。</details>
+直接用户是应用开发者、发布者和值班者；`u-a/u-b` 是应用终端用户。平台价值最终仍须联系后者结果。
+
+</details>
 
 <details><summary>2. 组件很多就表示接入体验好吗？</summary>
 
-不能。要看能否发现、完成、诊断、撤回并持续维护任务。</details>
+不能。要看能否发现、完成、诊断、撤回并持续维护任务。
+
+</details>
 
 <details><summary>3. CNCF 模型列哪五个独立方面？</summary>
 
-投入、采用、接口、运行、测量；各维分别诊断，不必统一追最高等级。</details>
+投入、采用、接口、运行、测量；各维分别诊断，不必统一追最高等级。
+
+</details>
 
 <details><summary>4. 黄金路径的接入契约至少应给什么？</summary>
 
-明确输入与默认/覆盖规则、校验反馈、输出证据、责任人、失败恢复和例外路径。</details>
+明确输入与默认/覆盖规则、校验反馈、输出证据、责任人、失败恢复和例外路径。
+
+</details>
 
 <details><summary>5. 本例允许只给镜像 tag，不给 digest 吗？</summary>
 
-不允许；审阅路径需要固定制品身份及可追溯内容摘要。</details>
+不允许；审阅路径需要固定制品身份及可追溯内容摘要。
+
+</details>
 
 <details><summary>6. 平台 RBAC 可代替会话成员授权吗？</summary>
 
-不能。RBAC 控集群资源，`u-a` 是否有权访问 `c-a` 是 IM 应用决策。</details>
+不能。RBAC 控集群资源，`u-a` 是否有权访问 `c-a` 是 IM 应用决策。
+
+</details>
 
 <details><summary>7. 当前 S2 200 是否表示 B 设备已收到？</summary>
 
-不表示；`accepted_in_memory` 只代表本进程内存受理。</details>
+不表示；`accepted_in_memory` 只代表本进程内存受理。
+
+</details>
 
 <details><summary>8. 新网关 Ready 是否表示 409/404 行为正确？</summary>
 
-不表示；需要单独验证业务合同。</details>
+不表示；需要单独验证业务合同。
+
+</details>
 
 ### 推演 9–16：接入、失败与支持
 
 <details><summary>9. T0 缺 owner 和告警联系人，平台怎样反馈？</summary>
 
-指出必填字段、责任要求和修复办法，不静默创建无人值班服务。</details>
+指出必填字段、责任要求和修复办法，不静默创建无人值班服务。
+
+</details>
 
 <details><summary>10. T1 渲染结果用了同名可变 tag，先查什么？</summary>
 
-查输入校验、模板覆盖和制品解析；审阅目标应有固定 digest。</details>
+查输入校验、模板覆盖和制品解析；审阅目标应有固定 digest。
+
+</details>
 
 <details><summary>11. T2 API 因代理无权限拒绝写入，该给什么信息？</summary>
 
-给被拒绝的资源、动作、身份和目标命名空间，以及权限升级路径。</details>
+给被拒绝的资源、动作、身份和目标命名空间，以及权限升级路径。
+
+</details>
 
 <details><summary>12. T3 Pod Pending，继续点“重试”足够吗？</summary>
 
-不足。看 request、Node 可分配、配额、放置约束及调度事件，定归属再处置。</details>
+不足。看 request、Node 可分配、配额、放置约束及调度事件，定归属再处置。
+
+</details>
 
 <details><summary>13. T3 Ready 而旧 Pod 仍用 K1，第一处边界在哪里？</summary>
 
-在声明/API 状态与进程生效间，查 ConfigMap 注入方式、Pod 模板版本和替换。</details>
+在声明/API 状态与进程生效间，查 ConfigMap 注入方式、Pod 模板版本和替换。
+
+</details>
 
 <details><summary>14. T4 非成员请求返回 200，可算接入成功吗？</summary>
 
-不能。当前合同要求隐藏为 404，平台就绪不覆盖业务错误。</details>
+不能。当前合同要求隐藏为 404，平台就绪不覆盖业务错误。
+
+</details>
 
 <details><summary>15. WebSocket 网关能无条件套短请求退出预算吗？</summary>
 
-不能。要有界摘流、在途处理、客户端退避与重连观察的证据。</details>
+不能。要有界摘流、在途处理、客户端退避与重连观察的证据。
+
+</details>
 
 <details><summary>16. B 离线 25h、broker 留 24h，平台五副本可直接补缺口吗？</summary>
 
-不能。未来需有成员权限的权威 DB 历史；当前 S2 尚无此承诺。</details>
+不能。未来需有成员权限的权威 DB 历史；当前 S2 尚无此承诺。
+
+</details>
 
 ### 决策 17–22：价值与演进
 
 <details><summary>17. 10 次旧 5 人时、新 1.5 人时，毛节省多少？</summary>
 
-`10×(5−1.5)=35 人时`，仅纸上同口径条件值。</details>
+`10×(5−1.5)=35 人时`，仅纸上同口径条件值。
+
+</details>
 
 <details><summary>18. 维护 12 人时、额外故障 8 人时后，净值多少？</summary>
 
-`35−12−8=15 人时`，尚非真实因果收益或全成本。</details>
+`35−12−8=15 人时`，尚非真实因果收益或全成本。
+
+</details>
 
 <details><summary>19. 10 次仅 7 次无需人工且业务门通过，有效自助率多少？</summary>
 
-`7/10=70%`；页面显示成功但仍需人工或合同未过不计。</details>
+`7/10=70%`；页面显示成功但仍需人工或合同未过不计。
+
+</details>
 
 <details><summary>20. 三次失败都因权限错误不清楚，先做门户还是改反馈？</summary>
 
-先补 T2 字段级拒绝原因、授权路径和自助修复；再按证据评估界面投资。</details>
+先补 T2 字段级拒绝原因、授权路径和自助修复；再按证据评估界面投资。
+
+</details>
 
 <details><summary>21. 平台维护成本持续高于节省，应怎样决策？</summary>
 
-审用户价值、缩小承诺、修默认、删除低用高成本能力或把例外转入明确支持路径。</details>
+审用户价值、缩小承诺、修默认、删除低用高成本能力或把例外转入明确支持路径。
+
+</details>
 
 <details><summary>22. 可审的平台产品评估卡至少应包含什么？</summary>
 
-用户任务与合同、输入/输出/错误接口、默认与例外、平台/应用责任、业务和运行观察、分布化接入时长、有效自助率、故障与总维护成本。</details>
+用户任务与合同、输入/输出/错误接口、默认与例外、平台/应用责任、业务和运行观察、分布化接入时长、有效自助率、故障与总维护成本。
+
+</details>
 
 ## 本章完成标准与后续路径
 

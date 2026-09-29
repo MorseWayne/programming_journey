@@ -133,91 +133,135 @@ Go `BeginTx` 后的相关读写都用同一 `*sql.Tx`，失败回滚、成功提
 
 <details><summary>1. 本章教学方案升级了 S2 的哪个边界？</summary>
 
-从进程内受理的静态设计进入有明确持久数据来源和数据库提交点的教学方案。</details>
+从进程内受理的静态设计进入有明确持久数据来源和数据库提交点的教学方案。
+
+</details>
 
 <details><summary>2. 客户端请求体写 `sender_id=u-a` 足以认证发件人吗？</summary>
 
-不能。发件人身份须来自服务端验证后的上下文。</details>
+不能。发件人身份须来自服务端验证后的上下文。
+
+</details>
 
 <details><summary>3. handler 应直接扫描 `sql.Rows` 吗？</summary>
 
-不宜。handler 负责 HTTP 输入输出；数据访问层负责查询与扫描。</details>
+不宜。handler 负责 HTTP 输入输出；数据访问层负责查询与扫描。
+
+</details>
 
 <details><summary>4. `ListVisible` 接口只收 SubjectID 却不检查权限，合同成立吗？</summary>
 
-不成立。名字承诺可见范围，实现必须真实执行授权/过滤。</details>
+不成立。名字承诺可见范围，实现必须真实执行授权/过滤。
+
+</details>
 
 <details><summary>5. “先查权限、再另查历史”可能出现什么时间差？</summary>
 
-两次查询之间成员资格可能变化，需按业务合同决定一致性边界。</details>
+两次查询之间成员资格可能变化，需按业务合同决定一致性边界。
 
-<details><summary>6. `seq < 2` 在本章纸上 c-a 数据返回什么？</summary>
+</details>
 
-上一页末项为 seq=2 时，返回更旧的 m-a(seq=1)。</details>
+<details><summary>6. `seq &lt; 2` 在本章纸上 c-a 数据返回什么？</summary>
+
+上一页末项为 seq=2 时，返回更旧的 m-a(seq=1)。
+
+</details>
 
 <details><summary>7. SQL 参数 `$1` 可以安全地代表任意客户端提供的表名吗？</summary>
 
-不能。它绑定值；SQL 结构应由服务端固定或白名单选择。</details>
+不能。它绑定值；SQL 结构应由服务端固定或白名单选择。
+
+</details>
 
 <details><summary>8. 多行查询成功后，谁负责 Rows？</summary>
 
-发起查询的函数负责 Close、逐行 Scan 和遍历后 Err 检查。</details>
+发起查询的函数负责 Close、逐行 Scan 和遍历后 Err 检查。
+
+</details>
 
 <details><summary>9. 旧消息昵称快照为 NULL 可以当空昵称吗？</summary>
 
-不能。它表示历史值没有可靠记录，须保留未知语义。</details>
+不能。它表示历史值没有可靠记录，须保留未知语义。
+
+</details>
 
 <details><summary>10. MongoDB 引用字段自动等于 SQL 外键吗？</summary>
 
-不等于。需要独立设计引用有效性和业务权限。</details>
+不等于。需要独立设计引用有效性和业务权限。
+
+</details>
 
 <details><summary>11. `"你好呀"` 为什么被本题拒绝？</summary>
 
-在 UTF-8 下为 9 字节，超过 09.02 当前 6 字节上限。</details>
+在 UTF-8 下为 9 字节，超过 09.02 当前 6 字节上限。
+
+</details>
 
 <details><summary>12. 消息事务提交能证明 B 设备收到吗？</summary>
 
-不能。数据库提交与设备交付是不同检查点。</details>
+不能。数据库提交与设备交付是不同检查点。
+
+</details>
 
 <details><summary>13. 唯一键冲突就能自动知道是同一次发送重试吗？</summary>
 
-不能。还要核对稳定操作身份及请求内容/业务合同。</details>
+不能。还要核对稳定操作身份及请求内容/业务合同。
+
+</details>
 
 <details><summary>14. Commit 附近断网应立即换新消息 ID 重发吗？</summary>
 
-不应。提交可能已成功，应沿稳定 ID 查询权威状态。</details>
+不应。提交可能已成功，应沿稳定 ID 查询权威状态。
+
+</details>
 
 <details><summary>15. 事务中先推送 B，再回滚消息行，推送会被回滚吗？</summary>
 
-不会。外部推送不属于普通数据库事务。</details>
+不会。外部推送不属于普通数据库事务。
+
+</details>
 
 <details><summary>16. 当前用户昵称能无标记地回填成发送时快照吗？</summary>
 
-不能。用户可能改名；无可信历史来源时应保留未知或明确标记回退。</details>
+不能。用户可能改名；无可信历史来源时应保留未知或明确标记回退。
+
+</details>
 
 <details><summary>17. 旧写入者仍在，能直接给新快照列全表加 NOT NULL 吗？</summary>
 
-不应。旧行和旧写入可能缺值，先完成兼容与覆盖策略。</details>
+不应。旧行和旧写入可能缺值，先完成兼容与覆盖策略。
+
+</details>
 
 <details><summary>18. 单元测试能证明真实驱动的事务/游标行为吗？</summary>
 
-不能。需在隔离数据库环境做有范围的集成验证。</details>
+不能。需在隔离数据库环境做有范围的集成验证。
+
+</details>
 
 <details><summary>19. OpenIM 固定 `send.go` 中已核对的群聊与单聊发送分支调用什么入口？</summary>
 
-群聊路径和单聊的 `isSend` 分支调用 `MsgDatabase.MsgToMQ`。</details>
+群聊路径和单聊的 `isSend` 分支调用 `MsgDatabase.MsgToMQ`。
+
+</details>
 
 <details><summary>20. MongoDB 批量写入在哪条已核对源码路径中调用？</summary>
 
-在 `online_msg_to_mongo_handler.go` 的消费处理函数中调用 `BatchInsertChat2DB`。</details>
+在 `online_msg_to_mongo_handler.go` 的消费处理函数中调用 `BatchInsertChat2DB`。
+
+</details>
 
 <details><summary>21. 仅看这两段源码能证明 MsgToMQ 的持久确认级别吗？</summary>
 
-不能。还需核对生产者配置、队列确认与故障路径。</details>
+不能。还需核对生产者配置、队列确认与故障路径。
+
+</details>
 
 <details><summary>22. 发送 RPC 返回带 ServerMsgID 就证明 MongoDB 已写入了吗？</summary>
 
-不能。已核对代码里，MongoDB 写入位于另一消费路径。</details>
+不能。已核对代码里，MongoDB 写入位于另一消费路径。
+
+</details>
 
 ## 来源与下一步
 

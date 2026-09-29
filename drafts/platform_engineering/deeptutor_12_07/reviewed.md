@@ -94,95 +94,139 @@ ConfigMap 作为**环境变量**注入容器时，已运行进程的环境变量
 
 <details><summary>1. ConfigMap 适合存 DB 密码吗？</summary>
 
-不适合。它用于非秘密配置，不提供秘密性。</details>
+不适合。它用于非秘密配置，不提供秘密性。
+
+</details>
 
 <details><summary>2. Secret 中 base64 文本等于已加密吗？</summary>
 
-不等于。base64 可还原，实际集群还需核静态加密与访问控制。</details>
+不等于。base64 可还原，实际集群还需核静态加密与访问控制。
+
+</details>
 
 <details><summary>3. ServiceAccount 是 `u-a` 的 IM 登录身份吗？</summary>
 
-不是。它是 Kubernetes 工作负载身份；IM 用户认证/成员授权另做。</details>
+不是。它是 Kubernetes 工作负载身份；IM 用户认证/成员授权另做。
+
+</details>
 
 <details><summary>4. RBAC Role 主要管什么？</summary>
 
-Kubernetes API 资源和动词的许可，不直接管 DB 行/IM 会话成员。</details>
+Kubernetes API 资源和动词的许可，不直接管 DB 行/IM 会话成员。
+
+</details>
 
 <details><summary>5. RBAC 有普通“最后一条 deny 覆盖 allow”规则吗？</summary>
 
-没有。RBAC 许可累加，不靠普通 deny 撤销先前许可。</details>
+没有。RBAC 许可累加，不靠普通 deny 撤销先前许可。
+
+</details>
 
 <details><summary>6. 有 NetworkPolicy 对象就必然生效吗？</summary>
 
-不一定。网络插件必须支持并实施它。</details>
+不一定。网络插件必须支持并实施它。
+
+</details>
 
 <details><summary>7. 默认无 NetworkPolicy 时 Pod 自动全部隔离吗？</summary>
 
-不是。通常各方向默认非隔离。</details>
+不是。通常各方向默认非隔离。
+
+</details>
 
 <details><summary>8. `u-c` 能到 gateway 端口，就有权读 `c-a` 吗？</summary>
 
-没有。当前非成员目标仍应隐藏为 404。</details>
+没有。当前非成员目标仍应隐藏为 404。
+
+</details>
 
 ### 推导 9–16：找出错误的权限假设
 
 <details><summary>9. Pod 通过挂载读 Secret，应用 SA 一定要 `get secrets` 吗？</summary>
 
-不一定。挂载/注入与应用主动调 API 读 Secret 是不同动作。</details>
+不一定。挂载/注入与应用主动调 API 读 Secret 是不同动作。
+
+</details>
 
 <details><summary>10. 能创建本 namespace Pod 的人，即使不能直接 get Secret，也可能怎样取得值？</summary>
 
-可能创建挂载该 Secret 的 Pod 使其暴露，因此工作负载创建权也要审。</details>
+可能创建挂载该 Secret 的 Pod 使其暴露，因此工作负载创建权也要审。
+
+</details>
 
 <details><summary>11. 只允许 db ingress，源 gateway egress 被隔离，会通吗？</summary>
 
-不会。源出站和目的入站都须允许，DNS 也要按实际解析路径考虑。</details>
+不会。源出站和目的入站都须允许，DNS 也要按实际解析路径考虑。
+
+</details>
 
 <details><summary>12. 两条 NetworkPolicy 一条允许 A、一条允许 B，后者会覆盖前者吗？</summary>
 
-不会。适用方向的允许规则累加。</details>
+不会。适用方向的允许规则累加。
+
+</details>
 
 <details><summary>13. NetworkPolicy 可以按消息 ID `m-9` 判断可读吗？</summary>
 
-不能。它面向网络连接，不做应用消息/成员授权。</details>
+不能。它面向网络连接，不做应用消息/成员授权。
+
+</details>
 
 <details><summary>14. ConfigMap 以 env 注入，源对象改后旧进程变量会自动改吗？</summary>
 
-不会。需受控替换/重启使新环境进入进程。</details>
+不会。需受控替换/重启使新环境进入进程。
+
+</details>
 
 <details><summary>15. ConfigMap 卷内容更新后，应用一定已用到新值吗？</summary>
 
-不一定。传播有延迟且应用要重读；subPath 挂载另有不自动更新例外。</details>
+不一定。传播有延迟且应用要重读；subPath 挂载另有不自动更新例外。
+
+</details>
 
 <details><summary>16. 某配置让旧 `/v1` 接纳 9 B，可称 R9 已灰度成功吗？</summary>
 
-不能。R9 尚待批准，当前 `/v1` 仍最多 6 B。</details>
+不能。R9 尚待批准，当前 `/v1` 仍最多 6 B。
+
+</details>
 
 ### 决策 17–22：最小权限与业务验收
 
 <details><summary>17. gateway 不用 Kubernetes API，还要给它 cluster-admin 吗？</summary>
 
-不应。API 权限按需最小化，若不需要可评审不自动挂 token。</details>
+不应。API 权限按需最小化，若不需要可评审不自动挂 token。
+
+</details>
 
 <details><summary>18. 未来 DB 凭据放 Secret 就能证明 m-9/seq9 已提交吗？</summary>
 
-不能。凭据提供访问条件，权威事务/恢复另证。</details>
+不能。凭据提供访问条件，权威事务/恢复另证。
+
+</details>
 
 <details><summary>19. 网络连通但 DB 认证失败，应改 NetworkPolicy 放宽所有出站吗？</summary>
 
-不应。先分清连接和认证失败，检查最小凭据/权限。</details>
+不应。先分清连接和认证失败，检查最小凭据/权限。
+
+</details>
 
 <details><summary>20. history-migrate Job 有权读全库就能保证不会泄露私聊吗？</summary>
 
-不能。任务范围、最小 DB 权限、应用授权、审计与幂等均需设计。</details>
+不能。任务范围、最小 DB 权限、应用授权、审计与幂等均需设计。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明真实 K8s RBAC 或 NetworkPolicy 吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费的异步边界。</details>
+不能。只支持所读发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一张可审权限卡至少交什么？</summary>
 
-配置/Secret 来源与版本、SA/RBAC API 权限、网络两个方向/插件、DB 身份、当前业务允许/拒绝样本和未证项。</details>
+配置/Secret 来源与版本、SA/RBAC API 权限、网络两个方向/插件、DB 身份、当前业务允许/拒绝样本和未证项。
+
+</details>
 
 ## 本章完成标准与后续路径
 

@@ -98,91 +98,135 @@ G-b 请求读，但当前没有字节
 
 <details><summary>1. G 代表什么？</summary>
 
-一个 goroutine，是 Go 调度的执行任务。</details>
+一个 goroutine，是 Go 调度的执行任务。
+
+</details>
 
 <details><summary>2. M 代表什么？</summary>
 
-一个 OS 线程，可执行 Go/运行时工作，也可处于系统调用或空闲。</details>
+一个 OS 线程，可执行 Go/运行时工作，也可处于系统调用或空闲。
+
+</details>
 
 <details><summary>3. P 是物理 CPU 核心吗？</summary>
 
-不是。它是执行用户 Go 代码需要的运行时资源/资格。</details>
+不是。它是执行用户 Go 代码需要的运行时资源/资格。
+
+</details>
 
 <details><summary>4. 当前运行时概念中 P 数与什么设置对应？</summary>
 
-与 `GOMAXPROCS` 对应；不等于连接数或 goroutine 数。</details>
+与 `GOMAXPROCS` 对应；不等于连接数或 goroutine 数。
+
+</details>
 
 <details><summary>5. G-b 等网络时在占用一个持续执行用户代码的 P 吗？</summary>
 
-不占用。它等待条件，后续就绪再进入可运行流程。</details>
+不占用。它等待条件，后续就绪再进入可运行流程。
+
+</details>
 
 <details><summary>6. 网络就绪后 G-b 一定立刻运行吗？</summary>
 
-不一定。它先具备可运行条件，仍等调度与 P。</details>
+不一定。它先具备可运行条件，仍等调度与 P。
+
+</details>
 
 <details><summary>7. G-b 恢复 Read 就能宣布一条完整消息吗？</summary>
 
-不能。还要检查 n/错误、累计字节并解析协议帧。</details>
+不能。还要检查 n/错误、累计字节并解析协议帧。
+
+</details>
 
 <details><summary>8. t0 的 P=1 模型里谁在运行 Go 用户代码？</summary>
 
-M1 持 P1 运行 G-a；G-c 可运行排队，G-b 等网络。</details>
+M1 持 P1 运行 G-a；G-c 可运行排队，G-b 等网络。
+
+</details>
 
 <details><summary>9. t1 G-a 进入阻塞系统调用时，P1 可以怎样？</summary>
 
-从等待的 M1 移交给其他可工作 M，让 G-c 有机会执行。</details>
+从等待的 M1 移交给其他可工作 M，让 G-c 有机会执行。
+
+</details>
 
 <details><summary>10. M1 系统调用返回后可不取得 P 就继续跑用户 Go 代码吗？</summary>
 
-不可以；需重新取得相应执行资格。</details>
+不可以；需重新取得相应执行资格。
+
+</details>
 
 <details><summary>11. GOMAXPROCS=1 是否意味着进程只有一个 OS 线程？</summary>
 
-不意味着。阻塞调用、运行时与其他工作可涉及更多线程。</details>
+不意味着。阻塞调用、运行时与其他工作可涉及更多线程。
+
+</details>
 
 <details><summary>12. 2000 条连接就必有 2000 个 goroutine 吗？</summary>
 
-不必然。连接与 goroutine 的对应是应用设计，不是语言定律。</details>
+不必然。连接与 goroutine 的对应是应用设计，不是语言定律。
+
+</details>
 
 <details><summary>13. 2000 个等待 G 就意味着 2000 个 M 正在忙等吗？</summary>
 
-不意味着；可轮询的网络等待可停放 G，M 与 G 并非一对一。</details>
+不意味着；可轮询的网络等待可停放 G，M 与 G 并非一对一。
+
+</details>
 
 <details><summary>14. P 本地队列和工作窃取给业务 FIFO 保证吗？</summary>
 
-不给。它们是调度工作的方法，不是会话消息序号协议。</details>
+不给。它们是调度工作的方法，不是会话消息序号协议。
+
+</details>
 
 <details><summary>15. 先写 `go f()` 就保证 f 先于下一 goroutine 完成吗？</summary>
 
-不保证。启动与完成先后要分开，05.04 用同步边解释。</details>
+不保证。启动与完成先后要分开，05.04 用同步边解释。
+
+</details>
 
 <details><summary>16. 工作窃取主要试图解决什么问题？</summary>
 
-让有空闲执行资源的 P 找到可运行工作，不让一处排队另一处长期空闲。</details>
+让有空闲执行资源的 P 找到可运行工作，不让一处排队另一处长期空闲。
+
+</details>
 
 <details><summary>17. `runtime.NumGoroutine()` 能直接当在线用户数吗？</summary>
 
-不能。它计 goroutine 快照，业务用户/设备语义不同。</details>
+不能。它计 goroutine 快照，业务用户/设备语义不同。
+
+</details>
 
 <details><summary>18. GOMAXPROCS 增大就会自动消除慢接收方队列积压吗？</summary>
 
-不会。慢设备流控、有限队列和满队列策略仍需单独设计。</details>
+不会。慢设备流控、有限队列和满队列策略仍需单独设计。
+
+</details>
 
 <details><summary>19. CPU 不高可断定进程内存使用很低吗？</summary>
 
-不能。连接、缓冲和对象可占驻留内存而任务大多等待。</details>
+不能。连接、缓冲和对象可占驻留内存而任务大多等待。
+
+</details>
 
 <details><summary>20. 所有文件/外部库阻塞都与可轮询 net.Conn 完全一样吗？</summary>
 
-不一样。资源与调用路径可能有不同阻塞和线程条件。</details>
+不一样。资源与调用路径可能有不同阻塞和线程条件。
+
+</details>
 
 <details><summary>21. netpoll 就绪是否证明设备收到 IM 消息？</summary>
 
-不能。它只提示 FD 有 I/O 条件，业务交付和确认另行定义。</details>
+不能。它只提示 FD 有 I/O 条件，业务交付和确认另行定义。
+
+</details>
 
 <details><summary>22. 本章 P=1 的 M1/M2 时间线是已观测的 Go 排程吗？</summary>
 
-不是。它是依据官方概念绘制的可发生纸上模型，实际时机需同版本 trace 验证。</details>
+不是。它是依据官方概念绘制的可发生纸上模型，实际时机需同版本 trace 验证。
+
+</details>
 
 ## 来源与下一步
 

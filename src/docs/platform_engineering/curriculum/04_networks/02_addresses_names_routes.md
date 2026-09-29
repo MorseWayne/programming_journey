@@ -162,91 +162,135 @@ Go 的 `net` 包有 `Dial`、`Listen` 等建立网络连接或监听的入口，
 
 <details><summary>1. `u-b` 是 IP 地址吗？</summary>
 
-不是。它是虚构 IM 用户 ID，地址属于网络层。</details>
+不是。它是虚构 IM 用户 ID，地址属于网络层。
+
+</details>
 
 <details><summary>2. `c-a` 与端口 8080 各表示什么？</summary>
 
-前者是应用会话身份，后者是传输协议下的服务入口编号。</details>
+前者是应用会话身份，后者是传输协议下的服务入口编号。
+
+</details>
 
 <details><summary>3. `chat.example.test` 在本章能真实解析吗？</summary>
 
-没有这样的声称。它是保留测试域名，解析表仅在虚构题设中成立。</details>
+没有这样的声称。它是保留测试域名，解析表仅在虚构题设中成立。
+
+</details>
 
 <details><summary>4. IPv4 有多少位？</summary>
 
-32 位，通常写成四段点分十进制。</details>
+32 位，通常写成四段点分十进制。
+
+</details>
 
 <details><summary>5. IPv6 有多少位？</summary>
 
-128 位，通常写成以冒号分隔的十六进制形式。</details>
+128 位，通常写成以冒号分隔的十六进制形式。
+
+</details>
 
 <details><summary>6. `/24` 表示有 24 台主机吗？</summary>
 
-不是。它表示 IPv4 前 24 位为共同前缀，剩余位的可用性要另看配置。</details>
+不是。它表示 IPv4 前 24 位为共同前缀，剩余位的可用性要另看配置。
+
+</details>
 
 <details><summary>7. `192.0.2.10` 与 `192.0.2.20` 在本题 `/24` 中匹配吗？</summary>
 
-匹配，前 24 位相同；这不证明两者实际可互通。</details>
+匹配，前 24 位相同；这不证明两者实际可互通。
+
+</details>
 
 <details><summary>8. `198.51.100.20` 命中 `192.0.2.0/24` 吗？</summary>
 
-不命中；若纸上只有这项和默认 `/0`，它走默认项。</details>
+不命中；若纸上只有这项和默认 `/0`，它走默认项。
+
+</details>
 
 <details><summary>9. DNS 返回 IP 就自动完成路由了吗？</summary>
 
-没有。本机仍须依据目的地址选择可用路由与下一跳。</details>
+没有。本机仍须依据目的地址选择可用路由与下一跳。
+
+</details>
 
 <details><summary>10. 有默认路由就一定能连接到服务吗？</summary>
 
-不能保证。下一跳、后续路径、端口和应用仍可能失败。</details>
+不能保证。下一跳、后续路径、端口和应用仍可能失败。
+
+</details>
 
 <details><summary>11. TCP 8080 与 UDP 8080 是完全同一个入口吗？</summary>
 
-不是。传输协议不同，即使端口数字相同也属于不同协议空间。</details>
+不是。传输协议不同，即使端口数字相同也属于不同协议空间。
+
+</details>
 
 <details><summary>12. 服务端只监听一个端口就只能接受一个客户端吗？</summary>
 
-不能这样推断。一个监听端点可接入多个不同客户端连接。</details>
+不能这样推断。一个监听端点可接入多个不同客户端连接。
+
+</details>
 
 <details><summary>13. IPv6 地址带端口为什么常写成 `[2001:db8::10]:8080`？</summary>
 
-用方括号隔开 IPv6 自身的冒号与后面的端口分隔符。</details>
+用方括号隔开 IPv6 自身的冒号与后面的端口分隔符。
+
+</details>
 
 <details><summary>14. 服务只监听 `127.0.0.1`，别的机器凭同端口一定能连吗？</summary>
 
-不能。它是本机 loopback 入口，跨机器还需合适的监听与网络路径。</details>
+不能。它是本机 loopback 入口，跨机器还需合适的监听与网络路径。
+
+</details>
 
 <details><summary>15. 监听 `0.0.0.0` 就必然暴露在公网吗？</summary>
 
-不必然。它表示本机 IPv4 接口上的监听意图，外部可达还受路由与访问控制等影响。</details>
+不必然。它表示本机 IPv4 接口上的监听意图，外部可达还受路由与访问控制等影响。
+
+</details>
 
 <details><summary>16. 域名解析失败时已发生 HTTP 404 吗？</summary>
 
-在本题这条路径上没有。尚未得到地址，无法向该目标建立后续连接并取得响应。</details>
+在本题这条路径上没有。尚未得到地址，无法向该目标建立后续连接并取得响应。
+
+</details>
 
 <details><summary>17. “连接被拒绝”唯一证明服务进程没启动吗？</summary>
 
-不能。也可能是端口或中间策略等因素，需进一步核对。</details>
+不能。也可能是端口或中间策略等因素，需进一步核对。
+
+</details>
 
 <details><summary>18. 收到 HTTP 404 至少说明什么？</summary>
 
-有某个 HTTP 响应者处理了请求；仍需确认是否为预期服务和正确资源。</details>
+有某个 HTTP 响应者处理了请求；仍需确认是否为预期服务和正确资源。
+
+</details>
 
 <details><summary>19. HTTP 403 能直接归因于 Linux 文件权限吗？</summary>
 
-不能。它是某个 HTTP 响应者的访问拒绝，需要查应用或代理合同。</details>
+不能。它是某个 HTTP 响应者的访问拒绝，需要查应用或代理合同。
+
+</details>
 
 <details><summary>20. HTTP 200 是否证明 `u-b` 已读 `m-a`？</summary>
 
-不证明。历史查询响应与设备接收、用户已读是不同业务事件。</details>
+不证明。历史查询响应与设备接收、用户已读是不同业务事件。
+
+</details>
 
 <details><summary>21. `net.Dial` 成功能证明消息已持久化吗？</summary>
 
-不能。它只覆盖连接建立的接口结果，后续请求和存储另需证据。</details>
+不能。它只覆盖连接建立的接口结果，后续请求和存储另需证据。
+
+</details>
 
 <details><summary>22. 本章的文档 IP 与 `.test` 域名适合直接部署教学 IM 吗？</summary>
 
-不适合。它们只供静态说明，不构成真实网络配置或可达性保证。</details>
+不适合。它们只供静态说明，不构成真实网络配置或可达性保证。
+
+</details>
 
 ## 来源与下一步
 

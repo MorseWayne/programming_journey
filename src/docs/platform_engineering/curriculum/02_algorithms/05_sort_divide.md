@@ -223,83 +223,123 @@ sort.Slice(messages, func(i, j int) bool {
 
 <details><summary>1. 只看 `MessageID` 能说明先后吗？</summary>
 
-不能。除非协议明确让 ID 编码先后，本章只把它用作同 `Seq` 时的确定次级键。</details>
+不能。除非协议明确让 ID 编码先后，本章只把它用作同 `Seq` 时的确定次级键。
+
+</details>
 
 <details><summary>2. `less(a,a)` 能返回 true 吗？</summary>
 
-不能。严格比较要求元素不小于自身；写成 `<=` 会破坏合同。</details>
+不能。严格比较要求元素不小于自身；写成 `<=` 会破坏合同。
+
+</details>
 
 <details><summary>3. 只按 `Seq` 稳定排序，相同 `Seq` 的记录怎样排列？</summary>
 
-保持它们在**本次输入**中的相对位置。</details>
+保持它们在**本次输入**中的相对位置。
+
+</details>
 
 <details><summary>4. 两批相同记录输入顺序不同，稳定排序会自动给相同结果吗？</summary>
 
-不会。若同 `Seq` 并列，稳定排序分别保留各自输入次序。</details>
+不会。若同 `Seq` 并列，稳定排序分别保留各自输入次序。
+
+</details>
 
 <details><summary>5. 什么条件下 `(Seq,MessageID)` 能确定不同输入的同一结果？</summary>
 
-比较器固定、自洽，ID 稳定且在比较范围内唯一，并先处理重复身份冲突。</details>
+比较器固定、自洽，ID 稳定且在比较范围内唯一，并先处理重复身份冲突。
+
+</details>
 
 <details><summary>6. 按 ID 打破并列，能证明真实发送顺序吗？</summary>
 
-不能。这只是可复核输出的次级裁决。</details>
+不能。这只是可复核输出的次级裁决。
+
+</details>
 
 <details><summary>7. 插入排序每轮开始时 `[0,i)` 有什么性质？</summary>
 
-前缀已按所选比较器有序；本轮把第 i 项插入后扩大到 `[0,i+1)`。</details>
+前缀已按所选比较器有序；本轮把第 i 项插入后扩大到 `[0,i+1)`。
+
+</details>
 
 <details><summary>8. 只按 `Seq` 的稳定插入排序，为何相等时不右移？</summary>
 
-后到的同键消息不应越过前面的同键消息；只有严格更大的项才右移。</details>
+后到的同键消息不应越过前面的同键消息；只有严格更大的项才右移。
+
+</details>
 
 <details><summary>9. 插入排序完全逆序时怎样增长？</summary>
 
-第 i 项可能跨过前面 i 项，累计比较和移动为 O(n²)。</details>
+第 i 项可能跨过前面 i 项，累计比较和移动为 O(n²)。
+
+</details>
 
 <details><summary>10. 归并排序什么时候停止递归？</summary>
 
-子段长度为 0 或 1 时自然有序，直接返回。</details>
+子段长度为 0 或 1 时自然有序，直接返回。
+
+</details>
 
 <details><summary>11. 归并左右两段首键相同，要稳定应先取哪边？</summary>
 
-先取左段，保留输入中原先较靠前的同键记录。</details>
+先取左段，保留输入中原先较靠前的同键记录。
+
+</details>
 
 <details><summary>12. 典型数组归并的时间与额外元素空间？</summary>
 
-时间 O(n log n)，通常需 O(n) 辅助数组，递归栈另计。</details>
+时间 O(n log n)，通常需 O(n) 辅助数组，递归栈另计。
+
+</details>
 
 <details><summary>13. 快速排序的一次分区后，左右两侧已各自有序吗？</summary>
 
-不一定。只保证它们与枢轴的关系，仍需递归处理内部顺序。</details>
+不一定。只保证它们与枢轴的关系，仍需递归处理内部顺序。
+
+</details>
 
 <details><summary>14. 朴素快排为什么可能退化到 O(n²)？</summary>
 
-连续得到极不均衡分区，例如每次分成 0 与 n−1 项。</details>
+连续得到极不均衡分区，例如每次分成 0 与 n−1 项。
+
+</details>
 
 <details><summary>15. `sort.Slice` 保证同键保留原次序吗？</summary>
 
-不保证；需要这种合同时使用 `sort.SliceStable` 或定义完整次级键。</details>
+不保证；需要这种合同时使用 `sort.SliceStable` 或定义完整次级键。
+
+</details>
 
 <details><summary>16. 排序原切片会影响共享底层数组的其他视图吗？</summary>
 
-可能。要保留原输入，先复制元素到独立切片。</details>
+可能。要保留原输入，先复制元素到独立切片。
+
+</details>
 
 <details><summary>17. 按时间排序后能按 `Seq` 直接二分吗？</summary>
 
-不能直接推断；必须先证明输出也按 `Seq` 非降序。</details>
+不能直接推断；必须先证明输出也按 `Seq` 非降序。
+
+</details>
 
 <details><summary>18. 用二分找插入点后，中间插入就变成 O(log n) 了吗？</summary>
 
-没有。定位可快，但搬移后续元素仍可能 O(n)。</details>
+没有。定位可快，但搬移后续元素仍可能 O(n)。
+
+</details>
 
 <details><summary>19. 外部排序的两大步骤是什么？</summary>
 
-把可装入内存的块分别排序写成有序段，再按同一规则多路归并。</details>
+把可装入内存的块分别排序写成有序段，再按同一规则多路归并。
+
+</details>
 
 <details><summary>20. 排序发现序号缺号，能自动补回缺失消息吗？</summary>
 
-不能。排序只重排已有记录；缺号是否异常要按业务协议调查。</details>
+不能。排序只重排已有记录；缺号是否异常要按业务协议调查。
+
+</details>
 
 ## 来源与下一步
 

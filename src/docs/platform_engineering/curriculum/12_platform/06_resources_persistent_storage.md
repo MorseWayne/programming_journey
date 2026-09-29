@@ -105,95 +105,139 @@ t3  新进程/Pod Ready → 仅表示可接入候选，旧 m-a 与 B 缺口仍�
 
 <details><summary>1. request 主要回答哪类问题？</summary>
 
-调度时能否按 Node allocatable、已有请求和其它约束放下 Pod；还影响争用权重。</details>
+调度时能否按 Node allocatable、已有请求和其它约束放下 Pod；还影响争用权重。
+
+</details>
 
 <details><summary>2. CPU limit 超过后 Kubernetes 必杀容器吗？</summary>
 
-不会因单纯 CPU 超限直接杀；可能通过 cgroup 节流。</details>
+不会因单纯 CPU 超限直接杀；可能通过 cgroup 节流。
+
+</details>
 
 <details><summary>3. 内存 limit 附近每次都必定 OOM kill 吗？</summary>
 
-不必。可能先回收；需看事件增量与容器状态。</details>
+不必。可能先回收；需看事件增量与容器状态。
+
+</details>
 
 <details><summary>4. `emptyDir` 与 Pod UID 生命周期怎样关联？</summary>
 
-同 Pod 内容可被其容器使用/重启后保留；Pod 删除、替代 UID 后不自动继承。</details>
+同 Pod 内容可被其容器使用/重启后保留；Pod 删除、替代 UID 后不自动继承。
+
+</details>
 
 <details><summary>5. PV、PVC 各是什么？</summary>
 
-PV 是集群存储资源对象，PVC 是命名空间内请求并与适合的 PV 绑定。</details>
+PV 是集群存储资源对象，PVC 是命名空间内请求并与适合的 PV 绑定。
+
+</details>
 
 <details><summary>6. PVC Bound 能证明 `m-9/seq9` 已 DB 提交吗？</summary>
 
-不能。它只说明存储绑定，权威事务和恢复另验。</details>
+不能。它只说明存储绑定，权威事务和恢复另验。
+
+</details>
 
 <details><summary>7. RWO 一定只允许全局一个 Pod 写吗？</summary>
 
-不是。它是单 Node 读写挂载，多个同 Node Pod 仍可能访问。</details>
+不是。它是单 Node 读写挂载，多个同 Node Pod 仍可能访问。
+
+</details>
 
 <details><summary>8. RWOP 能自动给数据库做主从复制吗？</summary>
 
-不能。它约束支持条件下的单 Pod 挂载，复制/事务另由数据库负责。</details>
+不能。它约束支持条件下的单 Pod 挂载，复制/事务另由数据库负责。
+
+</details>
 
 ### 算式 9–16：调度与故障证据
 
 <details><summary>9. N1 allocatable 2 CPU，已有 requests 1.7，新请求 0.5，合计多少？</summary>
 
-2.2 CPU，超过 N1 的 2 CPU。</details>
+2.2 CPU，超过 N1 的 2 CPU。
+
+</details>
 
 <details><summary>10. N1 内存 4 GiB，已有请求 3 GiB，新请求 512 MiB，合计多少？</summary>
 
-3.5 GiB，小于 4 GiB；本题阻塞在 CPU 请求维。</details>
+3.5 GiB，小于 4 GiB；本题阻塞在 CPU 请求维。
+
+</details>
 
 <details><summary>11. N1 实际 CPU 只用 10%，为何该 Pod 仍可能 Pending？</summary>
 
-调度按 requests/allocatable 和约束，不按单次实时 CPU 使用快照。</details>
+调度按 requests/allocatable 和约束，不按单次实时 CPU 使用快照。
+
+</details>
 
 <details><summary>12. N2 能放下资源请求就代表 Pod 已 Ready 吗？</summary>
 
-不代表。还要绑定、拉镜像、启动、配置和探针/业务验证。</details>
+不代表。还要绑定、拉镜像、启动、配置和探针/业务验证。
+
+</details>
 
 <details><summary>13. t1 只见 CPU 节流，可说进程被 OOM 杀了吗？</summary>
 
-不能。CPU 节流与内存 OOM 是不同事件。</details>
+不能。CPU 节流与内存 OOM 是不同事件。
+
+</details>
 
 <details><summary>14. t2 `oom_kill` 增且容器重启，仍需核对什么？</summary>
 
-具体进程/容器、时间与内存来源、连接/当前 S2 业务影响。</details>
+具体进程/容器、时间与内存来源、连接/当前 S2 业务影响。
+
+</details>
 
 <details><summary>15. GOMEMLIMIT 可替代 Kubernetes memory limit 吗？</summary>
 
-不能。前者是 Go 运行时管理内存软目标，后者由平台/内核施加资源约束。</details>
+不能。前者是 Go 运行时管理内存软目标，后者由平台/内核施加资源约束。
+
+</details>
 
 <details><summary>16. P1 换 P4，旧 `emptyDir` 可作为权威消息恢复来源吗？</summary>
 
-不能。它随旧 Pod UID 生命周期结束。</details>
+不能。它随旧 Pod UID 生命周期结束。
+
+</details>
 
 ### 决策 17–22：业务与存储身份
 
 <details><summary>17. StatefulSet 给 db-0 关联旧 PVC，就可宣布 DB 主已恢复吗？</summary>
 
-不能。还需卷可挂载、事务/WAL、复制/身份与有权查询证据。</details>
+不能。还需卷可挂载、事务/WAL、复制/身份与有权查询证据。
+
+</details>
 
 <details><summary>18. 三副本正常都能运行就必满足失一节点后的调度余量吗？</summary>
 
-不必。需计算剩余 Node allocatable/requests、热点和共享依赖。</details>
+不必。需计算剩余 Node allocatable/requests、热点和共享依赖。
+
+</details>
 
 <details><summary>19. 新 Pod Ready 能证明旧 S2 `m-a` 仍在吗？</summary>
 
-不能。旧进程内存不跨替代，当前 200 没有持久保证。</details>
+不能。旧进程内存不跨替代，当前 200 没有持久保证。
+
+</details>
 
 <details><summary>20. B 设备没看到消息，PVC Bound 和网关 Ready 足以结案吗？</summary>
 
-不够。要查未来权威历史、派生链和设备应用确认。</details>
+不够。要查未来权威历史、派生链和设备应用确认。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明其真实内存 limit/PVC 吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费异步边界。</details>
+不能。只支持所读发送与 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 一张可审资源与卷身份卡至少交什么？</summary>
 
-Node allocatable/已有 requests、Pod request/limit、运行事件/QoS、emptyDir/PV/PVC/访问模式与拓扑，以及 S2/S3/B 分层恢复门。</details>
+Node allocatable/已有 requests、Pod request/limit、运行事件/QoS、emptyDir/PV/PVC/访问模式与拓扑，以及 S2/S3/B 分层恢复门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

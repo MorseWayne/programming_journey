@@ -29,9 +29,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "d9af23e8b739a00fe9b2664190bed263d886654f4734837d39b485cb97fddfd7",
-  "reviewed_sha256": "c7c9619d6993d4863371237dbc89a5b2aaadfe7ae31cb82e25f49f5ae4184c8e",
-  "reviewed_characters": 10670,
+  "reviewed_sha256": "be35c18ea857b48747ce8b0426e43f536390c2e7c5bf707c7588caea067b38ca",
+  "reviewed_characters": 10720,
   "reviewed_chinese_characters": 4985,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/03_linux_process_resources.md",
-  "course_sha256": "399dd09fec51189bdd8c9ced44cf13df2b866350680ebdde1d7e9ebd2dd9cc17"
+  "course_sha256": "2bf8c262903d6aa19be861636f20629bb5e9f817521c5f7943c906abe87e2617"
 }

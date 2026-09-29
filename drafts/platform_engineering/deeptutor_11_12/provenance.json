@@ -29,9 +29,9 @@
   "original_sha256": "d896d322f47eba6beb449de1c5d53276f6c6beed93c31f5ace329bb38d4227c8",
   "original_characters": 31386,
   "generation_request_sha256": "7fa3b77b12bd4d3a0c0d213ece14bbd486f4e5ceae3ec5f7bdca0a9818941008",
-  "reviewed_sha256": "bd86375879f15bbe67dacf30be9a8b34bb86e110bd6e9c3510d880a7859a8230",
-  "reviewed_characters": 10446,
+  "reviewed_sha256": "9c56458e76776b71cfb8292da6779157c48c51919791d94d703b7beedf13c7ad",
+  "reviewed_characters": 10490,
   "reviewed_chinese_characters": 3654,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/12_capacity_cost_decision.md",
-  "course_sha256": "c7b7df5828f0dfdabb0a7901c4d186a3cc7a533741db67568a35fff90e60c7af"
+  "course_sha256": "19356ab02f9244e05f1f28723bace77ed72bebf19e57e4e26d9f934622256fb0"
 }

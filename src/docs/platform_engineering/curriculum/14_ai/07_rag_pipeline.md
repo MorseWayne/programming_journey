@@ -95,95 +95,139 @@ actor/问题 → 权限与意图判断 → 检索有权候选 → 回读权威�
 
 <details><summary>1. RAG 中检索到片段后可以直接当正确答案吗？</summary>
 
-不可以；先核身份、版本/状态、原文完整性和能否支持将要说的主张。</details>
+不可以；先核身份、版本/状态、原文完整性和能否支持将要说的主张。
+
+</details>
 
 <details><summary>2. `q-01` 的现行金资料是哪份，答案是什么？</summary>
 
-current `doc-current`，当前 `/v1` 正文最多 6 UTF-8 B。</details>
+current `doc-current`，当前 `/v1` 正文最多 6 UTF-8 B。
+
+</details>
 
 <details><summary>3. `q-02` 为何可同时看 current 和 proposed？</summary>
 
-它问 R9 是否生效，需要现行与提议对照，同时明确提议尚待审。</details>
+它问 R9 是否生效，需要现行与提议对照，同时明确提议尚待审。
+
+</details>
 
 <details><summary>4. 查询改写能改变 actor 和权限吗？</summary>
 
-不能；改写只辅助表达检索意图，身份/范围由应用确定。</details>
+不能；改写只辅助表达检索意图，身份/范围由应用确定。
+
+</details>
 
 <details><summary>5. `q-03` 必须调用模型吗？</summary>
 
-不必。应用可据权限元数据直接泛化拒绝，无权正文不进模型。</details>
+不必。应用可据权限元数据直接泛化拒绝，无权正文不进模型。
+
+</details>
 
 <details><summary>6. `answer/refuse/undecided` 来自哪一章的输出契约？</summary>
 
-14.05；它们分别是有权可证回答、权限/策略拒绝、规则或证据尚不足。</details>
+14.05；它们分别是有权可证回答、权限/策略拒绝、规则或证据尚不足。
+
+</details>
 
 <details><summary>7. 片段 ID 已知就能证明引用支持主张吗？</summary>
 
-不能；还需回读适用版本的原文，核主张、范围和限定词。</details>
+不能；还需回读适用版本的原文，核主张、范围和限定词。
+
+</details>
 
 <details><summary>8. RAG 回答能改变 S2 200 的含义吗？</summary>
 
-不能；`accepted_in_memory` 只表示本进程内存受理，不是设备送达。</details>
+不能；`accepted_in_memory` 只表示本进程内存受理，不是设备送达。
+
+</details>
 
 ### 推演 9–16：证据完整与逐句核证
 
 <details><summary>9. `q-01` 只见 r9 的“9 B”，能直接答当前上限吗？</summary>
 
-不能；r9 是 proposed，缺 current 原文时应报现行证据不足。</details>
+不能；r9 是 proposed，缺 current 原文时应报现行证据不足。
+
+</details>
 
 <details><summary>10. `q-02` 有 r9 却缺 current，够判断“已生效”吗？</summary>
 
-不够；要保留现行与提议两份资料对照。</details>
+不够；要保留现行与提议两份资料对照。
+
+</details>
 
 <details><summary>11. 纸上 32-token 预算：指令6、证据18、问题4，理想余多少？</summary>
 
-`32−6−18−4=4`，忽略了真实接口特殊标记等开销。</details>
+`32−6−18−4=4`，忽略了真实接口特殊标记等开销。
+
+</details>
 
 <details><summary>12. 截掉 r9 的“尚待审”但保留“9 B”，可以照样生成吗？</summary>
 
-不可以；关键限定词丢失使证据不完整，应调整片段/预算或说明不足。</details>
+不可以；关键限定词丢失使证据不完整，应调整片段/预算或说明不足。
+
+</details>
 
 <details><summary>13. 回答“6 B；B 已收到”只引 doc-current，整句都受支持吗？</summary>
 
-不是。6 B 受支持，B 已收到与内存受理边界冲突，须逐主张核对。</details>
+不是。6 B 受支持，B 已收到与内存受理边界冲突，须逐主张核对。
+
+</details>
 
 <details><summary>14. `q-04` 检出旧文档写“7 天”，就有批准的退群规则吗？</summary>
 
-没有。规则未定应 `undecided`，不能以旧文档或模型猜测补造。</details>
+没有。规则未定应 `undecided`，不能以旧文档或模型猜测补造。
+
+</details>
 
 <details><summary>15. `doc-history` 的 24h broker 能支持 `q-06` 哪个结论？</summary>
 
-不能**仅凭** 24h broker 保证 B 离线 25h 后补齐；不能据此断言未来 DB 已保留。</details>
+不能**仅凭** 24h broker 保证 B 离线 25h 后补齐；不能据此断言未来 DB 已保留。
+
+</details>
 
 <details><summary>16. 格式合法且有 citations，是否等于业务正确？</summary>
 
-不等于。还要核权限、资料状态、原文支持和当前合同。</details>
+不等于。还要核权限、资料状态、原文支持和当前合同。
+
+</details>
 
 ### 决策 17–22：拒答、更新和归因
 
 <details><summary>17. `q-03` 私有正文已进提示、输出却拒绝，算权限通过吗？</summary>
 
-不算；模型前的输入权限门已失败。</details>
+不算；模型前的输入权限门已失败。
+
+</details>
 
 <details><summary>18. 检索服务暂时拿不到 current，可让模型凭记忆答 q-01 吗？</summary>
 
-不应；标 `evidence_missing` 并安全说明不足或等待恢复。</details>
+不应；标 `evidence_missing` 并安全说明不足或等待恢复。
+
+</details>
 
 <details><summary>19. R9 获批前可以仅改提示就让 9 B 生效吗？</summary>
 
-不能。需要正式业务决定和资料/合同版本更新。</details>
+不能。需要正式业务决定和资料/合同版本更新。
+
+</details>
 
 <details><summary>20. 私有资料撤权后，旧答案/提示缓存还能跨 actor 复用吗？</summary>
 
-不能。缓存须按身份、权限和资料版本隔离并在撤权时失效。</details>
+不能。缓存须按身份、权限和资料版本隔离并在撤权时失效。
+
+</details>
 
 <details><summary>21. q-01 错答 9 B，current 未进提示，先查哪层？</summary>
 
-先查资料状态、检索与上下文组装；这是最早的坏边界。</details>
+先查资料状态、检索与上下文组装；这是最早的坏边界。
+
+</details>
 
 <details><summary>22. 六题 RAG 都答对，能直接声称生产准确率高吗？</summary>
 
-不能。六题是教学案例；需要独立代表性未见集、真实运行和分桶/硬门证据。</details>
+不能。六题是教学案例；需要独立代表性未见集、真实运行和分桶/硬门证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

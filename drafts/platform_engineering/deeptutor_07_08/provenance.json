@@ -25,9 +25,9 @@
   "original_sha256": "8554974bbb7218c8d79982bb3fb8b96b943feb441ac09e93e997e9a8911e863b",
   "original_characters": 30579,
   "generation_request_sha256": "f426e19016ba5e45472b4f6615cf0c35d9ab075b67d4fd53914f78f7ca3bc352",
-  "reviewed_sha256": "b815b68799152b9e5a5ab2547b4d85056a488fea5efbbb2f543044b250c95156",
-  "reviewed_characters": 7867,
+  "reviewed_sha256": "1838605811520f3d449973f4b89d503d0902716053ac82811498125bebf3db5b",
+  "reviewed_characters": 7914,
   "reviewed_chinese_characters": 3001,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/08_order_concurrent_consumption.md",
-  "course_sha256": "06c31bb56b64209a744ec34eda997f8b0b4b5d256817df39e5d375fd57d5b644"
+  "course_sha256": "f16e7dea5eaaedfbd744a7d474e54d346df9d2fd0285759dae64a44b30c2c57a"
 }

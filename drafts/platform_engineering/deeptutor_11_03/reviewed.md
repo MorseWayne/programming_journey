@@ -123,91 +123,135 @@ Trace 有自己的 `trace_id`，每个 Span 有 `span_id`；父子关系用于�
 
 <details><summary>1. 日志适合回答“最近五分钟占比”吗？</summary>
 
-单条日志不适合；要定义同口径分母与聚合计数。</details>
+单条日志不适合；要定义同口径分母与聚合计数。
+
+</details>
 
 <details><summary>2. 指标能直接画出某条 m-a 的完整请求栈吗？</summary>
 
-通常不能。需要关联日志或被采样 Trace 的阶段信息。</details>
+通常不能。需要关联日志或被采样 Trace 的阶段信息。
+
+</details>
 
 <details><summary>3. Trace 的一个 Span 表示什么？</summary>
 
-一次操作中的一段工作，带起止与父子关联等信息。</details>
+一次操作中的一段工作，带起止与父子关联等信息。
+
+</details>
 
 <details><summary>4. `status_planned=200` 证明 A 收到了 200 吗？</summary>
 
-不能。它仅说明服务端计划写该状态，外部结果另需观察。</details>
+不能。它仅说明服务端计划写该状态，外部结果另需观察。
+
+</details>
 
 <details><summary>5. Counter 当前累计值 100 等于 100 次/秒吗？</summary>
 
-不等于。速率要看选定时间窗内的增量除以时长。</details>
+不等于。速率要看选定时间窗内的增量除以时长。
+
+</details>
 
 <details><summary>6. Gauge 适合记录当前在途请求吗？</summary>
 
-适合。它随开始/结束增减，代表某时刻存量。</details>
+适合。它随开始/结束增减，代表某时刻存量。
+
+</details>
 
 <details><summary>7. Histogram 的 count=10、sum=0.326 s 表示均值多少？</summary>
 
-`0.326/10=0.0326 s=32.6 ms`。</details>
+`0.326/10=0.0326 s=32.6 ms`。
+
+</details>
 
 <details><summary>8. 累计桶 9、9、10 能相加当总数吗？</summary>
 
-不能。它们相互包含，总数由 `+Inf` 的 10 表达。</details>
+不能。它们相互包含，总数由 `+Inf` 的 10 表达。
+
+</details>
 
 <details><summary>9. `route` 标签应填 c-a 的原始 URL 吗？</summary>
 
-不应。用固定路由模板，避免每个会话生成一个新时间序列。</details>
+不应。用固定路由模板，避免每个会话生成一个新时间序列。
+
+</details>
 
 <details><summary>10. 3 条路由×4 个结果最多多少组合？</summary>
 
-仅这两个维度的上界为 12，尚未计其他维度。</details>
+仅这两个维度的上界为 12，尚未计其他维度。
+
+</details>
 
 <details><summary>11. 再加 100000 个用户 ID 标签，上界怎样变？</summary>
 
-可达 1200000 个组合，且涉及身份信息与成本。</details>
+可达 1200000 个组合，且涉及身份信息与成本。
+
+</details>
 
 <details><summary>12. 把 user_id 哈希就一定消除高基数吗？</summary>
 
-不会。大量不同用户的哈希仍是大量不同标签值。</details>
+不会。大量不同用户的哈希仍是大量不同标签值。
+
+</details>
 
 <details><summary>13. `trace_id` 与业务 `message_id` 是同一身份吗？</summary>
 
-不是。Trace 关联一次执行路径，消息 ID 关联业务对象。</details>
+不是。Trace 关联一次执行路径，消息 ID 关联业务对象。
+
+</details>
 
 <details><summary>14. 一次重试会必然沿用第一次 trace_id 吗？</summary>
 
-不必然。它可产生新请求/Trace，仍指向同一业务消息意图。</details>
+不必然。它可产生新请求/Trace，仍指向同一业务消息意图。
+
+</details>
 
 <details><summary>15. `app.Send` 12 ms 含子 Span `Append` 5 ms，能相加成 17 ms 吗？</summary>
 
-不能。子段已包含在父段中，相加会重复计时。</details>
+不能。子段已包含在父段中，相加会重复计时。
+
+</details>
 
 <details><summary>16. Go `context.Context` 传给函数就自动跨网络传播 Trace 吗？</summary>
 
-不会。跨进程需按协议注入、提取追踪上下文。</details>
+不会。跨进程需按协议注入、提取追踪上下文。
+
+</details>
 
 <details><summary>17. 某请求没有 Trace，能证明它没发生吗？</summary>
 
-不能。它可能未被采样或采集失败。</details>
+不能。它可能未被采样或采集失败。
+
+</details>
 
 <details><summary>18. 只用抽样 Trace 的条数作全部请求分母合适吗？</summary>
 
-不合适。抽样集合与 11.01 的全部合格尝试集合不同。</details>
+不合适。抽样集合与 11.01 的全部合格尝试集合不同。
+
+</details>
 
 <details><summary>19. 内存提交日志能证明数据库持久化吗？</summary>
 
-不能。本章尚无持久阶段的真实数据源。</details>
+不能。本章尚无持久阶段的真实数据源。
+
+</details>
 
 <details><summary>20. A 客户端超时与服务端 commit 日志矛盾吗？</summary>
 
-不矛盾。服务端可已受理而响应在返回途中丢失。</details>
+不矛盾。服务端可已受理而响应在返回途中丢失。
+
+</details>
 
 <details><summary>21. 能把消息正文/访问令牌写进日志便于排障吗？</summary>
 
-不应如此。记录脱敏阶段、类别和受控关联信息。</details>
+不应如此。记录脱敏阶段、类别和受控关联信息。
+
+</details>
 
 <details><summary>22. P99 升高就一定知道瓶颈是哪一个 Span 吗？</summary>
 
-不能。要结合同口径分布、具体阶段 Trace 和后续诊断证据。</details>
+不能。要结合同口径分布、具体阶段 Trace 和后续诊断证据。
+
+</details>
 
 ## 来源与下一步
 

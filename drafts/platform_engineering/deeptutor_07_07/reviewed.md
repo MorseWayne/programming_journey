@@ -86,91 +86,135 @@ B 离线后仍从权威消息历史按权限/游标补拉；E9 的重投不允�
 
 <details><summary>1. `message_id=m-9` 与 `event_id=evt:m-9:v1` 同一作用吗？</summary>
 
-不同。前者标业务消息，后者标这条消息 v1 变化对应的处理事件。</details>
+不同。前者标业务消息，后者标这条消息 v1 变化对应的处理事件。
+
+</details>
 
 <details><summary>2. broker 存下 E9，但发布 ACK 丢了，生产者能断言 E9 未存吗？</summary>
 
-不能。生产者结果未知，需要稳定事件身份与查证/重试政策。</details>
+不能。生产者结果未知，需要稳定事件身份与查证/重试政策。
+
+</details>
 
 <details><summary>3. 当前 S2 同消息 ID 再 POST 返回什么？</summary>
 
-409；Broker 的事件去重不会改变 HTTP 合同。</details>
+409；Broker 的事件去重不会改变 HTTP 合同。
+
+</details>
 
 <details><summary>4. 消费者 ACK 等于 B 用户已读吗？</summary>
 
-不等于。它只在消费者与 broker 的协议层有意义。</details>
+不等于。它只在消费者与 broker 的协议层有意义。
+
+</details>
 
 <details><summary>5. Redis Stream `XACK` 会自动删除整个 Stream 条目吗？</summary>
 
-不会。它移除相应组里的 PEL 待确认引用；条目保留另由政策决定。</details>
+不会。它移除相应组里的 PEL 待确认引用；条目保留另由政策决定。
+
+</details>
 
 <details><summary>6. SearchIndex 与 Notify 可共用“E9 已处理”一个布尔值吗？</summary>
 
-不能。副作用不同，完成与失败也不同，应区分作用域。</details>
+不能。副作用不同，完成与失败也不同，应区分作用域。
+
+</details>
 
 <details><summary>7. “至少一次投递”是否等于外部索引恰好一次效果？</summary>
 
-不等于。重投可能重复，外部目标需幂等/版本条件和对账。</details>
+不等于。重投可能重复，外部目标需幂等/版本条件和对账。
+
+</details>
 
 <details><summary>8. E9 重投能生成第二条权威聊天消息 m-9 吗？</summary>
 
-不应。E9 是处理事件，权威消息已由数据库身份/唯一约束管理。</details>
+不应。E9 是处理事件，权威消息已由数据库身份/唯一约束管理。
+
+</details>
 
 <details><summary>9. 五分钟玩具窗口内，首次后四分钟同 ID 发布重试怎样？</summary>
 
-在独立分支 A、broker 正常保留去重记录的前提下，可识别重复而不追加另一 E9。</details>
+在独立分支 A、broker 正常保留去重记录的前提下，可识别重复而不追加另一 E9。
+
+</details>
 
 <details><summary>10. 首次后六分钟的另一独立分支怎样？</summary>
 
-已超玩具五分钟窗口，有追加第二条事件的风险，不能靠短窗保证长时去重。</details>
+已超玩具五分钟窗口，有追加第二条事件的风险，不能靠短窗保证长时去重。
+
+</details>
 
 <details><summary>11. 第 9、10 题能当成同一条“先 t4 再 t6”的执行路径吗？</summary>
 
-不能。它们是从同一次首次发布出发的两个独立分支，避免假设重复命中会否刷新窗口。</details>
+不能。它们是从同一次首次发布出发的两个独立分支，避免假设重复命中会否刷新窗口。
+
+</details>
 
 <details><summary>12. W1 ACK 已被 broker 记录，尚未写索引就崩溃会怎样？</summary>
 
-组内可能认为完成而不重投，搜索索引效果缺失，需要独立对账/重建。</details>
+组内可能认为完成而不重投，搜索索引效果缺失，需要独立对账/重建。
+
+</details>
 
 <details><summary>13. W1 已写索引，ACK 未被记录就崩溃会怎样？</summary>
 
-可能重投给 W1/W2，外部索引操作被重复调用。</details>
+可能重投给 W1/W2，外部索引操作被重复调用。
+
+</details>
 
 <details><summary>14. 只用 `m-9` 去重，为何可能错过编辑 v2？</summary>
 
-v1 已标处理后，合法 `evt:m-9:v2` 也会被误判重复；须区分版本。</details>
+v1 已标处理后，合法 `evt:m-9:v2` 也会被误判重复；须区分版本。
+
+</details>
 
 <details><summary>15. `(m-9,v1,SearchIndex)` 已处理，能说明 Notify 已完成吗？</summary>
 
-不能。副作用作用域不同，Notify 有独立确认与设备边界。</details>
+不能。副作用作用域不同，Notify 有独立确认与设备边界。
+
+</details>
 
 <details><summary>16. 消费者去重记录 t=10 分钟过期，t=11 重投能保证被挡住吗？</summary>
 
-不能。记录已过期，需目标幂等或覆盖重放范围的更持久去重方案。</details>
+不能。记录已过期，需目标幂等或覆盖重放范围的更持久去重方案。
+
+</details>
 
 <details><summary>17. 把去重 TTL 从 10 分钟拉到 20 分钟，就可承诺永不重复吗？</summary>
 
-不能。还要考虑更晚人工重放、日志保留、恢复和目标副作用语义。</details>
+不能。还要考虑更晚人工重放、日志保留、恢复和目标副作用语义。
+
+</details>
 
 <details><summary>18. NATS `Nats-Msg-Id` 只要正文相同就自动去重吗？</summary>
 
-不是。官方机制按指定 ID 且受配置窗口约束。</details>
+不是。官方机制按指定 ID 且受配置窗口约束。
+
+</details>
 
 <details><summary>19. Kafka offset 已提交，就证明外部 SearchIndex 同事务更新了吗？</summary>
 
-不能。位点和外部索引写入在不同系统，需幂等/协调与证据。</details>
+不能。位点和外部索引写入在不同系统，需幂等/协调与证据。
+
+</details>
 
 <details><summary>20. DB 已提交 m-9、生产者尚未发 E9 就崩溃，Broker 重投能找回 E9 吗？</summary>
 
-Broker 根本没有 E9，须从可靠的本地待发布记录或权威对账入口找出漏发。</details>
+Broker 根本没有 E9，须从可靠的本地待发布记录或权威对账入口找出漏发。
+
+</details>
 
 <details><summary>21. Broker E9 去重成功，能改写当前 HTTP 重复 ID 的 409 吗？</summary>
 
-不能。事件发布去重与客户端消息重复拒绝是不同合同；如要变更 HTTP 语义须另行版本审查。</details>
+不能。事件发布去重与客户端消息重复拒绝是不同合同；如要变更 HTTP 语义须另行版本审查。
+
+</details>
 
 <details><summary>22. 什么时候能对 A 说“B 已读”？</summary>
 
-需要按设备/用户已读回执的合同取得相应证据；DB Commit、E9 发布或消费 ACK 都不足够。</details>
+需要按设备/用户已读回执的合同取得相应证据；DB Commit、E9 发布或消费 ACK 都不足够。
+
+</details>
 
 ## 本章完成标准与下一步
 

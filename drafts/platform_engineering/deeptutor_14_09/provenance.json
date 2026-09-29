@@ -28,9 +28,9 @@
   "original_sha256": "5cce343f59bb0dfa18c2a49b51651c471f0a115e71908ed72f5604b66cf10764",
   "original_characters": 29489,
   "generation_request_sha256": "1adffa54edd579c0d9375a73735396d079c0ae5e766384787f668d594f11774a",
-  "reviewed_sha256": "0ba795996b0d344f3be51a9caa88aeb77121c3638d6af58c71c80257da1dfeb9",
-  "reviewed_characters": 10079,
+  "reviewed_sha256": "cc332296f1aee261938fc509c39edb2e4ce84573c7aa03bf96dc4bde8ee31a12",
+  "reviewed_characters": 10123,
   "reviewed_chinese_characters": 3746,
   "course_file": "src/docs/platform_engineering/curriculum/14_ai/09_evaluation_data_engineering.md",
-  "course_sha256": "0090ddd4918267d8a60efaa50d6499239551b376469b27214cb5eb0a45fe20ca"
+  "course_sha256": "5db2e94f7ff752f4fb8054ba3fa0087d115756a9cb0ede81aa52e1c34654f90b"
 }

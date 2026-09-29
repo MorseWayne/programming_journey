@@ -169,91 +169,135 @@ ls -l /proc/24100/fd
 
 <details><summary>1. PID 是程序文件的永久 ID 吗？</summary>
 
-不是。它标识某个时间窗口里的进程实例，数值日后可能复用。</details>
+不是。它标识某个时间窗口里的进程实例，数值日后可能复用。
+
+</details>
 
 <details><summary>2. PPID 表示什么？</summary>
 
-表示观察时进程的父进程标识；父子关系应结合具体启动方式解释。</details>
+表示观察时进程的父进程标识；父子关系应结合具体启动方式解释。
+
+</details>
 
 <details><summary>3. `u-a` 与 Linux PID 是同一种身份吗？</summary>
 
-不是。`u-a` 是虚构 IM 用户 ID，PID 是 Linux 进程实例标识。</details>
+不是。`u-a` 是虚构 IM 用户 ID，PID 是 Linux 进程实例标识。
+
+</details>
 
 <details><summary>4. 在编辑器里看到文件，能保证任意进程用相对路径打开它吗？</summary>
 
-不能。要看该进程的 cwd、参数和访问许可。</details>
+不能。要看该进程的 cwd、参数和访问许可。
+
+</details>
 
 <details><summary>5. `-file history-c-a.json` 相对哪个目录？</summary>
 
-相对进程当时的工作目录，不必是源码或可执行文件所在目录。</details>
+相对进程当时的工作目录，不必是源码或可执行文件所在目录。
+
+</details>
 
 <details><summary>6. shell 后来改了环境变量，已启动进程一定随之改变吗？</summary>
 
-不会自动改变。已启动进程有自己的环境状态，除非程序自身另行修改。</details>
+不会自动改变。已启动进程有自己的环境状态，除非程序自身另行修改。
+
+</details>
 
 <details><summary>7. 显式 `-file` 与 `IMHISTORY_FILE` 同时给出时用谁？</summary>
 
-按 01.12 合同，显式 flag 优先。</details>
+按 01.12 合同，显式 flag 优先。
+
+</details>
 
 <details><summary>8. 环境变量为空时，本课程用哪个路径？</summary>
 
-若没有显式 flag，退回教学默认 `history-c-a.json`，它仍是相对路径。</details>
+若没有显式 flag，退回教学默认 `history-c-a.json`，它仍是相对路径。
+
+</details>
 
 <details><summary>9. `-max-bytes=0` 是文件打不开还是用法错误？</summary>
 
-用法错误，读取前拒绝，退出 2。</details>
+用法错误，读取前拒绝，退出 2。
+
+</details>
 
 <details><summary>10. 路径存在但进程没权限读取，退出哪类？</summary>
 
-文件 I/O 类别 4；不能报告成 JSON 无效 3。</details>
+文件 I/O 类别 4；不能报告成 JSON 无效 3。
+
+</details>
 
 <details><summary>11. FD=3 会永久指向同一份 JSON 文件吗？</summary>
 
-不会。描述符编号相对进程和时间，关闭后可被复用。</details>
+不会。描述符编号相对进程和时间，关闭后可被复用。
+
+</details>
 
 <details><summary>12. 标准输出编号 1 一定连着屏幕吗？</summary>
 
-不一定。shell 可以把它重定向到文件或管道。</details>
+不一定。shell 可以把它重定向到文件或管道。
+
+</details>
 
 <details><summary>13. 诊断写入 stdout 与 stderr 对脚本一样吗？</summary>
 
-不一样。01.12 约定成功结果走 stdout，错误诊断走 stderr。</details>
+不一样。01.12 约定成功结果走 stdout，错误诊断走 stderr。
+
+</details>
 
 <details><summary>14. 看到 40 个 FD 就能判定泄漏吗？</summary>
 
-不能。先了解正常负载与用途，再看数量是否异常增长及关闭路径。</details>
+不能。先了解正常负载与用途，再看数量是否异常增长及关闭路径。
+
+</details>
 
 <details><summary>15. `SIGTERM` 到达后 `defer` 一定执行吗？</summary>
 
-不保证。是否处理信号并走正常清理路径由程序实现决定。</details>
+不保证。是否处理信号并走正常清理路径由程序实现决定。
+
+</details>
 
 <details><summary>16. `SIGKILL` 能被 Go 程序捕获并完成优雅退出吗？</summary>
 
-不能。不能以它作为依赖程序清理和保存的机制。</details>
+不能。不能以它作为依赖程序清理和保存的机制。
+
+</details>
 
 <details><summary>17. `os.Exit` 会运行当前尚未执行的 `defer` 吗？</summary>
 
-不会。资源清理应在内层函数正常返回前完成。</details>
+不会。资源清理应在内层函数正常返回前完成。
+
+</details>
 
 <details><summary>18. `/proc` 的所有文件都只读吗？</summary>
 
-不是。它是伪文件系统，其中有可写接口；本章只选择只读观察路径。</details>
+不是。它是伪文件系统，其中有可写接口；本章只选择只读观察路径。
+
+</details>
 
 <details><summary>19. `/proc/24100/cwd` 读不到，能证明 24100 从未存在吗？</summary>
 
-不能。进程可能已退出、PID 被复用、权限或挂载策略限制可见性。</details>
+不能。进程可能已退出、PID 被复用、权限或挂载策略限制可见性。
 
-<details><summary>20. 记录整个 `/proc/<PID>/environ` 适合作为公开排障证据吗？</summary>
+</details>
 
-不适合。它可能包含敏感信息；只记录与假设相关的虚构或脱敏配置事实。</details>
+<details><summary>20. 记录整个 `/proc/&lt;PID&gt;/environ` 适合作为公开排障证据吗？</summary>
+
+不适合。它可能包含敏感信息；只记录与假设相关的虚构或脱敏配置事实。
+
+</details>
 
 <details><summary>21. 文件许可通过等于有 IM 会话查看权限吗？</summary>
 
-不等于。内核访问许可与业务身份授权属于不同层次。</details>
+不等于。内核访问许可与业务身份授权属于不同层次。
+
+</details>
 
 <details><summary>22. 进程在 `ps` 中出现能证明消息已送达吗？</summary>
 
-不能。它只证明该时刻可观察到进程，远端受理和接收端状态需其他证据。</details>
+不能。它只证明该时刻可观察到进程，远端受理和接收端状态需其他证据。
+
+</details>
 
 ## 来源与下一步
 

@@ -99,91 +99,135 @@ MongoDB Go 驱动的 `WithTransaction` 便于组织事务，但回调在某些�
 
 <details><summary>1. 数据库事务能把 B 的设备推送一起回滚吗？</summary>
 
-不能。普通数据库事务只控制纳入其中的数据库操作。</details>
+不能。普通数据库事务只控制纳入其中的数据库操作。
+
+</details>
 
 <details><summary>2. Atomicity 在本题主要要求什么？</summary>
 
-同一事务内的数据库变更不应只提交一半。</details>
+同一事务内的数据库变更不应只提交一半。
+
+</details>
 
 <details><summary>3. Consistency 会自动知道“退群者不能发送”吗？</summary>
 
-不会。业务不变量需要被明确定义并用约束和事务流程守住。</details>
+不会。业务不变量需要被明确定义并用约束和事务流程守住。
+
+</details>
 
 <details><summary>4. Isolation 与“写了 BeginTx”是同一件事吗？</summary>
 
-不是。隔离行为还取决于级别、数据库实现和具体读写。</details>
+不是。隔离行为还取决于级别、数据库实现和具体读写。
+
+</details>
 
 <details><summary>5. Durability 能证明 B 已读吗？</summary>
 
-不能。数据库恢复与设备展示/用户阅读是不同确认点。</details>
+不能。数据库恢复与设备展示/用户阅读是不同确认点。
+
+</details>
 
 <details><summary>6. T1 先查成员有效，T2 后退群提交，T1 再写消息，这个交错在读已提交下可能吗？</summary>
 
-可能。T1 的旧读结果不会自动阻止 T2 修改成员行。</details>
+可能。T1 的旧读结果不会自动阻止 T2 修改成员行。
+
+</details>
 
 <details><summary>7. 若合同按“发送决定先于退群决定”排序，还需要什么？</summary>
 
-需要两条路径共享的受控冲突边界，例如对同一成员行协调读写顺序。</details>
+需要两条路径共享的受控冲突边界，例如对同一成员行协调读写顺序。
+
+</details>
 
 <details><summary>8. 两事务都读 count=4 并各写常量 5，最终可能怎样？</summary>
 
-最终为 5，丢失一次应得到 6 的更新。</details>
+最终为 5，丢失一次应得到 6 的更新。
+
+</details>
 
 <details><summary>9. 单行 `SET count=count+1` 为什么比应用先读再写常量好？</summary>
 
-增量在数据库当前行上执行，可避免该特定常量覆盖竞态。</details>
+增量在数据库当前行上执行，可避免该特定常量覆盖竞态。
+
+</details>
 
 <details><summary>10. 同一行在一笔事务两次 SELECT 中变值叫什么？</summary>
 
-不可重复读。</details>
+不可重复读。
+
+</details>
 
 <details><summary>11. 同一成员谓词第二次多出一行叫什么？</summary>
 
-幻读，变化的是满足条件的行集合。</details>
+幻读，变化的是满足条件的行集合。
+
+</details>
 
 <details><summary>12. 两位管理员各看见另一位，随后各自退出导致零管理员是什么？</summary>
 
-写偏斜；两笔事务分别改不同的行却一起破坏跨行不变量。</details>
+写偏斜；两笔事务分别改不同的行却一起破坏跨行不变量。
+
+</details>
 
 <details><summary>13. PostgreSQL 的 Read Uncommitted 会读到别人的未提交退群吗？</summary>
 
-不会。PostgreSQL 实际按 Read Committed 处理。</details>
+不会。PostgreSQL 实际按 Read Committed 处理。
+
+</details>
 
 <details><summary>14. PostgreSQL 默认的 Read Committed 两次普通 SELECT 一定相同吗？</summary>
 
-不一定。各语句可读取不同的已提交快照。</details>
+不一定。各语句可读取不同的已提交快照。
+
+</details>
 
 <details><summary>15. PostgreSQL Repeatable Read 还有标准意义的幻读吗？</summary>
 
-该实现不出现，但仍可能发生串行化异常。</details>
+该实现不出现，但仍可能发生串行化异常。
+
+</details>
 
 <details><summary>16. Serializable 冲突失败后只重试最后一条 INSERT 合适吗？</summary>
 
-不合适。要从事务开始重新读取并判断，且有期限与次数边界。</details>
+不合适。要从事务开始重新读取并判断，且有期限与次数边界。
+
+</details>
 
 <details><summary>17. Tx 中途调用 `db.ExecContext` 有什么问题？</summary>
 
-它可能走另一连接，相关语句不在这笔 Tx 中。</details>
+它可能走另一连接，相关语句不在这笔 Tx 中。
+
+</details>
 
 <details><summary>18. 数据库事务重试回调里能直接推送 WebSocket 吗？</summary>
 
-不应如此。回调可能重跑，数据库回滚也无法撤销设备推送。</details>
+不应如此。回调可能重跑，数据库回滚也无法撤销设备推送。
+
+</details>
 
 <details><summary>19. Commit 时网络断开能直接断言消息没保存吗？</summary>
 
-不能。结果可能未知，需按稳定消息/操作身份查询权威状态。</details>
+不能。结果可能未知，需按稳定消息/操作身份查询权威状态。
+
+</details>
 
 <details><summary>20. MongoDB 单文档原子修改会自动覆盖另一个消息文档吗？</summary>
 
-不会。跨文档变化需另行设计，可在适用条件下使用多文档事务。</details>
+不会。跨文档变化需另行设计，可在适用条件下使用多文档事务。
+
+</details>
 
 <details><summary>21. `UnknownTransactionCommitResult` 表示一定失败吗？</summary>
 
-不表示。提交可能已成功；要区分重试提交与重执行业务事务。</details>
+不表示。提交可能已成功；要区分重试提交与重执行业务事务。
+
+</details>
 
 <details><summary>22. 事务提交成功但 A 超时，B 离线，分别该怎样表述？</summary>
 
-数据库提交有其证据；A 是否收到回应未知；B 设备交付尚未确认。</details>
+数据库提交有其证据；A 是否收到回应未知；B 设备交付尚未确认。
+
+</details>
 
 ## 来源与下一步
 

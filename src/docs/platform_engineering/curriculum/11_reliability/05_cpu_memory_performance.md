@@ -98,95 +98,139 @@ Go 工具不是同一张图换不同颜色；它们观察的对象不同。可�
 
 <details><summary>1. A 等到 200 变慢，可以直接说 B 设备送达变慢吗？</summary>
 
-不能。`accepted_in_memory` 仅是本进程受理，设备交付有另一确认点。</details>
+不能。`accepted_in_memory` 仅是本进程受理，设备交付有另一确认点。
+
+</details>
 
 <details><summary>2. 两核各忙一秒，CPU 时间与墙上时间分别约多少？</summary>
 
-合计约 2 核秒 CPU 时间，墙上约 1 秒。</details>
+合计约 2 核秒 CPU 时间，墙上约 1 秒。
+
+</details>
 
 <details><summary>3. 0.8 核秒/秒对 1 核额度和 8 核宿主分别是多少利用率？</summary>
 
-分别约 80% 和 10%，须注明分母和作用域。</details>
+分别约 80% 和 10%，须注明分母和作用域。
+
+</details>
 
 <details><summary>4. `GOMAXPROCS=2` 意味着只能有两个 goroutine 吗？</summary>
 
-不是。它约束同时执行 Go 代码的并行度，不限制 goroutine 总数。</details>
+不是。它约束同时执行 Go 代码的并行度，不限制 goroutine 总数。
+
+</details>
 
 <details><summary>5. CPU profile 会直接显示所有锁等待时间吗？</summary>
 
-不会。等待时未持续消耗 CPU，应结合 block/mutex、goroutine 状态和 trace。</details>
+不会。等待时未持续消耗 CPU，应结合 block/mutex、goroutine 状态和 trace。
+
+</details>
 
 <details><summary>6. 分配率高与存活堆高是一回事吗？</summary>
 
-不是。短命对象可使分配率高而存活堆稳定。</details>
+不是。短命对象可使分配率高而存活堆稳定。
+
+</details>
 
 <details><summary>7. RSS 比 Go 存活堆大，差额全是泄漏吗？</summary>
 
-不是。还可能有栈、运行时其他内存、映射与归还时机等。</details>
+不是。还可能有栈、运行时其他内存、映射与归还时机等。
+
+</details>
 
 <details><summary>8. `GOMEMLIMIT` 是容器 RSS 的硬上限吗？</summary>
 
-不是。它是 Go 运行时管理内存的软限制，不等于容器硬限或总 RSS。</details>
+不是。它是 Go 运行时管理内存的软限制，不等于容器硬限或总 RSS。
+
+</details>
 
 ### 推导 9–16：计算与选择证据
 
 <details><summary>9. 200 次/s、100 KiB/次，分配率约多少 MiB/s？</summary>
 
-`200×100/1024≈19.53 MiB/s`。</details>
+`200×100/1024≈19.53 MiB/s`。
+
+</details>
 
 <details><summary>10. 同请求率下改为 300 KiB/次，约多少 MiB/s？</summary>
 
-`200×300/1024≈58.59 MiB/s`，约是前者三倍。</details>
+`200×300/1024≈58.59 MiB/s`，约是前者三倍。
+
+</details>
 
 <details><summary>11. 当前正文最多 6 B，为何每请求纸上总分配可设为 100 KiB？</summary>
 
-它是整个处理路径的教学假设，包含临时对象、解析和复制等，不是正文字节数，也不是实测值。</details>
+它是整个处理路径的教学假设，包含临时对象、解析和复制等，不是正文字节数，也不是实测值。
+
+</details>
 
 <details><summary>12. 存活堆仍 80 MiB，能否排除新增短命分配？</summary>
 
-不能。alloc 速率可提高而存活量保持相近。</details>
+不能。alloc 速率可提高而存活量保持相近。
+
+</details>
 
 <details><summary>13. 有效新分配预算 80 MiB、20 MiB/s，简化周期约多久？</summary>
 
-约 `80/20=4 s`，仅是本章简化量级模型，不是精确 GC 触发时间。</details>
+约 `80/20=4 s`，仅是本章简化量级模型，不是精确 GC 触发时间。
+
+</details>
 
 <details><summary>14. 预算不变、分配率 60 MiB/s，简化周期约多久？</summary>
 
-约 `80/60≈1.33 s`；真实运行还受根集、目标、并发和负载波动影响。</details>
+约 `80/60≈1.33 s`；真实运行还受根集、目标、并发和负载波动影响。
+
+</details>
 
 <details><summary>15. 找累计分配来源与找仍存活对象，应分别看什么？</summary>
 
-前者看 alloc 视角，后者看 heap/in-use 视角，并标采样窗口。</details>
+前者看 alloc 视角，后者看 heap/in-use 视角，并标采样窗口。
+
+</details>
 
 <details><summary>16. 每秒 CPU 从 0.5 到 0.8 核秒，成功受理从 100 到 200 次，单次成本怎样变？</summary>
 
-按成功受理粗均摊约从 0.005 降到 0.004 核秒/次；不能据此推出逐条成本，仍要核对消息类型、后台工作和拒绝占比。</details>
+按成功受理粗均摊约从 0.005 降到 0.004 核秒/次；不能据此推出逐条成本，仍要核对消息类型、后台工作和拒绝占比。
+
+</details>
 
 ### 评审 17–22：不让优化破坏业务
 
 <details><summary>17. 宿主 CPU 10% 能排除单实例配额节流吗？</summary>
 
-不能。须看该容器的配额、实际 CPU 用量、节流及同窗等待。</details>
+不能。须看该容器的配额、实际 CPU 用量、节流及同窗等待。
+
+</details>
 
 <details><summary>18. 调高 GOGC 一定会使用户时延更低且更安全吗？</summary>
 
-不一定。GC CPU 可能降低，但内存峰值可能增加；须与容器限制和业务结果对照。</details>
+不一定。GC CPU 可能降低，但内存峰值可能增加；须与容器限制和业务结果对照。
+
+</details>
 
 <details><summary>19. 把 GOMEMLIMIT 设得极低可保证不会 OOM 吗？</summary>
 
-不能。它是软限制且不覆盖所有进程内存，过低还可能造成过度 GC。</details>
+不能。它是软限制且不覆盖所有进程内存，过低还可能造成过度 GC。
+
+</details>
 
 <details><summary>20. 省掉消息正文复制前必须证明什么？</summary>
 
-缓冲区所有权、生命周期、并发读写和已受理正文不被后续请求改写；再看成本是否确有改善。</details>
+缓冲区所有权、生命周期、并发读写和已受理正文不被后续请求改写；再看成本是否确有改善。
+
+</details>
 
 <details><summary>21. 优化后完成者 P95 变低，能宣布业务整体改善吗？</summary>
 
-不能。还要看超时/拒绝、仍在途、唯一消息结果、CPU/内存峰值及同负载比较。</details>
+不能。还要看超时/拒绝、仍在途、唯一消息结果、CPU/内存峰值及同负载比较。
+
+</details>
 
 <details><summary>22. OpenIM 两处固定源码能证明真实 GC 热点吗？</summary>
 
-不能。它们只提示异步边界；需要真实固定版本的负载、profile 与业务结果。</details>
+不能。它们只提示异步边界；需要真实固定版本的负载、profile 与业务结果。
+
+</details>
 
 ## 本章完成标准与后续路径
 

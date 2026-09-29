@@ -87,95 +87,139 @@ date: 2026-09-25
 
 <details><summary>1. TTFT 含哪些不只是模型计算的阶段？</summary>
 
-应用授权/检索、网络与排队等，还含 prefill；具体从哪个时点计量须写清。</details>
+应用授权/检索、网络与排队等，还含 prefill；具体从哪个时点计量须写清。
+
+</details>
 
 <details><summary>2. 总时延为何不能只等于 TTFT？</summary>
 
-后续 decode、传输、引用与合同核证等还会消耗时间。</details>
+后续 decode、传输、引用与合同核证等还会消耗时间。
+
+</details>
 
 <details><summary>3. 吞吐和单用户尾时延是同一指标吗？</summary>
 
-不是；批量可提高总体吞吐，同时某些请求排队更久。</details>
+不是；批量可提高总体吞吐，同时某些请求排队更久。
+
+</details>
 
 <details><summary>4. `q-03` 应先路由给大模型读取私有资料吗？</summary>
 
-不应；应用权限门可直接拒绝，无权正文不进模型。</details>
+不应；应用权限门可直接拒绝，无权正文不进模型。
+
+</details>
 
 <details><summary>5. prefill 主要处理哪段，decode 主要处理哪段？</summary>
 
-prefill 处理已有输入前缀，decode 随生成输出逐 token 继续。</details>
+prefill 处理已有输入前缀，decode 随生成输出逐 token 继续。
+
+</details>
 
 <details><summary>6. 14.04 的 2 KiB KV 算式能作真实显存报价吗？</summary>
 
-不能；它是虚构两层玩具模型，真实模型结构、精度和并发需重算实测。</details>
+不能；它是虚构两层玩具模型，真实模型结构、精度和并发需重算实测。
+
+</details>
 
 <details><summary>7. 三类缓存分别缓存什么？</summary>
 
-检索资料/候选、最终答案、模型输入前缀/KV；各自失效与权限条件不同。</details>
+检索资料/候选、最终答案、模型输入前缀/KV；各自失效与权限条件不同。
+
+</details>
 
 <details><summary>8. p95 时延是单次最慢请求吗？</summary>
 
-不是；它是排序后约 95% 样本不超过的分位位置。</details>
+不是；它是排序后约 95% 样本不超过的分位位置。
+
+</details>
 
 ### 推演 9–16：缓存、流式和过载
 
 <details><summary>9. `q-01` 答案缓存只按问题文本命中有何风险？</summary>
 
-资料状态变更后可能答旧版；不同 actor 的可读资料也可能不同。</details>
+资料状态变更后可能答旧版；不同 actor 的可读资料也可能不同。
+
+</details>
 
 <details><summary>10. `u-a` 的私有前缀能复用给 `u-b` 提速吗？</summary>
 
-不能；授权范围不匹配，可能泄露或产生跨租户侧信道。</details>
+不能；授权范围不匹配，可能泄露或产生跨租户侧信道。
+
+</details>
 
 <details><summary>11. 流出首 token 就等于最终答案已验证吗？</summary>
 
-不等于；引用、合同与权限检查可能还未完成。</details>
+不等于；引用、合同与权限检查可能还未完成。
+
+</details>
 
 <details><summary>12. `q-01` 先流出“9 B”再更正，算安全流式吗？</summary>
 
-不算；用户已看到错误现行主张，应先缓冲并核证。</details>
+不算；用户已看到错误现行主张，应先缓冲并核证。
+
+</details>
 
 <details><summary>13. A 短输入长输出、B 长输入短输出，哪项资源压力不同？</summary>
 
-A 增加 decode 步数，B 增加 prefill 输入和初始 KV；还要看排队与并发。</details>
+A 增加 decode 步数，B 增加 prefill 输入和初始 KV；还要看排队与并发。
+
+</details>
 
 <details><summary>14. 过载时 `q-02` 只能取到 r9，可直接答“已生效”吗？</summary>
 
-不能；缺 current 对照，应说明证据不足或走保守路径。</details>
+不能；缺 current 对照，应说明证据不足或走保守路径。
+
+</details>
 
 <details><summary>15. 缓存命中率高能单独证明优化成功吗？</summary>
 
-不能；可能复用过期或无权内容，还需看业务结果、撤权和时延。</details>
+不能；可能复用过期或无权内容，还需看业务结果、撤权和时延。
+
+</details>
 
 <details><summary>16. 客户端取消流式读取能证明 IM 写动作被撤销吗？</summary>
 
-不能；流式推理取消与 IM 副作用确认是不同边界。</details>
+不能；流式推理取消与 IM 副作用确认是不同边界。
+
+</details>
 
 ### 决策 17–22：质量、容量和部署
 
 <details><summary>17. 小模型快但 q-02 错把 R9 当 current，可凭速度上线吗？</summary>
 
-不能；现行/提议业务门失败，先修证据和路由。</details>
+不能；现行/提议业务门失败，先修证据和路由。
+
+</details>
 
 <details><summary>18. `q-03` 无权正文进入提示，其他五题全对能平均掉吗？</summary>
 
-不能；权限是独立硬门，须单列并阻止交付。</details>
+不能；权限是独立硬门，须单列并阻止交付。
+
+</details>
 
 <details><summary>19. 批量提高 token 吞吐，下一步要核哪些用户指标？</summary>
 
-按输入/输出和并发桶看 TTFT、p95 总时延、失败/拒绝、有权成功任务。</details>
+按输入/输出和并发桶看 TTFT、p95 总时延、失败/拒绝、有权成功任务。
+
+</details>
 
 <details><summary>20. 权限源不可用时可用旧答案缓存继续服务私有题吗？</summary>
 
-不可无条件使用；无法确认当前权限时应保守拒绝/说明不可用。</details>
+不可无条件使用；无法确认当前权限时应保守拒绝/说明不可用。
+
+</details>
 
 <details><summary>21. “每成功任务成本”分母应数哪类任务？</summary>
 
-数有权且有证据的正确回答，也数按权限/未定规则正确停止的结果；排除越权、错误事实和无故拒答，分子范围要说明。</details>
+数有权且有证据的正确回答，也数按权限/未定规则正确停止的结果；排除越权、错误事实和无故拒答，分子范围要说明。
+
+</details>
 
 <details><summary>22. 只有六题纸上结果，可写“支持生产千并发”吗？</summary>
 
-不能；缺真实模型、硬件、负载形状、容量与故障测量。</details>
+不能；缺真实模型、硬件、负载形状、容量与故障测量。
+
+</details>
 
 ## 本章完成标准与后续路径
 

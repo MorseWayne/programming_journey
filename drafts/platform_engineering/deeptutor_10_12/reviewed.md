@@ -89,95 +89,139 @@ Martin Fowler 的技术债讨论提醒区分取舍背景，而不是把所有“
 
 <details><summary>1. 当前 S2 正文上限是 6 个汉字吗？</summary>
 
-不是。非空且最多 6 个 UTF-8 字节。</details>
+不是。非空且最多 6 个 UTF-8 字节。
+
+</details>
 
 <details><summary>2. Go 的 `len("你好")` 是 2 还是 6？</summary>
 
-6，`len(string)` 计字节；rune 数才是 2。</details>
+6，`len(string)` 计字节；rune 数才是 2。
+
+</details>
 
 <details><summary>3. `len(body)` 与 `len([]byte(body))` 对同一 Go string 会一个算字符一个算字节吗？</summary>
 
-不会，二者都计该 string 的字节数。差异在字节数与 rune 数之间。</details>
+不会，二者都计该 string 的字节数。差异在字节数与 rune 数之间。
+
+</details>
 
 <details><summary>4. 原始 JSON 请求体 4096 B 与正文 6 B 是同一限额吗？</summary>
 
-不是。前者在解析前约束资源，后者在解码后约束消息规则。</details>
+不是。前者在解析前约束资源，后者在解码后约束消息规则。
+
+</details>
 
 <details><summary>5. 同 ID、同正文重复 POST 当前应返回什么？</summary>
 
-409，旧消息/顺序不覆盖。</details>
+409，旧消息/顺序不覆盖。
+
+</details>
 
 <details><summary>6. `u-c` 登录后不是 `c-a` 成员，可见私有历史吗？</summary>
 
-不可。当前隐藏目标合同为 404。</details>
+不可。当前隐藏目标合同为 404。
+
+</details>
 
 <details><summary>7. S3 `stored_in_teaching_db` 和 R9 9 B 已生效了吗？</summary>
 
-都没有。二者是不同的未部署/待审变更。</details>
+都没有。二者是不同的未部署/待审变更。
+
+</details>
 
 <details><summary>8. 维护性可以只用 Go 文件数量衡量吗？</summary>
 
-不能。要看定位、扩散、验证、兼容和回退成本与业务风险。</details>
+不能。要看定位、扩散、验证、兼容和回退成本与业务风险。
+
+</details>
 
 ### 方案与重构 9–16：一个数字的影响
 
 <details><summary>9. 全局 `MaxMessageBytes=6` 同时控制旧 v1 和新路径，直接改 9 会怎样？</summary>
 
-旧 `/v1` 也可能悄悄接纳 9 B，破坏当前合同。</details>
+旧 `/v1` 也可能悄悄接纳 9 B，破坏当前合同。
+
+</details>
 
 <details><summary>10. 一处用 `len(body)`、一处用 `utf8.RuneCountInString(body)`，为什么会分歧？</summary>
 
-前者数字节，后者数 Unicode code point；`"你好"` 是 6 B/2 rune。</details>
+前者数字节，后者数 Unicode code point；`"你好"` 是 6 B/2 rune。
+
+</details>
 
 <details><summary>11. 新版本的 9 B 规则可由不可信请求体写 `version=9` 自行启用吗？</summary>
 
-不可。由可信路由/已批准的接口合同选择规则。</details>
+不可。由可信路由/已批准的接口合同选择规则。
+
+</details>
 
 <details><summary>12. R9 未批准，现在能改当前 `/v1` 校验吗？</summary>
 
-不能。先做影响评审与行为保持重构，待批准后另加版本化能力。</details>
+不能。先做影响评审与行为保持重构，待批准后另加版本化能力。
+
+</details>
 
 <details><summary>13. 提取纯字节校验函数时，第一批刻画用例至少有哪些？</summary>
 
-6 B 合法、9 B 当前拒绝、空正文/总请求超限、重复 409、非成员 404、200 内存受理和拒绝状态不变。</details>
+6 B 合法、9 B 当前拒绝、空正文/总请求超限、重复 409、非成员 404、200 内存受理和拒绝状态不变。
+
+</details>
 
 <details><summary>14. 只跑 `gofmt/go vet` 可证明 R9 旧客户端回归安全吗？</summary>
 
-不能。它们是格式/可疑构造检查，旧新 HTTP/客户端/事件行为需独立验。</details>
+不能。它们是格式/可疑构造检查，旧新 HTTP/客户端/事件行为需独立验。
+
+</details>
 
 <details><summary>15. 为两个正文限额创建十个空接口就一定更可维护？</summary>
 
-不一定。抽象自身有理解/验证成本，先用明确的版本政策与小纯函数。</details>
+不一定。抽象自身有理解/验证成本，先用明确的版本政策与小纯函数。
+
+</details>
 
 <details><summary>16. R9 批准后可以把拟议 S3 的 200 语义顺便并入 v1 吗？</summary>
 
-不能。正文容量与持久提交是两个合同变更，须分别版本化评审。</details>
+不能。正文容量与持久提交是两个合同变更，须分别版本化评审。
+
+</details>
 
 ### 偿债与证据 17–22：把风险排队
 
 <details><summary>17. 假设退群后搜索泄露私有正文，与命名不统一相比谁先处理？</summary>
 
-权限泄露风险优先，按权威授权/索引修复和回归证据处置。</details>
+权限泄露风险优先，按权威授权/索引修复和回归证据处置。
+
+</details>
 
 <details><summary>18. 旧 event_v1 仍在 broker/DLQ 可回放，双读分支一定是坏技术债吗？</summary>
 
-不一定。它可能在守存量兼容，待支持/回放窗口闭合后再有证据清理。</details>
+不一定。它可能在守存量兼容，待支持/回放窗口闭合后再有证据清理。
+
+</details>
 
 <details><summary>19. 功能开关增加时，应同时记录什么避免永久分支？</summary>
 
-owner、启用/停止门、支持窗口、删除期限和回退依赖。</details>
+owner、启用/停止门、支持窗口、删除期限和回退依赖。
+
+</details>
 
 <details><summary>20. 单次变更从 8 个文件降为 3 个，能直接证明维护性提高？</summary>
 
-不能。也可能把复杂性藏起来；还要看审阅、测试、故障与回退成本。</details>
+不能。也可能把复杂性藏起来；还要看审阅、测试、故障与回退成本。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码可证明整仓耦合或 R9 真实影响范围吗？</summary>
 
-不能。需要围绕固定需求继续追实际调用、模块、客户端与测试证据。</details>
+不能。需要围绕固定需求继续追实际调用、模块、客户端与测试证据。
+
+</details>
 
 <details><summary>22. 一份可复核的维护性评估至少交什么？</summary>
 
-明确合同、改/验/不动影响图、坏/好方案反例、小步行为保持计划、验证/回退成本与按业务风险排序的偿还清单。</details>
+明确合同、改/验/不动影响图、坏/好方案反例、小步行为保持计划、验证/回退成本与按业务风险排序的偿还清单。
+
+</details>
 
 ## 本章完成标准与后续路径
 

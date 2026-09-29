@@ -184,91 +184,135 @@ HTTP 是请求—响应，但 HTTP/1.1 连接可以复用，不能教成“每�
 
 <details><summary>1. 为什么先教历史 GET 再教 WebSocket？</summary>
 
-一次只读请求—响应能先建立方法、目标、状态和正文，之后再增加持续双向通道的状态。</details>
+一次只读请求—响应能先建立方法、目标、状态和正文，之后再增加持续双向通道的状态。
+
+</details>
 
 <details><summary>2. `limit=20` 表示服务端一定返回 20 条吗？</summary>
 
-不是。它是本次返回数量的请求上限，还要看权限、范围和实际历史。</details>
+不是。它是本次返回数量的请求上限，还要看权限、范围和实际历史。
+
+</details>
 
 <details><summary>3. GET 的方法和资源各在哪里？</summary>
 
-请求行的 `GET` 是方法，路径和查询部分表示目标资源及其参数。</details>
+请求行的 `GET` 是方法，路径和查询部分表示目标资源及其参数。
+
+</details>
 
 <details><summary>4. `Host` 和 `Accept` 是正文吗？</summary>
 
-不是。它们是 HTTP 头部字段，正文在头部结束的空行之后。</details>
+不是。它们是 HTTP 头部字段，正文在头部结束的空行之后。
+
+</details>
 
 <details><summary>5. GET 的安全语义允许故意删除历史吗？</summary>
 
-不允许把“删除目标资源”作为 GET 的预期业务效果；日志等附带效果另论。</details>
+不允许把“删除目标资源”作为 GET 的预期业务效果；日志等附带效果另论。
+
+</details>
 
 <details><summary>6. 响应中的 `Content-Length: 39` 按字符还是字节算？</summary>
 
-按字节。本例正文全 ASCII，正好 39 B；改成中文需重新编码计数。</details>
+按字节。本例正文全 ASCII，正好 39 B；改成中文需重新编码计数。
+
+</details>
 
 <details><summary>7. `messages:[]` 一定说明会话从未有过消息吗？</summary>
 
-不能。它只表示本次已定义查询范围返回了空数组。</details>
+不能。它只表示本次已定义查询范围返回了空数组。
+
+</details>
 
 <details><summary>8. HTTP 200 能证明 `u-b` 已收到新发的 `m-a` 吗？</summary>
 
-不能。本章 200 示例只是一次历史查询响应。</details>
+不能。本章 200 示例只是一次历史查询响应。
+
+</details>
 
 <details><summary>9. HTTP 404 一定证明会话在数据库里不存在吗？</summary>
 
-不能。响应方可能不愿披露资源存在，还要确认实际响应者和 API 合同。</details>
+不能。响应方可能不愿披露资源存在，还要确认实际响应者和 API 合同。
+
+</details>
 
 <details><summary>10. 没收到 HTTP 响应时可以编一个 500 吗？</summary>
 
-不可以。结果可能停在 DNS、连接、等待或中途断开，应报告实际观察。</details>
+不可以。结果可能停在 DNS、连接、等待或中途断开，应报告实际观察。
+
+</details>
 
 <details><summary>11. WebSocket 开场请求为什么仍有 HTTP GET 行？</summary>
 
-本章的 HTTP/1.1 升级方式先通过 HTTP 请求协商协议切换。</details>
+本章的 HTTP/1.1 升级方式先通过 HTTP 请求协商协议切换。
+
+</details>
 
 <details><summary>12. WebSocket 的 101 表示什么？</summary>
 
-表示该连接的协议切换成功，不是 IM 消息受理或送达回执。</details>
+表示该连接的协议切换成功，不是 IM 消息受理或送达回执。
+
+</details>
 
 <details><summary>13. `Sec-WebSocket-Key` 是 `u-a` 的登录令牌吗？</summary>
 
-不是。它是握手挑战值，身份验证必须另行设计。</details>
+不是。它是握手挑战值，身份验证必须另行设计。
+
+</details>
 
 <details><summary>14. 握手后每条聊天消息都是新 HTTP 请求吗？</summary>
 
-不是。握手后这条连接上传递 WebSocket 帧与消息。</details>
+不是。握手后这条连接上传递 WebSocket 帧与消息。
+
+</details>
 
 <details><summary>15. TCP 字节流能自动保留 `m-a` 的边界吗？</summary>
 
-不能。WebSocket 帧与应用载荷各自定义上层边界。</details>
+不能。WebSocket 帧与应用载荷各自定义上层边界。
+
+</details>
 
 <details><summary>16. 一条 WebSocket 消息只能有一帧吗？</summary>
 
-不一定。它可被分成多个帧；接收方应按协议组合。</details>
+不一定。它可被分成多个帧；接收方应按协议组合。
+
+</details>
 
 <details><summary>17. 客户端帧的掩码等于加密吗？</summary>
 
-不等于。掩码是 WebSocket 帧协议要求，机密性依赖另行设计的安全传输。</details>
+不等于。掩码是 WebSocket 帧协议要求，机密性依赖另行设计的安全传输。
+
+</details>
 
 <details><summary>18. Ping/Pong 回来就说明 `m-a` 已保存吗？</summary>
 
-不能。它是通道协议级往返，不是业务保存回执。</details>
+不能。它是通道协议级往返，不是业务保存回执。
+
+</details>
 
 <details><summary>19. 客户端在发送后超时，能认定服务端没有处理吗？</summary>
 
-不能。回答可能丢失，实际处理结果可能未知。</details>
+不能。回答可能丢失，实际处理结果可能未知。
+
+</details>
 
 <details><summary>20. HTTP/1.1 的每个 GET 都要新建 TCP 连接吗？</summary>
 
-不一定。连接可以复用，不应把请求数直接当连接数。</details>
+不一定。连接可以复用，不应把请求数直接当连接数。
+
+</details>
 
 <details><summary>21. 为什么不能仅靠客户端载荷里的 `sender_id` 授权？</summary>
 
-它是可控输入，服务必须由可信身份上下文验证发送者及会话权限。</details>
+它是可控输入，服务必须由可信身份上下文验证发送者及会话权限。
+
+</details>
 
 <details><summary>22. 本章的 101、200、消息帧示例能证明线上 IM 已运行吗？</summary>
 
-不能。它们是静态教材；实际服务与 A/B 设备结果需独立实现和验证。</details>
+不能。它们是静态教材；实际服务与 A/B 设备结果需独立实现和验证。
+
+</details>
 
 ## 来源与下一步
 

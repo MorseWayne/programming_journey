@@ -142,95 +142,139 @@ Go 标准库已有泛型 `slices.IndexFunc`、`slices.Clone`、`maps.Clone` 等�
 
 <details><summary>1. `[]Message` 与 `[T any]` 的方括号用途相同吗？</summary>
 
-不同。前者是切片类型，后者在声明处引入类型参数及约束。</details>
+不同。前者是切片类型，后者在声明处引入类型参数及约束。
+
+</details>
 
 <details><summary>2. `First(messages, ...)` 中 T 可从什么推断？</summary>
 
-从 `messages` 的 `[]Message` 参数推断 `T=Message`。</details>
+从 `messages` 的 `[]Message` 参数推断 `T=Message`。
+
+</details>
 
 <details><summary>3. `First` 的 `match func(T) bool` 负责什么？</summary>
 
-决定当前元素是否符合业务匹配条件，遍历算法本身不写死 `Message.ID`。</details>
+决定当前元素是否符合业务匹配条件，遍历算法本身不写死 `Message.ID`。
+
+</details>
 
 <details><summary>4. `First` 找不到为何同时返回 zero 与 false？</summary>
 
-零值可能也是合法元素；`false` 才表示没找到。</details>
+零值可能也是合法元素；`false` 才表示没找到。
+
+</details>
 
 <details><summary>5. `any` 约束下可直接写 `item.ID` 吗？</summary>
 
-不可；并非每种允许的 T 都有 ID 字段。</details>
+不可；并非每种允许的 T 都有 ID 字段。
+
+</details>
 
 <details><summary>6. `type MessageID string` 是与 string 完全相同的类型吗？</summary>
 
-不是，是底层类型为 string 的新定义类型。</details>
+不是，是底层类型为 string 的新定义类型。
+
+</details>
 
 <details><summary>7. `~string` 额外允许什么？</summary>
 
-允许底层类型为 string 的定义类型，如 `MessageID`。</details>
+允许底层类型为 string 的定义类型，如 `MessageID`。
+
+</details>
 
 <details><summary>8. `Set[K comparable]` 的零值 map 能直接 Add 吗？</summary>
 
-不能；先 `make(Set[MessageID])` 或初始化 map。</details>
+不能；先 `make(Set[MessageID])` 或初始化 map。
+
+</details>
 
 ### 推演 9–16：约束与容器
 
 <details><summary>9. `Set[[]byte]` 为什么不合法？</summary>
 
-切片不可比较，不能作为 map 键，不满足本约束。</details>
+切片不可比较，不能作为 map 键，不满足本约束。
 
-<details><summary>10. `Before[K ~int64|~string]` 为何可用 `<`？</summary>
+</details>
 
-集合内所有允许的类型都支持 `<`；一次调用 K 仍是同一具体类型。</details>
+<details><summary>10. `Before[K ~int64|~string]` 为何可用 `&lt;`？</summary>
 
-<details><summary>11. 给 Before 的约束加入 `~[]byte` 后可继续 `<` 吗？</summary>
+集合内所有允许的类型都支持 `<`；一次调用 K 仍是同一具体类型。
 
-不可；切片没有 `<` 操作。</details>
+</details>
+
+<details><summary>11. 给 Before 的约束加入 `~[]byte` 后可继续 `&lt;` 吗？</summary>
+
+不可；切片没有 `<` 操作。
+
+</details>
 
 <details><summary>12. `Queue[Message].Pop()` 在空队列返回什么？</summary>
 
-`Message` 零值和 `false`，调用方应看 bool。</details>
+`Message` 零值和 `false`，调用方应看 bool。
+
+</details>
 
 <details><summary>13. 泛型队列自动有并发安全与容量限制吗？</summary>
 
-没有；类型参数只解决元素类型的复用，锁/容量另设计。</details>
+没有；类型参数只解决元素类型的复用，锁/容量另设计。
+
+</details>
 
 <details><summary>14. `slices.Clone` 能深复制 Message 内嵌的切片吗？</summary>
 
-不能；它是浅复制，内嵌切片的底层数据仍可能共享。</details>
+不能；它是浅复制，内嵌切片的底层数据仍可能共享。
+
+</details>
 
 <details><summary>15. `NewZero[T any]() T` 调 `NewZero()` 能自动推断 T 吗？</summary>
 
-不能从普通参数推断；应显式写如 `NewZero[Message]()`。</details>
+不能从普通参数推断；应显式写如 `NewZero[Message]()`。
+
+</details>
 
 <details><summary>16. `comparable` 允许任何动态接口值都安全比较吗？</summary>
 
-不能这样保证；某些接口类型可满足约束，但装入不可比较动态值时比较仍可能 panic。</details>
+不能这样保证；某些接口类型可满足约束，但装入不可比较动态值时比较仍可能 panic。
+
+</details>
 
 ### 决策 17–22：选择与业务边界
 
 <details><summary>17. 只有 Message 一种类型的 6 B 校验，必需泛型吗？</summary>
 
-不必；具体函数更直接，也清楚表达业务合同。</details>
+不必；具体函数更直接，也清楚表达业务合同。
+
+</details>
 
 <details><summary>18. 两个历史读取实现只共享 Read 行为，先考虑什么？</summary>
 
-小接口，变化的是实现行为而非元素类型。</details>
+小接口，变化的是实现行为而非元素类型。
+
+</details>
 
 <details><summary>19. `slices.IndexFunc` 与 First 的返回合同一样吗？</summary>
 
-不一样；前者给下标/未找到 `-1`，后者给元素/布尔值。</details>
+不一样；前者给下标/未找到 `-1`，后者给元素/布尔值。
+
+</details>
 
 <details><summary>20. Go 1.27 才有的是什么泛型方法能力？</summary>
 
-具体类型的方法可**自行声明新的类型参数**；接收者使用泛型类型已有参数从 1.18 起可用。</details>
+具体类型的方法可**自行声明新的类型参数**；接收者使用泛型类型已有参数从 1.18 起可用。
+
+</details>
 
 <details><summary>21. 泛型 Set 发现重复 message_id，能把当前 409 改成 200 吗？</summary>
 
-不能；数据结构复用不修改现行同 ID 重复 409 合同。</details>
+不能；数据结构复用不修改现行同 ID 重复 409 合同。
+
+</details>
 
 <details><summary>22. 判断一个泛型抽象值得保留，需检查什么？</summary>
 
-确有多个类型共享同一算法、约束表达了所需操作、调用更清楚、错误与资源/业务边界未被隐藏。</details>
+确有多个类型共享同一算法、约束表达了所需操作、调用更清楚、错误与资源/业务边界未被隐藏。
+
+</details>
 
 ## 本章完成标准与后续路径
 

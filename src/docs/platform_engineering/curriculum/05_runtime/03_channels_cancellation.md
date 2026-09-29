@@ -197,91 +197,135 @@ A 断开 → 主管 cancel()
 
 <details><summary>1. 无缓冲 channel 的发送何时可完成？</summary>
 
-需要有接收操作配对；配对不等于接收者已处理业务。</details>
+需要有接收操作配对；配对不等于接收者已处理业务。
+
+</details>
 
 <details><summary>2. 容量 2、无消费者时，前两次发送可怎样？</summary>
 
-可进入缓冲；第三次发送会等待空间，除非另有取消或非阻塞政策。</details>
+可进入缓冲；第三次发送会等待空间，除非另有取消或非阻塞政策。
+
+</details>
 
 <details><summary>3. `cap(queue)==2` 表示最多只能有两个 goroutine 吗？</summary>
 
-不是。它只限定该通道缓冲容量，不限制等待的发送者数。</details>
+不是。它只限定该通道缓冲容量，不限制等待的发送者数。
 
-<details><summary>4. `len(queue)<cap(queue)` 就保证随后发送不等待吗？</summary>
+</details>
 
-不能。并发生产者可在你检查后抢先占用空间。</details>
+<details><summary>4. `len(queue)&lt;cap(queue)` 就保证随后发送不等待吗？</summary>
+
+不能。并发生产者可在你检查后抢先占用空间。
+
+</details>
 
 <details><summary>5. 发送 `Message` 值后，内部 `[]byte` 必然不共享吗？</summary>
 
-不必然。值拷贝仍可共享切片底层数据，需要所有权规则。</details>
+不必然。值拷贝仍可共享切片底层数据，需要所有权规则。
 
-<details><summary>6. `chan<- Message` 限制了什么？</summary>
+</details>
 
-接收该参数的代码只能通过它发送，不能用它接收。</details>
+<details><summary>6. `chan&lt;- Message` 限制了什么？</summary>
+
+接收该参数的代码只能通过它发送，不能用它接收。
+
+</details>
 
 <details><summary>7. 关闭有缓冲通道会清空已经发送的值吗？</summary>
 
-不会。接收者先取完缓冲，之后才得到零值和 `ok=false`。</details>
+不会。接收者先取完缓冲，之后才得到零值和 `ok=false`。
 
-<details><summary>8. `m, ok := <-queue` 的 `ok=false` 表示什么？</summary>
+</details>
 
-通道已关闭且缓冲已排空；不表示收到合法的零值业务消息。</details>
+<details><summary>8. `m, ok := &lt;-queue` 的 `ok=false` 表示什么？</summary>
+
+通道已关闭且缓冲已排空；不表示收到合法的零值业务消息。
+
+</details>
 
 <details><summary>9. 向已关闭通道发送会返回普通 error 吗？</summary>
 
-不会按普通发送返回错误；会发生 panic，故须由所有者协调关闭。</details>
+不会按普通发送返回错误；会发生 panic，故须由所有者协调关闭。
+
+</details>
 
 <details><summary>10. 多个生产者还在工作时，消费者可以随意 close 吗？</summary>
 
-不应如此。它不知道是否还有后续发送，可能使发送者 panic。</details>
+不应如此。它不知道是否还有后续发送，可能使发送者 panic。
+
+</details>
 
 <details><summary>11. 关闭通道等于取消正在处理的消息吗？</summary>
 
-不等于。关闭宣布不再发送新值，已缓冲/处理中的业务状态另定。</details>
+不等于。关闭宣布不再发送新值，已缓冲/处理中的业务状态另定。
+
+</details>
 
 <details><summary>12. `Offer` 的发送 case 返回 nil 证明 B 已收到吗？</summary>
 
-不能。它只证明值进入本进程通道或被消费者接收。</details>
+不能。它只证明值进入本进程通道或被消费者接收。
+
+</details>
 
 <details><summary>13. 队列有空间且 ctx 同时已取消，`select` 必选取消吗？</summary>
 
-不保证。两个 case 同时可执行时可能选择发送。</details>
+不保证。两个 case 同时可执行时可能选择发送。
+
+</details>
 
 <details><summary>14. 带 `default` 的无限循环为什么可能有害？</summary>
 
-它可能忙轮询，持续用 CPU 而不等待事件。</details>
+它可能忙轮询，持续用 CPU 而不等待事件。
+
+</details>
 
 <details><summary>15. `WithTimeout` 返回的 cancel 在提前完成后还要调用吗？</summary>
 
-应调用，以释放关联的计时和父子引用资源。</details>
+应调用，以释放关联的计时和父子引用资源。
+
+</details>
 
 <details><summary>16. 父 context 取消会传播到派生子 context 吗？</summary>
 
-会。子取消不会反向取消父任务。</details>
+会。子取消不会反向取消父任务。
+
+</details>
 
 <details><summary>17. `cancel()` 会强制终止不理会 ctx 的 `handle` 吗？</summary>
 
-不会。取消是协作信号，下层需检查或使用支持取消的操作。</details>
+不会。取消是协作信号，下层需检查或使用支持取消的操作。
+
+</details>
 
 <details><summary>18. 正常关闭后 `for range queue` 何时退出？</summary>
 
-关闭且已缓冲值全部取完之后退出。</details>
+关闭且已缓冲值全部取完之后退出。
+
+</details>
 
 <details><summary>19. 取消时缓冲里仍有 `m-b`，能登记为已送达吗？</summary>
 
-不能。它可能尚未被消费者处理，业务结果应记录为未处理或未知。</details>
+不能。它可能尚未被消费者处理，业务结果应记录为未处理或未知。
+
+</details>
 
 <details><summary>20. 队列满时可以默默丢掉普通聊天消息并显示成功吗？</summary>
 
-不符合本课程的可验证合同。若允许丢弃必须明示类型、结果和计数。</details>
+不符合本课程的可验证合同。若允许丢弃必须明示类型、结果和计数。
+
+</details>
 
 <details><summary>21. `close(queue)` 会自动关闭 WebSocket 连接吗？</summary>
 
-不会。通道和连接是不同资源，主管需分别管理。</details>
+不会。通道和连接是不同资源，主管需分别管理。
+
+</details>
 
 <details><summary>22. Ping/Pong 回来或 `Offer` 成功能证明 `u-b` 已读吗？</summary>
 
-不能。协议存活、进程内入队与用户已读是不同确认点。</details>
+不能。协议存活、进程内入队与用户已读是不同确认点。
+
+</details>
 
 ## 来源与下一步
 

@@ -112,91 +112,135 @@ BDP = 1 MB/s × 0.1 s = 0.1 MB = 100 kB
 
 <details><summary>1. `rwnd` 主要保护谁？</summary>
 
-接收端的有限接收缓冲。</details>
+接收端的有限接收缓冲。
+
+</details>
 
 <details><summary>2. `cwnd` 主要反映谁对路径的限制？</summary>
 
-发送端 TCP 的拥塞控制对网络在途量的限制。</details>
+发送端 TCP 的拥塞控制对网络在途量的限制。
+
+</details>
 
 <details><summary>3. `rwnd=8 kB`、`cwnd=40 kB`，概念窗口由谁限制？</summary>
 
-接收端 rwnd；还要扣除已在途字节等实际条件。</details>
+接收端 rwnd；还要扣除已在途字节等实际条件。
+
+</details>
 
 <details><summary>4. `rwnd=80 kB`、`cwnd=20 kB`，概念窗口由谁限制？</summary>
 
-发送侧 cwnd 的路径约束。</details>
+发送侧 cwnd 的路径约束。
+
+</details>
 
 <details><summary>5. B 程序不 Read，接收缓冲可能怎样？</summary>
 
-逐渐占满，接收端通告的可用窗口可能变小甚至为零。</details>
+逐渐占满，接收端通告的可用窗口可能变小甚至为零。
+
+</details>
 
 <details><summary>6. 零窗口可证明 B 已退出账号吗？</summary>
 
-不能，只表示该 TCP 方向的接收空间状态。</details>
+不能，只表示该 TCP 方向的接收空间状态。
+
+</details>
 
 <details><summary>7. 8 kB/s 到达、2 kB/s 消费，纸上净积压多少？</summary>
 
-6 kB/s。</details>
+6 kB/s。
+
+</details>
 
 <details><summary>8. 忽略 TCP 背压，12 kB 空间约多久填满？</summary>
 
-`12/6=2 s`；真实到达速率会随窗口变化。</details>
+`12/6=2 s`；真实到达速率会随窗口变化。
+
+</details>
 
 <details><summary>9. B 读得快而网关写慢，一定是 B 的错吗？</summary>
 
-不一定，网络拥塞和其他阶段也可能限制发送。</details>
+不一定，网络拥塞和其他阶段也可能限制发送。
+
+</details>
 
 <details><summary>10. `min(rwnd,cwnd)` 是实测吞吐公式吗？</summary>
 
-不是，是纸上的在途约束模型；还受缓冲、ACK、应用速率和开销影响。</details>
+不是，是纸上的在途约束模型；还受缓冲、ACK、应用速率和开销影响。
+
+</details>
 
 <details><summary>11. 8 Mb/s 按十进制约等于多少 MB/s？</summary>
 
-1 MB/s。</details>
+1 MB/s。
+
+</details>
 
 <details><summary>12. 100 ms 等于多少秒？</summary>
 
-0.1 s。</details>
+0.1 s。
+
+</details>
 
 <details><summary>13. 1 MB/s×0.1 s 的 BDP 是多少？</summary>
 
-0.1 MB，即十进制 100 kB。</details>
+0.1 MB，即十进制 100 kB。
+
+</details>
 
 <details><summary>14. 10 kB 有效窗口、RTT 0.1 s 的简化吞吐上界是多少？</summary>
 
-100 kB/s，即 0.8 Mb/s，忽略开销和其他瓶颈。</details>
+100 kB/s，即 0.8 Mb/s，忽略开销和其他瓶颈。
+
+</details>
 
 <details><summary>15. BDP=100 kB 意味每条 IM 消息必须 100 kB 吗？</summary>
 
-不意味着；它估计在途数据量，不是应用消息大小。</details>
+不意味着；它估计在途数据量，不是应用消息大小。
+
+</details>
 
 <details><summary>16. 1 MB/s 瓶颈前排 200 kB，纸上额外等待约多少？</summary>
 
-`200/1000=0.2 s=200 ms`，实际还受新到达和调度影响。</details>
+`200/1000=0.2 s=200 ms`，实际还受新到达和调度影响。
+
+</details>
 
 <details><summary>17. 缓冲从 200 kB 增到 1 MB，一定改善 B 的尾延迟吗？</summary>
 
-不一定；按同一排出速率，排队时间可能从约 200 ms 增到约 1 s。</details>
+不一定；按同一排出速率，排队时间可能从约 200 ms 增到约 1 s。
+
+</details>
 
 <details><summary>18. TCP 接收窗口缩小会自动让网关所有业务队列有界吗？</summary>
 
-不会。上游仍可能继续产生消息，应用层需单独背压。</details>
+不会。上游仍可能继续产生消息，应用层需单独背压。
+
+</details>
 
 <details><summary>19. 网关容量 2 队列已满，能无条件丢弃聊天正文吗？</summary>
 
-不能。要先定义消息是否权威保存、失败反馈和补拉/重试合同。</details>
+不能。要先定义消息是否权威保存、失败反馈和补拉/重试合同。
+
+</details>
 
 <details><summary>20. 只看一次重传可直接断言网络拥塞吗？</summary>
 
-不能，需同时间窗的多项证据和进一步验证。</details>
+不能，需同时间窗的多项证据和进一步验证。
+
+</details>
 
 <details><summary>21. TCP ACK 能证明 B 已在界面展示 m-a 吗？</summary>
 
-不能。TCP 字节确认与设备展示、已读不同。</details>
+不能。TCP 字节确认与设备展示、已读不同。
+
+</details>
 
 <details><summary>22. 同时慢设备和拥塞时该怎样分析？</summary>
 
-分别列接收窗口/读取速率与路径 RTT/丢失/拥塞证据，按阶段和时间窗判断。</details>
+分别列接收窗口/读取速率与路径 RTT/丢失/拥塞证据，按阶段和时间窗判断。
+
+</details>
 
 ## 来源与下一步
 

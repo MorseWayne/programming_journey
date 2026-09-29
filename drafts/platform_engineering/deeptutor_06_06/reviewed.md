@@ -114,91 +114,135 @@ PostgreSQL 的规划器利用 `ANALYZE` 收集的采样统计（如分布、常�
 
 <details><summary>1. 固定 11 行中，`c-a` 有几行？</summary>
 
-8 行，序号 1..8；另外 3 行属于 `c-b`。</details>
+8 行，序号 1..8；另外 3 行属于 `c-b`。
 
-<details><summary>2. `c-a AND seq<7` 过滤后剩几行？</summary>
+</details>
 
-6 行，即 `c-a` 的序号 1..6；严格小于不含 7。</details>
+<details><summary>2. `c-a AND seq&lt;7` 过滤后剩几行？</summary>
+
+6 行，即 `c-a` 的序号 1..6；严格小于不含 7。
+
+</details>
 
 <details><summary>3. 降序 `LIMIT 3` 的正确结果是什么？</summary>
 
-`6,5,4`。结果预期先于计划优劣判断。</details>
+`6,5,4`。结果预期先于计划优劣判断。
+
+</details>
 
 <details><summary>4. 计划树中的叶节点主要做什么？</summary>
 
-产生候选行，例如从表扫描或索引路径获取；上层再过滤、连接、排序或限制。</details>
+产生候选行，例如从表扫描或索引路径获取；上层再过滤、连接、排序或限制。
+
+</details>
 
 <details><summary>5. 最上层输出 3 行，是否说明底层只读了 3 行？</summary>
 
-不说明。全扫描方案先看 11 行、过滤 6 行、排序后才取 3；其他节点也可能先消费输入。</details>
+不说明。全扫描方案先看 11 行、过滤 6 行、排序后才取 3；其他节点也可能先消费输入。
+
+</details>
 
 <details><summary>6. `cost=20..50` 应解释为 20–50 ms 吗？</summary>
 
-不应。它是规划器的相对成本，不能直接换成真实毫秒或接口 P95。</details>
+不应。它是规划器的相对成本，不能直接换成真实毫秒或接口 P95。
+
+</details>
 
 <details><summary>7. SQL 没有 `ORDER BY`，能保证自然按 `seq` 返回吗？</summary>
 
-不能。输出顺序需要显式约定，不能依赖当前索引或插入顺序。</details>
+不能。输出顺序需要显式约定，不能依赖当前索引或插入顺序。
+
+</details>
 
 <details><summary>8. `Index Cond` 和 `Filter` 的问题各是什么？</summary>
 
-前者可限制索引访问范围，后者通常在候选出来后进一步检查；同一个 SQL 条件落在哪里要看具体计划。</details>
+前者可限制索引访问范围，后者通常在候选出来后进一步检查；同一个 SQL 条件落在哪里要看具体计划。
+
+</details>
 
 <details><summary>9. 纸上 Seq Scan 方案扫描、过滤、排序输入和最终输出分别多少行？</summary>
 
-依次是 11、6、6、3。Sort 的输入为过滤后的六行。</details>
+依次是 11、6、6、3。Sort 的输入为过滤后的六行。
+
+</details>
 
 <details><summary>10. 纸上索引方案为什么可能提前停？</summary>
 
-若访问路径已按所需顺序逐行产出，取得前三个合格可见结果后，上层 Limit 不再需要后续键；若还要权限或版本过滤，可能检查超过三项。</details>
+若访问路径已按所需顺序逐行产出，取得前三个合格可见结果后，上层 Limit 不再需要后续键；若还要权限或版本过滤，可能检查超过三项。
+
+</details>
 
 <details><summary>11. Bitmap Index Scan 后仍可能出现 Sort 吗？</summary>
 
-可能。位图路径按行位置回访通常不保留原索引键序；最终 `ORDER BY` 仍要满足。</details>
+可能。位图路径按行位置回访通常不保留原索引键序；最终 `ORDER BY` 仍要满足。
 
-<details><summary>12. `read_seq=4` 且本题未读定义为 `seq>4`，`c-a` 未读几条？</summary>
+</details>
 
-5、6、7、8 共 4 条；这只是本题简化规则，不等于完整已读状态语义。</details>
+<details><summary>12. `read_seq=4` 且本题未读定义为 `seq&gt;4`，`c-a` 未读几条？</summary>
+
+5、6、7、8 共 4 条；这只是本题简化规则，不等于完整已读状态语义。
+
+</details>
 
 <details><summary>13. 有一个合格会员，Nested Loop 内侧纸上取到六个条件候选；这证明真实数据库选 Nested Loop 吗？</summary>
 
-不证明。它只是可行的纸上计划；真实选择由统计、索引、版本和代价决定。</details>
+不证明。它只是可行的纸上计划；真实选择由统计、索引、版本和代价决定。
+
+</details>
 
 <details><summary>14. Hash Join 与 `message_id` 哈希索引是同一个东西吗？</summary>
 
-不是。Hash Join 为连接输入临时构造/使用哈希匹配；哈希索引是表上的持久访问结构，两者都用散列思想但职责不同。</details>
+不是。Hash Join 为连接输入临时构造/使用哈希匹配；哈希索引是表上的持久访问结构，两者都用散列思想但职责不同。
+
+</details>
 
 <details><summary>15. `c-a` 在全表中的选择率是多少？</summary>
 
-`8/11≈72.7%`。分子是 c-a 的 8 行，分母是全表 11 行。</details>
+`8/11≈72.7%`。分子是 c-a 的 8 行，分母是全表 11 行。
 
-<details><summary>16. `c-a AND seq<7` 在全表的选择率是多少？在 c-a 内部呢？</summary>
+</details>
 
-全表是 `6/11≈54.5%`；已限定 c-a 后是 `6/8=75%`。两个分母不同。</details>
+<details><summary>16. `c-a AND seq&lt;7` 在全表的选择率是多少？在 c-a 内部呢？</summary>
+
+全表是 `6/11≈54.5%`；已限定 c-a 后是 `6/8=75%`。两个分母不同。
+
+</details>
 
 <details><summary>17. 计划写 `actual rows=2 loops=5`，可粗略理解为共输出多少行？</summary>
 
-约 10 行输出（每次平均 2，执行 5 次）。还要留意显示精度和该节点是否在每次循环都完整运行。</details>
+约 10 行输出（每次平均 2，执行 5 次）。还要留意显示精度和该节点是否在每次循环都完整运行。
+
+</details>
 
 <details><summary>18. `shared read=4` 代表物理设备恰好读了四次吗？</summary>
 
-不代表。它描述 PostgreSQL 缓冲块访问口径，操作系统缓存和存储层还会影响设备 I/O。</details>
+不代表。它描述 PostgreSQL 缓冲块访问口径，操作系统缓存和存储层还会影响设备 I/O。
+
+</details>
 
 <details><summary>19. `EXPLAIN ANALYZE UPDATE ...` 是只读查看吗？</summary>
 
-不是。ANALYZE 会执行语句，写操作的副作用会发生；将来只能在安全隔离和明确回滚/副作用边界下练习。</details>
+不是。ANALYZE 会执行语句，写操作的副作用会发生；将来只能在安全隔离和明确回滚/副作用边界下练习。
+
+</details>
 
 <details><summary>20. 发现估计 2 行、实际很多行，就必然要新建索引吗？</summary>
 
-不必然。先核对统计时间、参数值、字段相关和偏差首次出现的节点；索引是否有益还要测读写空间成本。</details>
+不必然。先核对统计时间、参数值、字段相关和偏差首次出现的节点；索引是否有益还要测读写空间成本。
+
+</details>
 
 <details><summary>21. MongoDB `totalDocsExamined=20` 可以直接换算 PostgreSQL `Heap Fetches=20` 吗？</summary>
 
-不能。两引擎的执行与计数口径不同；MongoDB 同一文档被多次检查还可能计多次。</details>
+不能。两引擎的执行与计数口径不同；MongoDB 同一文档被多次检查还可能计多次。
+
+</details>
 
 <details><summary>22. 接口 P95 升到 240 ms，但数据库计划节点耗时很短，下一步查什么？</summary>
 
-对齐同窗口请求 Trace 与数据库执行样本，检查连接等待、应用队列、权限、序列化、网络与客户端阶段，并核对抽样与计划开销；不能直接宣布数据库无关或凭单次计划定根因。</details>
+对齐同窗口请求 Trace 与数据库执行样本，检查连接等待、应用队列、权限、序列化、网络与客户端阶段，并核对抽样与计划开销；不能直接宣布数据库无关或凭单次计划定根因。
+
+</details>
 
 ## 本章完成标准与下一步
 

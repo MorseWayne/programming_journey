@@ -104,95 +104,139 @@ Docker 的 **named volume** 通常独立于某个容器生命周期，删除容�
 
 <details><summary>1. 镜像 D1 相同，A/B 会共享 Go 进程内存吗？</summary>
 
-不会。它们是不同进程生命周期，内存不因镜像相同而共享。</details>
+不会。它们是不同进程生命周期，内存不因镜像相同而共享。
+
+</details>
 
 <details><summary>2. 容器可写层是镜像的永久共享层吗？</summary>
 
-不是。它是该容器独有的文件改动，删除重建不自动继承。</details>
+不是。它是该容器独有的文件改动，删除重建不自动继承。
+
+</details>
 
 <details><summary>3. 停止再启动同一容器时，旧 Go 进程内存还在吗？</summary>
 
-不在。进程已退出；可写层可能仍属同一容器，二者不同。</details>
+不在。进程已退出；可写层可能仍属同一容器，二者不同。
+
+</details>
 
 <details><summary>4. named volume 可跨容器删除保留就等于 S2 消息已持久吗？</summary>
 
-不等于。应用要实际写入且定义提交/恢复语义，当前 S2 仅内存受理。</details>
+不等于。应用要实际写入且定义提交/恢复语义，当前 S2 仅内存受理。
+
+</details>
 
 <details><summary>5. tmpfs 适合承诺权威历史跨重建吗？</summary>
 
-不适合。它是非持久临时挂载。</details>
+不适合。它是非持久临时挂载。
+
+</details>
 
 <details><summary>6. namespace 和 cgroup 分别做什么？</summary>
 
-namespace 隔离视图，cgroup 记账/限制资源；具体组合由运行配置决定。</details>
+namespace 隔离视图，cgroup 记账/限制资源；具体组合由运行配置决定。
+
+</details>
 
 <details><summary>7. 容器内 `127.0.0.1` 总是宿主数据库吗？</summary>
 
-不是。它指进程所在网络 namespace 的回环。</details>
+不是。它指进程所在网络 namespace 的回环。
+
+</details>
 
 <details><summary>8. 容器 running 能证明当前 6 B/409/404 合同正确吗？</summary>
 
-不能。还需有权请求的正反例与实际运行配置证据。</details>
+不能。还需有权请求的正反例与实际运行配置证据。
+
+</details>
 
 ### 推导 9–16：信号与数据生命周期
 
 <details><summary>9. 同 D1 两容器各写 `/tmp/x`，默认互相可见吗？</summary>
 
-不可因同镜像推定互见；各自可写层独立，还需看是否挂相同卷。</details>
+不可因同镜像推定互见；各自可写层独立，还需看是否挂相同卷。
+
+</details>
 
 <details><summary>10. 删除 A 后以 D1 建 A2，A 的可写层会自动给 A2 吗？</summary>
 
-不会。须另有明确保留/挂载数据来源。</details>
+不会。须另有明确保留/挂载数据来源。
+
+</details>
 
 <details><summary>11. 挂 named volume 到已有镜像目录时，空卷与非空卷有什么差异？</summary>
 
-非空卷会遮住镜像文件；Docker 首次挂空卷默认复制原目录内容，除非禁用复制。需核对卷身份与有效 mount。</details>
+非空卷会遮住镜像文件；Docker 首次挂空卷默认复制原目录内容，除非禁用复制。需核对卷身份与有效 mount。
+
+</details>
 
 <details><summary>12. `cpu.max=50000 100000` 约多少平均核额度？</summary>
 
-约 0.5 核；即使宿主空闲，该 cgroup 仍可能节流。</details>
+约 0.5 核；即使宿主空闲，该 cgroup 仍可能节流。
+
+</details>
 
 <details><summary>13. Shell 作为 PID 1 却不转发 SIGTERM，有什么风险？</summary>
 
-Go 网关可能收不到预期关停信号，无法按计划停止接入和排空。</details>
+Go 网关可能收不到预期关停信号，无法按计划停止接入和排空。
+
+</details>
 
 <details><summary>14. Docker stop 的停止信号和宽限期永远固定吗？</summary>
 
-不固定，可配置；本课程不假定统一秒数。</details>
+不固定，可配置；本课程不假定统一秒数。
+
+</details>
 
 <details><summary>15. `http.Server.Shutdown` 会自动等待所有 WebSocket 应用任务吗？</summary>
 
-不会。hijacked/WebSocket 连接需应用另行管理与有界等待。</details>
+不会。hijacked/WebSocket 连接需应用另行管理与有界等待。
+
+</details>
 
 <details><summary>16. A 收到 S2 内存受理 200，重建后 B 必看到消息吗？</summary>
 
-不能。进程内状态没有跨重建承诺，设备结果另需证据。</details>
+不能。进程内状态没有跨重建承诺，设备结果另需证据。
+
+</details>
 
 ### 恢复 17–22：守住业务合同
 
 <details><summary>17. 同 D1 不同 CPU 限额，P95 可不同吗？</summary>
 
-可以。资源限制影响调度/等待，需同负载与用户结果核对。</details>
+可以。资源限制影响调度/等待，需同负载与用户结果核对。
+
+</details>
 
 <details><summary>18. 同 D1+配置，但 DB 成员状态不同，404 可不同吗？</summary>
 
-同请求主体/会话的授权数据不同会改变结果，须固定数据身份再比较。</details>
+同请求主体/会话的授权数据不同会改变结果，须固定数据身份再比较。
+
+</details>
 
 <details><summary>19. `BODY_LIMIT=9` 让旧 `/v1` 接纳 9 B，属于合理运行差异吗？</summary>
 
-不是。现行 6 B 合同被破坏，R9 尚待批准。</details>
+不是。现行 6 B 合同被破坏，R9 尚待批准。
+
+</details>
 
 <details><summary>20. 重挂卷后可以直接宣布未来 S3 权威消息已恢复吗？</summary>
 
-不能。还要验数据库事务、消息身份、权限、备份与查询结果。</details>
+不能。还要验数据库事务、消息身份、权限、备份与查询结果。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明它的卷或 PID 1 行为吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费的异步边界。</details>
+不能。只支持所读发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一张容器重建状态卡至少交什么？</summary>
 
-镜像/运行配置、PID/网络/资源视图、可写层/卷/外部 DB 归属、信号排空、当前 S2 正反例和未来权威/设备恢复待证项。</details>
+镜像/运行配置、PID/网络/资源视图、可写层/卷/外部 DB 归属、信号排空、当前 S2 正反例和未来权威/设备恢复待证项。
+
+</details>
 
 ## 本章完成标准与后续路径
 

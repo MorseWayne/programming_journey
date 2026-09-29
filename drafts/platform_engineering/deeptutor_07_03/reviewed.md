@@ -89,91 +89,135 @@ A 在未来 S3 提议里已知提交 `m-9/seq9`，紧接着会话预览 hit V8�
 
 <details><summary>1. `GET preview:c-a` miss 可以直接说明数据库没有会话吗？</summary>
 
-不能。只说明这次缓存没有可用值，应按权限回源或按故障政策处理。</details>
+不能。只说明这次缓存没有可用值，应按权限回源或按故障政策处理。
+
+</details>
 
 <details><summary>2. 命中缓存 V8，权威已是 V9，就算“新鲜 hit”吗？</summary>
 
-不是。键存在但值旧，是否能返回取决于预览合同。</details>
+不是。键存在但值旧，是否能返回取决于预览合同。
+
+</details>
 
 <details><summary>3. Redis 错误与数据库明确“不存在”能用同一个 404 吗？</summary>
 
-不能。依赖失败没有形成业务不存在的权威证明。</details>
+不能。依赖失败没有形成业务不存在的权威证明。
+
+</details>
 
 <details><summary>4. `u-c` 查私有 `m-9` 得隐藏 404，能全局缓存“m-9 不存在”吗？</summary>
 
-不能。那是授权隐藏结果，不是真实不存在；会污染有权用户的查询。</details>
+不能。那是授权隐藏结果，不是真实不存在；会污染有权用户的查询。
+
+</details>
 
 <details><summary>5. Cache-aside 读 miss 后通常做哪两步？</summary>
 
-查权威源；若结果可安全缓存，再按版本/TTL 政策回填。</details>
+查权威源；若结果可安全缓存，再按版本/TTL 政策回填。
+
+</details>
 
 <details><summary>6. 写入 V9 时 DB Commit 与 Redis DEL 自动同事务吗？</summary>
 
-不自动。两系统各有独立成功/失败与竞态窗口。</details>
+不自动。两系统各有独立成功/失败与竞态窗口。
+
+</details>
 
 <details><summary>7. TTL 还没到，缓存值就必是数据库最新吗？</summary>
 
-不必然。源可能已更新，缓存尚未正确失效。</details>
+不必然。源可能已更新，缓存尚未正确失效。
+
+</details>
 
 <details><summary>8. SET NX 单独能阻止第 4 节的 V8 回填吗？</summary>
 
-不能。W 已删除/键原本空，R 的 NX 条件仍能成立。</details>
+不能。W 已删除/键原本空，R 的 NX 条件仍能成立。
+
+</details>
 
 <details><summary>9. 先删再写表：W DEL 后 R 读到哪个 DB 版本？</summary>
 
-W 尚未提交 V9，所以 R 读到 V8。</details>
+W 尚未提交 V9，所以 R 读到 V8。
+
+</details>
 
 <details><summary>10. 同一表最后 W Commit V9，cache 留什么？</summary>
 
-R 已回填 V8，若 W 没有再失效，cache 仍为 V8。</details>
+R 已回填 V8，若 W 没有再失效，cache 仍为 V8。
+
+</details>
 
 <details><summary>11. 先提交再删表：R 在 W Commit 前读了什么？</summary>
 
-R 从 DB 读到 V8，随后暂停，尚未 SET。</details>
+R 从 DB 读到 V8，随后暂停，尚未 SET。
+
+</details>
 
 <details><summary>12. W Commit V9 并 DEL 空键后，R 迟到 SET 会怎样？</summary>
 
-cache 被回填为旧 V8，形成“旧值复活”。</details>
+cache 被回填为旧 V8，形成“旧值复活”。
+
+</details>
 
 <details><summary>13. 回填值多带 `source_version=V8` 就自动阻止复活了吗？</summary>
 
-不自动。要有受控的最低有效版本/围栏和条件比较；写侧失败也需有回退方案。</details>
+不自动。要有受控的最低有效版本/围栏和条件比较；写侧失败也需有回退方案。
+
+</details>
 
 <details><summary>14. `m-x` 先被查无，W 后插入并失效，R 再写 ABSENT，后果是什么？</summary>
 
-有权用户可能被旧负缓存错误告知“不存在”，直到过期/修正。</details>
+有权用户可能被旧负缓存错误告知“不存在”，直到过期/修正。
+
+</details>
 
 <details><summary>15. 30 秒 TTL 从哪一刻开始限制第 4 节那次旧值？</summary>
 
-从 R 实际把 V8 回填进缓存并设置 TTL 的时刻起，不从 W Commit 时起。</details>
+从 R 实际把 V8 回填进缓存并设置 TTL 的时刻起，不从 W Commit 时起。
+
+</details>
 
 <details><summary>16. 同一旧值被反复重新回填，还能把首次 TTL 当绝对陈旧上限吗？</summary>
 
-不能。每次重填可能有新生命周期，须设计版本/失效与测量范围。</details>
+不能。每次重填可能有新生命周期，须设计版本/失效与测量范围。
+
+</details>
 
 <details><summary>17. A 已退群、许可缓存仍活跃，能按旧键放行发送吗？</summary>
 
-不能。发送资格须按足够新的受控权威/版本状态判断。</details>
+不能。发送资格须按足够新的受控权威/版本状态判断。
+
+</details>
 
 <details><summary>18. A 已提交 m-9，预览 hit V8，若承诺发后立刻可见应怎样？</summary>
 
-不能返回旧预览冒充满足合同；可读权威或等待可见水位，达不到就按合同失败/降级。</details>
+不能返回旧预览冒充满足合同；可读权威或等待可见水位，达不到就按合同失败/降级。
+
+</details>
 
 <details><summary>19. DB Commit V9 成功但 Redis DEL 失败，消息会自动回滚吗？</summary>
 
-不会。DB 提交已发生；派生预览修复和用户答复要按合同另处理。</details>
+不会。DB 提交已发生；派生预览修复和用户答复要按合同另处理。
+
+</details>
 
 <details><summary>20. 缓存命中率 90% 就证明没有陈旧读吗？</summary>
 
-不能。hit 只表示缓存给了值，还要比较版本、授权和用户可见结果。</details>
+不能。hit 只表示缓存给了值，还要比较版本、授权和用户可见结果。
+
+</details>
 
 <details><summary>21. 如果要求严格的写后读，单靠 cache-aside + TTL 能证明吗？</summary>
 
-不能。需要权威读或受控水位/围栏协议及失败策略，TTL 只管理生命周期。</details>
+不能。需要权威读或受控水位/围栏协议及失败策略，TTL 只管理生命周期。
+
+</details>
 
 <details><summary>22. 修复方案上线前要保留哪几类可核对证据？</summary>
 
-至少 DB 提交/源版本、DEL 与回填顺序、缓存版本、用户读版本、权限版本及故障注入结果。</details>
+至少 DB 提交/源版本、DEL 与回填顺序、缓存版本、用户读版本、权限版本及故障注入结果。
+
+</details>
 
 ## 本章完成标准与下一步
 

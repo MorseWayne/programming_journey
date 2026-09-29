@@ -163,91 +163,135 @@ messages 文档：     {_id: m-a, conversation_id: c-a, sender_id: u-a, seq: 1, 
 
 <details><summary>1. 表与一行各代表什么？</summary>
 
-表定义同类记录的列和约束；一行是一份具体记录。</details>
+表定义同类记录的列和约束；一行是一份具体记录。
+
+</details>
 
 <details><summary>2. schema 与 instance 的区别是什么？</summary>
 
-schema 是列、类型和约束的定义；instance 是当前实际数据行。</details>
+schema 是列、类型和约束的定义；instance 是当前实际数据行。
+
+</details>
 
 <details><summary>3. 数据库表能像 Go 切片那样依赖下标顺序吗？</summary>
 
-不能。展示顺序应在查询中明确指定。</details>
+不能。展示顺序应在查询中明确指定。
+
+</details>
 
 <details><summary>4. `u-a` 的显示名可以当稳定主键吗？</summary>
 
-不宜；显示名可更改或重复，稳定 `user_id` 才承担身份。</details>
+不宜；显示名可更改或重复，稳定 `user_id` 才承担身份。
+
+</details>
 
 <details><summary>5. `members` 为什么用 `(conversation_id,user_id)` 复合键？</summary>
 
-任一列单独都可能重复；两列组合识别当前关系中的一行。</details>
+任一列单独都可能重复；两列组合识别当前关系中的一行。
+
+</details>
 
 <details><summary>6. 主键允许同表两行都是 `message_id=m-a` 吗？</summary>
 
-不允许。主键要求唯一且非 NULL。</details>
+不允许。主键要求唯一且非 NULL。
+
+</details>
 
 <details><summary>7. `m-x` 引用不存在的 `c-z` 会怎样？</summary>
 
-若声明并执行该外键，应拒绝引用不存在会话的记录。</details>
+若声明并执行该外键，应拒绝引用不存在会话的记录。
+
+</details>
 
 <details><summary>8. 用户外键通过是否证明发送者是会话成员？</summary>
 
-不能。它只保证用户存在，成员资格还需独立检查。</details>
+不能。它只保证用户存在，成员资格还需独立检查。
+
+</details>
 
 <details><summary>9. `UNIQUE(conversation_id,seq)` 限制什么？</summary>
 
-限制同一会话内重复使用同一个序号，不定义序号怎样并发分配。</details>
+限制同一会话内重复使用同一个序号，不定义序号怎样并发分配。
+
+</details>
 
 <details><summary>10. 3 个常见汉字为何可能恰好达到 9 字节？</summary>
 
-题设 UTF-8 下这几个汉字各占 3 字节；合计 9 字节，因此按当前 6 字节合同应拒绝。</details>
+题设 UTF-8 下这几个汉字各占 3 字节；合计 9 字节，因此按当前 6 字节合同应拒绝。
+
+</details>
 
 <details><summary>11. `NULL` 与空字符串一样吗？</summary>
 
-不一样。前者表示缺失/未知等字段合同所定义的状态，后者是一个长度为 0 的字符串值。</details>
+不一样。前者表示缺失/未知等字段合同所定义的状态，后者是一个长度为 0 的字符串值。
+
+</details>
 
 <details><summary>12. 查 `left_at` 为空该写 `= NULL` 吗？</summary>
 
-不应。SQL 用 `IS NULL` 判断空值。</details>
+不应。SQL 用 `IS NULL` 判断空值。
 
-<details><summary>13. `CHECK (body_length > 0)` 为何还可能需要 `NOT NULL`？</summary>
+</details>
 
-在 PostgreSQL 中，NULL 参与比较得到 UNKNOWN，CHECK 不会因此拒绝；必填要明确 NOT NULL。</details>
+<details><summary>13. `CHECK (body_length &gt; 0)` 为何还可能需要 `NOT NULL`？</summary>
+
+在 PostgreSQL 中，NULL 参与比较得到 UNKNOWN，CHECK 不会因此拒绝；必填要明确 NOT NULL。
+
+</details>
 
 <details><summary>14. `left_at=NULL` 能证明用户从未退出过吗？</summary>
 
-不能。当前快照只表示该行没有记载退出时刻，不能复原完整历史。</details>
+不能。当前快照只表示该行没有记载退出时刻，不能复原完整历史。
+
+</details>
 
 <details><summary>15. 退群后再入群，当前复合键模型缺什么？</summary>
 
-缺两段独立成员资格的历史身份或事件记录。</details>
+缺两段独立成员资格的历史身份或事件记录。
+
+</details>
 
 <details><summary>16. 查询历史前要先核对什么业务条件？</summary>
 
-调用者身份、对会话及所查时间范围的读取权限。</details>
+调用者身份、对会话及所查时间范围的读取权限。
+
+</details>
 
 <details><summary>17. 没有排序条件可承诺最旧消息总先返回吗？</summary>
 
-不能。应明确按序号或其他合同规定的键排序。</details>
+不能。应明确按序号或其他合同规定的键排序。
+
+</details>
 
 <details><summary>18. 消息行存在就证明 A 收到 HTTP 回应了吗？</summary>
 
-不能。数据记录、服务端提交和客户端收到回答是不同检查点。</details>
+不能。数据记录、服务端提交和客户端收到回答是不同检查点。
+
+</details>
 
 <details><summary>19. MongoDB 文档可以包含嵌套结构吗？</summary>
 
-可以，字段可包含子文档和数组。</details>
+可以，字段可包含子文档和数组。
+
+</details>
 
 <details><summary>20. 为什么不把整个会话的无界历史都嵌进一个文档？</summary>
 
-增长、文档大小限制、分页及独立更新会变得困难。</details>
+增长、文档大小限制、分页及独立更新会变得困难。
+
+</details>
 
 <details><summary>21. 文档引用字段会自动等同于 SQL 外键吗？</summary>
 
-不会。验证和跨文档关系要按具体存储与应用规则设计。</details>
+不会。验证和跨文档关系要按具体存储与应用规则设计。
+
+</details>
 
 <details><summary>22. 本章的 SQL 表能证明崩溃后消息仍在吗？</summary>
 
-不能。这里只设计模式，持久提交和恢复另需实现与证据。</details>
+不能。这里只设计模式，持久提交和恢复另需实现与证据。
+
+</details>
 
 ## 来源与下一步
 

@@ -97,91 +97,135 @@ MongoDB WiredTiger 也有 journal；日志何时被同步到存储与写关注�
 
 <details><summary>1. `INSERT m-a` 返回成功就等于事务已提交吗？</summary>
 
-不等于。它可处于 C1：语句执行了，事务仍未 COMMIT。</details>
+不等于。它可处于 C1：语句执行了，事务仍未 COMMIT。
+
+</details>
 
 <details><summary>2. dirty 数据页表示事务尚未提交吗？</summary>
 
-不表示。已提交事务的数据页仍可 dirty，未提交状态也不能只凭 dirty 位判断。</details>
+不表示。已提交事务的数据页仍可 dirty，未提交状态也不能只凭 dirty 位判断。
+
+</details>
 
 <details><summary>3. WAL 的关键持久顺序是什么？</summary>
 
-恢复相关数据页修改所需的日志要在该修改的数据页持久化之前按协议先具备；同步提交还需满足相应 WAL 持久边界。</details>
+恢复相关数据页修改所需的日志要在该修改的数据页持久化之前按协议先具备；同步提交还需满足相应 WAL 持久边界。
+
+</details>
 
 <details><summary>4. WAL 记录刚在内存里生成，与可靠 flush 完成一样吗？</summary>
 
-不一样。生成、写入 OS 缓存和持久 flush 是不同阶段。</details>
+不一样。生成、写入 OS 缓存和持久 flush 是不同阶段。
+
+</details>
 
 <details><summary>5. REDO 在本题解释什么？</summary>
 
-日志已持久且事务提交，但数据页未反映全部修改时，恢复可按日志重做缺失部分。</details>
+日志已持久且事务提交，但数据页未反映全部修改时，恢复可按日志重做缺失部分。
+
+</details>
 
 <details><summary>6. PostgreSQL 必然为每个事务维护一份教材式独立 UNDO 日志吗？</summary>
 
-不能这样断言。UNDO 是通用概念；PostgreSQL 的 WAL、MVCC 和事务状态有其具体恢复实现。</details>
+不能这样断言。UNDO 是通用概念；PostgreSQL 的 WAL、MVCC 和事务状态有其具体恢复实现。
+
+</details>
 
 <details><summary>7. 检查点等于 COMMIT 或备份吗？</summary>
 
-都不等于。它推进数据文件与恢复起点，但不是每笔业务提交或独立可恢复副本。</details>
+都不等于。它推进数据文件与恢复起点，但不是每笔业务提交或独立可恢复副本。
+
+</details>
 
 <details><summary>8. 数据库提交能证明 B 设备已读吗？</summary>
 
-不能。持久数据、在线投递、展示和阅读分别需要证据。</details>
+不能。持久数据、在线投递、展示和阅读分别需要证据。
+
+</details>
 
 <details><summary>9. C0 崩溃时本事务有 `m-a` 提交吗？</summary>
 
-没有。本题 `BEGIN` 尚未发生。</details>
+没有。本题 `BEGIN` 尚未发生。
+
+</details>
 
 <details><summary>10. C1 崩溃后可向 A 说“肯定已保存”吗？</summary>
 
-不能。`INSERT` 后尚未 COMMIT。</details>
+不能。`INSERT` 后尚未 COMMIT。
+
+</details>
 
 <details><summary>11. C2 日志已产生但未达可靠持久边界，消息一定丢吗？</summary>
 
-不能说一定丢，也不能保证已提交恢复；需看实际恢复/权威状态。纸上只有“持久证明不足”。</details>
+不能说一定丢，也不能保证已提交恢复；需看实际恢复/权威状态。纸上只有“持久证明不足”。
+
+</details>
 
 <details><summary>12. C3 数据页还 dirty，本机崩溃后为何仍可恢复？</summary>
 
-在本题同步 WAL 与可靠存储前提下，已提交记录持久，恢复可 REDO 尚未写回的数据页修改。</details>
+在本题同步 WAL 与可靠存储前提下，已提交记录持久，恢复可 REDO 尚未写回的数据页修改。
+
+</details>
 
 <details><summary>13. C4 页写回了，A 就一定收到 HTTP 200 吗？</summary>
 
-不一定。页写回是数据库内部事件，响应可能尚未发出或在网络途中丢失。</details>
+不一定。页写回是数据库内部事件，响应可能尚未发出或在网络途中丢失。
+
+</details>
 
 <details><summary>14. C3 到 C5 响应丢失，A 应直接生成新 ID 重发吗？</summary>
 
-不应。先用稳定 `m-a`/操作 ID 查权威提交状态，再按幂等合同处理未知。</details>
+不应。先用稳定 `m-a`/操作 ID 查权威提交状态，再按幂等合同处理未知。
+
+</details>
 
 <details><summary>15. 当前 S2 HTTP 200 能按本章 C5 解读为数据库持久吗？</summary>
 
-不能。S2 现有合同是 `accepted_in_memory`；C5 属于未来持久版的单独教学情景。</details>
+不能。S2 现有合同是 `accepted_in_memory`；C5 属于未来持久版的单独教学情景。
+
+</details>
 
 <details><summary>16. 检查点越频繁就一定越好吗？</summary>
 
-不一定。可能缩短恢复重做范围，但增加脏页刷写及某些 WAL 开销，要按负载和恢复目标权衡。</details>
+不一定。可能缩短恢复重做范围，但增加脏页刷写及某些 WAL 开销，要按负载和恢复目标权衡。
+
+</details>
 
 <details><summary>17. `synchronous_commit=off` 与 `fsync=off` 风险完全一样吗？</summary>
 
-不一样。前者可使近期已报成功事务在崩溃后丢失；后者还可能破坏数据库崩溃后一致性。</details>
+不一样。前者可使近期已报成功事务在崩溃后丢失；后者还可能破坏数据库崩溃后一致性。
+
+</details>
 
 <details><summary>18. 本机 WAL 已同步，就等于同步副本也确认了吗？</summary>
 
-不等于。复制条件、同步备库和所选提交模式要另外核对。</details>
+不等于。复制条件、同步备库和所选提交模式要另外核对。
+
+</details>
 
 <details><summary>19. 存储控制器提前谎报 flush 完成，会影响哪条前提？</summary>
 
-破坏 C3“WAL 可靠持久”的前提；数据库应用层无法从一次成功返回单独证明底层硬件可靠。</details>
+破坏 C3“WAL 可靠持久”的前提；数据库应用层无法从一次成功返回单独证明底层硬件可靠。
+
+</details>
 
 <details><summary>20. SQLite 的 WAL checkpoint 可直接按 PostgreSQL `checkpoint_timeout` 推断吗？</summary>
 
-不能。两引擎的日志、参数和检查点实现要按各自文档核对。</details>
+不能。两引擎的日志、参数和检查点实现要按各自文档核对。
+
+</details>
 
 <details><summary>21. MongoDB `j: true` 证明 B 设备收到了消息吗？</summary>
 
-不能。它属于存储日志相关写关注条件，与 IM 对端设备确认分层不同。</details>
+不能。它属于存储日志相关写关注条件，与 IM 对端设备确认分层不同。
+
+</details>
 
 <details><summary>22. 写一个最小“本机可恢复”之外还必须回答的业务问题。</summary>
 
-例如：若整机磁盘损坏，允许最多丢多少消息（RPO）、多久恢复服务（RTO）、备份/WAL 归档是否齐全，客户端未知提交如何凭稳定 ID 对账，以及离线设备怎样补拉。</details>
+例如：若整机磁盘损坏，允许最多丢多少消息（RPO）、多久恢复服务（RTO）、备份/WAL 归档是否齐全，客户端未知提交如何凭稳定 ID 对账，以及离线设备怎样补拉。
+
+</details>
 
 ## 本章完成标准与下一步
 

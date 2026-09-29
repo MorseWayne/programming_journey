@@ -123,91 +123,135 @@ Lamport 标量能保证因果时数值递增，却不能仅凭 `1<6` 判断因�
 
 <details><summary>1. A 显示 10:00:05、B 显示 09:59:58，能证明 B 先收吗？</summary>
 
-不能。两个设备的墙钟可能有偏移/漂移；应看通知的发送→接收链。</details>
+不能。两个设备的墙钟可能有偏移/漂移；应看通知的发送→接收链。
+
+</details>
 
 <details><summary>2. 时区统一成 UTC 能消除设备时钟偏差吗？</summary>
 
-不能。时区只改变同一时刻的表示；设备钟本身可能不准。</details>
+不能。时区只改变同一时刻的表示；设备钟本身可能不准。
+
+</details>
 
 <details><summary>3. Go 中测一个处理函数本机耗时，`time.Since(start)` 主要依靠什么？</summary>
 
-两个时间值都带单调读数时，Go 优先用单调部分作差；它不是跨节点时钟。</details>
+两个时间值都带单调读数时，Go 优先用单调部分作差；它不是跨节点时钟。
+
+</details>
 
 <details><summary>4. `time.Time` 经 JSON 发给 B 后还带原进程单调读数吗？</summary>
 
-不带。序列化会省去它，因为单调读数离开原进程没有意义。</details>
+不带。序列化会省去它，因为单调读数离开原进程没有意义。
+
+</details>
 
 <details><summary>5. `message_id` 和 `seq` 分别解决什么？</summary>
 
-前者是稳定消息身份/查重与对账键；后者是在特定会话内的业务排序键。</details>
+前者是稳定消息身份/查重与对账键；后者是在特定会话内的业务排序键。
+
+</details>
 
 <details><summary>6. `created_at` 能自动给所有会话消息一个无冲突总序吗？</summary>
 
-不能。时钟偏差、精度并列和产生时间位置都使它不足以单独承担该合同。</details>
+不能。时钟偏差、精度并列和产生时间位置都使它不足以单独承担该合同。
+
+</details>
 
 <details><summary>7. 发生在前的三条生成规则是什么？</summary>
 
-同进程内顺序、消息发送先于对应接收，以及关系的传递闭包。</details>
+同进程内顺序、消息发送先于对应接收，以及关系的传递闭包。
+
+</details>
 
 <details><summary>8. `c-a.seq=9` 与 `c-b.seq=9` 是否冲突？</summary>
 
-不冲突；本模型只要求同一会话内唯一，跨会话不能凭 seq 比先后。</details>
+不冲突；本模型只要求同一会话内唯一，跨会话不能凭 seq 比先后。
+
+</details>
 
 <details><summary>9. a2 发送到 G 与 g1 接收，谁发生在前？</summary>
 
-`a2→g1`，这是同一条消息的发送→接收边。</details>
+`a2→g1`，这是同一条消息的发送→接收边。
+
+</details>
 
 <details><summary>10. a2 与 s2 之间能画因果箭头吗？</summary>
 
-能。`a2→g1→g2→s1→s2`，由传递性得到 `a2→s2`。</details>
+能。`a2→g1→g2→s1→s2`，由传递性得到 `a2→s2`。
+
+</details>
 
 <details><summary>11. c1 与 s2 为什么在本图中并发？</summary>
 
-C 离线独立编辑，没有到 S 或来自 S 的消息边；两事件之间不存在已知因果路径。</details>
+C 离线独立编辑，没有到 S 或来自 S 的消息边；两事件之间不存在已知因果路径。
+
+</details>
 
 <details><summary>12. g1 收到携带 2 的消息，G 本地原为 0，Lamport 值是多少？</summary>
 
-`max(0,2)+1=3`。</details>
+`max(0,2)+1=3`。
+
+</details>
 
 <details><summary>13. S 在 s1 收到携带 4 的消息，本地原为 0，s1 与 s2 值分别多少？</summary>
 
-接收 `s1=max(0,4)+1=5`，后续本地提交事件 `s2=6`。</details>
+接收 `s1=max(0,4)+1=5`，后续本地提交事件 `s2=6`。
+
+</details>
 
 <details><summary>14. G 发出时值 4，收到 S 带 7 的答复，g3 值多少？</summary>
 
-`max(4,7)+1=8`；随后 g4 发 B 的值为 9。</details>
+`max(4,7)+1=8`；随后 g4 发 B 的值为 9。
 
-<details><summary>15. `L(c1)=1<L(s2)=6` 能证明 c1 导致 s2 吗？</summary>
+</details>
 
-不能。若有因果箭头则逻辑值递增；逻辑值较小的逆命题不成立。</details>
+<details><summary>15. `L(c1)=1&lt;L(s2)=6` 能证明 c1 导致 s2 吗？</summary>
+
+不能。若有因果箭头则逻辑值递增；逻辑值较小的逆命题不成立。
+
+</details>
 
 <details><summary>16. 给两个并发事件按 `(L,nodeID)` 排序后，它们变成因果相关了吗？</summary>
 
-没有。这只是人为选定可重复的总序，不改变过去的通信历史。</details>
+没有。这只是人为选定可重复的总序，不改变过去的通信历史。
+
+</details>
 
 <details><summary>17. `[1,0]` 与 `[0,1]` 的向量关系是什么？</summary>
 
-各有一维大于对方，不可比较，表示本题 A/C 独立事件并发。</details>
+各有一维大于对方，不可比较，表示本题 A/C 独立事件并发。
+
+</details>
 
 <details><summary>18. C 原为 `[0,1]`，收到 A 的 `[1,0]` 后再记接收事件，得到什么？</summary>
 
-先逐维取最大 `[1,1]`，再加 C 分量得到 `[1,2]`。</details>
+先逐维取最大 `[1,1]`，再加 C 分量得到 `[1,2]`。
+
+</details>
 
 <details><summary>19. C 接收 A 后，先前 vA1 与 vC1 就不再并发了吗？</summary>
 
-仍并发。后来的接收事件在二者之后，不会改写这两个早期事件的关系。</details>
+仍并发。后来的接收事件在二者之后，不会改写这两个早期事件的关系。
+
+</details>
 
 <details><summary>20. 本章 Lamport `s2=6` 能直接作为 `c-a` 的下一个消息 seq 吗？</summary>
 
-不能。业务序号由权威消息写入规则分配，本题已是 `seq=9`；两套数字职责不同。</details>
+不能。业务序号由权威消息写入规则分配，本题已是 `seq=9`；两套数字职责不同。
+
+</details>
 
 <details><summary>21. 两台机器日志墙钟顺序相反，排查时先找什么？</summary>
 
-找同一消息/请求关联 ID、每跳发送→接收与权威提交证据，再结合墙钟误差做近似窗口。</details>
+找同一消息/请求关联 ID、每跳发送→接收与权威提交证据，再结合墙钟误差做近似窗口。
+
+</details>
 
 <details><summary>22. A 超时后只凭 `created_at` 判断 `m-9` 已存，够吗？</summary>
 
-不够。按稳定 `message_id` 经授权查询权威状态；设备显示时间或客户端时间不证明数据库提交。</details>
+不够。按稳定 `message_id` 经授权查询权威状态；设备显示时间或客户端时间不证明数据库提交。
+
+</details>
 
 ## 本章完成标准与下一步
 

@@ -29,9 +29,9 @@
   "original_sha256": "e608b3b426f7fc6dbfc90e4f56e370ecc8f3c39560e9bfe731480a677d6ecbbe",
   "original_characters": 30179,
   "generation_request_sha256": "044e374a05b257563acef0235cad82eb68255bb0c1c8ebc8dfbdb7826ad4ba41",
-  "reviewed_sha256": "195f917882dfe45c23cd2413203ad34f5d0111f0efababdee43f234baaa1068d",
-  "reviewed_characters": 9537,
+  "reviewed_sha256": "cc4063b77eb57663770fc415b54be667c8af58b13ceee3fb6d9a2430cdd7dbd0",
+  "reviewed_characters": 9581,
   "reviewed_chinese_characters": 4230,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/10_incident_response.md",
-  "course_sha256": "a0deae0ea6762f8a9fa7ced17095a4a67cf1e406b71cead4112455b25b798ed4"
+  "course_sha256": "eb032cc2bc18eeacf9844564b45f8bcd95a73044eb5b523d57015c1ec8eed144"
 }

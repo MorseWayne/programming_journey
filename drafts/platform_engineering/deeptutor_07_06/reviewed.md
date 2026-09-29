@@ -88,91 +88,135 @@ broker： topic "message-events" / partition P0 / offset 42  ← 仅纸上位置
 
 <details><summary>1. 数据库中的 `m-9` 与通知事件 E9 是同一份权威事实吗？</summary>
 
-不是。m-9 是教学 S3 的权威消息行；E9 是触发后续处理的事件，保留和确认另定。</details>
+不是。m-9 是教学 S3 的权威消息行；E9 是触发后续处理的事件，保留和确认另定。
+
+</details>
 
 <details><summary>2. 在线 Pub/Sub 的主要优点与离线边界是什么？</summary>
 
-可向当前订阅者实时广播；Redis Pub/Sub 不给离线 B 自动保留过去发布。</details>
+可向当前订阅者实时广播；Redis Pub/Sub 不给离线 B 自动保留过去发布。
+
+</details>
 
 <details><summary>3. 两个搜索 worker 会让同一任务必然执行两次吗？</summary>
 
-不会。一次任务可由其中一个承担；失败重投仍可能让它后来再次执行。</details>
+不会。一次任务可由其中一个承担；失败重投仍可能让它后来再次执行。
+
+</details>
 
 <details><summary>4. 可回放日志会在消费者读完后立刻删除事件吗？</summary>
 
-不必然。日志按保留政策而非“有人读过”决定何时可清理。</details>
+不必然。日志按保留政策而非“有人读过”决定何时可清理。
+
+</details>
 
 <details><summary>5. `message_id=m-9`、`seq=9`、`offset=42` 分别属于哪层？</summary>
 
-消息业务身份、`c-a` 内排序位置、broker 分区 P0 的事件位置，不能互算。</details>
+消息业务身份、`c-a` 内排序位置、broker 分区 P0 的事件位置，不能互算。
+
+</details>
 
 <details><summary>6. P0 的顺序能推出 P1 所有事件的全局先后吗？</summary>
 
-不能。分区内顺序不自动成为跨分区总序。</details>
+不能。分区内顺序不自动成为跨分区总序。
+
+</details>
 
 <details><summary>7. 消费 ACK 能证明 B 用户已读吗？</summary>
 
-不能。它通常只说明消费者按本组协议完成处理，设备/用户回执另计。</details>
+不能。它通常只说明消费者按本组协议完成处理，设备/用户回执另计。
+
+</details>
 
 <details><summary>8. 当前 S2 `accepted_in_memory` 能直接当本章 S3 数据库提交吗？</summary>
 
-不能。S2 仍只是当前进程内存受理；S3 v2 是未来教学提议。</details>
+不能。S2 仍只是当前进程内存受理；S3 v2 是未来教学提议。
+
+</details>
 
 <details><summary>9. B 发布时离线，只依赖 Redis Pub/Sub，上线后能自动收到旧 E9 吗？</summary>
 
-不能。需要权威历史补拉或另设保留/确认机制。</details>
+不能。需要权威历史补拉或另设保留/确认机制。
+
+</details>
 
 <details><summary>10. SearchIndex 组 W1/W2 与 Notify 组如何分 E9？</summary>
 
-两逻辑组各自需要看到 E9；SearchIndex 组内由 W1/W2 分担，不是组内人人都收到一次。</details>
+两逻辑组各自需要看到 E9；SearchIndex 组内由 W1/W2 分担，不是组内人人都收到一次。
+
+</details>
 
 <details><summary>11. E9 在 P0 offset42，`m-9` 的会话 seq 会因此变成 42 吗？</summary>
 
-不会。业务 seq 仍为 9，offset42 只属于该 broker 分区。</details>
+不会。业务 seq 仍为 9，offset42 只属于该 broker 分区。
+
+</details>
 
 <details><summary>12. 若 E10 与 E9 在稳定策略下同落 P0，消费者可依赖哪种顺序？</summary>
 
-该分区内的追加/读取顺序；不扩展成所有分区的全局顺序。</details>
+该分区内的追加/读取顺序；不扩展成所有分区的全局顺序。
+
+</details>
 
 <details><summary>13. 日志保留 24 小时，B 离线 25 小时，E9 一定还能从日志重放吗？</summary>
 
-不能。若已按保留政策清理，须从权威消息历史补拉。</details>
+不能。若已按保留政策清理，须从权威消息历史补拉。
+
+</details>
 
 <details><summary>14. SearchIndex 处理完 E9 后重放一次，能盲目再创建一个新消息吗？</summary>
 
-不能。应按稳定 m-9 和版本更新派生索引，避免重复外部效果。</details>
+不能。应按稳定 m-9 和版本更新派生索引，避免重复外部效果。
+
+</details>
 
 <details><summary>15. W1 先 ACK 再写索引，ACK 后崩溃有什么风险？</summary>
 
-组内已标完成而外部索引未更新，可能不再重投而漏效果。</details>
+组内已标完成而外部索引未更新，可能不再重投而漏效果。
+
+</details>
 
 <details><summary>16. W1 先写索引再 ACK，ACK 前崩溃有什么风险？</summary>
 
-任务可能重投、索引效果重复；需幂等处理和对账。</details>
+任务可能重投、索引效果重复；需幂等处理和对账。
+
+</details>
 
 <details><summary>17. broker 发布成功能证明 G 已通知 B 吗？</summary>
 
-不能。发布、消费者处理、G 发送、B 接收各是不同阶段。</details>
+不能。发布、消费者处理、G 发送、B 接收各是不同阶段。
+
+</details>
 
 <details><summary>18. G 对 B 写 WebSocket 成功能证明 B 用户已读吗？</summary>
 
-不能。传输尝试、设备应用接收、界面展示和阅读都需分别定义证据。</details>
+不能。传输尝试、设备应用接收、界面展示和阅读都需分别定义证据。
+
+</details>
 
 <details><summary>19. DB 已提交 m-9、E9 尚未发布就崩溃，换成 Kafka 自动修复吗？</summary>
 
-不会。DB→broker 仍是跨系统空窗，须另设计 outbox/重试与对账。</details>
+不会。DB→broker 仍是跨系统空窗，须另设计 outbox/重试与对账。
+
+</details>
 
 <details><summary>20. 一条日志保留得越久就自动等于永久 IM 历史吗？</summary>
 
-不等于。仍受保留/删除、权限、版本与权威消息存储合同限制。</details>
+不等于。仍受保留/删除、权限、版本与权威消息存储合同限制。
+
+</details>
 
 <details><summary>21. 在线通知事件能直接包含所有私有正文并广播吗？</summary>
 
-不应无授权地广播私有内容；可传最小受控引用，再按当前权限补拉权威消息。</details>
+不应无授权地广播私有内容；可传最小受控引用，再按当前权限补拉权威消息。
+
+</details>
 
 <details><summary>22. 交付消息系统设计时最少列哪五个确认点？</summary>
 
-数据库提交、broker 发布、消费者处理 ACK、网关通知尝试、B 设备应用/阅读回执；每点可证明的范围不同。</details>
+数据库提交、broker 发布、消费者处理 ACK、网关通知尝试、B 设备应用/阅读回执；每点可证明的范围不同。
+
+</details>
 
 ## 本章完成标准与下一步
 

@@ -260,83 +260,123 @@ Go `map` 的 `range` 次序没有承诺，不能用它选“最旧消息”或�
 
 <details><summary>1. 正文都为“你好”的两条消息一定重复吗？</summary>
 
-不一定。正文是内容；本章按会话 ID 与消息 ID 的复合键判断身份。</details>
+不一定。正文是内容；本章按会话 ID 与消息 ID 的复合键判断身份。
+
+</details>
 
 <details><summary>2. `c-a/m-a` 和 `c-b/m-a` 在本模型中相等吗？</summary>
 
-不相等，会话字段不同。若真实协议另有唯一性范围，需要按契约修订键。</details>
+不相等，会话字段不同。若真实协议另有唯一性范围，需要按契约修订键。
+
+</details>
 
 <details><summary>3. 玩具哈希 `k%4` 中，1 与 5 映到同桶就相等吗？</summary>
 
-不相等。同桶是碰撞，仍需比较完整键。</details>
+不相等。同桶是碰撞，仍需比较完整键。
+
+</details>
 
 <details><summary>4. 把所有键都映到桶 0，正确性与成本分别怎样？</summary>
 
-若桶内逐键比较，正确性仍可保持；查找却可能退化到 O(N)。</details>
+若桶内逐键比较，正确性仍可保持；查找却可能退化到 O(N)。
+
+</details>
 
 <details><summary>5. 链式法的 `α=N/M` 能大于 1 吗？</summary>
 
-能。一个桶可保存多个键；α 是平均桶长度的量纲。</details>
+能。一个桶可保存多个键；α 是平均桶长度的量纲。
+
+</details>
 
 <details><summary>6. 开放寻址接近满表会怎样？</summary>
 
-空槽稀少，探查可能变长；删除还要维护探查链语义。</details>
+空槽稀少，探查可能变长；删除还要维护探查链语义。
+
+</details>
 
 <details><summary>7. 一次扩容为什么可能不再是 O(1)？</summary>
 
-可能要迁移许多旧键；摊还结论需要明确的增长与负载策略。</details>
+可能要迁移许多旧键；摊还结论需要明确的增长与负载策略。
+
+</details>
 
 <details><summary>8. `map[[]byte]struct{}` 可直接编译吗？</summary>
 
-不能，切片不可比较；本章使用只含字符串字段的可比较结构体键。</details>
+不能，切片不可比较；本章使用只含字符串字段的可比较结构体键。
+
+</details>
 
 <details><summary>9. 从 nil map 读取和写入各会怎样？</summary>
 
-读取会得到零值和 `ok=false`；赋值写入会运行时失败，写前要初始化。</details>
+读取会得到零值和 `ok=false`；赋值写入会运行时失败，写前要初始化。
+
+</details>
 
 <details><summary>10. 只看 `seen[key]` 的零值能区分缺失吗？</summary>
 
-不能。用 `_, exists := seen[key]` 明确取得是否存在。</details>
+不能。用 `_, exists := seen[key]` 明确取得是否存在。
+
+</details>
 
 <details><summary>11. `range seen` 能得到最早进入窗口的键吗？</summary>
 
-不能。Go map 迭代无顺序保证，最早键由顺序结构记录。</details>
+不能。Go map 迭代无顺序保证，最早键由顺序结构记录。
+
+</details>
 
 <details><summary>12. N=3，依次到达 A、B、C、A 后窗口怎样？</summary>
 
-仍为 A、B、C；重复 A 不刷新位置。</details>
+仍为 A、B、C；重复 A 不刷新位置。
+
+</details>
 
 <details><summary>13. 接着到达 D 后窗口怎样？</summary>
 
-满时淘汰最旧 A，窗口为 B、C、D。</details>
+满时淘汰最旧 A，窗口为 B、C、D。
+
+</details>
 
 <details><summary>14. 此后 A 再到达，算窗口重复吗？</summary>
 
-不算。A 已被驱逐；接纳 A 并淘汰 B 后窗口为 C、D、A。</details>
+不算。A 已被驱逐；接纳 A 并淘汰 B 后窗口为 C、D、A。
+
+</details>
 
 <details><summary>15. 只从队列删 A、忘记从集合删，会发生什么？</summary>
 
-已驱逐 A 仍被误判为重复，集合与队列的不变量被破坏。</details>
+已驱逐 A 仍被误判为重复，集合与队列的不变量被破坏。
+
+</details>
 
 <details><summary>16. 为什么窗口容量 N 必须为正？</summary>
 
-本章环形索引要对 N 取模；零容量也没有“接纳新身份”的明确定义。</details>
+本章环形索引要对 N 取模；零容量也没有“接纳新身份”的明确定义。
+
+</details>
 
 <details><summary>17. 窗口重启后能继续认出旧键吗？</summary>
 
-不能。当前窗口只在进程内存中，重启后要重新建立状态。</details>
+不能。当前窗口只在进程内存中，重启后要重新建立状态。
+
+</details>
 
 <details><summary>18. 两节点各自有窗口，能保证全局一次效果吗？</summary>
 
-不能。没有共享的权威记录和一致性规则，彼此不能判断对方处理结果。</details>
+不能。没有共享的权威记录和一致性规则，彼此不能判断对方处理结果。
+
+</details>
 
 <details><summary>19. 同键却不同正文应直接当安全重试吗？</summary>
 
-不能自动这样判断；需要定义冲突处理、首次结果和可信身份来源。</details>
+不能自动这样判断；需要定义冲突处理、首次结果和可信身份来源。
+
+</details>
 
 <details><summary>20. 哈希集合能替代 02.03 的范围查找吗？</summary>
 
-不能。集合只按精确键判断存在；范围查询需要有序表示或另建索引。</details>
+不能。集合只按精确键判断存在；范围查询需要有序表示或另建索引。
+
+</details>
 
 ## 来源与下一步
 

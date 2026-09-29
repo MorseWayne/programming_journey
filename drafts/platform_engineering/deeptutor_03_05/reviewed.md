@@ -109,91 +109,135 @@ Linux `/proc/<pid>/status` 的 `VmSize` 描述虚拟内存大小，`VmRSS` 描�
 
 <details><summary>1. 虚拟地址是物理内存上的直接位置吗？</summary>
 
-不是。进程使用虚拟地址，硬件与操作系统按映射翻译到物理位置。</details>
+不是。进程使用虚拟地址，硬件与操作系统按映射翻译到物理位置。
+
+</details>
 
 <details><summary>2. 4 KiB 等于多少字节、多少个 2 的幂？</summary>
 
-4096 B，即 `2^12` B。</details>
+4096 B，即 `2^12` B。
+
+</details>
 
 <details><summary>3. 4 KiB 页的页内偏移占低几位？</summary>
 
-低 12 位。</details>
+低 12 位。
+
+</details>
 
 <details><summary>4. `0x2345` 的 VPN 是多少？</summary>
 
-2，因为它位于 `0x2000..0x2fff` 这一页。</details>
+2，因为它位于 `0x2000..0x2fff` 这一页。
+
+</details>
 
 <details><summary>5. `0x2345` 的页内偏移是什么？</summary>
 
-`0x345`，十进制 837 字节。</details>
+`0x345`，十进制 837 字节。
+
+</details>
 
 <details><summary>6. VPN 2→PFN 7 时，物理地址是什么？</summary>
 
-`0x7345`，在 PFN 7 的页框基址 `0x7000` 上加 `0x345`。</details>
+`0x7345`，在 PFN 7 的页框基址 `0x7000` 上加 `0x345`。
+
+</details>
 
 <details><summary>7. `0x2fff` 与 `0x3000` 属于同一虚拟页吗？</summary>
 
-不属于；前者 VPN 2，后者 VPN 3。</details>
+不属于；前者 VPN 2，后者 VPN 3。
+
+</details>
 
 <details><summary>8. 连续虚拟页必然映到连续物理页框吗？</summary>
 
-不必然；页表可分别映射。</details>
+不必然；页表可分别映射。
+
+</details>
 
 <details><summary>9. 两个进程的虚拟地址数值相同，就自动共享对象吗？</summary>
 
-不会；各自映射可不同，共享必须有明确机制。</details>
+不会；各自映射可不同，共享必须有明确机制。
+
+</details>
 
 <details><summary>10. 页表只记录 PFN，不管访问权限吗？</summary>
 
-不对。地址转换还涉及访问权限和映射状态。</details>
+不对。地址转换还涉及访问权限和映射状态。
+
+</details>
 
 <details><summary>11. TLB 主要缓存消息正文还是地址翻译？</summary>
 
-地址翻译及相关访问信息，不是消息正文。</details>
+地址翻译及相关访问信息，不是消息正文。
+
+</details>
 
 <details><summary>12. TLB miss 一定是缺页异常吗？</summary>
 
-不是。页表可提供已驻留、有效的翻译。</details>
+不是。页表可提供已驻留、有效的翻译。
+
+</details>
 
 <details><summary>13. 合法页第一次触碰发生缺页就一定要读磁盘吗？</summary>
 
-不一定，按需建立/清零页面可不读后备存储。</details>
+不一定，按需建立/清零页面可不读后备存储。
+
+</details>
 
 <details><summary>14. 写入只读映射会被自动升级成可写吗？</summary>
 
-不会凭应用意愿自动升级；可能因权限错误失败，具体合法写时复制是另一种受控机制。</details>
+不会凭应用意愿自动升级；可能因权限错误失败，具体合法写时复制是另一种受控机制。
+
+</details>
 
 <details><summary>15. 访问完全未映射的地址会如何？</summary>
 
-不能假定自动得到一页；会进入异常处理并可能因非法访问失败。</details>
+不能假定自动得到一页；会进入异常处理并可能因非法访问失败。
+
+</details>
 
 <details><summary>16. 保留 3 页只触碰第 0、2 页，玩具虚拟和新增驻留各是多少？</summary>
 
-虚拟 12 KiB；在独立驻留且不计其他映射的假设下，新增驻留 8 KiB。</details>
+虚拟 12 KiB；在独立驻留且不计其他映射的假设下，新增驻留 8 KiB。
+
+</details>
 
 <details><summary>17. `VmSize−VmRSS` 都是 swap 中的数据吗？</summary>
 
-不是。还可能包含从未触碰等未驻留的合法虚拟范围。</details>
+不是。还可能包含从未触碰等未驻留的合法虚拟范围。
+
+</details>
 
 <details><summary>18. 进程 RSS 是 Go 业务对象大小之和吗？</summary>
 
-不是。RSS 是进程驻留页的统计视角，含多种映射与共享页等。</details>
+不是。RSS 是进程驻留页的统计视角，含多种映射与共享页等。
+
+</details>
 
 <details><summary>19. 系统一定启用了 swap 吗？</summary>
 
-不一定，取决于配置和运行条件。</details>
+不一定，取决于配置和运行条件。
+
+</details>
 
 <details><summary>20. 4096 连接各保留 8 KiB，虚拟范围合计多少？</summary>
 
-32 MiB；这是固定假设，不是实测按连接成本。</details>
+32 MiB；这是固定假设，不是实测按连接成本。
+
+</details>
 
 <details><summary>21. 每连接只新触碰 4 KiB 时，理想新增驻留多少？</summary>
 
-16 MiB；页表、代码、Go 运行时、内核 socket 等未计。</details>
+16 MiB；页表、代码、Go 运行时、内核 socket 等未计。
+
+</details>
 
 <details><summary>22. 业务对象变少、RSS 未立刻下降，就证明泄漏吗？</summary>
 
-不能。分配器保留、共享/映射、GC 与页返回时机均需进一步区分。</details>
+不能。分配器保留、共享/映射、GC 与页返回时机均需进一步区分。
+
+</details>
 
 ## 来源与下一步
 

@@ -89,95 +89,139 @@ B 提交导出时核对当前身份与 `c-a` 对象权限；worker 执行时再�
 
 <details><summary>1. 当前 S2 发消息的 200 可改写成导出任务 202 吗？</summary>
 
-不能。当前消息 `/v1` 仍 `accepted_in_memory`；本章是另一个未部署 `/v3` 导出接口。</details>
+不能。当前消息 `/v1` 仍 `accepted_in_memory`；本章是另一个未部署 `/v3` 导出接口。
+
+</details>
 
 <details><summary>2. 本章 202 表示文件已生成可下载吗？</summary>
 
-不表示。只说明导出操作已被接受用于处理，当前任务仍可能排队/失败/取消。</details>
+不表示。只说明导出操作已被接受用于处理，当前任务仍可能排队/失败/取消。
+
+</details>
 
 <details><summary>3. 202 响应的 `Location` 在本题指向哪里？</summary>
 
-`/v3/operations/exp-9`，供有权用户查询任务当前状态。</details>
+`/v3/operations/exp-9`，供有权用户查询任务当前状态。
+
+</details>
 
 <details><summary>4. `GET /v3/operations/exp-9` 的 200 可证明 B 已下载吗？</summary>
 
-不能。它只返回操作资源状态，下载是另一次有权读取。</details>
+不能。它只返回操作资源状态，下载是另一次有权读取。
+
+</details>
 
 <details><summary>5. 本章导出正文受当前发消息的 6 字节限额吗？</summary>
 
-不按同一字段规则。导出参数须有自己的有界校验，S2 发消息 6 字节合同不变。</details>
+不按同一字段规则。导出参数须有自己的有界校验，S2 发消息 6 字节合同不变。
+
+</details>
 
 <details><summary>6. 同一 B、同一幂等键、相同规范请求在保留窗重试，目标是什么？</summary>
 
-复用同一 `exp-9`，返回其当前状态而非新建第二个导出。</details>
+复用同一 `exp-9`，返回其当前状态而非新建第二个导出。
+
+</details>
 
 <details><summary>7. 同一幂等键改 `before_seq` 后再发，本题返回什么？</summary>
 
-409 幂等键冲突；不能把不同请求偷偷指向旧文件。</details>
+409 幂等键冲突；不能把不同请求偷偷指向旧文件。
+
+</details>
 
 <details><summary>8. `Cache-Control: no-store` 能单独保证私有导出不泄露吗？</summary>
 
-不能。仍需身份、对象授权、传输保护和结果存储权限。</details>
+不能。仍需身份、对象授权、传输保护和结果存储权限。
+
+</details>
 
 ### 故障与取消 9–16：问谁先提交
 
 <details><summary>9. 操作 exp-9 已入库，202 回应丢，B 能断言没创建吗？</summary>
 
-不能。沿原幂等键/有权操作记录核对，不换键盲目再创建。</details>
+不能。沿原幂等键/有权操作记录核对，不换键盲目再创建。
+
+</details>
 
 <details><summary>10. 只把 exp-9 放进进程内 channel 就答 202，重启后有什么问题？</summary>
 
-任务可能丢失，状态 URL 也无可恢复工作；需持久记录与可靠调度意图。</details>
+任务可能丢失，状态 URL 也无可恢复工作；需持久记录与可靠调度意图。
+
+</details>
 
 <details><summary>11. worker 写出临时 artifact 后状态写入丢了，应直接生成公开新文件吗？</summary>
 
-不应。按稳定 artifact ID 查结果/完整性并处理部分文件、孤儿与条件更新。</details>
+不应。按稳定 artifact ID 查结果/完整性并处理部分文件、孤儿与条件更新。
+
+</details>
 
 <details><summary>12. 取消接口答 202 就能显示 `CANCELED` 吗？</summary>
 
-不能。它只持久接受取消请求，worker 清理/停止后才进入取消终态。</details>
+不能。它只持久接受取消请求，worker 清理/停止后才进入取消终态。
+
+</details>
 
 <details><summary>13. `SUCCEEDED` 先于取消条件更新提交，本题怎样答迟到取消？</summary>
 
-保留 `SUCCEEDED`，按本题合同返回明确终态冲突（如 409 ALREADY_TERMINAL），不伪改为取消。</details>
+保留 `SUCCEEDED`，按本题合同返回明确终态冲突（如 409 ALREADY_TERMINAL），不伪改为取消。
+
+</details>
 
 <details><summary>14. `CANCEL_REQUESTED` 先赢，旧 worker 可无条件发布 `SUCCEEDED` 吗？</summary>
 
-不能。状态/版本条件更新应拒绝旧结果，并清理不能对外公开的临时物。</details>
+不能。状态/版本条件更新应拒绝旧结果，并清理不能对外公开的临时物。
+
+</details>
 
 <details><summary>15. Go `context` 取消能收回用户已下载的文件吗？</summary>
 
-不能。取消是协作信号，不是对外部已发生效果的回滚。</details>
+不能。取消是协作信号，不是对外部已发生效果的回滚。
+
+</details>
 
 <details><summary>16. WebSocket 提示“完成”丢了，客户端还能怎样恢复？</summary>
 
-用 `Location` 指向的有权 GET 状态资源查询，提示只是唤醒。</details>
+用 `Location` 指向的有权 GET 状态资源查询，提示只是唤醒。
+
+</details>
 
 ### 权限与交付 17–22：让结果仍然属于有权用户
 
 <details><summary>17. B 提交时有权、执行中退群，worker 能继续按旧资格导出吗？</summary>
 
-不能无条件继续。要按当前可见政策中止、过滤或重建，并保护已写部分文件。</details>
+不能无条件继续。要按当前可见政策中止、过滤或重建，并保护已写部分文件。
+
+</details>
 
 <details><summary>18. `u-c` 猜中 `exp-9`，可读取状态或结果吗？</summary>
 
-不能。已登录不等于有 `c-a` 权限；本题按隐藏目标政策 404。</details>
+不能。已登录不等于有 `c-a` 权限；本题按隐藏目标政策 404。
+
+</details>
 
 <details><summary>19. `before_seq=9` 就等于数据库一致快照的事务 ID 吗？</summary>
 
-不等于。它只限定会话业务范围，导出一致性快照另定义。</details>
+不等于。它只限定会话业务范围，导出一致性快照另定义。
+
+</details>
 
 <details><summary>20. 文件已 `SUCCEEDED`，B 下载时权限被撤销，还能凭旧 URL 取文件吗？</summary>
 
-不能。结果端点重新授权并可撤销/过期链接，不沿用提交时资格。</details>
+不能。结果端点重新授权并可撤销/过期链接，不沿用提交时资格。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明 `/v3` 导出接口存在吗？</summary>
 
-不能。只核对所述发送入队返回与另一 MongoDB 消费路径。</details>
+不能。只核对所述发送入队返回与另一 MongoDB 消费路径。
+
+</details>
 
 <details><summary>22. 本章 API 何时可算交付可评审？</summary>
 
-POST/GET/cancel/result 合同、幂等/保留、状态转移、权限/缓存、故障与清理证据齐全；真实运行结果另记。</details>
+POST/GET/cancel/result 合同、幂等/保留、状态转移、权限/缓存、故障与清理证据齐全；真实运行结果另记。
+
+</details>
 
 ## 本章完成标准与下一步
 

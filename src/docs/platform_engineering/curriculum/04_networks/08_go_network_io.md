@@ -103,95 +103,139 @@ HTTP 和 WebSocket 有各自的报错/关闭码；教学帧的 `EOF` 是练习�
 
 <details><summary>1. TCP 一次 Write 是否保证对端一次 Read 得同样边界？</summary>
 
-不保证；TCP 是有序字节流，应用自行定帧。</details>
+不保证；TCP 是有序字节流，应用自行定帧。
+
+</details>
 
 <details><summary>2. “公告”两个汉字在 UTF-8 中是多少 B？</summary>
 
-各 3 B，共 **6 B**。</details>
+各 3 B，共 **6 B**。
+
+</details>
 
 <details><summary>3. 本章 2 B 长度头 + 6 B 正文的总帧长是多少？</summary>
 
-8 B；该头仅属教学帧，不是现行 IM/HTTP/WebSocket 线协议。</details>
+8 B；该头仅属教学帧，不是现行 IM/HTTP/WebSocket 线协议。
+
+</details>
 
 <details><summary>4. 长度 6 的大端两字节是什么？</summary>
 
-`00 06`。</details>
+`00 06`。
+
+</details>
 
 <details><summary>5. 为什么先验证 n 再分配 body？</summary>
 
-防止恶意/错误长度触发无界内存申请。</details>
+防止恶意/错误长度触发无界内存申请。
+
+</details>
 
 <details><summary>6. `Read` 返回 n 小于缓冲长度且 err=nil 就算帧坏了吗？</summary>
 
-不一定；普通 Reader 允许短读，需继续直到指定长度或错误。</details>
+不一定；普通 Reader 允许短读，需继续直到指定长度或错误。
+
+</details>
 
 <details><summary>7. `io.ReadFull` 读到部分后遇 EOF 返回什么？</summary>
 
-`io.ErrUnexpectedEOF`；一字节未读到才可返回 EOF。</details>
+`io.ErrUnexpectedEOF`；一字节未读到才可返回 EOF。
+
+</details>
 
 <details><summary>8. 教学帧 maxBody 6 B 能替代 HTTP 原始 body 4096 B 上限吗？</summary>
 
-不能；它们属不同协议/层，HTTP 体和解码正文分别限制。</details>
+不能；它们属不同协议/层，HTTP 体和解码正文分别限制。
+
+</details>
 
 ### 推演 9–16：部分结果和期限
 
 <details><summary>9. 头只到 1 B 后连接结束，能按完整头解析 n 吗？</summary>
 
-不能；固定头未读齐，应报截断而非继续分配。</details>
+不能；固定头未读齐，应报截断而非继续分配。
+
+</details>
 
 <details><summary>10. 载荷声明 6 B，只到 4 B 后 EOF，是什么结果？</summary>
 
-帧截断，`ReadFull` 返回 `ErrUnexpectedEOF`，不能按完整正文交付。</details>
+帧截断，`ReadFull` 返回 `ErrUnexpectedEOF`，不能按完整正文交付。
+
+</details>
 
 <details><summary>11. Writer 本次接收 3/8 B，剩余多少 B？</summary>
 
-5 B；还要结合错误，不能宣称对端业务受理。</details>
+5 B；还要结合错误，不能宣称对端业务受理。
+
+</details>
 
 <details><summary>12. Write 报 n=0、err=nil，为何要防循环？</summary>
 
-没有进展，盲重试可无限循环；按封装约定报告短写/异常。</details>
+没有进展，盲重试可无限循环；按封装约定报告短写/异常。
+
+</details>
 
 <details><summary>13. `DialContext` 成功后其 context 到期会自动取消普通 `conn.Read` 吗？</summary>
 
-不会；连接建立后的读要单独设 deadline、关闭或用明确取消方案。</details>
+不会；连接建立后的读要单独设 deadline、关闭或用明确取消方案。
+
+</details>
 
 <details><summary>14. deadline 是每次调用的相对时长吗？</summary>
 
-不是；`SetReadDeadline/SetWriteDeadline` 使用绝对时间点，复用时需更新。</details>
+不是；`SetReadDeadline/SetWriteDeadline` 使用绝对时间点，复用时需更新。
+
+</details>
 
 <details><summary>15. 写齐 8 B 后响应丢失，可以断言服务端未受理吗？</summary>
 
-不能；业务结果未知，当前同 ID 重试可能回 409 也不代表幂等成功。</details>
+不能；业务结果未知，当前同 ID 重试可能回 409 也不代表幂等成功。
+
+</details>
 
 <details><summary>16. 看到 TLS 成功就能跳过成员授权吗？</summary>
 
-不能；传输对端身份与会话对象权限不同。</details>
+不能；传输对端身份与会话对象权限不同。
+
+</details>
 
 ### 决策 17–22：并发、关闭与确认点
 
 <details><summary>17. 两 goroutine 各写头和载荷，net.Conn 可并发就保证帧不交错吗？</summary>
 
-不保证应用层整帧原子顺序；应单写者/写队列/帧级串行化。</details>
+不保证应用层整帧原子顺序；应单写者/写队列/帧级串行化。
+
+</details>
 
 <details><summary>18. HTTP 客户端复用 Transport 时，还需处理响应 Body 吗？</summary>
 
-需要按标准库约定读/关闭，连接能否复用也依赖它。</details>
+需要按标准库约定读/关闭，连接能否复用也依赖它。
+
+</details>
 
 <details><summary>19. 旧 deadline 留在池中连接，会怎样？</summary>
 
-下一次 I/O 可能立刻超时；借出/使用时按新操作预算设置。</details>
+下一次 I/O 可能立刻超时；借出/使用时按新操作预算设置。
+
+</details>
 
 <details><summary>20. S2 返回 `200 accepted_in_memory` 可记 B 设备 ACK 吗？</summary>
 
-不可；只到本进程内存受理。</details>
+不可；只到本进程内存受理。
+
+</details>
 
 <details><summary>21. 教学帧长度字段能表示 65535 B，就允许正文超 6 B 吗？</summary>
 
-不能；字段表达能力与应用允许上限不同。</details>
+不能；字段表达能力与应用允许上限不同。
+
+</details>
 
 <details><summary>22. 设计网络读取验收卡至少要列哪几类失败？</summary>
 
-短头/短载荷、坏长度/UTF-8、超时/取消、短写、关闭/并发、权限/重复 ID/确认点。</details>
+短头/短载荷、坏长度/UTF-8、超时/取消、短写、关闭/并发、权限/重复 ID/确认点。
+
+</details>
 
 ## 本章完成标准与后续路径
 

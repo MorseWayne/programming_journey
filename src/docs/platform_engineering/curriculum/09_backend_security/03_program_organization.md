@@ -158,91 +158,135 @@ cmd 先创建并验证 Config
 
 <details><summary>1. handler 应直接改 `History.byID` 吗？</summary>
 
-不应。内存状态不变量由适配器维护，handler 负责 HTTP 边界。</details>
+不应。内存状态不变量由适配器维护，handler 负责 HTTP 边界。
+
+</details>
 
 <details><summary>2. `domain` 要知道 HTTP 409 吗？</summary>
 
-不需要。它返回领域错误身份，外层映射到接口状态。</details>
+不需要。它返回领域错误身份，外层映射到接口状态。
+
+</details>
 
 <details><summary>3. `cmd/teachingim` 的主要责任是什么？</summary>
 
-验证配置、构造具体依赖并接线，管理启动与收尾设计。</details>
+验证配置、构造具体依赖并接线，管理启动与收尾设计。
+
+</details>
 
 <details><summary>4. `internal` 会自动验证 `u-a` 的身份吗？</summary>
 
-不会。它限制 Go 包导入范围，不是认证机制。</details>
+不会。它限制 Go 包导入范围，不是认证机制。
+
+</details>
 
 <details><summary>5. 为什么由 app 定义小型 HistoryStore 接口？</summary>
 
-接口只表达消费方需要的追加和快照，减少对具体内存/数据库实现的依赖。</details>
+接口只表达消费方需要的追加和快照，减少对具体内存/数据库实现的依赖。
+
+</details>
 
 <details><summary>6. 内存适配器必须显式写 `implements HistoryStore` 吗？</summary>
 
-不必。Go 通过方法集隐式满足接口。</details>
+不必。Go 通过方法集隐式满足接口。
+
+</details>
 
 <details><summary>7. 4096 B 限额属于哪一层？</summary>
 
-HTTP 原始请求体解析边界；与领域正文 6 B 不同。</details>
+HTTP 原始请求体解析边界；与领域正文 6 B 不同。
+
+</details>
 
 <details><summary>8. `IMHISTORY_FILE` 是这个未来服务的配置来源吗？</summary>
 
-不是。它属于 01.12 本地 CLI，网络服务需另定自己的配置合同。</details>
+不是。它属于 01.12 本地 CLI，网络服务需另定自己的配置合同。
+
+</details>
 
 <details><summary>9. handler 可以从 JSON `sender_id` 获得可信主体吗？</summary>
 
-不能。主体由服务端认证边界给出，客户端字段可伪造。</details>
+不能。主体由服务端认证边界给出，客户端字段可伪造。
+
+</details>
 
 <details><summary>10. 对 `c-a` 的读取资格与发送资格必然相同吗？</summary>
 
-不一定。应用服务应按动作分别检查。</details>
+不一定。应用服务应按动作分别检查。
+
+</details>
 
 <details><summary>11. `ResponseWriter.Write` 先写了成功 JSON，之后还能重设最终 403 吗？</summary>
 
-不能按预期重设；第一次写入可能已隐式提交 200。</details>
+不能按预期重设；第一次写入可能已隐式提交 200。
+
+</details>
 
 <details><summary>12. 为什么小 JSON 响应要先准备表示再写出？</summary>
 
-避免编码或业务错误发生在状态已提交后，留下部分成功体。</details>
+避免编码或业务错误发生在状态已提交后，留下部分成功体。
+
+</details>
 
 <details><summary>13. 同会话重复 ID 由谁在同一锁区判断？</summary>
 
-内存适配器，它保护查重、map 和顺序的一次完整变化。</details>
+内存适配器，它保护查重、map 和顺序的一次完整变化。
+
+</details>
 
 <details><summary>14. `Snapshot` 返回后，旧快照会随新消息自动更新吗？</summary>
 
-不会。它是那次读取范围的一份独立内存视图。</details>
+不会。它是那次读取范围的一份独立内存视图。
+
+</details>
 
 <details><summary>15. 局部序号分配可以在锁外另做吗？</summary>
 
-若它与追加顺序是一项不变量，应在同一受控状态变化里完成。</details>
+若它与追加顺序是一项不变量，应在同一受控状态变化里完成。
+
+</details>
 
 <details><summary>16. `slog` 中直接记录真实令牌和正文合适吗？</summary>
 
-不合适。记录必要的阶段、分类与脱敏关联信息。</details>
+不合适。记录必要的阶段、分类与脱敏关联信息。
+
+</details>
 
 <details><summary>17. `errors.Is` 比比较错误文本适合什么？</summary>
 
-沿 `%w` 包装识别稳定错误身份，再映射 HTTP 类别。</details>
+沿 `%w` 包装识别稳定错误身份，再映射 HTTP 类别。
+
+</details>
 
 <details><summary>18. `r.Context()` 取消会撤销已完成的内存追加吗？</summary>
 
-不会自动回滚。取消需要下层协作，提交后结果可能对客户端未知。</details>
+不会自动回滚。取消需要下层协作，提交后结果可能对客户端未知。
+
+</details>
 
 <details><summary>19. `httptest` 的成功未来可证明数据库持久化吗？</summary>
 
-不能。它只覆盖所接入的 handler、应用替身和对应边界。</details>
+不能。它只覆盖所接入的 handler、应用替身和对应边界。
+
+</details>
 
 <details><summary>20. 一次 POST 返回 200 就能说 B 设备收到吗？</summary>
 
-不能。09.02 的 200 只承诺教学进程内存受理。</details>
+不能。09.02 的 200 只承诺教学进程内存受理。
+
+</details>
 
 <details><summary>21. 固定虚构主体的授权桩可直接公网部署吗？</summary>
 
-不能。它仅用于隔离教学；真实认证与授权在 S3 设计实现。</details>
+不能。它仅用于隔离教学；真实认证与授权在 S3 设计实现。
+
+</details>
 
 <details><summary>22. 启动时校验配置有何作用？</summary>
 
-提前拒绝互相矛盾或非法的上限与地址，使 handler 使用同一份已验证合同。</details>
+提前拒绝互相矛盾或非法的上限与地址，使 handler 使用同一份已验证合同。
+
+</details>
 
 ## 来源与下一步
 

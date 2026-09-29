@@ -94,95 +94,139 @@ IM 合同: S2 /v1，正文 6 UTF-8 B；R9 status=proposed
 
 <details><summary>1. 只记 `model=v2` 能重现 q-01 答案吗？</summary>
 
-不能；还需资料/权限/索引/提示/输出契约/应用及题集版本。</details>
+不能；还需资料/权限/索引/提示/输出契约/应用及题集版本。
+
+</details>
 
 <details><summary>2. R9 进入候选 release 就变 current 吗？</summary>
 
-不会；它仍是 6→9 B 待审提议，除非另有正式业务批准。</details>
+不会；它仍是 6→9 B 待审提议，除非另有正式业务批准。
+
+</details>
 
 <details><summary>3. `q-03` 越权能被其它五题正确平均掉吗？</summary>
 
-不能；私有正文进入无权路径是独立硬门失败。</details>
+不能；私有正文进入无权路径是独立硬门失败。
+
+</details>
 
 <details><summary>4. 六题为何不是最终未见集？</summary>
 
-它们已公开用于教学、开发与回归；需另外独立划分未见题。</details>
+它们已公开用于教学、开发与回归；需另外独立划分未见题。
+
+</details>
 
 <details><summary>5. 影子模式的输出不展示，就可以随意复制私聊吗？</summary>
 
-不可以；输入进入新环境本身仍受授权、许可、隔离和保留约束。</details>
+不可以；输入进入新环境本身仍受授权、许可、隔离和保留约束。
+
+</details>
 
 <details><summary>6. 灰度先让谁看到候选？</summary>
 
-只让预先限定、具备数据/服务授权的一小范围，在明确窗口和停止门下评估。</details>
+只让预先限定、具备数据/服务授权的一小范围，在明确窗口和停止门下评估。
+
+</details>
 
 <details><summary>7. 用户点“不对”就自动成为金标签吗？</summary>
 
-不是；需有权审阅、归因和争议处理，并记录版本。</details>
+不是；需有权审阅、归因和争议处理，并记录版本。
+
+</details>
 
 <details><summary>8. 资料助手回答 JSON 版本等于 IM HTTP `/v1` 吗？</summary>
 
-不等于；这是两个独立的兼容合同。</details>
+不等于；这是两个独立的兼容合同。
+
+</details>
 
 ### 推演 9–16：反馈、切片与回滚
 
 <details><summary>9. `q-01` 候选答 9 B，先查哪个资料状态？</summary>
 
-查 `doc-r9` 是否误标 current、`doc-current` 是否漏掉和上下文限定词。</details>
+查 `doc-r9` 是否误标 current、`doc-current` 是否漏掉和上下文限定词。
+
+</details>
 
 <details><summary>10. 模型回滚了但索引仍把 r9 标 current，问题解决了吗？</summary>
 
-未必；错误索引仍可把 9 B 当现行证据送进旧模型。</details>
+未必；错误索引仍可把 9 B 当现行证据送进旧模型。
+
+</details>
 
 <details><summary>11. 私有资料已泄露，回滚能撤销已看到的内容吗？</summary>
 
-不能；还要遏制、核影响范围与按实际责任流程处置。</details>
+不能；还要遏制、核影响范围与按实际责任流程处置。
+
+</details>
 
 <details><summary>12. 10 条负反馈中修 8 条，可推出总体准确率吗？</summary>
 
-不能；反馈有自选择偏差、缺总体分母与未反馈抽样。</details>
+不能；反馈有自选择偏差、缺总体分母与未反馈抽样。
+
+</details>
 
 <details><summary>13. 改提示时继续用已看过的错题当最终未见集，合适吗？</summary>
 
-不合适；已用于开发，需新的独立未见集。</details>
+不合适；已用于开发，需新的独立未见集。
+
+</details>
 
 <details><summary>14. 正式批准 R9 后仍回旧版 6 B 一定安全吗？</summary>
 
-不一定；要以当时权威合同为准，不能机械回退资料版本。</details>
+不一定；要以当时权威合同为准，不能机械回退资料版本。
+
+</details>
 
 <details><summary>15. 候选新 JSON 字段旧消费端不认识，能只上线服务端吗？</summary>
 
-不能直接假定；要有兼容窗口、版本识别与拒绝/回退策略。</details>
+不能直接假定；要有兼容窗口、版本识别与拒绝/回退策略。
+
+</details>
 
 <details><summary>16. q-01 平均正确但无权桶出现一次泄漏，继续扩大灰度吗？</summary>
 
-不应；停止硬门失败并查输入、索引与输出权限边界。</details>
+不应；停止硬门失败并查输入、索引与输出权限边界。
+
+</details>
 
 ### 决策 17–22：事故和长期责任
 
 <details><summary>17. R9 被误标 current，第一步是修改当前 `/v1` 上限吗？</summary>
 
-不是。先停灰度并隔离错误资料/索引/缓存，现行仍为 6 UTF-8 B。</details>
+不是。先停灰度并隔离错误资料/索引/缓存，现行仍为 6 UTF-8 B。
+
+</details>
 
 <details><summary>18. 事故调查为何保留 release/索引/资料散列？</summary>
 
-用于重现当时组合、定位第一坏边界和核受影响范围。</details>
+用于重现当时组合、定位第一坏边界和核受影响范围。
+
+</details>
 
 <details><summary>19. 只看模型准确率能覆盖引用/权限/成本吗？</summary>
 
-不能；需分层和分桶看证据、硬门、用户结果与资源。</details>
+不能；需分层和分桶看证据、硬门、用户结果与资源。
+
+</details>
 
 <details><summary>20. 资料撤权后只改主文档，旧答案缓存可继续吗？</summary>
 
-不能；索引、检索、答案和前缀缓存都要按范围失效/核对。</details>
+不能；索引、检索、答案和前缀缓存都要按范围失效/核对。
+
+</details>
 
 <details><summary>21. 事件复盘只写“模型幻觉”够吗？</summary>
 
-不够；要区分触发变更、第一坏边界、扩大因素、检测与回滚缺口。</details>
+不够；要区分触发变更、第一坏边界、扩大因素、检测与回滚缺口。
+
+</details>
 
 <details><summary>22. 本章完成后能声称课程已有生产部署证据吗？</summary>
 
-不能；这里只有静态设计，真实实现、负载、授权和运行观察需由学习者另行记录。</details>
+不能；这里只有静态设计，真实实现、负载、授权和运行观察需由学习者另行记录。
+
+</details>
 
 ## 本章完成标准与后续路径
 

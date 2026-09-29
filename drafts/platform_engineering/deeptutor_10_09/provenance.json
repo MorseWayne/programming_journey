@@ -30,9 +30,9 @@
   "original_sha256": "a61963a1513be3a4022126a1f1d10db6fd16ef61c72eff624817026d069029d8",
   "original_characters": 31912,
   "generation_request_sha256": "7a2177ca398e5237940d472970967afcb50a7992d69b4cce9e0c7e8b5b125578",
-  "reviewed_sha256": "df49b8dba9c549b1d05304aa9c43c9f7c447e17b5b6f21cd851b414d00405c97",
-  "reviewed_characters": 9402,
+  "reviewed_sha256": "a465557990e57f1b62abfc06a0e3f58f25cd46202c2feea43f77f4fc24f4dfcd",
+  "reviewed_characters": 9446,
   "reviewed_chinese_characters": 4916,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/09_ci_artifacts.md",
-  "course_sha256": "1958b7d8bfb87c0ec8cacfff124ae10cba47a06d85229db22d906e2e2a8960ee"
+  "course_sha256": "23dde1a90e0b9135dbee8d527c2e5a544a798b1da8e535b3709b43b2bcfdae6d"
 }

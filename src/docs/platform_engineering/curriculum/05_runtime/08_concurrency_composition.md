@@ -109,91 +109,135 @@ c-b：seq1            （可与 c-a 并行）
 
 <details><summary>1. t0 哪两个目标正在处理？</summary>
 
-A、B，占用两个 worker。</details>
+A、B，占用两个 worker。
+
+</details>
 
 <details><summary>2. t0 哪三个目标已接纳排队？</summary>
 
-C、D、E，等待队列正好满 3。</details>
+C、D、E，等待队列正好满 3。
+
+</details>
 
 <details><summary>3. t0 的 F 已被 worker 或队列接纳了吗？</summary>
 
-没有。生产者仍持有 F，须等待空位或按规则拒绝。</details>
+没有。生产者仍持有 F，须等待空位或按规则拒绝。
+
+</details>
 
 <details><summary>4. 本模型已接纳未完成任务上限是多少？</summary>
 
-2 个处理中加 3 个排队，共 5 个；不等于全进程所有任务内存。</details>
+2 个处理中加 3 个排队，共 5 个；不等于全进程所有任务内存。
+
+</details>
 
 <details><summary>5. t1 A 完成、C 出队后，F 可以到哪里？</summary>
 
-新空出的等待槽；此时 B/C 处理，D/E/F 排队。</details>
+新空出的等待槽；此时 B/C 处理，D/E/F 排队。
+
+</details>
 
 <details><summary>6. 先为 10000 目标启动 G，再在 G 里等许可，限制了什么？</summary>
 
-只限制同时做实际工作的数量；已经创建了大量等待 G。</details>
+只限制同时做实际工作的数量；已经创建了大量等待 G。
+
+</details>
 
 <details><summary>7. `errgroup.SetLimit` 的 Go 调用满额时会怎样？</summary>
 
-按官方 API 语义阻塞调用方直到可加入活跃 G；上游已物化数据仍需另限。</details>
+按官方 API 语义阻塞调用方直到可加入活跃 G；上游已物化数据仍需另限。
+
+</details>
 
 <details><summary>8. `TryGo` 返回 false 可当作任务成功吗？</summary>
 
-不能。它表示本次没有启动任务，需处理未接纳结果。</details>
+不能。它表示本次没有启动任务，需处理未接纳结果。
+
+</details>
 
 <details><summary>9. 只限制 channel 为 3，先建 10000 个完整任务切片会怎样？</summary>
 
-channel 有界但输入切片仍可能占大量内存，应该按需枚举或限源。</details>
+channel 有界但输入切片仍可能占大量内存，应该按需枚举或限源。
+
+</details>
 
 <details><summary>10. fan-out 与 fan-in 分别做什么？</summary>
 
-前者拆分一个来源到多个处理者；后者汇聚多个目标结果。</details>
+前者拆分一个来源到多个处理者；后者汇聚多个目标结果。
+
+</details>
 
 <details><summary>11. B 比 A 先完成时，可把第一个结果当 A 吗？</summary>
 
-不能。结果要带 recipient ID，完成次序可不同。</details>
+不能。结果要带 recipient ID，完成次序可不同。
+
+</details>
 
 <details><summary>12. 一个目标超时就证明它一定没有网络副作用吗？</summary>
 
-不能。超时后结果可能未知，需保留状态与后续核对责任。</details>
+不能。超时后结果可能未知，需保留状态与后续核对责任。
+
+</details>
 
 <details><summary>13. 下游结果消费者先退出，上游仍发送可能发生什么？</summary>
 
-上游可能卡在 channel 发送并保留 goroutine/对象引用；要传播取消。</details>
+上游可能卡在 channel 发送并保留 goroutine/对象引用；要传播取消。
+
+</details>
 
 <details><summary>14. 多 worker 共用输出通道，任一 worker 退出都可关闭吗？</summary>
 
-不能。由协调者等全部发送者结束后关闭。</details>
+不能。由协调者等全部发送者结束后关闭。
+
+</details>
 
 <details><summary>15. `cancel()` 会自动清空队列并撤回已写字节吗？</summary>
 
-不会。各阶段要按合同处理已接纳、处理中与未知副作用。</details>
+不会。各阶段要按合同处理已接纳、处理中与未知副作用。
+
+</details>
 
 <details><summary>16. 同一 `c-a` 按 key 串行可让 `c-b` 并行吗？</summary>
 
-可以。不同 key 可各走自己的本地执行路径。</details>
+可以。不同 key 可各走自己的本地执行路径。
+
+</details>
 
 <details><summary>17. 本进程 `c-a` 串行就能保证跨节点数据库提交顺序吗？</summary>
 
-不能。跨节点还需更高层序号、事务与恢复协议。</details>
+不能。跨节点还需更高层序号、事务与恢复协议。
+
+</details>
 
 <details><summary>18. 热门 key 无容量限制会怎样？</summary>
 
-该 key 的队列可能积压，必须定义上限、过载与清理。</details>
+该 key 的队列可能积压，必须定义上限、过载与清理。
+
+</details>
 
 <details><summary>19. singleflight 主要合并什么？</summary>
 
-同一 Group 中同键**同时在途**的函数调用与结果。</details>
+同一 Group 中同键**同时在途**的函数调用与结果。
+
+</details>
 
 <details><summary>20. singleflight 是持久缓存或跨进程幂等吗？</summary>
 
-都不是；完成后可再次执行，也不跨进程保存业务结果。</details>
+都不是；完成后可再次执行，也不跨进程保存业务结果。
+
+</details>
 
 <details><summary>21. 两个权限不同的用户查 c-a，可只以 c-a 作共享 key 吗？</summary>
 
-不能直接这么做。应先定义授权及安全的结果/键范围。</details>
+不能直接这么做。应先定义授权及安全的结果/键范围。
+
+</details>
 
 <details><summary>22. 一次群消息被服务受理，等于六设备都已展示吗？</summary>
 
-不等于。目标尝试、设备应用确认和展示各有独立状态。</details>
+不等于。目标尝试、设备应用确认和展示各有独立状态。
+
+</details>
 
 ## 来源与下一步
 

@@ -106,91 +106,135 @@ MongoDB 的 WiredTiger 内部缓存和文件系统缓存也有不同表示与统
 
 <details><summary>1. 一条 IM 消息等于一个数据库页吗？</summary>
 
-不等于。记录和数据库页是不同层次，一个页可存多条记录。</details>
+不等于。记录和数据库页是不同层次，一个页可存多条记录。
+
+</details>
 
 <details><summary>2. 数据库页与 OS 虚拟内存页必定同大小吗？</summary>
 
-不必定，它们分别服务存储访问与地址映射。</details>
+不必定，它们分别服务存储访问与地址映射。
+
+</details>
 
 <details><summary>3. 64 条、每玩具页 4 条，共多少数据页？</summary>
 
-16 页，即 P0..P15。</details>
+16 页，即 P0..P15。
+
+</details>
 
 <details><summary>4. P0、P1、P2 各放哪段 seq？</summary>
 
-分别是 1..4、5..8、9..12。</details>
+分别是 1..4、5..8、9..12。
+
+</details>
 
 <details><summary>5. `[5,8]` 的四条位于哪页？</summary>
 
-P1，这是理想连续排列的玩具数据页。</details>
+P1，这是理想连续排列的玩具数据页。
 
-<details><summary>6. `seq<9 DESC LIMIT4` 返回哪些序号？</summary>
+</details>
 
-8、7、6、5。</details>
+<details><summary>6. `seq&lt;9 DESC LIMIT4` 返回哪些序号？</summary>
+
+8、7、6、5。
+
+</details>
 
 <details><summary>7. “结果都在 P1”证明整个 SQL 只访问一页吗？</summary>
 
-不能。定位、索引、权限和计划可能访问更多页。</details>
+不能。定位、索引、权限和计划可能访问更多页。
+
+</details>
 
 <details><summary>8. 页内槽的作用是什么？</summary>
 
-保存页内记录的定位入口，便于管理记录与空闲空间。</details>
+保存页内记录的定位入口，便于管理记录与空闲空间。
+
+</details>
 
 <details><summary>9. PostgreSQL 常见页为 8 KiB，就表示每页正好 4 消息吗？</summary>
 
-不表示。真实页头、行宽和外置内容等决定容量。</details>
+不表示。真实页头、行宽和外置内容等决定容量。
+
+</details>
 
 <details><summary>10. 缓冲池 frame 等于 OS 物理页框吗？</summary>
 
-不是。frame 是数据库缓存中容纳数据库页的内存槽。</details>
+不是。frame 是数据库缓存中容纳数据库页的内存槽。
+
+</details>
 
 <details><summary>11. 缓冲 hit 说明什么？</summary>
 
-需要的数据库页已在内部缓冲池中，可复用该 frame。</details>
+需要的数据库页已在内部缓冲池中，可复用该 frame。
+
+</details>
 
 <details><summary>12. 玩具访问 P0,P1,P0,P2,P1 共几次 hit？</summary>
 
-1 次，即第三次访问 P0。</details>
+1 次，即第三次访问 P0。
+
+</details>
 
 <details><summary>13. 同序列共几次 miss、几次 eviction？</summary>
 
-4 次 miss、2 次逐出：先 P1，后 P0。</details>
+4 次 miss、2 次逐出：先 P1，后 P0。
+
+</details>
 
 <details><summary>14. 第四次访问 P2 前谁是 LRU？</summary>
 
-P1；第三次 P0 命中让 P0 成为较新页。</details>
+P1；第三次 P0 命中让 P0 成为较新页。
+
+</details>
 
 <details><summary>15. 容量改为 3，同序列从空开始的 hit/miss 是多少？</summary>
 
-2 hit、3 miss，且无需逐出。</details>
+2 hit、3 miss，且无需逐出。
+
+</details>
 
 <details><summary>16. 4 次 buffer miss 必定是 4 次物理磁盘读吗？</summary>
 
-不必；操作系统页缓存或其他存储层可满足读取。</details>
+不必；操作系统页缓存或其他存储层可满足读取。
+
+</details>
 
 <details><summary>17. P0 与 P1 都 pinned，能直接逐出 P0 装 P2 吗？</summary>
 
-不能按本章模型覆盖正在被使用的页；需等待/别的资源策略。</details>
+不能按本章模型覆盖正在被使用的页；需等待/别的资源策略。
+
+</details>
 
 <details><summary>18. dirty 页表示什么？</summary>
 
-内存页已有修改，尚未按协议写回对应持久位置。</details>
+内存页已有修改，尚未按协议写回对应持久位置。
+
+</details>
 
 <details><summary>19. dirty 页写回等于事务提交了吗？</summary>
 
-不等于。提交、WAL 与页写回的顺序另有保证。</details>
+不等于。提交、WAL 与页写回的顺序另有保证。
+
+</details>
 
 <details><summary>20. `EXPLAIN BUFFERS shared read` 可直接当物理盘读次数吗？</summary>
 
-不能。它是 PostgreSQL 缓冲层指标，OS 缓存和重复访问另计。</details>
+不能。它是 PostgreSQL 缓冲层指标，OS 缓存和重复访问另计。
+
+</details>
 
 <details><summary>21. 可把本章 LRU 表当 PostgreSQL 或 WiredTiger 替换算法吗？</summary>
 
-不能。它只建立容量与访问序列的机制直觉。</details>
+不能。它只建立容量与访问序列的机制直觉。
+
+</details>
 
 <details><summary>22. 本章已核对 OpenIM 的实际消息页布局吗？</summary>
 
-没有。上游存储实现与配置需独立源码/运行证据。</details>
+没有。上游存储实现与配置需独立源码/运行证据。
+
+</details>
 
 ## 来源与下一步
 

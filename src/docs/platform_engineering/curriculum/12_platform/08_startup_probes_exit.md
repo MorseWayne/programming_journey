@@ -98,95 +98,139 @@ Kubernetes 负责探针与端点状态、Pod 终止预算、替代 Pod；Go HTTP
 
 <details><summary>1. startup probe 主要保护什么？</summary>
 
-给慢启动明确窗口；首次成功前不运行 liveness/readiness，避免过早判失败。</details>
+给慢启动明确窗口；首次成功前不运行 liveness/readiness，避免过早判失败。
+
+</details>
 
 <details><summary>2. readiness 失败会因这一项直接杀容器吗？</summary>
 
-不会。它主要影响 Pod 是否适合常规新流量。</details>
+不会。它主要影响 Pod 是否适合常规新流量。
+
+</details>
 
 <details><summary>3. liveness 长期失败到门槛通常触发什么？</summary>
 
-容器可能被重启；它不应拿短暂 DB 失联当必需重启条件。</details>
+容器可能被重启；它不应拿短暂 DB 失联当必需重启条件。
+
+</details>
 
 <details><summary>4. 端口 healthcheck 绿能证明 B 设备 ACK 到了吗？</summary>
 
-不能。探针只覆盖它具体检查的阶段。</details>
+不能。探针只覆盖它具体检查的阶段。
+
+</details>
 
 <details><summary>5. preStop 是否在 termination grace 预算之外免费执行？</summary>
 
-不是。宽限期包含 preStop 所耗时间。</details>
+不是。宽限期包含 preStop 所耗时间。
+
+</details>
 
 <details><summary>6. Terminating 端点的 ready 通常是什么？</summary>
 
-通常为 false；serving 可另表示仍处理已有连接，具体路由有实现/选项边界。</details>
+通常为 false；serving 可另表示仍处理已有连接，具体路由有实现/选项边界。
+
+</details>
 
 <details><summary>7. Go `Server.Shutdown` 自动等 WebSocket 吗？</summary>
 
-不等。hijacked/WebSocket 由应用单独管理。</details>
+不等。hijacked/WebSocket 由应用单独管理。
+
+</details>
 
 <details><summary>8. P4 Ready 后 P1 上旧 WebSocket 会自动迁移吗？</summary>
 
-不会。客户端需重连并按有权历史补缺口。</details>
+不会。客户端需重连并按有权历史补缺口。
+
+</details>
 
 ### 推导 9–16：宽限期和反例
 
 <details><summary>9. 纸上总 grace 40s、preStop 5s、应用计划 30s，还剩多少预算？</summary>
 
-`40−5−30=5s` 纸上余量；实际阶段可能交错，需观察并留安全边界。</details>
+`40−5−30=5s` 纸上余量；实际阶段可能交错，需观察并留安全边界。
+
+</details>
 
 <details><summary>10. preStop 睡满 40s 后 Go 还有 30s 吗？</summary>
 
-没有。preStop 已消耗宽限预算，进程可能随后被强制结束。</details>
+没有。preStop 已消耗宽限预算，进程可能随后被强制结束。
+
+</details>
 
 <details><summary>11. EndpointSlice 变动与 TERM 到达能保证严格先后吗？</summary>
 
-不能。控制面传播与 kubelet本地关停可并行，应用须自设 draining 门。</details>
+不能。控制面传播与 kubelet本地关停可并行，应用须自设 draining 门。
+
+</details>
 
 <details><summary>12. liveness 探针查共享 DB，DB 暂停会造成什么放大？</summary>
 
-多个 gateway 可能一起重启，断线/重连/补拉再给 DB 加压。</details>
+多个 gateway 可能一起重启，断线/重连/补拉再给 DB 加压。
+
+</details>
 
 <details><summary>13. readiness 永远 true，发布时可能伤到谁？</summary>
 
-尚未就绪或正在摘流的 Pod 仍接新请求，A 可能超时/失败。</details>
+尚未就绪或正在摘流的 Pod 仍接新请求，A 可能超时/失败。
+
+</details>
 
 <details><summary>14. `Shutdown(ctx)` 到期返回错误能证明活动 HTTP 已全部结束吗？</summary>
 
-不能。它报告期限到期，应用需按退出政策处理未完成状态。</details>
+不能。它报告期限到期，应用需按退出政策处理未完成状态。
+
+</details>
 
 <details><summary>15. A 的 m-a 已在 P1 内存受理、回应丢失，P4 会自动返回重复 409 吗？</summary>
 
-不能。跨 Pod 需要统一消息身份裁决；本地内存不会迁移。</details>
+不能。跨 Pod 需要统一消息身份裁决；本地内存不会迁移。
+
+</details>
 
 <details><summary>16. 优雅摘流足以覆盖 OOM/Node 突然故障吗？</summary>
 
-不足。突然故障可能没有 preStop/TERM 机会，客户端仍需状态查询与补拉。</details>
+不足。突然故障可能没有 preStop/TERM 机会，客户端仍需状态查询与补拉。
+
+</details>
 
 ### 决策 17–22：业务恢复门
 
 <details><summary>17. P4 Ready 与 B 已补到 seq9 是同一确认点吗？</summary>
 
-不是。前者是平台就绪，后者是有权历史/设备业务结果。</details>
+不是。前者是平台就绪，后者是有权历史/设备业务结果。
+
+</details>
 
 <details><summary>18. 只看 `Shutdown` 返回就宣布全部在途消息已送达，可行吗？</summary>
 
-不可。WebSocket/后台任务、未来 DB 权威和设备 ACK 各需证据。</details>
+不可。WebSocket/后台任务、未来 DB 权威和设备 ACK 各需证据。
+
+</details>
 
 <details><summary>19. 发布期间看到拒绝/积压上升，应继续扩大滚动比例吗？</summary>
 
-不应。按预定停止门暂停/回退并核对用户结果。</details>
+不应。按预定停止门暂停/回退并核对用户结果。
+
+</details>
 
 <details><summary>20. 旧 `/v1` 正文 9 B 在新 Pod 被接纳，可当 R9 灰度成功吗？</summary>
 
-不能。R9 未批准，旧合同仍最多 6 B。</details>
+不能。R9 未批准，旧合同仍最多 6 B。
+
+</details>
 
 <details><summary>21. OpenIM 两处源码可证明其真实探针和排空预算吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费异步边界。</details>
+不能。只支持所读发送与 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 一张可审退出卡至少交什么？</summary>
 
-制品/探针定义、grace/preStop/信号预算、EndpointSlice 状态、HTTP/WebSocket/后台在途、A 当前合同与未来权威/设备恢复门。</details>
+制品/探针定义、grace/preStop/信号预算、EndpointSlice 状态、HTTP/WebSocket/后台在途、A 当前合同与未来权威/设备恢复门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

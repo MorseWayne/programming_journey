@@ -25,9 +25,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "578234b866ea50bb4d06464e9814a1b31cbc4b9add27e5fa34ba050480a72fc7",
-  "reviewed_sha256": "0caa38263672ff883174c9bfccfe1ea401c0dcfe40216548cc77147851aecce2",
-  "reviewed_characters": 8391,
+  "reviewed_sha256": "cebe89af0dcb6cbfb978ad0097d113af6d2522ddadcc89bee37e0e711ce27599",
+  "reviewed_characters": 8435,
   "reviewed_chinese_characters": 3702,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/02_distributions_statistics.md",
-  "course_sha256": "4f36025a2fc410ccc0035cc2f60e43497ca91ad35cb3c71ffb37341b5ce03cd4"
+  "course_sha256": "7c447bb7cd0eae169b8690f960952c2667c2600e42ba31f6c710409bf27a288a"
 }

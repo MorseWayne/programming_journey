@@ -95,95 +95,139 @@ date: 2026-09-25
 
 <details><summary>1. 一万在线连接等于一万条消息/秒吗？</summary>
 
-不等于。需活跃比和每活跃连接的发送率。</details>
+不等于。需活跃比和每活跃连接的发送率。
+
+</details>
 
 <details><summary>2. 10,000 连接、2% 活跃，活跃连接多少？</summary>
 
-`10,000×0.02=200` 条。</details>
+`10,000×0.02=200` 条。
+
+</details>
 
 <details><summary>3. 200 活跃连接各发 0.1 条/s，入站多少？</summary>
 
-`200×0.1=20 条/秒`。</details>
+`200×0.1=20 条/秒`。
+
+</details>
 
 <details><summary>4. 每条恰好 50 目标成员、每人 2 设备且无过滤，设备任务多少？</summary>
 
-`20×50×2=2,000 项/秒`，不是 2,000 条新权威消息。</details>
+`20×50×2=2,000 项/秒`，不是 2,000 条新权威消息。
+
+</details>
 
 <details><summary>5. 2,000 项/s 每项假设 512 B，纯载荷约多少 MiB/s？</summary>
 
-`2,000×512÷1,048,576≈0.977 MiB/s`，未计协议/重试。</details>
+`2,000×512÷1,048,576≈0.977 MiB/s`，未计协议/重试。
+
+</details>
 
 <details><summary>6. 每连接 32 KiB、10,000 连接的连接态分量多少？</summary>
 
-`10,000×32÷1024=312.5 MiB`，不是进程总 RSS。</details>
+`10,000×32÷1024=312.5 MiB`，不是进程总 RSS。
+
+</details>
 
 <details><summary>7. 当前 S2 的 200 能证明未来 B 设备已收到吗？</summary>
 
-不能。它只代表本进程内存受理。</details>
+不能。它只代表本进程内存受理。
+
+</details>
 
 <details><summary>8. 本章 30 天权威历史保留已成为现行合同吗？</summary>
 
-没有。它是未来业务若批准时的容量情景。</details>
+没有。它是未来业务若批准时的容量情景。
+
+</details>
 
 ### 计算 9–16：历史、事件和故障余量
 
 <details><summary>9. 20 条/s 一天有多少条权威消息？</summary>
 
-`20×86,400=1,728,000 条/天`。</details>
+`20×86,400=1,728,000 条/天`。
+
+</details>
 
 <details><summary>10. 每条原始逻辑记录 1 KiB，一天约多少 GiB？</summary>
 
-`1,728,000÷1,048,576≈1.648 GiB`，不含索引/副本/备份。</details>
+`1,728,000÷1,048,576≈1.648 GiB`，不含索引/副本/备份。
+
+</details>
 
 <details><summary>11. 同速率、获批保留 30 天，原始记录约多少 GiB？</summary>
 
-`1.648×30≈49.44 GiB`，不是账单总存储。</details>
+`1.648×30≈49.44 GiB`，不是账单总存储。
+
+</details>
 
 <details><summary>12. 每入站一条 E9、每事件 512 B、保留 24h，原始事件约多少 GiB？</summary>
 
-`20×86,400×512÷1,073,741,824≈0.824 GiB`。</details>
+`20×86,400×512÷1,073,741,824≈0.824 GiB`。
+
+</details>
 
 <details><summary>13. 相同事件流保留改 48h，原始量约多少？</summary>
 
-约 `1.648 GiB`，只是 24h 量两倍，不含 broker 副本与其他事件。</details>
+约 `1.648 GiB`，只是 24h 量两倍，不含 broker 副本与其他事件。
+
+</details>
 
 <details><summary>14. 每实例纸上 100 入站/s、三实例失一，名义能力与余量多少？</summary>
 
-剩 `2×100=200/s`；对另设目标峰值 150/s，名义余量 50/s。</details>
+剩 `2×100=200/s`；对另设目标峰值 150/s，名义余量 50/s。
+
+</details>
 
 <details><summary>15. 若只有两实例，失一后能守 150/s 吗？</summary>
 
-不能，剩 100/s，小于目标。</details>
+不能，剩 100/s，小于目标。
+
+</details>
 
 <details><summary>16. 原 20 入站/s、目标群 50→500 人，设备任务怎样变？</summary>
 
-在其余条件不变时从 2,000 变 `20×500×2=20,000 项/s`，十倍。</details>
+在其余条件不变时从 2,000 变 `20×500×2=20,000 项/s`，十倍。
+
+</details>
 
 ### 决策 17–22：比较方案和业务风险
 
 <details><summary>17. 连接数翻倍且活跃比/发送率不变，连接态与入站各多少？</summary>
 
-连接态约 625 MiB，入站约 40 条/s；这是单独情景，不与群 500 人自动叠加。</details>
+连接态约 625 MiB，入站约 40 条/s；这是单独情景，不与群 500 人自动叠加。
+
+</details>
 
 <details><summary>18. B 离线 25h、教学 broker 保留 24h，如何恢复 m-9？</summary>
 
-从有权权威 DB 历史按 `seq9` 缺口补；增加 broker 保留不能替代这条路径。</details>
+从有权权威 DB 历史按 `seq9` 缺口补；增加 broker 保留不能替代这条路径。
+
+</details>
 
 <details><summary>19. 增加网关实例一定解除 DB 瓶颈吗？</summary>
 
-不一定。共享 DB、broker 或热点可能仍先饱和，需同负载验证。</details>
+不一定。共享 DB、broker 或热点可能仍先饱和，需同负载验证。
+
+</details>
 
 <details><summary>20. 为省钱能删掉已承诺保留的权威历史吗？</summary>
 
-不能。先守业务保留/授权与恢复合同，再讨论索引、分层和成本。</details>
+不能。先守业务保留/授权与恢复合同，再讨论索引、分层和成本。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码能给真实容量和云账单吗？</summary>
 
-不能。它们只提示选定发送与 Mongo 消费的异步边界。</details>
+不能。它们只提示选定发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一份可审容量与成本决策书至少交什么？</summary>
 
-业务确认点、工作负载/增长、单位算式、瓶颈/共享依赖、N−1、方案成本/风险、实验证据缺口、停止/回退门与复核负责人。</details>
+业务确认点、工作负载/增长、单位算式、瓶颈/共享依赖、N−1、方案成本/风险、实验证据缺口、停止/回退门与复核负责人。
+
+</details>
 
 ## 本章完成标准与后续路径
 

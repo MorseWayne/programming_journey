@@ -126,91 +126,135 @@ Go 的 `GOMEMLIMIT` 是**Go 运行时管理内存的软限制**，官方说明�
 
 <details><summary>1. 业务代码不再需要 B，就证明 B 已不可达吗？</summary>
 
-不能。其他切片、队列、缓存或全局变量仍可能引用它。</details>
+不能。其他切片、队列、缓存或全局变量仍可能引用它。
+
+</details>
 
 <details><summary>2. 局部变量一定在 goroutine 栈上吗？</summary>
 
-不一定；具体位置取决于编译器按使用情境做的逃逸分析。</details>
+不一定；具体位置取决于编译器按使用情境做的逃逸分析。
+
+</details>
 
 <details><summary>3. 对局部变量取地址就一定分配到 Go 堆吗？</summary>
 
-不一定；要看地址是否逃出可安全管理的生命周期。</details>
+不一定；要看地址是否逃出可安全管理的生命周期。
+
+</details>
 
 <details><summary>4. 保留 8 字节的小切片能使 64 KiB 底层数组继续可达吗？</summary>
 
-可能。切片值仍引用底层数组，须检查其他引用与复制策略。</details>
+可能。切片值仍引用底层数组，须检查其他引用与复制策略。
+
+</details>
 
 <details><summary>5. 把 `full` 设为空值就断开所有引用了吗？</summary>
 
-没有，只断开这一个变量持有的引用。</details>
+没有，只断开这一个变量持有的引用。
+
+</details>
 
 <details><summary>6. 02.07 的二叉堆与本章 Go GC 堆是同一种结构吗？</summary>
 
-不是。前者按优先级选元素，后者是运行时管理某些 Go 对象的内存区域。</details>
+不是。前者按优先级选元素，后者是运行时管理某些 Go 对象的内存区域。
+
+</details>
 
 <details><summary>7. 玩具 4 KiB 块有一个活槽、三个空槽，可以立刻归还整块吗？</summary>
 
-不能按这个玩具规则整块归还；活槽 A 仍需该块。空槽可先用于复用。</details>
+不能按这个玩具规则整块归还；活槽 A 仍需该块。空槽可先用于复用。
+
+</details>
 
 <details><summary>8. 玩具块的 1 KiB 槽就是 Go 真实大小类别吗？</summary>
 
-不是，它只演示部分占用与整块归还的差别。</details>
+不是，它只演示部分占用与整块归还的差别。
+
+</details>
 
 <details><summary>9. 物理页框不连续，就必然无法得到连续虚拟缓冲吗？</summary>
 
-不是。页表可把不连续物理页框映到连续虚拟页。</details>
+不是。页表可把不连续物理页框映到连续虚拟页。
+
+</details>
 
 <details><summary>10. t1 时 B 的最后引用断开，`HeapAlloc` 必须立即下降吗？</summary>
 
-不必；不可达对象可能尚未被 GC 清扫。</details>
+不必；不可达对象可能尚未被 GC 清扫。
+
+</details>
 
 <details><summary>11. t2 清扫后 B 的空间可复用，RSS 必须马上下降吗？</summary>
 
-不必；运行时可能保留分配块供后续使用，且 RSS 还有别的来源。</details>
+不必；运行时可能保留分配块供后续使用，且 RSS 还有别的来源。
+
+</details>
 
 <details><summary>12. `TotalAlloc` 不下降能证明泄漏吗？</summary>
 
-不能。它是累计分配量，正常运行也会增长。</details>
+不能。它是累计分配量，正常运行也会增长。
+
+</details>
 
 <details><summary>13. `HeapAlloc` 精确等于当前业务有用的对象大小吗？</summary>
 
-不等于；它还可能包含尚未清扫的不可达对象，且不涵盖进程所有内存。</details>
+不等于；它还可能包含尚未清扫的不可达对象，且不涵盖进程所有内存。
+
+</details>
 
 <details><summary>14. `HeapSys` 与进程 RSS 是同一统计口径吗？</summary>
 
-不是。`HeapSys` 是 Go 堆保留的虚拟空间，RSS 是进程驻留页。</details>
+不是。`HeapSys` 是 Go 堆保留的虚拟空间，RSS 是进程驻留页。
+
+</details>
 
 <details><summary>15. `HeapReleased` 增加是否必然让同一瞬间的 RSS 等量下降？</summary>
 
-不能这么推断；RSS 含其他来源、共享页和采样时差。</details>
+不能这么推断；RSS 含其他来源、共享页和采样时差。
+
+</details>
 
 <details><summary>16. `MAP_PRIVATE` 修改会写回原文件吗？</summary>
 
-不会按该映射语义写回；它是私有写时复制。</details>
+不会按该映射语义写回；它是私有写时复制。
+
+</details>
 
 <details><summary>17. `MAP_SHARED` 中的修改对别人可见就证明已耐久吗？</summary>
 
-不能。可见性与崩溃后的持久性是不同合同。</details>
+不能。可见性与崩溃后的持久性是不同合同。
+
+</details>
 
 <details><summary>18. 建立 `mmap` 后关闭文件描述符会自动解除映射吗？</summary>
 
-不会。映射有自己的生命周期，需另行解除。</details>
+不会。映射有自己的生命周期，需另行解除。
+
+</details>
 
 <details><summary>19. 普通 `read` 产生的文件页缓存必然计入该进程 RSS 吗？</summary>
 
-不必；未映射的内核页缓存与进程驻留映射是不同视角。</details>
+不必；未映射的内核页缓存与进程驻留映射是不同视角。
+
+</details>
 
 <details><summary>20. 映射文件被触碰后的驻留页可能进入哪个 RSS 分类？</summary>
 
-可进入 `RssFile`；仍须按具体映射和统计口径核对。</details>
+可进入 `RssFile`；仍须按具体映射和统计口径核对。
+
+</details>
 
 <details><summary>21. 多进程 RSS 相加为何可能高估独占内存？</summary>
 
-共享映射的同一物理页可分别计入多个进程的 RSS；PSS 是另一种分摊视角。</details>
+共享映射的同一物理页可分别计入多个进程的 RSS；PSS 是另一种分摊视角。
+
+</details>
 
 <details><summary>22. `GOMEMLIMIT` 能保证整个容器 RSS 绝不超限吗？</summary>
 
-不能。它是 Go 运行时管理内存的软限制，不覆盖全部外部和内核内存。</details>
+不能。它是 Go 运行时管理内存的软限制，不覆盖全部外部和内核内存。
+
+</details>
 
 ## 来源与下一步
 

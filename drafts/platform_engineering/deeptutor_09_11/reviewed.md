@@ -115,91 +115,135 @@ defer resp.Body.Close()
 
 <details><summary>1. 当前 09.02 的正文上限是多少？</summary>
 
-6 个 UTF-8 字节，R9 的 9 B 是待审变更。</details>
+6 个 UTF-8 字节，R9 的 9 B 是待审变更。
+
+</details>
 
 <details><summary>2. 当前合同下 `"你好"` 与 `"你好呀"` 分别怎样？</summary>
 
-前者 6 B 可受理，后者 9 B 应拒绝。</details>
+前者 6 B 可受理，后者 9 B 应拒绝。
+
+</details>
 
 <details><summary>3. R9 待审报告可证明当前 6 B 合同已经生效为 9 B 吗？</summary>
 
-不能。拟议版本与已生效版本的预期和证据必须分开。</details>
+不能。拟议版本与已生效版本的预期和证据必须分开。
+
+</details>
 
 <details><summary>4. 测试的预期从现有函数输出抄来可靠吗？</summary>
 
-不可靠。真值应来自独立需求、合同和状态承诺。</details>
+不可靠。真值应来自独立需求、合同和状态承诺。
+
+</details>
 
 <details><summary>5. 纯函数测试通过能证明 A 收到了 HTTP 200 吗？</summary>
 
-不能，它不覆盖网络和客户端观察。</details>
+不能，它不覆盖网络和客户端观察。
+
+</details>
 
 <details><summary>6. `httptest.NewRecorder` 会真的经过 TCP/TLS 吗？</summary>
 
-不会。它记录直接调用 handler 的输出。</details>
+不会。它记录直接调用 handler 的输出。
+
+</details>
 
 <details><summary>7. `httptest.NewServer` 能证明生产代理与设备送达吗？</summary>
 
-不能。它只在隔离测试服务器中走真实 HTTP。</details>
+不能。它只在隔离测试服务器中走真实 HTTP。
+
+</details>
 
 <details><summary>8. handler 测试为什么还要检查 JSON 和存储状态？</summary>
 
-状态码单独不能说明返回字段正确或失败后数据未被修改。</details>
+状态码单独不能说明返回字段正确或失败后数据未被修改。
+
+</details>
 
 <details><summary>9. 为何不能把 `X-Test-User` 直接留在公开 handler 当登录后门？</summary>
 
-客户端可伪造该头；测试身份须仅由私有测试装配控制。</details>
+客户端可伪造该头；测试身份须仅由私有测试装配控制。
+
+</details>
 
 <details><summary>10. 当前合同的重复 m-a 应有什么结果？</summary>
 
-409 `DUPLICATE_MESSAGE`，旧正文与顺序不变。</details>
+409 `DUPLICATE_MESSAGE`，旧正文与顺序不变。
+
+</details>
 
 <details><summary>11. 原始请求体 4097 B 与正文 9 B 应返回同一错误吗？</summary>
 
-不应。前者是请求体资源上限 413，后者是正文业务上限 400 `TOO_LONG`。</details>
+不应。前者是请求体资源上限 413，后者是正文业务上限 400 `TOO_LONG`。
+
+</details>
 
 <details><summary>12. u-c 已登录却请求 c-a 历史，本章预期是什么？</summary>
 
-按当前隐藏目标政策对外 404，内部仍记录授权拒绝。</details>
+按当前隐藏目标政策对外 404，内部仍记录授权拒绝。
+
+</details>
 
 <details><summary>13. 客户端改 message_id 就能看别人的消息吗？</summary>
 
-不能。每个对象仍须按已认证主体做资源授权。</details>
+不能。每个对象仍须按已认证主体做资源授权。
+
+</details>
 
 <details><summary>14. A 在 JSON 中填 sender_id=u-b，本章 DTO 怎样处理？</summary>
 
-09.02 当前合同拒绝这个未知字段；发件人仍由受信身份决定。</details>
+09.02 当前合同拒绝这个未知字段；发件人仍由受信身份决定。
+
+</details>
 
 <details><summary>15. SQL 中含引号的 ID 一定要按“注入成功”报错吗？</summary>
 
-不是。参数绑定让它只是值；字段格式是否合法与对象授权另判。</details>
+不是。参数绑定让它只是值；字段格式是否合法与对象授权另判。
+
+</details>
 
 <details><summary>16. fake 存储能证明真实数据库唯一约束吗？</summary>
 
-不能，只能证明应用面对 fake 给定错误的决策。</details>
+不能，只能证明应用面对 fake 给定错误的决策。
+
+</details>
 
 <details><summary>17. 隔离数据库 INSERT 成功能证明 B 设备收到吗？</summary>
 
-不能，设备交付是另一确认点。</details>
+不能，设备交付是另一确认点。
+
+</details>
 
 <details><summary>18. Commit 附近断网能直接写“消息未保存”吗？</summary>
 
-不能。结果可能未知，需按稳定身份查验。</details>
+不能。结果可能未知，需按稳定身份查验。
+
+</details>
 
 <details><summary>19. 附件与预览尚未实现，可填“安全测试通过”吗？</summary>
 
-不能。可写纸上防护设计和将来要验证的负例。</details>
+不能。可写纸上防护设计和将来要验证的负例。
+
+</details>
 
 <details><summary>20. 绿色 CI 报告至少要能定位哪些输入？</summary>
 
-提交 SHA、工具链、命令、数据版本、合同版本与检查结果。</details>
+提交 SHA、工具链、命令、数据版本、合同版本与检查结果。
+
+</details>
 
 <details><summary>21. 缓存命中等于测试结果制品吗？</summary>
 
-不等于。缓存是加速，报告/构建输出是本次运行制品。</details>
+不等于。缓存是加速，报告/构建输出是本次运行制品。
+
+</details>
 
 <details><summary>22. “未验证的故障路径”应怎样写进交付文档？</summary>
 
-明确列出路径、所需环境与下一份证据，不能拿其他层的绿色代替。</details>
+明确列出路径、所需环境与下一份证据，不能拿其他层的绿色代替。
+
+</details>
 
 ## 来源与下一步
 

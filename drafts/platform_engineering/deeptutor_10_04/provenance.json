@@ -12,15 +12,15 @@
   "generation_request_file": "generation_request.json",
   "generation_request_sha256": "706b3aca77ca8bb79d0d53bafdfc121667b4e63bf12149af506bcca1c7dd96b4",
   "original_sha256": "2ae2524e07226ceb859f6d6396625e3bb05c4c60ca34a9bc07ff236691e39194",
-  "reviewed_sha256": "4f46faae8a3f48cf4fc17382206a27319c4fac4a40b5451e9ce301148a5500dc",
+  "reviewed_sha256": "d06ed205ffd3806764d7cdae828852a14c8108e25c0a1158de0b6bacf1592a3e",
   "original_characters": 38983,
-  "reviewed_characters": 12643,
+  "reviewed_characters": 12687,
   "reviewed_chinese_characters": 4941,
   "code_execution": false,
   "site_build": false,
   "publication_status": "integrated into local course source",
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/04_test_doubles_design.md",
-  "course_sha256": "34c15554261f79cc501ffd0fc59bf555fb38bce1d277e3c82d86f851cf172b9d",
+  "course_sha256": "771d78dd7f5f275b6016997dde7e14cf6b6f2ca6cce4c771add31adda39bb801",
   "source_reference": {
     "primary_sources": [
       "https://martinfowler.com/articles/mocksArentStubs.html",

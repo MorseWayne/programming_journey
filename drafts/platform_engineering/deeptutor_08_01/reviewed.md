@@ -102,91 +102,135 @@ S 的可能状态：未收到 → 在途/处理中 → 已提交
 
 <details><summary>1. A、G、S、B 分别代表什么？</summary>
 
-A 是发送客户端，G 是接入网关，S 是权威消息存储，B 是可能在线的目标设备。</details>
+A 是发送客户端，G 是接入网关，S 是权威消息存储，B 是可能在线的目标设备。
+
+</details>
 
 <details><summary>2. A→G 通了，就证明 G→S 也通吗？</summary>
 
-不能。链路可独立失败，部分失败的核心就是一些路径可用、另一些不可用。</details>
+不能。链路可独立失败，部分失败的核心就是一些路径可用、另一些不可用。
+
+</details>
 
 <details><summary>3. `m-9` 与“这次 HTTP 请求”是同一个身份吗？</summary>
 
-不是。`m-9` 是希望存储的业务消息身份，一次或多次网络尝试可围绕它发生。</details>
+不是。`m-9` 是希望存储的业务消息身份，一次或多次网络尝试可围绕它发生。
+
+</details>
 
 <details><summary>4. 当前 S2 的 200 表示 S 数据库已提交吗？</summary>
 
-不表示。现有 S2 只是 `accepted_in_memory`；S3 `stored_in_teaching_db` 是未来纸上提议。</details>
+不表示。现有 S2 只是 `accepted_in_memory`；S3 `stored_in_teaching_db` 是未来纸上提议。
+
+</details>
 
 <details><summary>5. A 在 100 ms 期限到达，能证明 G 死了吗？</summary>
 
-不能。G 可能暂停、排队，回包可能丢失或仅迟到。</details>
+不能。G 可能暂停、排队，回包可能丢失或仅迟到。
+
+</details>
 
 <details><summary>6. 崩溃与暂停在本题怎样区分？</summary>
 
-崩溃指进程在该运行中停止；暂停指暂时不前进但可能恢复。短时外部无响应不一定能区分它们。</details>
+崩溃指进程在该运行中停止；暂停指暂时不前进但可能恢复。短时外部无响应不一定能区分它们。
+
+</details>
 
 <details><summary>7. 网络分区等于全部机器都坏了吗？</summary>
 
-不是。可只有 G→S 不通，其他客户端或网关仍能访问 S。</details>
+不是。可只有 G→S 不通，其他客户端或网关仍能访问 S。
+
+</details>
 
 <details><summary>8. TCP ACK 能证明 B 已读 `m-9` 吗？</summary>
 
-不能。传输字节确认、S 提交、B 应用收到和用户阅读是不同层。</details>
+不能。传输字节确认、S 提交、B 应用收到和用户阅读是不同层。
+
+</details>
 
 <details><summary>9. R1 请求未达 G，t=100 的 S 状态是什么？</summary>
 
-本次请求没有使 S 提交；A 仍应按可观察到的连接/错误证据分类。</details>
+本次请求没有使 S 提交；A 仍应按可观察到的连接/错误证据分类。
+
+</details>
 
 <details><summary>10. R2 t=100 尚未提交，能保证 t=120 仍不会提交吗？</summary>
 
-不能。G 可能从暂停恢复或请求仍在途，最终状态仍需查证。</details>
+不能。G 可能从暂停恢复或请求仍在途，最终状态仍需查证。
+
+</details>
 
 <details><summary>11. R3 与 R4 对 A 的观察一样吗？对 S 的事实呢？</summary>
 
-A 都可能只见超时；S 在两条轨迹中都已提交。R4 多了 G 崩溃。</details>
+A 都可能只见超时；S 在两条轨迹中都已提交。R4 多了 G 崩溃。
+
+</details>
 
 <details><summary>12. S 在 t=20 已提交、A 在 t=100 超时，A 能直接换新 ID 重发吗？</summary>
 
-不能。换 ID 可能产生第二条业务消息；应保留稳定 ID 并授权查询权威状态。</details>
+不能。换 ID 可能产生第二条业务消息；应保留稳定 ID 并授权查询权威状态。
+
+</details>
 
 <details><summary>13. Go `context` 取消会自动撤销 S 已提交事务吗？</summary>
 
-不会。取消是协作信号，不能倒转已发生的远端提交。</details>
+不会。取消是协作信号，不能倒转已发生的远端提交。
+
+</details>
 
 <details><summary>14. 重试 `m-9` 返回 409，已证明首次请求是同一意图吗？</summary>
 
-没有。只证明 ID 已占用，还须核对会话、发送者和原始意图。</details>
+没有。只证明 ID 已占用，还须核对会话、发送者和原始意图。
+
+</details>
 
 <details><summary>15. “同 ID 至多一条权威行”属于什么性质？</summary>
 
-安全性：违反时就是坏事已发生。不同 ID 的语义重复仍需其他规则。</details>
+安全性：违反时就是坏事已发生。不同 ID 的语义重复仍需其他规则。
+
+</details>
 
 <details><summary>16. “网络最终恢复后 A 能查明状态”属于什么性质？</summary>
 
-活性，但依赖权威可读、网络连通、授权有效等前提，不能无条件保证固定时限。</details>
+活性，但依赖权威可读、网络连通、授权有效等前提，不能无条件保证固定时限。
+
+</details>
 
 <details><summary>17. 永久分区下能承诺所有 A 请求在 100 ms 内完成吗？</summary>
 
-不能。缺少可达权威和已知延迟上界时，应有明确超时/未知行为。</details>
+不能。缺少可达权威和已知延迟上界时，应有明确超时/未知行为。
+
+</details>
 
 <details><summary>18. 健康检查连败三次能证明旧 G 物理死亡吗？</summary>
 
-不能。可能只是暂停、网络隔离或检测器过载；需要防旧节点迟到写的后续机制。</details>
+不能。可能只是暂停、网络隔离或检测器过载；需要防旧节点迟到写的后续机制。
+
+</details>
 
 <details><summary>19. 为什么 `m-9` 的服务日志要记录阶段，又不能记完整正文？</summary>
 
-阶段/关联 ID 帮助区分 R1–R4；私有正文和凭据可能泄漏，应按脱敏规则限制。</details>
+阶段/关联 ID 帮助区分 R1–R4；私有正文和凭据可能泄漏，应按脱敏规则限制。
+
+</details>
 
 <details><summary>20. A 的 timeout 率能直接代表 S 未提交率吗？</summary>
 
-不能。R3/R4 使 A 超时但 S 已提交；两个指标分母和事件不同。</details>
+不能。R3/R4 使 A 超时但 S 已提交；两个指标分母和事件不同。
+
+</details>
 
 <details><summary>21. 设计 R3 测试时，为什么要在 S 提交后受控丢回包？</summary>
 
-这样才能固定“权威已提交、A 未知”的轨迹并核对查证流程；随意 Sleep 不保证事件顺序。</details>
+这样才能固定“权威已提交、A 未知”的轨迹并核对查证流程；随意 Sleep 不保证事件顺序。
+
+</details>
 
 <details><summary>22. FLP 论文是否证明本题所有 IM 历史查询永远不能成功？</summary>
 
-没有。它讨论特定完全异步故障模型中的确定性共识终止限制，不是对单次普通查询成功与否的结论。</details>
+没有。它讨论特定完全异步故障模型中的确定性共识终止限制，不是对单次普通查询成功与否的结论。
+
+</details>
 
 ## 本章完成标准与下一步
 

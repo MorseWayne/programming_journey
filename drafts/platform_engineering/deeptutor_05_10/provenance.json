@@ -28,9 +28,9 @@
   "original_sha256": "444a610da43b1a61ed6b2bca4a58f62beaaafa6791cf28c91ed9e2f4efbe79c3",
   "original_characters": 33358,
   "generation_request_sha256": "6409bb8210fae4e4709da1f54b8c0c1173654254b7d8b8b5ca2b3229810e9844",
-  "reviewed_sha256": "b4084cc2928a47d5b10fa23186ad87bcd8000720cbe6d4b373ab524fdbd62aa8",
-  "reviewed_characters": 7662,
+  "reviewed_sha256": "0b6e048b16e4f8cd6064e2837796bbc841a4d739908347eb14ebf726e7b7fab8",
+  "reviewed_characters": 7706,
   "reviewed_chinese_characters": 3391,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/10_performance_tools.md",
-  "course_sha256": "df0dcb33b7ce5f08f3d5bf24ed0378cd674b138d8394c944ffe3763c5619eaf9"
+  "course_sha256": "48737dcaf2a8d3288ecde90f1549b0719e53a1ea3166b5ed8c290fe24aaa34ec"
 }

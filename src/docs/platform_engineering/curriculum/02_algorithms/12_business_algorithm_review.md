@@ -100,95 +100,139 @@ date: 2026-09-25
 
 <details><summary>1. `fromSeq=4,limit=3` 对序号 1…8 应返回什么？</summary>
 
-按本章 `seq>=4` 合同返回 4、5、6。</details>
+按本章 `seq>=4` 合同返回 4、5、6。
+
+</details>
 
 <details><summary>2. `fromSeq=9` 与无权请求的结果可混为一种吗？</summary>
 
-不能；前者有权空结果，后者按当前非成员隐藏 404 等授权合同处理。</details>
+不能；前者有权空结果，后者按当前非成员隐藏 404 等授权合同处理。
+
+</details>
 
 <details><summary>3. N、K、C 分别代表什么？</summary>
 
-单会话记录数、实际返回条数、会话数。</details>
+单会话记录数、实际返回条数、会话数。
+
+</details>
 
 <details><summary>4. 热会话 N 很大，平均 N 小能证明尾时延好看吗？</summary>
 
-不能；要按会话大小和热度分桶看。</details>
+不能；要按会话大小和热度分桶看。
+
+</details>
 
 <details><summary>5. map 的遍历顺序能当序号分页顺序吗？</summary>
 
-不能；按 ID 的 map 不保证有序范围输出。</details>
+不能；按 ID 的 map 不保证有序范围输出。
+
+</details>
 
 <details><summary>6. 当前 S2 的 200 等于跨重启历史可查吗？</summary>
 
-不等于；它只表示本进程内存受理。</details>
+不等于；它只表示本进程内存受理。
+
+</details>
 
 <details><summary>7. Bloom “可能在”能直接判重复 409 吗？</summary>
 
-不能；假阳性需权威精确 ID 核查。</details>
+不能；假阳性需权威精确 ID 核查。
+
+</details>
 
 <details><summary>8. 一个算法评审先写 Big-O 还是业务查询合同？</summary>
 
-先写查询、权限、版本、缺失/空结果等合同和输入分布，再分析成本。</details>
+先写查询、权限、版本、缺失/空结果等合同和输入分布，再分析成本。
+
+</details>
 
 ### 推演 9–16：候选、证明与测量
 
 <details><summary>9. 序号 1…8 中下界 4 的零基下标是多少？</summary>
 
-3。</details>
+3。
+
+</details>
 
 <details><summary>10. 有序切片下界加输出 K 条的成本量级是什么？</summary>
 
-约 `O(log N+K)`，并要求排序不变量成立。</details>
+约 `O(log N+K)`，并要求排序不变量成立。
+
+</details>
 
 <details><summary>11. 乱序在有序切片中间插入可能移动多少元素？</summary>
 
-最坏 `O(N)` 个，需量写入比例。</details>
+最坏 `O(N)` 个，需量写入比例。
+
+</details>
 
 <details><summary>12. 精确 ID map 能直接回答 `fromSeq` 有序分页吗？</summary>
 
-不能；它按键查精确 ID，另需排序/范围结构。</details>
+不能；它按键查精确 ID，另需排序/范围结构。
 
-<details><summary>13. 二分比较条件为何是 `seq<fromSeq` 时移动 lo？</summary>
+</details>
 
-这些位置不可能是第一个 `seq>=fromSeq`，可排除到 mid。</details>
+<details><summary>13. 二分比较条件为何是 `seq&lt;fromSeq` 时移动 lo？</summary>
+
+这些位置不可能是第一个 `seq>=fromSeq`，可排除到 mid。
+
+</details>
 
 <details><summary>14. 乱序数据上二分更快，能认为答案正确吗？</summary>
 
-不能；输入未满足排序前提，快速也可能错。</details>
+不能；输入未满足排序前提，快速也可能错。
+
+</details>
 
 <details><summary>15. `testing.B` 微基准能证明 HTTP 用户 p95 吗？</summary>
 
-不能；它只量被测代码段，端到端还含授权、I/O、排队、网络等。</details>
+不能；它只量被测代码段，端到端还含授权、I/O、排队、网络等。
+
+</details>
 
 <details><summary>16. 基准把样本构造计入时间却候选构造成本不同，如何处理？</summary>
 
-明确测量范围；若只比较查询，统一提前建相同版本输入/索引，另测构建成本。</details>
+明确测量范围；若只比较查询，统一提前建相同版本输入/索引，另测构建成本。
+
+</details>
 
 ### 决策 17–22：退化与可审结论
 
 <details><summary>17. limit 极大时可静默少返而声称完整吗？</summary>
 
-不能；应有明确上限、错误/分页合同和用户可见结果。</details>
+不能；应有明确上限、错误/分页合同和用户可见结果。
+
+</details>
 
 <details><summary>18. 现行权限源不可用，可用旧索引结果代替授权吗？</summary>
 
-不可；要保守失败/等待，不能用过期候选泄内容。</details>
+不可；要保守失败/等待，不能用过期候选泄内容。
+
+</details>
 
 <details><summary>19. `unsafe.Sizeof(Message)` 是每条历史完整内存吗？</summary>
 
-不是；字符串正文、切片、map/索引、对齐和运行缓冲等另算。</details>
+不是；字符串正文、切片、map/索引、对齐和运行缓冲等另算。
+
+</details>
 
 <details><summary>20. 顺序追加且范围读多的纸上 CLI，先考虑什么基线？</summary>
 
-有序切片加下界/校验；实际规模与写入模式再测。</details>
+有序切片加下界/校验；实际规模与写入模式再测。
+
+</details>
 
 <details><summary>21. 算法“胜出”但重复 ID 被改成 200，可接受吗？</summary>
 
-不可；现行同 ID 重复仍为 409，算法不改业务合同。</details>
+不可；现行同 ID 重复仍为 409，算法不改业务合同。
+
+</details>
 
 <details><summary>22. 评审卡还需写哪些退化/回退证据？</summary>
 
-容量/limit、错误与拒绝、版本失效、可验证基线、真实测量计划和负责人。</details>
+容量/limit、错误与拒绝、版本失效、可验证基线、真实测量计划和负责人。
+
+</details>
 
 ## 本章完成标准与后续路径
 

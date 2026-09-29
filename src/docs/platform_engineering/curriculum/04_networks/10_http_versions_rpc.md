@@ -100,95 +100,139 @@ gRPC 客户端可设 deadline；超时后客户端可能得到 `DEADLINE_EXCEEDE
 
 <details><summary>1. URL `/v1` 就是 HTTP/1.1 吗？</summary>
 
-不是；前者是应用路径/合同，后者是传输协议版本。</details>
+不是；前者是应用路径/合同，后者是传输协议版本。
+
+</details>
 
 <details><summary>2. HTTP/2 的一条连接可承载多个什么？</summary>
 
-多个并发 HTTP stream，请求/响应帧可交错。</details>
+多个并发 HTTP stream，请求/响应帧可交错。
+
+</details>
 
 <details><summary>3. HTTP/2 已消除同一 TCP 的所有丢包等待吗？</summary>
 
-没有；TCP 字节流的传输层队头阻塞仍可能影响多个 stream。</details>
+没有；TCP 字节流的传输层队头阻塞仍可能影响多个 stream。
+
+</details>
 
 <details><summary>4. HTTP/3 基于什么传输？</summary>
 
-QUIC；不同 stream 可独立可靠有序交付，仍有流控/拥塞。</details>
+QUIC；不同 stream 可独立可靠有序交付，仍有流控/拥塞。
+
+</details>
 
 <details><summary>5. HTTP/3 可保证所有 IM 请求更快吗？</summary>
 
-不能；要按网络/实现/负载实际测量。</details>
+不能；要按网络/实现/负载实际测量。
+
+</details>
 
 <details><summary>6. gRPC 里的服务/方法先解决什么？</summary>
 
-定义可调用操作及请求/响应结构，不自动解决应用授权和业务结果。</details>
+定义可调用操作及请求/响应结构，不自动解决应用授权和业务结果。
+
+</details>
 
 <details><summary>7. `.proto` 增字段就等于 R9 的 9 B 已生效吗？</summary>
 
-不等于；业务提案仍待批准，当前上限 6 UTF-8 B。</details>
+不等于；业务提案仍待批准，当前上限 6 UTF-8 B。
+
+</details>
 
 <details><summary>8. WebSocket 客户端协议与内部 gRPC 能画成同一概念吗？</summary>
 
-不能；它们可在不同段各司其职，不能互相推实现。</details>
+不能；它们可在不同段各司其职，不能互相推实现。
+
+</details>
 
 ### 推演 9–16：流控与状态
 
 <details><summary>9. HTTP/2 的流控只在 stream 级吗？</summary>
 
-不是；还有整条连接级流控，且属逐跳传输。</details>
+不是；还有整条连接级流控，且属逐跳传输。
+
+</details>
 
 <details><summary>10. HTTP 200 就保证 `grpc-status=0`（OK） 吗？</summary>
 
-不保证；gRPC 最终状态需看其状态/trailers。</details>
+不保证；gRPC 最终状态需看其状态/trailers。
+
+</details>
 
 <details><summary>11. `grpc-status=0`（OK） 能证明 B 设备收到吗？</summary>
 
-不能；仍按 RPC 方法和 IM 业务确认点解释。</details>
+不能；仍按 RPC 方法和 IM 业务确认点解释。
+
+</details>
 
 <details><summary>12. 客户端 `DEADLINE_EXCEEDED` 能证明后端未改状态吗？</summary>
 
-不能；服务端可能已执行，取消不自动回滚。</details>
+不能；服务端可能已执行，取消不自动回滚。
+
+</details>
 
 <details><summary>13. gRPC 流式写 API 返回就表示字节已上网吗？</summary>
 
-不一定；可能只交给框架缓冲，仍非应用确认。</details>
+不一定；可能只交给框架缓冲，仍非应用确认。
+
+</details>
 
 <details><summary>14. HTTP/2 的 stream 与 IM 业务消息必一一对应吗？</summary>
 
-不必；一个 stream 可承载 RPC 流中的多个消息，应用须另定边界/确认。</details>
+不必；一个 stream 可承载 RPC 流中的多个消息，应用须另定边界/确认。
+
+</details>
 
 <details><summary>15. 原有 protobuf field number 可改号让 schema 看起来整齐吗？</summary>
 
-不能；使用中的字段号标识线格式，重用/改号会破坏兼容。</details>
+不能；使用中的字段号标识线格式，重用/改号会破坏兼容。
+
+</details>
 
 <details><summary>16. 代理外部 h3、内部 h2 就算全链 h3 吗？</summary>
 
-不算；协议逐跳协商和终止。</details>
+不算；协议逐跳协商和终止。
+
+</details>
 
 ### 决策 17–22：错误与迁移
 
 <details><summary>17. 内部权限错误可不加审查地映成外部 403 吗？</summary>
 
-不可；当前非成员要隐藏 404，不泄会话存在。</details>
+不可；当前非成员要隐藏 404，不泄会话存在。
+
+</details>
 
 <details><summary>18. 内部 RPC 自动重试就使当前同 ID 写入幂等了吗？</summary>
 
-没有；当前重复 ID 409，响应丢失仍需权威核证。</details>
+没有；当前重复 ID 409，响应丢失仍需权威核证。
+
+</details>
 
 <details><summary>19. 选 HTTP/2/3 时只比较吞吐，不看尾时延/内存可吗？</summary>
 
-不够；stream/连接流控、队列与用户阶段结果都要测。</details>
+不够；stream/连接流控、队列与用户阶段结果都要测。
+
+</details>
 
 <details><summary>20. Go 用 `http.Client` 就能断言本次连接一定 h2 吗？</summary>
 
-不能；看实际协商、HTTPS、代理和 Transport 配置。</details>
+不能；看实际协商、HTTPS、代理和 Transport 配置。
+
+</details>
 
 <details><summary>21. 内部状态 OK，外部可把 S2 200 写成 `stored_in_teaching_db` 吗？</summary>
 
-不可；S3 `/v2` 存库仍提议，现行 200 仅本进程内存受理。</details>
+不可；S3 `/v2` 存库仍提议，现行 200 仅本进程内存受理。
+
+</details>
 
 <details><summary>22. 一次协议迁移的评审卡至少要列什么？</summary>
 
-客户端/代理/服务端版本、旧端兼容、模式字段号、流控/期限、错误映射、授权/确认点和回退证据。</details>
+客户端/代理/服务端版本、旧端兼容、模式字段号、流控/期限、错误映射、授权/确认点和回退证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

@@ -270,91 +270,135 @@ func (c fixedClock) Now() time.Time { return c.at }
 
 <details><summary>1. `ValidateMessage` 没有外部依赖，必须造接口吗？</summary>
 
-不必。直接传入字符串和上限，比较返回结果；接口解决可替换边界，不是测试语法的必选项。</details>
+不必。直接传入字符串和上限，比较返回结果；接口解决可替换边界，不是测试语法的必选项。
+
+</details>
 
 <details><summary>2. SUT 是什么？</summary>
 
-本次要核对的函数或服务。测试 `Recorder` 时，`MessageSaver` 是协作者。</details>
+本次要核对的函数或服务。测试 `Recorder` 时，`MessageSaver` 是协作者。
+
+</details>
 
 <details><summary>3. `want` 从哪里来？</summary>
 
-从 10.01 的需求和边界表来，不从当前实现的 `if` 分支复制。</details>
+从 10.01 的需求和边界表来，不从当前实现的 `if` 分支复制。
+
+</details>
 
 <details><summary>4. `MessageSaver` 为什么只有一个方法？</summary>
 
-记录服务只需要保存能力；接口越宽，替身和调用方越容易被无关方法牵连。</details>
+记录服务只需要保存能力；接口越宽，替身和调用方越容易被无关方法牵连。
+
+</details>
 
 <details><summary>5. Go 类型需要显式声明实现接口吗？</summary>
 
-不需要。方法集满足签名即可；01.06 还讲了指针和值方法集的区别。</details>
+不需要。方法集满足签名即可；01.06 还讲了指针和值方法集的区别。
+
+</details>
 
 <details><summary>6. 把 `now time.Time` 当参数有什么好处？</summary>
 
-测试能指定唯一时刻，精确检查边界和 UTC 结果。</details>
+测试能指定唯一时刻，精确检查边界和 UTC 结果。
+
+</details>
 
 <details><summary>7. `memorySaver` 是 stub 吗？</summary>
 
-按本章定义它是 fake：它用 map 真正保存和拒绝重复消息，而非只返回预设答案。</details>
+按本章定义它是 fake：它用 map 真正保存和拒绝重复消息，而非只返回预设答案。
+
+</details>
 
 <details><summary>8. `failingSaver` 证明磁盘必然会失败吗？</summary>
 
-不能。它只控制协作者向 `Recorder` 返回指定错误。</details>
+不能。它只控制协作者向 `Recorder` 返回指定错误。
+
+</details>
 
 <details><summary>9. spy 的 `calls` 在什么时候看？</summary>
 
-调用 SUT 之后读取它记录的请求；狭义 mock 则预设交互期待。</details>
+调用 SUT 之后读取它记录的请求；狭义 mock 则预设交互期待。
+
+</details>
 
 <details><summary>10. 非法正文时 `len(calls)==0` 说明什么？</summary>
 
-说明这次服务调用没有越过保存边界；不能据此证明所有输入都如此。</details>
+说明这次服务调用没有越过保存边界；不能据此证明所有输入都如此。
+
+</details>
 
 <details><summary>11. 为什么检查 `errors.Is(err, errDisk)`？</summary>
 
-核对错误身份沿 `%w` 包装被保留，避免依赖文字描述。</details>
+核对错误身份沿 `%w` 包装被保留，避免依赖文字描述。
+
+</details>
 
 <details><summary>12. 保存失败返回错误，就证明文件字节不变吗？</summary>
 
-不能。文件可能在中途写了一部分；需真实文件层观察故障点与前后状态。</details>
+不能。文件可能在中途写了一部分；需真实文件层观察故障点与前后状态。
+
+</details>
 
 <details><summary>13. 同会话重复 ID 的核心断言是什么？</summary>
 
-得到 `ErrDuplicate`，消息数不增且原消息内容不被替换。</details>
+得到 `ErrDuplicate`，消息数不增且原消息内容不被替换。
+
+</details>
 
 <details><summary>14. 不同会话都使用 `m-a` 一定冲突吗？</summary>
 
-本题以会话 ID 和消息 ID 组成键，因此不冲突；若需求改为全局唯一，键和测试都要调整。</details>
+本题以会话 ID 和消息 ID 组成键，因此不冲突；若需求改为全局唯一，键和测试都要调整。
+
+</details>
 
 <details><summary>15. 为什么每个测试案例新建 fake？</summary>
 
-避免前一案例留下的状态改变后一案例的初始条件。</details>
+避免前一案例留下的状态改变后一案例的初始条件。
+
+</details>
 
 <details><summary>16. 为什么不能只用 fake 测试 JSON 文件？</summary>
 
-fake 没有经过编码、解码、路径、写入和关闭边界，不能证明文件合同。</details>
+fake 没有经过编码、解码、路径、写入和关闭边界，不能证明文件合同。
+
+</details>
 
 <details><summary>17. `bytes.Buffer` 适合检查什么？</summary>
 
-接住 `io.Writer` 的输出，核对 CLI `stdout`、`stderr` 文本与敏感字段边界。</details>
+接住 `io.Writer` 的输出，核对 CLI `stdout`、`stderr` 文本与敏感字段边界。
+
+</details>
 
 <details><summary>18. `t.TempDir()` 的作用是什么？</summary>
 
-给真实文件测试一个独立临时目录，避免使用共享真实历史或固定绝对路径。</details>
+给真实文件测试一个独立临时目录，避免使用共享真实历史或固定绝对路径。
+
+</details>
 
 <details><summary>19. 6 字节上限改 9 时，哪些边界预期变化？</summary>
 
-9 字节由拒绝改为接受；10 字节仍拒绝，6 字节仍接受。重复 ID 与错误身份合同不随之改变。</details>
+9 字节由拒绝改为接受；10 字节仍拒绝，6 字节仍接受。重复 ID 与错误身份合同不随之改变。
+
+</details>
 
 <details><summary>20. 为什么 `sleep` 不适合测试纯时间规则？</summary>
 
-等待依赖调度与墙上时间，慢且不稳定；直接传固定时刻能准确命中边界。</details>
+等待依赖调度与墙上时间，慢且不稳定；直接传固定时刻能准确命中边界。
+
+</details>
 
 <details><summary>21. 只检查 `Save` 调用一次，能证明消息会被收件设备看到吗？</summary>
 
-不能。本章没有网络、服务端或接收端；调用次数只涉及本地服务与协作者。</details>
+不能。本章没有网络、服务端或接收端；调用次数只涉及本地服务与协作者。
+
+</details>
 
 <details><summary>22. 何时值得断言调用次数？</summary>
 
-当次数本身是明确合同，例如非法输入不得调用存储；内部 helper 的次数通常不必固定。</details>
+当次数本身是明确合同，例如非法输入不得调用存储；内部 helper 的次数通常不必固定。
+
+</details>
 
 ## 来源与下一步
 

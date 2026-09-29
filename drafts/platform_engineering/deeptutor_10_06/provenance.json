@@ -26,9 +26,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "007737ea9c6667c64d223edf27788d9f12cf623ade4c8ef090f4d5337df5d008",
-  "reviewed_sha256": "97f6a38e77286f518c36d7c57e837bdde1d7eb7005fd35f36a06b708573dc8eb",
-  "reviewed_characters": 9358,
+  "reviewed_sha256": "a6439f479029df4141e6770adfcee1acc1ccc4ac757298aaadb6b93e39a9224d",
+  "reviewed_characters": 9405,
   "reviewed_chinese_characters": 4656,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/06_code_review_merge.md",
-  "course_sha256": "d06b1b86d1c3013e863e0e4e8ada1f8fff9f0b994e3e1c9dc10f8c3704ac8d3d"
+  "course_sha256": "32f5af510476b61bc3eec14b157dd884096cdca3f8ae405e1922481cc2756e5e"
 }

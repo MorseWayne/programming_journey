@@ -107,95 +107,139 @@ Go 纸上表示可写 `type Edge struct { To string; Cost int64 }` 与 `map[stri
 
 <details><summary>1. 一条路径的总代价怎样算？</summary>
 
-在已约定同一可加单位下，将路径上每条边的权重相加。</details>
+在已约定同一可加单位下，将路径上每条边的权重相加。
+
+</details>
 
 <details><summary>2. A→C→E 有几跳、代价多少？</summary>
 
-2 跳，`5+7=12`。</details>
+2 跳，`5+7=12`。
+
+</details>
 
 <details><summary>3. A→B→C→D→E 有几跳、代价多少？</summary>
 
-4 跳，`2+1+1+3=7`。</details>
+4 跳，`2+1+1+3=7`。
+
+</details>
 
 <details><summary>4. BFS 的最少边数能自动给最低代价吗？</summary>
 
-不能；只有所有可用边同权等特殊前提才相合。</details>
+不能；只有所有可用边同权等特殊前提才相合。
+
+</details>
 
 <details><summary>5. `dist[A]` 初始为多少，F 初始为何不能当 0？</summary>
 
-A 为 0；F 未发现应是 ∞/缺失，不是代价 0。</details>
+A 为 0；F 未发现应是 ∞/缺失，不是代价 0。
+
+</details>
 
 <details><summary>6. 松弛边 u→v 做什么？</summary>
 
-若 `dist[u]+w(u,v)` 更小，就更新 v 暂定代价和 parent。</details>
+若 `dist[u]+w(u,v)` 更小，就更新 v 暂定代价和 parent。
+
+</details>
 
 <details><summary>7. 纸图的 F 从 A 可达吗？</summary>
 
-不可达；无边连接，不能构造 A 到 F 路径。</details>
+不可达；无边连接，不能构造 A 到 F 路径。
+
+</details>
 
 <details><summary>8. 代价 2 ms 与 3 元可直接相加吗？</summary>
 
-不能；单位和优化目标必须先一致或明确定义换算。</details>
+不能；单位和优化目标必须先一致或明确定义换算。
+
+</details>
 
 ### 推演 9–16：堆与非负前提
 
 <details><summary>9. 从 B 松弛后 C 的暂定代价由 5 降到多少？</summary>
 
-`2+1=3`。</details>
+`2+1=3`。
+
+</details>
 
 <details><summary>10. 从 C 松弛后 D 的暂定代价由 6 降到多少？</summary>
 
-`3+1=4`。</details>
+`3+1=4`。
+
+</details>
 
 <details><summary>11. E 第一次入堆为 10，可马上停止吗？</summary>
 
-不可；经 D 后降为 7，应在 E 被有效取出并定型时停。</details>
+不可；经 D 后降为 7，应在 E 被有效取出并定型时停。
+
+</details>
 
 <details><summary>12. 堆中旧 C(5) 与新 C(3) 共存，旧条目怎么办？</summary>
 
-弹出时核当前 dist/定型状态，旧 C(5) 跳过。</details>
+弹出时核当前 dist/定型状态，旧 C(5) 跳过。
+
+</details>
 
 <details><summary>13. Dijkstra 定型一次版本为何要非负权？</summary>
 
-后续路径不能靠负边把已取出的最小暂定代价再降低。</details>
+后续路径不能靠负边把已取出的最小暂定代价再降低。
+
+</details>
 
 <details><summary>14. S→A=2、S→B=5、B→A=−4 的真正 A 代价多少？</summary>
 
-经 B 为 `5−4=1`，比直接 2 小；一次定型 A=2 会错。</details>
+经 B 为 `5−4=1`，比直接 2 小；一次定型 A=2 会错。
+
+</details>
 
 <details><summary>15. 负边就必有负环吗？</summary>
 
-不必；上一题只有一条负边、无环。</details>
+不必；上一题只有一条负边、无环。
+
+</details>
 
 <details><summary>16. 可达负环能使沿它到目标的路径怎样？</summary>
 
-反复绕行可继续降低总代价，相关目标可能没有有限最短代价。</details>
+反复绕行可继续降低总代价，相关目标可能没有有限最短代价。
+
+</details>
 
 ### 决策 17–22：状态、业务和证明
 
 <details><summary>17. 已用 broker 额度与未用额度到同一 D，可合并 visited[D] 吗？</summary>
 
-不可直接合并；后续可行动作不同，应区分 `(D,true/false)`。</details>
+不可直接合并；后续可行动作不同，应区分 `(D,true/false)`。
+
+</details>
 
 <details><summary>18. 扩展状态图仍为非负权，可用什么算法？</summary>
 
-可在完整状态上用 Dijkstra；若全边同权可用 BFS。</details>
+可在完整状态上用 Dijkstra；若全边同权可用 BFS。
+
+</details>
 
 <details><summary>19. parent 只存顶点名能重建额度合法路径吗？</summary>
 
-不一定；应存完整状态与转移。</details>
+不一定；应存完整状态与转移。
+
+</details>
 
 <details><summary>20. `map[string]int64` 缺键返回 0，可当未发现吗？</summary>
 
-不可；要看 `ok` 或用可靠的单独状态/哨兵，并防溢出。</details>
+不可；要看 `ok` 或用可靠的单独状态/哨兵，并防溢出。
+
+</details>
 
 <details><summary>21. 纸上最低代价 7 能证明 B 设备收到消息吗？</summary>
 
-不能；S2 200 只到本进程内存受理，图成本不是确认点。</details>
+不能；S2 200 只到本进程内存受理，图成本不是确认点。
+
+</details>
 
 <details><summary>22. 评审路径算法时至少核哪些前提？</summary>
 
-目标和单位、图方向/版本、边权正负、可达性、溢出、并列规则、规模与业务授权。</details>
+目标和单位、图方向/版本、边权正负、可达性、溢出、并列规则、规模与业务授权。
+
+</details>
 
 ## 本章完成标准与后续路径
 

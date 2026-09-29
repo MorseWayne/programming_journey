@@ -94,91 +94,135 @@ trace/profile 也会扰动被测程序；尤其在高峰、短窗口或争用激
 
 <details><summary>1. 10 人群的 80 ms 可直接与优化后 10000 人群的 230 ms 比吗？</summary>
 
-不能。评估优化必须固定负载条件。</details>
+不能。评估优化必须固定负载条件。
+
+</details>
 
 <details><summary>2. CPU profile 主要采样什么状态？</summary>
 
-正在消耗 CPU 的执行栈，不是完整壁钟等待。</details>
+正在消耗 CPU 的执行栈，不是完整壁钟等待。
+
+</details>
 
 <details><summary>3. 等数据库 200 ms 会按比例出现在 CPU 栈样本里吗？</summary>
 
-不一定。等待期间不持续用 CPU，应看请求 Trace/运行时等待证据。</details>
+不一定。等待期间不持续用 CPU，应看请求 Trace/运行时等待证据。
+
+</details>
 
 <details><summary>4. pprof 的 flat 与 cum 有何区别？</summary>
 
-flat 近似函数自身采样，cum 包含它下游调用路径的采样。</details>
+flat 近似函数自身采样，cum 包含它下游调用路径的采样。
+
+</details>
 
 <details><summary>5. 多个 cum 百分比能直接相加到 100% 吗？</summary>
 
-不能。同一栈样本可进入多个调用者的累计值。</details>
+不能。同一栈样本可进入多个调用者的累计值。
+
+</details>
 
 <details><summary>6. 短命群副本应先看哪种 heap 视角？</summary>
 
-`alloc_space`，找累计分配热点。</details>
+`alloc_space`，找累计分配热点。
+
+</details>
 
 <details><summary>7. 慢设备队列长期留住大数组应先看哪种？</summary>
 
-`inuse_space`，再追引用链与队列容量。</details>
+`inuse_space`，再追引用链与队列容量。
+
+</details>
 
 <details><summary>8. heap profile 是逐个对象的完整账本吗？</summary>
 
-不是。通常是采样归因，不能当精确全量列表。</details>
+不是。通常是采样归因，不能当精确全量列表。
+
+</details>
 
 <details><summary>9. Go heap 视角稳定可断言进程 RSS 不会升吗？</summary>
 
-不能。RSS 还含栈、文件映射和外部/内核相关范围。</details>
+不能。RSS 还含栈、文件映射和外部/内核相关范围。
+
+</details>
 
 <details><summary>10. mutex profile 热点更接近谁的栈？</summary>
 
-造成其他 G 等待的持锁临界区结束位置，而非每个等待者的请求总耗时。</details>
+造成其他 G 等待的持锁临界区结束位置，而非每个等待者的请求总耗时。
+
+</details>
 
 <details><summary>11. block profile 更接近什么？</summary>
 
-goroutine 阻塞在 channel、锁、等待组等同步原语的位置。</details>
+goroutine 阻塞在 channel、锁、等待组等同步原语的位置。
+
+</details>
 
 <details><summary>12. block profile 能覆盖所有远端数据库等待吗？</summary>
 
-不能。它有同步原语的采样范围，还需其他 trace/下游证据。</details>
+不能。它有同步原语的采样范围，还需其他 trace/下游证据。
+
+</details>
 
 <details><summary>13. 哪个工具适合看 G 何时 runnable、running 或等网络？</summary>
 
-Go execution trace。</details>
+Go execution trace。
+
+</details>
 
 <details><summary>14. execution trace 与跨进程请求 Trace 是同一件事吗？</summary>
 
-不是。前者看 Go 运行事件，后者跨业务服务分解请求阶段。</details>
+不是。前者看 Go 运行事件，后者跨业务服务分解请求阶段。
+
+</details>
 
 <details><summary>15. 本地写操作在 trace 中返回就证明设备已展示吗？</summary>
 
-不能。设备应用确认和展示需要独立协议证据。</details>
+不能。设备应用确认和展示需要独立协议证据。
+
+</details>
 
 <details><summary>16. 可以同时打开所有 profile 而不考虑扰动吗？</summary>
 
-不应。采样可能改变 CPU、内存和调度，应按问题分窗口采集并记录开销。</details>
+不应。采样可能改变 CPU、内存和调度，应按问题分窗口采集并记录开销。
+
+</details>
 
 <details><summary>17. 300→230 ms 的纸上改善比例约多少？</summary>
 
-约 23.3%；这是算式示例，不是真实改善结果。</details>
+约 23.3%；这是算式示例，不是真实改善结果。
+
+</details>
 
 <details><summary>18. 候选 P95 降了但队列积压翻倍，就可宣布成功吗？</summary>
 
-不能。还要看容量、错误、内存和确认合同。</details>
+不能。还要看容量、错误、内存和确认合同。
+
+</details>
 
 <details><summary>19. 只看到编码函数火焰图很红，足以证明业务根因吗？</summary>
 
-不足。需同窗业务阶段、负载和可反驳的优化对照。</details>
+不足。需同窗业务阶段、负载和可反驳的优化对照。
+
+</details>
 
 <details><summary>20. `alloc_space` 高而 `inuse_space` 稳定，较像什么？</summary>
 
-短命分配繁忙；仍需核对 GC CPU 与业务时延。</details>
+短命分配繁忙；仍需核对 GC CPU 与业务时延。
+
+</details>
 
 <details><summary>21. 采集 profile 的端点可无控制地公开吗？</summary>
 
-不应。运行信息可能敏感，未来采集需限定隔离和访问权限。</details>
+不应。运行信息可能敏感，未来采集需限定隔离和访问权限。
+
+</details>
 
 <details><summary>22. 本章已采集真实 CPU/heap/trace 吗？</summary>
 
-没有。所有表是静态课程与待测计划。</details>
+没有。所有表是静态课程与待测计划。
+
+</details>
 
 ## 来源与下一步
 

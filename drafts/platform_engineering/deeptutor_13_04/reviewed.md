@@ -91,95 +91,139 @@ B 离线 **25h** 而教学 broker 留 **24h** 的反例逼出数据来源：即�
 
 <details><summary>1. 代码模块与部署单元是一回事吗？</summary>
 
-不是。多个清晰模块可在同一进程一起部署，独立部署也不保证模块清晰。</details>
+不是。多个清晰模块可在同一进程一起部署，独立部署也不保证模块清晰。
+
+</details>
 
 <details><summary>2. 分层架构必然意味着跨进程 RPC 吗？</summary>
 
-不必然。分层首先描述依赖方向，可在一个 Go 进程内。</details>
+不必然。分层首先描述依赖方向，可在一个 Go 进程内。
+
+</details>
 
 <details><summary>3. 使用事件就自动变成微服务吗？</summary>
 
-不会。事件是协作方式，单体或多个服务都可使用。</details>
+不会。事件是协作方式，单体或多个服务都可使用。
+
+</details>
 
 <details><summary>4. 当前 S2 200 到哪一层？</summary>
 
-只到本进程内存受理，不代表权威持久或 B 设备收到。</details>
+只到本进程内存受理，不代表权威持久或 B 设备收到。
+
+</details>
 
 <details><summary>5. 同一单体进程能拥有清晰 Send/History/Transfer 模块吗？</summary>
 
-能；是否独立部署是另一决定。</details>
+能；是否独立部署是另一决定。
+
+</details>
 
 <details><summary>6. 两个服务共用一张可随意写的消息表就有独立数据权威吗？</summary>
 
-没有。部署拆分未明确写入归属，反而可能形成隐形耦合。</details>
+没有。部署拆分未明确写入归属，反而可能形成隐形耦合。
+
+</details>
 
 <details><summary>7. broker offset42 与会话 seq9 能互换吗？</summary>
 
-不能。前者是传输日志位置，后者是未来业务会话内序号。</details>
+不能。前者是传输日志位置，后者是未来业务会话内序号。
+
+</details>
 
 <details><summary>8. R9 未批时旧 `/v1` 可接纳 7 B 正文吗？</summary>
 
-不能。当前仍守 6 UTF-8 B。</details>
+不能。当前仍守 6 UTF-8 B。
+
+</details>
 
 ### 推演 9–16：事务、事件与长离线
 
 <details><summary>9. 当前 S2 由一 Pod 变三 Pod，消息就有持久权威了吗？</summary>
 
-没有。每个进程的内存不会因副本数自动共享或持久。</details>
+没有。每个进程的内存不会因副本数自动共享或持久。
+
+</details>
 
 <details><summary>10. 未来同一 DB 本地事务可一起守什么？</summary>
 
-在适用设计下可原子维护权威消息身份/序号与待发布记录；不自动覆盖 broker/设备。</details>
+在适用设计下可原子维护权威消息身份/序号与待发布记录；不自动覆盖 broker/设备。
+
+</details>
 
 <details><summary>11. DB 已写 `m-9`，E9 还没发，可向 A 宣称 B 已收到吗？</summary>
 
-不能。权威存储、事件投递和设备 ACK 是不同确认点。</details>
+不能。权威存储、事件投递和设备 ACK 是不同确认点。
+
+</details>
 
 <details><summary>12. 中继发 E9 后崩溃、重启再发，权威消息应有几条？</summary>
 
-仍应只有一条 `m-9`；消费者须处理同 E9 的重复投递。</details>
+仍应只有一条 `m-9`；消费者须处理同 E9 的重复投递。
+
+</details>
 
 <details><summary>13. 两阶段提交在所有跨服务场景都不可能吗？</summary>
 
-不是；取决于资源支持与可用性/耦合代价，不可当默认万能解。</details>
+不是；取决于资源支持与可用性/耦合代价，不可当默认万能解。
+
+</details>
 
 <details><summary>14. B 离线 25h、broker 留 24h，增 Transfer 副本能补全吗？</summary>
 
-不能靠过期 broker；未来应从有权权威历史按会话游标补缺。</details>
+不能靠过期 broker；未来应从有权权威历史按会话游标补缺。
+
+</details>
 
 <details><summary>15. 10,000 连接、2% 活跃、0.1 入站/s，入站多少？</summary>
 
-`10,000×0.02×0.1=20/s`，只是一组纸上条件。</details>
+`10,000×0.02×0.1=20/s`，只是一组纸上条件。
+
+</details>
 
 <details><summary>16. 若未来每条 50 成员×2 设备，无过滤重试，任务多少？</summary>
 
-`20×50×2=2,000 设备任务/s`，不是 2,000 条权威消息或设备 ACK。</details>
+`20×50×2=2,000 设备任务/s`，不是 2,000 条权威消息或设备 ACK。
+
+</details>
 
 ### 决策 17–22：拆分证据与停止门
 
 <details><summary>17. 仅因 Send 包 2,000 行代码就应独立服务吗？</summary>
 
-不一定。需看变化、负载、团队、发布独立性和故障/事务成本。</details>
+不一定。需看变化、负载、团队、发布独立性和故障/事务成本。
+
+</details>
 
 <details><summary>18. Transfer 压测 CPU 高但 DB 已满，拆服务一定解决吗？</summary>
 
-不能保证。共享 DB 仍是瓶颈，要按相同工作量和用户结果重测。</details>
+不能保证。共享 DB 仍是瓶颈，要按相同工作量和用户结果重测。
+
+</details>
 
 <details><summary>19. 两团队想独立发布但必须同时改共享表，独立性怎样？</summary>
 
-只是部署上分开；数据和兼容合同仍耦合，应先明确所有权与演进协议。</details>
+只是部署上分开；数据和兼容合同仍耦合，应先明确所有权与演进协议。
+
+</details>
 
 <details><summary>20. 细碎服务方案在本例缺什么证据？</summary>
 
-缺比粗边界更大的可量化独立收益及承担调用、事务和运维成本的能力。</details>
+缺比粗边界更大的可量化独立收益及承担调用、事务和运维成本的能力。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明它用了 outbox 或某服务拓扑吗？</summary>
 
-不能；只证明所读发送到 MQ 与另一 Mongo 消费路径的异步边界。</details>
+不能；只证明所读发送到 MQ 与另一 Mongo 消费路径的异步边界。
+
+</details>
 
 <details><summary>22. 可审架构决定卡至少交付什么？</summary>
 
-相同用户目标/确认点、候选边界、权威/事务与部分失败、负载/团队证据、运维成本、迁移/回退门和未决假设。</details>
+相同用户目标/确认点、候选边界、权威/事务与部分失败、负载/团队证据、运维成本、迁移/回退门和未决假设。
+
+</details>
 
 ## 本章完成标准与后续路径
 

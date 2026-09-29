@@ -12,17 +12,21 @@
   "generation_request_file": "generation_request.json",
   "generation_request_sha256": "0bb59283e644584bd5e050e43d80ade5ae73e7bbf022de6ffc026d77e96c5c31",
   "original_sha256": "e1d28333a631c10a10ed4f88720a49cec97aead48bab5e6780f69109ec39bcdb",
-  "reviewed_sha256": "d5e10346fd747e0a4860d76d148935c205ef172c996c1d45f28c84c760acffb2",
+  "reviewed_sha256": "cb798c04abde68e9c98fc0d5b84a8a89d4e13309a71673b9a3a65f0359ff317c",
   "original_characters": 35445,
-  "reviewed_characters": 9203,
+  "reviewed_characters": 9252,
   "reviewed_chinese_characters": 3524,
   "code_execution": false,
   "site_build": false,
   "publication_status": "integrated into local course source",
   "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/03_search_invariants.md",
-  "course_sha256": "0304e42f3d94f614ed6ea74c32c391992c6e10a405e0c77e81addb12456c340d",
+  "course_sha256": "013aec205ea35ace63ac42a7a6ed16f1a06054120b7aa232b10faf9643a3c201",
   "source_reference": {
-    "primary_sources": ["https://pkg.go.dev/sort#Search", "https://algs4.cs.princeton.edu/11model/", "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/"],
+    "primary_sources": [
+      "https://pkg.go.dev/sort#Search",
+      "https://algs4.cs.princeton.edu/11model/",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/"
+    ],
     "upstream_implementation_claims": false,
     "openim_future_reading": "https://github.com/openimsdk/open-im-server/blob/f6411a8a1a31d3df36f4c2b3ad28481a94141e1f/internal/rpc/msg/sync_msg.go"
   }

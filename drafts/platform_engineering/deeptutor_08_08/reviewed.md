@@ -91,95 +91,139 @@ Saga 可由一个持久编排者保存步骤/重试/补偿责任，也可由服�
 
 <details><summary>1. 当前 S2 `200 accepted_in_memory` 能证明数据库已提交吗？</summary>
 
-不能。未来 S3 `stored_in_teaching_db` 只是另拟的本地数据库提交合同。</details>
+不能。未来 S3 `stored_in_teaching_db` 只是另拟的本地数据库提交合同。
+
+</details>
 
 <details><summary>2. 同库 `messages` 与 outbox 能由一个 SQL 事务同成同败吗？</summary>
 
-能，在它们确实处于该事务覆盖的同一个数据库范围时；broker/设备仍在外面。</details>
+能，在它们确实处于该事务覆盖的同一个数据库范围时；broker/设备仍在外面。
+
+</details>
 
 <details><summary>3. 两个独立数据库各自 `Commit`，放同一个 Go 函数里就原子了吗？</summary>
 
-没有。两个系统之间仍有崩溃和回应未知的空窗。</details>
+没有。两个系统之间仍有崩溃和回应未知的空窗。
+
+</details>
 
 <details><summary>4. 2PC 本题的两个参与者是什么？</summary>
 
-虚构 MessagesDB 与 DeliveryLedgerDB，前提是两者都支持准备/提交协议。</details>
+虚构 MessagesDB 与 DeliveryLedgerDB，前提是两者都支持准备/提交协议。
+
+</details>
 
 <details><summary>5. WebSocket 字节发送可仅靠 PostgreSQL `PREPARE TRANSACTION` 加入 2PC 吗？</summary>
 
-不能。该外部动作没有因此获得 prepare/commit/rollback 能力。</details>
+不能。该外部动作没有因此获得 prepare/commit/rollback 能力。
+
+</details>
 
 <details><summary>6. outbox 的 `PUBLISHED` 可直接表示 B 已读吗？</summary>
 
-不能。它在教学方案里只表示所选 broker 发布确认阶段。</details>
+不能。它在教学方案里只表示所选 broker 发布确认阶段。
+
+</details>
 
 <details><summary>7. Saga 的补偿等于数据库回滚已发到 B 的提示吗？</summary>
 
-不等于。补偿是新动作，不能抹去 B 已见的外部事实。</details>
+不等于。补偿是新动作，不能抹去 B 已见的外部事实。
+
+</details>
 
 <details><summary>8. SearchIndex 与 Notify 能用一个模糊 `done` 代表吗？</summary>
 
-不能。两条派生目的独立进展、失败与对账，设备收/读又是另外状态。</details>
+不能。两条派生目的独立进展、失败与对账，设备收/读又是另外状态。
+
+</details>
 
 ### 2PC 与故障 9–16：谁在等待谁
 
 <details><summary>9. 一个参与者在 prepare 阶段投 NO，协调者应怎样决定？</summary>
 
-决定 ABORT，并让已准备的参与者按该决议回滚。</details>
+决定 ABORT，并让已准备的参与者按该决议回滚。
+
+</details>
 
 <details><summary>10. 两个参与者都投 YES，协调者在持久决议前失联，参与者能各自猜 COMMIT 吗？</summary>
 
-不能。它们处于 in-doubt，需等/恢复全局决议，可能持锁阻塞。</details>
+不能。它们处于 in-doubt，需等/恢复全局决议，可能持锁阻塞。
+
+</details>
 
 <details><summary>11. C 已持久决定 COMMIT，发给一方的消息丢了，能改 ABORT 吗？</summary>
 
-不能。按同一全局 tx ID 重发决定或核查参与者，决议已确定。</details>
+不能。按同一全局 tx ID 重发决定或核查参与者，决议已确定。
+
+</details>
 
 <details><summary>12. PostgreSQL prepared 事务长期不结束，最直接的运维代价是什么？</summary>
 
-继续持有锁，并妨碍 VACUUM 清理等；需要外部事务管理器及时收尾。</details>
+继续持有锁，并妨碍 VACUUM 清理等；需要外部事务管理器及时收尾。
+
+</details>
 
 <details><summary>13. 消息已提交、relay 未发 E9，2PC 两个数据库参与者自动修 broker 吗？</summary>
 
-不自动。教学 outbox 的 `PENDING` 与转发/对账负责这段跨系统裂缝。</details>
+不自动。教学 outbox 的 `PENDING` 与转发/对账负责这段跨系统裂缝。
+
+</details>
 
 <details><summary>14. broker ACK 丢失可断言 E9 未发布吗？</summary>
 
-不能。结果未知，沿稳定 `evt:m-9:v1` 重试并由消费者幂等收敛。</details>
+不能。结果未知，沿稳定 `evt:m-9:v1` 重试并由消费者幂等收敛。
+
+</details>
 
 <details><summary>15. Notify 可能已推送但回执丢失，应无条件重做非幂等副作用吗？</summary>
 
-不应。先查目标/设备可得证据，按稳定任务 ID 受控重试；必要时承认未知。</details>
+不应。先查目标/设备可得证据，按稳定任务 ID 受控重试；必要时承认未知。
+
+</details>
 
 <details><summary>16. B 离线 25h，玩具 broker 只保留 24h，应从哪补消息？</summary>
 
-按当前权限从权威 `messages` 历史按 `seq` 游标补拉。</details>
+按当前权限从权威 `messages` 历史按 `seq` 游标补拉。
+
+</details>
 
 ### Saga、状态与源码 17–22：把用户承诺放回来
 
 <details><summary>17. 已向 A 承诺 S3 DB Commit 后，Notify 失败可无记录删除 `m-9` 吗？</summary>
 
-不能。消息是已承诺事实；修复通知，或按显式业务规则发新撤回/更正动作并留证据。</details>
+不能。消息是已承诺事实；修复通知，或按显式业务规则发新撤回/更正动作并留证据。
+
+</details>
 
 <details><summary>18. `operation_id=send:m-9:v1` 解决 HTTP 回应丢失的哪一步？</summary>
 
-提供稳定身份来查权威提交和各子步骤状态，避免盲目换 ID 重建第二条消息。</details>
+提供稳定身份来查权威提交和各子步骤状态，避免盲目换 ID 重建第二条消息。
+
+</details>
 
 <details><summary>19. 当前 S2 同 ID 相同内容再发可以改成幂等 200 吗？</summary>
 
-不能。本系列固定当前合同仍为 409，未来新接口须单独评审。</details>
+不能。本系列固定当前合同仍为 409，未来新接口须单独评审。
+
+</details>
 
 <details><summary>20. 迟到 `m-9:v1` 能覆盖搜索里当前 v2 吗？</summary>
 
-不能。用权威版本、删除和权限条件更新或重建派生目标。</details>
+不能。用权威版本、删除和权限条件更新或重建派生目标。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明它使用 2PC 或 Saga 吗？</summary>
 
-不能。只看到所述 `MsgToMQ` 之后返回和另一路 Mongo 消费写入位置。</details>
+不能。只看到所述 `MsgToMQ` 之后返回和另一路 Mongo 消费写入位置。
+
+</details>
 
 <details><summary>22. 整个工作流什么时候可对用户说“B 已收到”？</summary>
 
-只有在所选设备协议提供并核对 B 的接收证据时；DB Commit、outbox、broker 和 Notify 尝试都不够。</details>
+只有在所选设备协议提供并核对 B 的接收证据时；DB Commit、outbox、broker 和 Notify 尝试都不够。
+
+</details>
 
 ## 本章完成标准与下一步
 

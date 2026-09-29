@@ -122,91 +122,135 @@ Go 官方 GC 指南把堆 profile 分为 `alloc_space`（累计分配字节热�
 
 <details><summary>1. 10 个目标各复制 1 KiB，单次纯数据多少？</summary>
 
-10 KiB；没有计对象、协议和队列开销。</details>
+10 KiB；没有计对象、协议和队列开销。
+
+</details>
 
 <details><summary>2. 10000 个目标各复制 1 KiB，约多少 MiB？</summary>
 
-10000 KiB≈9.77 MiB，仍是纸上单次新数据量。</details>
+10000 KiB≈9.77 MiB，仍是纸上单次新数据量。
+
+</details>
 
 <details><summary>3. 单次分配 9.77 MiB 就等于分配速率 9.77 MiB/s 吗？</summary>
 
-不等于。还需知道每秒这样的操作发生几次。</details>
+不等于。还需知道每秒这样的操作发生几次。
+
+</details>
 
 <details><summary>4. 副本很快不可达，主要可能推高哪一类压力？</summary>
 
-新分配速率和 GC 周期频率，而非必然长期存活集。</details>
+新分配速率和 GC 周期频率，而非必然长期存活集。
+
+</details>
 
 <details><summary>5. 队列仍引用副本，反复 GC 能删掉它们吗？</summary>
 
-不能。它们从队列根引用可达，业务须处理积压和所有权。</details>
+不能。它们从队列根引用可达，业务须处理积压和所有权。
+
+</details>
 
 <details><summary>6. Go GC 标记从哪里开始？</summary>
 
-从有效根引用出发，沿对象引用图找可达对象。</details>
+从有效根引用出发，沿对象引用图找可达对象。
+
+</details>
 
 <details><summary>7. 无根的循环引用本身一定导致泄漏吗？</summary>
 
-不一定。追踪式 GC 可回收从根不可达的循环对象。</details>
+不一定。追踪式 GC 可回收从根不可达的循环对象。
+
+</details>
 
 <details><summary>8. 清扫后空出的 Go 堆空间一定立刻降低 RSS 吗？</summary>
 
-不一定。分配器可保留供复用，物理页归还另有时机。</details>
+不一定。分配器可保留供复用，物理页归还另有时机。
+
+</details>
 
 <details><summary>9. L=8 MiB、R=2 MiB、GOGC=100 时新增额度是多少？</summary>
 
-`(8+2)×100%=10 MiB`。</details>
+`(8+2)×100%=10 MiB`。
+
+</details>
 
 <details><summary>10. 同样条件下目标总堆是多少？</summary>
 
-`8+10=18 MiB`，是简化目标而非 RSS 上限。</details>
+`8+10=18 MiB`，是简化目标而非 RSS 上限。
+
+</details>
 
 <details><summary>11. GOGC=50 的目标总堆是多少？</summary>
 
-`8+(8+2)×50%=13 MiB`。</details>
+`8+(8+2)×50%=13 MiB`。
+
+</details>
 
 <details><summary>12. GOGC=200 的目标总堆是多少？</summary>
 
-`8+(8+2)×200%=28 MiB`。</details>
+`8+(8+2)×200%=28 MiB`。
+
+</details>
 
 <details><summary>13. 每秒分配 2 MiB、额度 10 MiB，纸上约多久填满？</summary>
 
-约 5 秒；实际 GC 启停并非精确钟表。</details>
+约 5 秒；实际 GC 启停并非精确钟表。
+
+</details>
 
 <details><summary>14. 每秒分配 10 MiB、额度仍 10 MiB 呢？</summary>
 
-约 1 秒，说明速率变大可能令 GC 更频繁。</details>
+约 1 秒，说明速率变大可能令 GC 更频繁。
+
+</details>
 
 <details><summary>15. 降低 GOGC 能让仍在慢设备队列中的副本消失吗？</summary>
 
-不能。队列仍引用，它们属于存活集。</details>
+不能。队列仍引用，它们属于存活集。
+
+</details>
 
 <details><summary>16. Go GC 是否全程停止所有业务 goroutine？</summary>
 
-不是。主要工作与应用并发，但仍有短暂停顿和其他 CPU 成本。</details>
+不是。主要工作与应用并发，但仍有短暂停顿和其他 CPU 成本。
+
+</details>
 
 <details><summary>17. 单次 `PauseNs` 等于完整 GC 周期耗时吗？</summary>
 
-不等于。它记录暂停相关时长，不涵盖全部并发标记/业务竞争。</details>
+不等于。它记录暂停相关时长，不涵盖全部并发标记/业务竞争。
+
+</details>
 
 <details><summary>18. `GCCPUFraction` 可以直接读作事故五分钟 GC CPU 吗？</summary>
 
-不能。它是进程启动以来的累计比例，需要匹配时间窗与其他证据。</details>
+不能。它是进程启动以来的累计比例，需要匹配时间窗与其他证据。
+
+</details>
 
 <details><summary>19. `GOMEMLIMIT` 是容器 RSS 硬上限吗？</summary>
 
-不是。它是 Go 运行时管理内存的软限制，范围不同。</details>
+不是。它是 Go 运行时管理内存的软限制，范围不同。
+
+</details>
 
 <details><summary>20. 短命分配热点优先看 `alloc_space` 还是 `inuse_space`？</summary>
 
-优先看 `alloc_space`；长期保留更关注 `inuse_space` 与引用链。</details>
+优先看 `alloc_space`；长期保留更关注 `inuse_space` 与引用链。
+
+</details>
 
 <details><summary>21. 堆 profile 可把每个对象都精确记录下来吗？</summary>
 
-通常不能，profile 会采样，需要按其统计口径解释。</details>
+通常不能，profile 会采样，需要按其统计口径解释。
+
+</details>
 
 <details><summary>22. 历史查询 P95 变慢就能宣布 GC 是根因吗？</summary>
 
-不能。需将 GC 事件与请求 Trace、CPU、锁、网络和存储等待对齐比较。</details>
+不能。需将 GC 事件与请求 Trace、CPU、锁、网络和存储等待对齐比较。
+
+</details>
 
 ## 来源与下一步
 

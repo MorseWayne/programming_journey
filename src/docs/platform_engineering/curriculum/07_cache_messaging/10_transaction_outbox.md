@@ -103,95 +103,139 @@ SearchIndex 与 Notify 是**两个独立消费目的**。E9 在 broker 中重复
 
 <details><summary>1. 本章的权威聊天事实是什么？</summary>
 
-未来教学 S3 中同库已提交的 `messages` 行 `m-9,c-a,seq9`。当前 S2 尚无这个数据库提交点。</details>
+未来教学 S3 中同库已提交的 `messages` 行 `m-9,c-a,seq9`。当前 S2 尚无这个数据库提交点。
+
+</details>
 
 <details><summary>2. E9 的稳定事件身份是什么？</summary>
 
-`evt:m-9:v1`。重试同一版本沿用它，编辑为 v2 才有新版本身份。</details>
+`evt:m-9:v1`。重试同一版本沿用它，编辑为 v2 才有新版本身份。
+
+</details>
 
 <details><summary>3. 先提交 DB 后发布，哪一个窗口会漏 E9？</summary>
 
-DB Commit 已成功、发布前崩溃；只靠 broker 消费重试找不到从未发布的事件。</details>
+DB Commit 已成功、发布前崩溃；只靠 broker 消费重试找不到从未发布的事件。
+
+</details>
 
 <details><summary>4. 先发布后提交 DB，哪种反例会产生孤儿事件？</summary>
 
-broker 接受 E9 后 DB 回滚，消费者可能看到并不存在的权威 `m-9`。</details>
+broker 接受 E9 后 DB 回滚，消费者可能看到并不存在的权威 `m-9`。
+
+</details>
 
 <details><summary>5. outbox 行和消息行必须满足什么位置条件才可用一次本地事务提交？</summary>
 
-位于同一个支持该事务的数据库范围内，由同一事务写入并一起 Commit/rollback。</details>
+位于同一个支持该事务的数据库范围内，由同一事务写入并一起 Commit/rollback。
+
+</details>
 
 <details><summary>6. 本章的 SQL 事务能原子地提交 broker、索引与设备吗？</summary>
 
-不能。它只原子化其覆盖的本地数据库写入。</details>
+不能。它只原子化其覆盖的本地数据库写入。
+
+</details>
 
 <details><summary>7. S2 成功响应和未来 S3 提议分别代表什么？</summary>
 
-S2 当前为 `accepted_in_memory`；S3 `stored_in_teaching_db` 是拟议的本地数据库已知提交，不含 broker/设备。</details>
+S2 当前为 `accepted_in_memory`；S3 `stored_in_teaching_db` 是拟议的本地数据库已知提交，不含 broker/设备。
+
+</details>
 
 <details><summary>8. outbox 只存 `message_id` 与版本时，谁保存权威正文？</summary>
 
-权威消息表；下游读取仍须依授权。是否在事件里存快照另按隐私与重建需求设计。</details>
+权威消息表；下游读取仍须依授权。是否在事件里存快照另按隐私与重建需求设计。
+
+</details>
 
 ### 推演 9–16：逐点问“已知、未知、如何恢复”
 
 <details><summary>9. C1 两行已写但未 Commit，进程崩溃后能发布 E9 吗？</summary>
 
-不能以未提交行作为事实；事务回滚后两行都不成为已提交记录。</details>
+不能以未提交行作为事实；事务回滚后两行都不成为已提交记录。
+
+</details>
 
 <details><summary>10. C2 Commit 已知成功，relay 停机时留下什么？</summary>
 
-`m-9` 与 `PENDING` E9 同在，恢复者可继续发现待发记录。</details>
+`m-9` 与 `PENDING` E9 同在，恢复者可继续发现待发记录。
+
+</details>
 
 <details><summary>11. broker 已接受 E9 但 ACK 丢了，relay 能确定“没有发出”吗？</summary>
 
-不能；结果未知。保持稳定 `event_id` 并安全重试，接受可能重复。</details>
+不能；结果未知。保持稳定 `event_id` 并安全重试，接受可能重复。
+
+</details>
 
 <details><summary>12. 为什么不能先标 `PUBLISHED` 再发 broker？</summary>
 
-标记后、发送前崩溃会让扫描器误以为已发，造成静默漏事件。</details>
+标记后、发送前崩溃会让扫描器误以为已发，造成静默漏事件。
+
+</details>
 
 <details><summary>13. C6 `PUBLISHED` 能证明 SearchIndex 已完成吗？</summary>
 
-不能。它在本题仅证明按约定级别已知 broker 接受。</details>
+不能。它在本题仅证明按约定级别已知 broker 接受。
+
+</details>
 
 <details><summary>14. R1 领取后死掉，E9 如何继续？</summary>
 
-租约到期后让其他 relay 按状态条件重新领取，沿用原事件身份并记录尝试。</details>
+租约到期后让其他 relay 按状态条件重新领取，沿用原事件身份并记录尝试。
+
+</details>
 
 <details><summary>15. R1 租约过期后迟到，如何防它覆盖 R2 的领取状态？</summary>
 
-用认领 token/版本与条件更新拒绝过期持有者写状态；仍要容忍双发可能。</details>
+用认领 token/版本与条件更新拒绝过期持有者写状态；仍要容忍双发可能。
+
+</details>
 
 <details><summary>16. E9/E10 同一个会话分区，为何仍可能先见 E10？</summary>
 
-两个 relay 在生产侧可能先发布 seq10；分区只排序 broker 实际接收的记录。</details>
+两个 relay 在生产侧可能先发布 seq10；分区只排序 broker 实际接收的记录。
+
+</details>
 
 ### 评审 17–22：从局部正确性走向业务结果
 
 <details><summary>17. E9 重复与 `m-9` 编辑成 v2，能用同一条去重规则直接丢掉吗？</summary>
 
-不能。v1 重复是同一事实重做，v2 是新版本；按消息、版本、副作用区分。</details>
+不能。v1 重复是同一事实重做，v2 是新版本；按消息、版本、副作用区分。
+
+</details>
 
 <details><summary>18. 搜索目标 `latest_version=2`，迟到 v1 可直接覆盖吗？</summary>
 
-不可；用目标端原子版本条件保护该字段，同时单独核查 v1 的其他必要效果。</details>
+不可；用目标端原子版本条件保护该字段，同时单独核查 v1 的其他必要效果。
+
+</details>
 
 <details><summary>19. 只看 outbox `PUBLISHED` 比例足以证明 B 已读吗？</summary>
 
-不足。broker 接受、各组消费、gateway 尝试、设备接收与用户阅读有不同证据。</details>
+不足。broker 接受、各组消费、gateway 尝试、设备接收与用户阅读有不同证据。
+
+</details>
 
 <details><summary>20. CDC 换掉轮询 relay 后，消费者幂等可以删吗？</summary>
 
-不能。连接器发布和消费的重复/重放及外部副作用仍需处理。</details>
+不能。连接器发布和消费的重复/重放及外部副作用仍需处理。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 的两段源码能证实它已实现本章 SQL outbox 吗？</summary>
 
-不能。只看到所述分支 `MsgToMQ` 后返回与另一消费路径调用 MongoDB 批量写。</details>
+不能。只看到所述分支 `MsgToMQ` 后返回与另一消费路径调用 MongoDB 批量写。
+
+</details>
 
 <details><summary>22. `PUBLISHED` 后搜索缺一条，下一份可执行的证据是什么？</summary>
 
-先按 `event_id`/版本核对 broker/消费位置、隔离记录和索引目标，再由权威 `messages` 安全重建并留下对账结果；不要猜设备状态。</details>
+先按 `event_id`/版本核对 broker/消费位置、隔离记录和索引目标，再由权威 `messages` 安全重建并留下对账结果；不要猜设备状态。
+
+</details>
 
 ## 本章完成标准与下一步
 

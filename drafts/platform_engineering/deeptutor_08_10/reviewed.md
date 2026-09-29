@@ -82,95 +82,139 @@ Proto 字段编号用于线格式识别；已使用编号不能随意改或重�
 
 <details><summary>1. `C_old` 与 `C_new` 各有几个投票者、多数是多少？</summary>
 
-各 3 个，多数各为 2。</details>
+各 3 个，多数各为 2。
+
+</details>
 
 <details><summary>2. 旧 `{R1,R2}` 与新 `{R3,R4}` 两个多数有交点吗？</summary>
 
-没有。直接让两套配置独立同时决策有风险。</details>
+没有。直接让两套配置独立同时决策有风险。
+
+</details>
 
 <details><summary>3. 联合配置阶段只拿旧组 2 票够吗？</summary>
 
-不够；按 Raft 论文模型须旧组和新组分别满足多数。</details>
+不够；按 Raft 论文模型须旧组和新组分别满足多数。
+
+</details>
 
 <details><summary>4. etcd learner 刚启动但未追平，可直接计入投票多数吗？</summary>
 
-不可。它先是非投票成员，追上后按产品规则 promotion。</details>
+不可。它先是非投票成员，追上后按产品规则 promotion。
+
+</details>
 
 <details><summary>5. Raft `lastIncludedIndex=12` 是 `c-a seq12` 吗？</summary>
 
-不是。前者是复制组日志坐标，后者若存在才是会话业务序号。</details>
+不是。前者是复制组日志坐标，后者若存在才是会话业务序号。
+
+</details>
 
 <details><summary>6. b1 的 `S0/L0` 与 Raft `index12/term4` 可互换吗？</summary>
 
-不可。前者接续应用数据快照/增量，后者定位 Raft 状态机快照与日志。</details>
+不可。前者接续应用数据快照/增量，后者定位 Raft 状态机快照与日志。
+
+</details>
 
 <details><summary>7. 事件 `event_v2` 与当前 HTTP S2 成功合同是同一版本号吗？</summary>
 
-不是。事件格式版本与 HTTP 接口/阶段合同是两条独立演进轴。</details>
+不是。事件格式版本与 HTTP 接口/阶段合同是两条独立演进轴。
+
+</details>
 
 <details><summary>8. Protobuf 旧程序能解析新增字段，就一定会正确执行 `visibility` 吗？</summary>
 
-不一定。旧程序可能忽略字段，线格式可读不等于权限语义安全。</details>
+不一定。旧程序可能忽略字段，线格式可读不等于权限语义安全。
+
+</details>
 
 ### 快照与在途 9–16：哪里会丢增量
 
 <details><summary>9. Raft 快照只应覆盖什么前缀？</summary>
 
-已提交且应用的状态机前缀，并带 `lastIncludedIndex/Term` 供后续日志衔接。</details>
+已提交且应用的状态机前缀，并带 `lastIncludedIndex/Term` 供后续日志衔接。
+
+</details>
 
 <details><summary>10. R4 落后到 index8，领导者已截断需要的旧日志，怎么办？</summary>
 
-按 Raft 安装完整快照至 index12，再追其后的合法日志。</details>
+按 Raft 安装完整快照至 index12，再追其后的合法日志。
+
+</details>
 
 <details><summary>11. 应用 `S0` 只含 `m-9:v1`，复制期间发生 v2 编辑，N3 可直接切流吗？</summary>
 
-不可。须沿配对 `L0` 增量追到 v2 并核对版本。</details>
+不可。须沿配对 `L0` 增量追到 v2 并核对版本。
+
+</details>
 
 <details><summary>12. 编辑 `m-9:v2` 会让它自动占用新聊天 `seq10` 吗？</summary>
 
-本题不会；它仍是 `m-9/seq9` 的新版本，`m-10` 才占 seq10。</details>
+本题不会；它仍是 `m-9/seq9` 的新版本，`m-10` 才占 seq10。
+
+</details>
 
 <details><summary>13. 新消费者先支持旧/新事件，再升级生产者有何作用？</summary>
 
-避免仍在运行的旧消费者忽略新语义字段；旧事件回放也有可解释路径。</details>
+避免仍在运行的旧消费者忽略新语义字段；旧事件回放也有可解释路径。
+
+</details>
 
 <details><summary>14. Protobuf 旧未知字段经 JSON 转码一定保留吗？</summary>
 
-不一定。官方说明 ProtoJSON 或逐字段复制可能丢未知字段，需逐链路验证。</details>
+不一定。官方说明 ProtoJSON 或逐字段复制可能丢未知字段，需逐链路验证。
+
+</details>
 
 <details><summary>15. M2 两边消息数量一样，就能认定版本和权限全对吗？</summary>
 
-不能。还要比 ID 差集、seq 缺口、版本、撤回/删除、可见范围与 outbox。</details>
+不能。还要比 ID 差集、seq 缺口、版本、撤回/删除、可见范围与 outbox。
+
+</details>
 
 <details><summary>16. 搬 b1 会把 Kafka P0:42 的 E9 自动移到另一分区吗？</summary>
 
-不会。存储桶路由与 broker 分区是不同映射。</details>
+不会。存储桶路由与 broker 分区是不同映射。
+
+</details>
 
 ### 回退与源码 17–22：评审一个可执行门槛
 
 <details><summary>17. N3 尚未追上 `L0`，可先发布 epoch8 再补吗？</summary>
 
-不可作为已追平切换。先修断档/追增量与对账，再开放新 owner。</details>
+不可作为已追平切换。先修断档/追增量与对账，再开放新 owner。
+
+</details>
 
 <details><summary>18. N3 已接收新 `m-11`，能无条件把路由改回旧 epoch7/N1 吗？</summary>
 
-不能。先围栏 N3、反向追新写并核对，再发布更高的新 epoch。</details>
+不能。先围栏 N3、反向追新写并核对，再发布更高的新 epoch。
+
+</details>
 
 <details><summary>19. 迟到的 `evt:m-9:v1` 可覆盖 `m-9:v2` 搜索文档吗？</summary>
 
-不可。目标按权威消息版本/权限条件处理并保留缺口修复。</details>
+不可。目标按权威消息版本/权限条件处理并保留缺口修复。
+
+</details>
 
 <details><summary>20. 新字段删除后可重用原 Protobuf 字段号吗？</summary>
 
-不应。编号不可随意重用，删除后按官方规则 `reserved` 防止冲突。</details>
+不应。编号不可随意重用，删除后按官方规则 `reserved` 防止冲突。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码可证明它采用本章联合配置与事件 v2 吗？</summary>
 
-不能。只核对了所述发送入队返回和另一 MongoDB 消费调用。</details>
+不能。只核对了所述发送入队返回和另一 MongoDB 消费调用。
+
+</details>
 
 <details><summary>22. 何时能清理旧 N1 拷贝和旧事件读取分支？</summary>
 
-路由/增量/ID版本权限/outbox 对账、旧客户端和旧事件重放/隔离窗口、回退证据均有明确通过结果后，按保留政策受控清理。</details>
+路由/增量/ID版本权限/outbox 对账、旧客户端和旧事件重放/隔离窗口、回退证据均有明确通过结果后，按保留政策受控清理。
+
+</details>
 
 ## 本章完成标准与下一步
 

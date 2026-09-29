@@ -32,9 +32,9 @@
   "original_sha256": "655556b009879a266c81b880f3d9277725f41d42935ca0a2f7bdbc495a3fa161",
   "original_characters": 31065,
   "generation_request_sha256": "864b55cc613b372579795658621eb29443200925fd0850bd1a9a4b3507c9baf1",
-  "reviewed_sha256": "d716e8e505ce5bc28d8bf9affa20bc0cbc71b07345f1181e36f76bbf9401705d",
-  "reviewed_characters": 9953,
+  "reviewed_sha256": "f2ed23f3fe148710d91b3c5ed4cb775a50547c2037b01e0f52c9a4638522e705",
+  "reviewed_characters": 9997,
   "reviewed_chinese_characters": 3928,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/12_maintainability_assessment.md",
-  "course_sha256": "1a53260849b64fed87799fb2cbca56673d0821a27ac42ff983ea40b1458cbfa7"
+  "course_sha256": "79c894535ceb7b389ad374071b7afebdfd394634e18f27892ad88acce295cc6a"
 }

@@ -305,83 +305,123 @@ func main() {
 
 <details><summary>1. `tasks[0]` 是任务身份吗？</summary>
 
-不是，只是当前第一个位置。出队后原 `tasks[1]` 会成为新队首，ID 不变。</details>
+不是，只是当前第一个位置。出队后原 `tasks[1]` 会成为新队首，ID 不变。
+
+</details>
 
 <details><summary>2. 一条消息面向两台设备形成几个教学任务？</summary>
 
-在“每条消息每台设备一任务”的明确模型中为两个；消息仍只有一条。</details>
+在“每条消息每台设备一任务”的明确模型中为两个；消息仍只有一条。
+
+</details>
 
 <details><summary>3. `tasks=tasks[1:]` 会搬移所有剩余元素吗？</summary>
 
-不会，它主要改变切片描述；原底层数组可能继续被引用。</details>
+不会，它主要改变切片描述；原底层数组可能继续被引用。
+
+</details>
 
 <details><summary>4. 为什么出队前清掉旧槽？</summary>
 
-`Task` 的字符串等引用不应在逻辑删除后仍由存活的数组槽长期持有。</details>
+`Task` 的字符串等引用不应在逻辑删除后仍由存活的数组槽长期持有。
+
+</details>
 
 <details><summary>5. `append` 的每一次调用都是 O(1) 吗？</summary>
 
-不是。容量不足的一次可能分配并复制 O(n) 个元素；摊还分析需要增长策略前提。</details>
+不是。容量不足的一次可能分配并复制 O(n) 个元素；摊还分析需要增长策略前提。
+
+</details>
 
 <details><summary>6. 有头尾指针的单链，删除唯一节点后怎样更新？</summary>
 
-同时令 `head=nil`、`tail=nil`；只清其中一个会留下不一致状态。</details>
+同时令 `head=nil`、`tail=nil`；只清其中一个会留下不一致状态。
+
+</details>
 
 <details><summary>7. 只知道一个消息 ID，单链表能 O(1) 删除对应任务吗？</summary>
 
-通常不能。先按 ID 找节点或前驱仍需遍历，除非另有索引与相应指针。</details>
+通常不能。先按 ID 找节点或前驱仍需遍历，除非另有索引与相应指针。
+
+</details>
 
 <details><summary>8. 栈依次压入 A、B、C，第一次弹出谁？</summary>
 
-C；这是后进先出。它不自动表示服务端撤回了 C。</details>
+C；这是后进先出。它不自动表示服务端撤回了 C。
+
+</details>
 
 <details><summary>9. 队列依次入 A、B、C，第一次出队谁？</summary>
 
-A；这是先进先出，只规定此容器的取出顺序。</details>
+A；这是先进先出，只规定此容器的取出顺序。
+
+</details>
 
 <details><summary>10. 容量 4、`head=2`、`count=3`，`tail` 是几？</summary>
 
-`(2+3)%4=1`，下一次写下标 1。</details>
+`(2+3)%4=1`，下一次写下标 1。
+
+</details>
 
 <details><summary>11. `head==tail` 能单独判断空吗？</summary>
 
-不能；`count=0` 为空，`count=C` 为满，两者都可能令下标相等。</details>
+不能；`count=0` 为空，`count=C` 为满，两者都可能令下标相等。
+
+</details>
 
 <details><summary>12. 为什么构造时拒绝 `capacity=0`？</summary>
 
-所有取模与访问都要求正容量，`%0` 无定义。</details>
+所有取模与访问都要求正容量，`%0` 无定义。
+
+</details>
 
 <details><summary>13. 容量 4 的推演中，出 B 后逻辑队列是什么？</summary>
 
-只有 C，`head=2,count=1,tail=3`。</details>
+只有 C，`head=2,count=1,tail=3`。
+
+</details>
 
 <details><summary>14. 再入 D、E、F 后逻辑队列是什么？</summary>
 
-C、D、E、F；`head=2,count=4,tail=2`，已满。</details>
+C、D、E、F；`head=2,count=4,tail=2`，已满。
+
+</details>
 
 <details><summary>15. 已满时入 G，本章结果是什么？</summary>
 
-返回 `false`，C、D、E、F 和三个状态量均保持不变。</details>
+返回 `false`，C、D、E、F 和三个状态量均保持不变。
+
+</details>
 
 <details><summary>16. 空队列出队返回零值任务，如何区分真实结果？</summary>
 
-同时返回 `ok=false`；不能只看 `Task{}` 的字段。</details>
+同时返回 `ok=false`；不能只看 `Task{}` 的字段。
+
+</details>
 
 <details><summary>17. 出队完成是否等于任务执行成功？</summary>
 
-不等于。它只从本地队列移走任务；后续发送、确认、重试另有状态。</details>
+不等于。它只从本地队列移走任务；后续发送、确认、重试另有状态。
+
+</details>
 
 <details><summary>18. 固定环形队列入队 O(1) 能说明发送时延 O(1) 吗？</summary>
 
-不能。排队等待、消息大小、网络、设备数量和重试都在结构操作以外。</details>
+不能。排队等待、消息大小、网络、设备数量和重试都在结构操作以外。
+
+</details>
 
 <details><summary>19. 为什么链表不一定比切片快？</summary>
 
-节点分配、指针追踪与局部性有成本；只比较大 O 不能得到真实耗时结论。</details>
+节点分配、指针追踪与局部性有成本；只比较大 O 不能得到真实耗时结论。
+
+</details>
 
 <details><summary>20. 阅读公开 IM 项目队列时先问什么？</summary>
 
-确认任务身份、容量、满载处理、出队清理、确认点和恢复条件；不能仅看容器名称推断可靠性。</details>
+确认任务身份、容量、满载处理、出队清理、确认点和恢复条件；不能仅看容器名称推断可靠性。
+
+</details>
 
 ## 来源与下一步
 

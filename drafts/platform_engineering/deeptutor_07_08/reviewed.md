@@ -72,91 +72,135 @@ P0: 42 E9 [仍 pending] → 43 E10 [已完成] → next offset 44
 
 <details><summary>1. E9 的 `seq9` 与 P0 `offset42` 可以互推吗？</summary>
 
-不能。前者是 `c-a` 业务历史序号，后者是 broker P0 的位置。</details>
+不能。前者是 `c-a` 业务历史序号，后者是 broker P0 的位置。
+
+</details>
 
 <details><summary>2. P0:42、43 排序能比较 P1:7 的全局先后吗？</summary>
 
-不能。没有本题定义的跨分区总序。</details>
+不能。没有本题定义的跨分区总序。
+
+</details>
 
 <details><summary>3. 为什么同 `conversation_id` 作为键可能帮助会话内顺序？</summary>
 
-在稳定映射和正确发布顺序前提下，同会话事件落同分区，可按分区追加顺序读取。</details>
+在稳定映射和正确发布顺序前提下，同会话事件落同分区，可按分区追加顺序读取。
 
-<details><summary>4. DB 中 seq9<seq10，broker 一定收到 E9 再 E10 吗？</summary>
+</details>
 
-不一定。生产者发布/重试顺序仍须设计；本题把正确追加顺序列为前提。</details>
+<details><summary>4. DB 中 seq9&lt;seq10，broker 一定收到 E9 再 E10 吗？</summary>
+
+不一定。生产者发布/重试顺序仍须设计；本题把正确追加顺序列为前提。
+
+</details>
 
 <details><summary>5. W1 持 P0、W2 持 P1，W2 也会同时拿 P0:E9 吗？</summary>
 
-在本题正常组内分配下不会；再平衡或重放会改变后来归属。</details>
+在本题正常组内分配下不会；再平衡或重放会改变后来归属。
+
+</details>
 
 <details><summary>6. 顺序读 E9/E10 就保证应用完成也先 E9 后 E10 吗？</summary>
 
-不保证。W1 可把它们交给并发任务，完成时长不同。</details>
+不保证。W1 可把它们交给并发任务，完成时长不同。
+
+</details>
 
 <details><summary>7. F1 来自 c-b，可否在 E9 仍待处理时并行？</summary>
 
-可以作为候选，因为本题两会话没有同键顺序依赖且位于不同分区。</details>
+可以作为候选，因为本题两会话没有同键顺序依赖且位于不同分区。
+
+</details>
 
 <details><summary>8. 加十个 worker 就能让 c-g 同一有序分区并行十倍吗？</summary>
 
-不能。单键/单分区的顺序边界仍在；拆分需重新定义顺序。</details>
+不能。单键/单分区的顺序边界仍在；拆分需重新定义顺序。
+
+</details>
 
 <details><summary>9. T9=100 ms、T10=10 ms 同时开始，谁先完成？</summary>
 
-T10 先完成，虽然 E10 在 P0 日志中晚于 E9。</details>
+T10 先完成，虽然 E10 在 P0 日志中晚于 E9。
+
+</details>
 
 <details><summary>10. 无条件写 `latest_seq`，T10 后 T9 写完的最后值是多少？</summary>
 
-先到 10，后被 E9 写回 9，是错误倒退。</details>
+先到 10，后被 E9 写回 9，是错误倒退。
+
+</details>
 
 <details><summary>11. `max(latest_seq,event.seq)` 可阻止哪项错误？又不能证明什么？</summary>
 
-可阻止该字段从 10 回到 9；不能证明 E9 的其他索引/权限/通知效果已处理。</details>
+可阻止该字段从 10 回到 9；不能证明 E9 的其他索引/权限/通知效果已处理。
+
+</details>
 
 <details><summary>12. E9 首次失败，E10 成功后 E9 重投，broker 原始分区顺序改变了吗？</summary>
 
-没有，原日志仍 42→43；外部处理/重试完成顺序变了。</details>
+没有，原日志仍 42→43；外部处理/重试完成顺序变了。
+
+</details>
 
 <details><summary>13. Kafka toy offset42/43 后 `commit(44)` 表示什么？</summary>
 
-恢复时下一条从 44 读，暗含 42、43 在该消费者策略里已处理。</details>
+恢复时下一条从 44 读，暗含 42、43 在该消费者策略里已处理。
+
+</details>
 
 <details><summary>14. E9 仍 pending、E10 已完成就提交 44，风险是什么？</summary>
 
-崩溃后从 44 继续，E9 可能再也不被该组处理。</details>
+崩溃后从 44 继续，E9 可能再也不被该组处理。
+
+</details>
 
 <details><summary>15. E9 未完成时，可提交的连续完成前缀能越过 42 吗？</summary>
 
-不能。即使 43 已先完成，也不能用最高完成值越过未完成的 42。</details>
+不能。即使 43 已先完成，也不能用最高完成值越过未完成的 42。
+
+</details>
 
 <details><summary>16. NATS 给 E10 单独 ACK 后，预览就绝不会倒退吗？</summary>
 
-不能推断。E9 后到仍可能更新外部预览，须目标版本或顺序政策。</details>
+不能推断。E9 后到仍可能更新外部预览，须目标版本或顺序政策。
+
+</details>
 
 <details><summary>17. 批次 E9 已写索引、E10 失败，先 ACK 全批有什么风险？</summary>
 
-E10 可能漏处理；确认范围超出了实际完成范围。</details>
+E10 可能漏处理；确认范围超出了实际完成范围。
+
+</details>
 
 <details><summary>18. 改成整批完成后才 ACK，重试时 E9 会怎样？</summary>
 
-E9 可能重放，索引须按稳定身份/版本幂等处理。</details>
+E9 可能重放，索引须按稳定身份/版本幂等处理。
+
+</details>
 
 <details><summary>19. W1 被撤销 P0 后，旧在途 E9 是否必然无法写外部系统？</summary>
 
-不必然。W1 可迟到完成，目标要有版本/owner 代次等防回退。</details>
+不必然。W1 可迟到完成，目标要有版本/owner 代次等防回退。
+
+</details>
 
 <details><summary>20. W2 已把预览到 10，W1 后到 E9 应被怎样处理？</summary>
 
-不能无条件覆盖为 9；可拒绝低版本或按明确重放/修复协议处理其他必要效果。</details>
+不能无条件覆盖为 9；可拒绝低版本或按明确重放/修复协议处理其他必要效果。
+
+</details>
 
 <details><summary>21. 顺序更严格会对热会话带来什么代价？</summary>
 
-同键任务需等待前项或按序提交，热分区可能积压；要测量吞吐/尾延迟并定义失败政策。</details>
+同键任务需等待前项或按序提交，热分区可能积压；要测量吞吐/尾延迟并定义失败政策。
+
+</details>
 
 <details><summary>22. 为此案例交接最少保留哪五类位置/状态？</summary>
 
-业务 seq、broker 分区 offset、worker/代次、外部目标版本、ACK/已提交 offset 与在途状态，便于查跳洞和迟到写。</details>
+业务 seq、broker 分区 offset、worker/代次、外部目标版本、ACK/已提交 offset 与在途状态，便于查跳洞和迟到写。
+
+</details>
 
 ## 本章完成标准与下一步
 

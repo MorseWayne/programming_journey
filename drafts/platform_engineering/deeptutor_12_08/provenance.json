@@ -30,9 +30,9 @@
   "original_sha256": "dcbbe25714de7e78a8ed1b9a707f609d8e9534025a7167034a90b6c29416144f",
   "original_characters": 31368,
   "generation_request_sha256": "e909e3dbe33c230ef941587562c62178ef15d43138b397a4bd33a7ae74a36350",
-  "reviewed_sha256": "cf3d827cad05746f62da9f6cf2ef9954576c2c0ce478ac65ab37ee1615051ddc",
-  "reviewed_characters": 10545,
+  "reviewed_sha256": "1f4358d9e52cd82d03a502a14c7e2a4a4b33c3a6ed9e84b3459882c602ccb3b5",
+  "reviewed_characters": 10589,
   "reviewed_chinese_characters": 3248,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/08_startup_probes_exit.md",
-  "course_sha256": "ccb14bb42681c418c5c9ed6e84e68367a7fa46cdac049094bf9f43cf8b10d252"
+  "course_sha256": "c3ae93c581952c1f9ced5929b4147b38d610132da5f414a677b028a1ddd0b831"
 }

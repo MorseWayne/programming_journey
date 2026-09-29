@@ -28,9 +28,9 @@
   "original_sha256": "7b6453bd1db4519d94e8066a7c3b55ec78c21c7e01c7f6838387006bb7e2f0b7",
   "original_characters": 31522,
   "generation_request_sha256": "faf312907d0b1de312a210de72033420b0a2f679807dd482a88ea3ecca551299",
-  "reviewed_sha256": "0d4f8325a8c78d05b68cc48892c2d6a8d2b724060ff198b136032e47251e5bff",
-  "reviewed_characters": 10625,
+  "reviewed_sha256": "07319ba4061f99eadb3c1e6e67aa9bc3e1cf92eaf0242d9f1d03bd3b0dfa6586",
+  "reviewed_characters": 10672,
   "reviewed_chinese_characters": 4344,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/12_database_business_case.md",
-  "course_sha256": "e69b06d37c5dc4357dc889d3122b33529126e69da29a4bebc2f5293513ee3aca"
+  "course_sha256": "dd51124716865aa19c519f6d49e80b265d7c2fc17c5ae801a4a1a3f96c5b1cbd"
 }

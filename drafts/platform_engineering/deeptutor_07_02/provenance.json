@@ -32,9 +32,9 @@
   "original_sha256": "b8a3496614be11e62553a697efe6b391bb7da986254b193f121c73bf32a1098a",
   "original_characters": 31238,
   "generation_request_sha256": "d011df45770b16c87b9a3c12e4a719f3048ec117af05f49d8ea5d8112c6dded5",
-  "reviewed_sha256": "2bcdc8d0f677323f50c5403faa13e535b9d7870a65332c31bd6d4e8d961e04d7",
-  "reviewed_characters": 9160,
+  "reviewed_sha256": "2e75f531e231e12c29a06ddc623ee1a090310a8d3ab16c10952755aeef4de2da",
+  "reviewed_characters": 9204,
   "reviewed_chinese_characters": 3359,
   "course_file": "src/docs/platform_engineering/curriculum/07_cache_messaging/02_redis_data_model.md",
-  "course_sha256": "36cd316f152e0cfde603363b80785bc5cfcdb16495350698aa4df229f181d603"
+  "course_sha256": "d5643d3d160b712a8c8bc3c72cb43e19f53c87a04b0eecd1e2413d03c0f00d8f"
 }

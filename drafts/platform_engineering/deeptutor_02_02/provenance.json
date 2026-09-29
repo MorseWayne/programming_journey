@@ -12,17 +12,22 @@
   "generation_request_file": "generation_request.json",
   "generation_request_sha256": "8526a4aeb5256fd6c041269b345006503320e1a1035af47f6beb0721725445b8",
   "original_sha256": "cd1f7cad6e6a20572c44fec2d80241b729519fc3f3e3e3142ba7e307bae8f5d6",
-  "reviewed_sha256": "9331467b8a35f00e9dfe21c1bfa875d8f2e63b2b09531681efc0fc8d066d7753",
+  "reviewed_sha256": "d2a19fcf404cefd5a8be1bfb0fa7a1c50b6114c042f4b7cae3f0d4df94a27682",
   "original_characters": 40575,
-  "reviewed_characters": 11270,
+  "reviewed_characters": 11310,
   "reviewed_chinese_characters": 4387,
   "code_execution": false,
   "site_build": false,
   "publication_status": "integrated into local course source",
   "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/02_linear_structures.md",
-  "course_sha256": "643952f442c11d01dc837f743abba098e111423e5cef3848828cf68d2bc60952",
+  "course_sha256": "f3a8524058cfdd2cbb2ee63de8a7ef4457d71f18d168e21edce2d778f2604dea",
   "source_reference": {
-    "primary_sources": ["https://algs4.cs.princeton.edu/13stacks/", "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/", "https://pkg.go.dev/container/list", "https://go.dev/blog/slices-intro"],
+    "primary_sources": [
+      "https://algs4.cs.princeton.edu/13stacks/",
+      "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/pages/lecture-notes/",
+      "https://pkg.go.dev/container/list",
+      "https://go.dev/blog/slices-intro"
+    ],
     "upstream_implementation_claims": false,
     "input_scope": "Original bounded IM teaching model; books and official Go documentation used for topic and behavior review, not imported as DeepTutor knowledge bases."
   }

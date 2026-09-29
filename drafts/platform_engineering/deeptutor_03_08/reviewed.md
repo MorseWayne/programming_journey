@@ -116,91 +116,135 @@ Go 初学者可把上述步骤对应到 `os.OpenFile`、`(*File).Write`、`(*Fil
 
 <details><summary>1. `write` 返回成功等于掉电后可恢复吗？</summary>
 
-不等于；写入的页和目录项可能尚未按耐久要求同步。</details>
+不等于；写入的页和目录项可能尚未按耐久要求同步。
+
+</details>
 
 <details><summary>2. 一次 `write` 请求 100 字节却返回 60，已经完成多少？</summary>
 
-本次只确认 60 字节；须继续处理剩余 40 字节或报告失败。</details>
+本次只确认 60 字节；须继续处理剩余 40 字节或报告失败。
+
+</details>
 
 <details><summary>3. `close` 可以通用替代文件和父目录同步吗？</summary>
 
-不能。关闭文件生命周期与两类持久化合同不同。</details>
+不能。关闭文件生命周期与两类持久化合同不同。
+
+</details>
 
 <details><summary>4. `fsync` 临时文件主要解决哪一层？</summary>
 
-为临时文件内容及相关元数据提供同步证据，不自动同步其父目录名字。</details>
+为临时文件内容及相关元数据提供同步证据，不自动同步其父目录名字。
+
+</details>
 
 <details><summary>5. 为什么直接 `O_TRUNC` 覆盖 V1 有风险？</summary>
 
-旧完整内容会先被截空，读者和崩溃恢复都可能遇到空或部分新版本。</details>
+旧完整内容会先被截空，读者和崩溃恢复都可能遇到空或部分新版本。
+
+</details>
 
 <details><summary>6. 本章 temp 与目标为何放在同一目录？</summary>
 
-便于处在同一文件系统，使用单次名称替换并同步同一个父目录；仍要确认实际文件系统条件。</details>
+便于处在同一文件系统，使用单次名称替换并同步同一个父目录；仍要确认实际文件系统条件。
+
+</details>
 
 <details><summary>7. temp 写入一半能先 `rename` 为正式目标吗？</summary>
 
-不应按本章合同这么做；新路径会公开不完整 V2。</details>
+不应按本章合同这么做；新路径会公开不完整 V2。
+
+</details>
 
 <details><summary>8. `rename(temp,target)` 主要给什么可见性？</summary>
 
-在本章同文件系统成功条件下，目标路径的名称替换是单步原子可见的。</details>
+在本章同文件系统成功条件下，目标路径的名称替换是单步原子可见的。
+
+</details>
 
 <details><summary>9. `rename` 成功会让已打开 V1 的 FD 自动读 V2 吗？</summary>
 
-不会；旧 FD 仍指向先前打开的旧对象。</details>
+不会；旧 FD 仍指向先前打开的旧对象。
+
+</details>
 
 <details><summary>10. 替换前 V1 为什么要先假定已持久？</summary>
 
-否则早期崩溃点连旧版本的恢复基线都没有，不能说“至少有 V1”。</details>
+否则早期崩溃点连旧版本的恢复基线都没有，不能说“至少有 V1”。
+
+</details>
 
 <details><summary>11. C1 崩溃时可把 temp 当完整持久 V2 吗？</summary>
 
-不能。temp 可能只写了一部分或尚未同步。</details>
+不能。temp 可能只写了一部分或尚未同步。
+
+</details>
 
 <details><summary>12. C2 文件同步后、改名前，目标路径仍指向谁？</summary>
 
-仍指向完整 V1；V2 临时文件内容有同步证据，但其名字未获父目录同步保证。</details>
+仍指向完整 V1；V2 临时文件内容有同步证据，但其名字未获父目录同步保证。
+
+</details>
 
 <details><summary>13. C3 改名成功、父目录未同步，运行时新打开目标见谁？</summary>
 
-可见 V2；这仍不证明掉电后新名字耐久。</details>
+可见 V2；这仍不证明掉电后新名字耐久。
+
+</details>
 
 <details><summary>14. C3 掉电后一定恢复 V1 吗？</summary>
 
-不能断定。新名称未获持久证据，具体恢复结果取决于文件系统与故障时刻。</details>
+不能断定。新名称未获持久证据，具体恢复结果取决于文件系统与故障时刻。
+
+</details>
 
 <details><summary>15. C4 的耐久结论要带哪些前提？</summary>
 
-所有步骤成功、Linux 同一文件系统、旧版原先持久，且文件系统与设备兑现同步语义。</details>
+所有步骤成功、Linux 同一文件系统、旧版原先持久，且文件系统与设备兑现同步语义。
+
+</details>
 
 <details><summary>16. 文件 `fsync` 已成功就能保证新文件名掉电后存在吗？</summary>
 
-不能，父目录项还需单独同步。</details>
+不能，父目录项还需单独同步。
+
+</details>
 
 <details><summary>17. 文件系统日志能检查 V2 的消息序号是否正确吗？</summary>
 
-不能。业务内容正确性由应用规则和验证负责。</details>
+不能。业务内容正确性由应用规则和验证负责。
+
+</details>
 
 <details><summary>18. temp 写完但 `fsync` 返回错误，可继续按成功路径改名吗？</summary>
 
-不能把它当作已获文件耐久保证；应报告并按失败状态处理。</details>
+不能把它当作已获文件耐久保证；应报告并按失败状态处理。
+
+</details>
 
 <details><summary>19. `rename` 返回成功但目录同步失败，可报告“本地耐久”吗？</summary>
 
-不能。运行时可能可见 V2，掉电后名称恢复合同尚未证明。</details>
+不能。运行时可能可见 V2，掉电后名称恢复合同尚未证明。
+
+</details>
 
 <details><summary>20. 成功提示丢失，就能断定导出没有副作用吗？</summary>
 
-不能。应回查目标版本与校验信息，再决定是否重试。</details>
+不能。应回查目标版本与校验信息，再决定是否重试。
+
+</details>
 
 <details><summary>21. 本地历史文件耐久能证明设备已收到 IM 消息吗？</summary>
 
-不能。文件导出、内存受理、数据库提交和设备交付是不同确认点。</details>
+不能。文件导出、内存受理、数据库提交和设备交付是不同确认点。
+
+</details>
 
 <details><summary>22. 把 temp 放在另一文件系统，还能假定一次 `rename` 原子替换吗？</summary>
 
-不能。跨文件系统通常不满足本章单次同文件系统替换前提。</details>
+不能。跨文件系统通常不满足本章单次同文件系统替换前提。
+
+</details>
 
 ## 来源与下一步
 

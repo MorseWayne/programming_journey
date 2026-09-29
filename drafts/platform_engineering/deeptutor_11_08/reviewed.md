@@ -86,95 +86,139 @@ SLO 不是单人给某个百分比加粗。纸上卡片若要进入真实团队�
 
 <details><summary>1. `200 accepted_in_memory` 能当 B 设备收到的 SLI 吗？</summary>
 
-不能。它只表示 A 侧本进程内存受理，未来设备 ACK 是另一结果。</details>
+不能。它只表示 A 侧本进程内存受理，未来设备 ACK 是另一结果。
+
+</details>
 
 <details><summary>2. SLI、SLO、SLA 各是什么？</summary>
 
-SLI 是定量服务指标，SLO 是该指标的目标，SLA 是含后果的服务协议。</details>
+SLI 是定量服务指标，SLO 是该指标的目标，SLA 是含后果的服务协议。
+
+</details>
 
 <details><summary>3. 服务端提交完成但 A 的响应丢失，本章首发体验算好还是坏？</summary>
 
-若 A 未在 2 秒内收到完整 200，本卡按用户体验算坏；服务端结果另查。</details>
+若 A 未在 2 秒内收到完整 200，本卡按用户体验算坏；服务端结果另查。
+
+</details>
 
 <details><summary>4. 同 ID 重试得到 409，应直接当作本卡服务故障吗？</summary>
 
-本卡按合法非重复**首发尝试**入组，重试另计；仍需观察其用户体验。</details>
+本卡按合法非重复**首发尝试**入组，重试另计；仍需观察其用户体验。
+
+</details>
 
 <details><summary>5. 非成员目标隐藏返回 404，说明服务不可用吗？</summary>
 
-不说明。它是按合同的授权拒绝，须与意外失败分开。</details>
+不说明。它是按合同的授权拒绝，须与意外失败分开。
+
+</details>
 
 <details><summary>6. 窗口里合格机会为 0，SLI 是 100% 吗？</summary>
 
-不是。分母为 0 时未定义/无样本。</details>
+不是。分母为 0 时未定义/无样本。
+
+</details>
 
 <details><summary>7. 客户端埋点全部丢失，图上没有坏事件，能报健康吗？</summary>
 
-不能。机会数可能也丢失，需报观测覆盖不足。</details>
+不能。机会数可能也丢失，需报观测覆盖不足。
+
+</details>
 
 <details><summary>8. 未来 S3 的 `stored_in_teaching_db` 与 S2 的 200 可混成同一成功点吗？</summary>
 
-不能。它们承诺的阶段不同，须版本化和分开统计。</details>
+不能。它们承诺的阶段不同，须版本化和分开统计。
+
+</details>
 
 ### 计算 9–16：预算与消耗速度
 
 <details><summary>9. S2 候选 SLO 99.9%，允许坏比例多少？</summary>
 
-`100%−99.9%=0.1%`。</details>
+`100%−99.9%=0.1%`。
+
+</details>
 
 <details><summary>10. 30 日合格机会 100,000 次，允许坏多少次？</summary>
 
-`100,000×0.001=100 次`。</details>
+`100,000×0.001=100 次`。
+
+</details>
 
 <details><summary>11. 实际 99,500 好、500 坏，SLI 多少？</summary>
 
-`99,500/100,000=99.5%`，低于候选 99.9% 目标。</details>
+`99,500/100,000=99.5%`，低于候选 99.9% 目标。
+
+</details>
 
 <details><summary>12. 上题超预算多少次、用了几倍预算？</summary>
 
-超 `500−100=400` 次；用了 `500/100=5` 倍预算。</details>
+超 `500−100=400` 次；用了 `500/100=5` 倍预算。
+
+</details>
 
 <details><summary>13. 未来设备卡目标 99%、机会 1,000，预算多少坏？</summary>
 
-`1,000×0.01=10 次`。</details>
+`1,000×0.01=10 次`。
+
+</details>
 
 <details><summary>14. 若 985 好、15 坏，设备卡预算怎样？</summary>
 
-超 5 次，消耗 1.5 倍；不可由 S2 预算抵消。</details>
+超 5 次，消耗 1.5 倍；不可由 S2 预算抵消。
+
+</details>
 
 <details><summary>15. 容许坏率 0.1%，短窗 1,000 次中 10 坏，burn rate 多少？</summary>
 
-坏率 `1%`，消耗速度 `1%/0.1%=10 倍`。</details>
+坏率 `1%`，消耗速度 `1%/0.1%=10 倍`。
+
+</details>
 
 <details><summary>16. 短窗 1 次机会 1 次坏可直接呼叫全员吗？</summary>
 
-不宜仅凭高比例决定；样本小，需结合用户影响、长窗、覆盖率和预定动作。</details>
+不宜仅凭高比例决定；样本小，需结合用户影响、长窗、覆盖率和预定动作。
+
+</details>
 
 ### 评审 17–22：让告警有行动
 
 <details><summary>17. CPU 90% 就必然触发用户故障 pager 吗？</summary>
 
-不必然。先看用户症状/预算消耗，CPU 可作定位线索或容量预警。</details>
+不必然。先看用户症状/预算消耗，CPU 可作定位线索或容量预警。
+
+</details>
 
 <details><summary>18. 最近 2 秒尚未归档的首发尝试可提前算好？</summary>
 
-不能。要完整观察 2 秒，标待决或延迟报告。</details>
+不能。要完整观察 2 秒，标待决或延迟报告。
+
+</details>
 
 <details><summary>19. 没有设备 ACK，网关 Write 成功可以补成好事件吗？</summary>
 
-不能。应用 ACK 未到期前待决，到期按定义算坏或标观测失效。</details>
+不能。应用 ACK 未到期前待决，到期按定义算坏或标观测失效。
+
+</details>
 
 <details><summary>20. 一条可行动告警至少写什么？</summary>
 
-用户结果、确认点、窗口/分子分母、覆盖率、负责人、证据入口与止损/升级步骤。</details>
+用户结果、确认点、窗口/分子分母、覆盖率、负责人、证据入口与止损/升级步骤。
+
+</details>
 
 <details><summary>21. 错误预算耗尽必须自动停掉所有发布吗？</summary>
 
-不是课程自动规则；须由相关负责人共同批准预算政策、例外和复核门。</details>
+不是课程自动规则；须由相关负责人共同批准预算政策、例外和复核门。
+
+</details>
 
 <details><summary>22. 固定 OpenIM 两处源码能证明真实 SLO 或告警阈值吗？</summary>
 
-不能。仅支持所读异步边界，目标和规则需业务合同、指标实现与运行证据。</details>
+不能。仅支持所读异步边界，目标和规则需业务合同、指标实现与运行证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

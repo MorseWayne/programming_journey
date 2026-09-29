@@ -94,91 +94,135 @@ MongoDB 的**因果一致会话**也有具体读写关注前提；官方文档�
 
 <details><summary>1. 本章的 `W9` 与 `c-a.seq=9` 是同一个字段吗？</summary>
 
-不是。W9 是抽象源提交位置；seq9 是会话内业务排序值。</details>
+不是。W9 是抽象源提交位置；seq9 是会话内业务排序值。
+
+</details>
 
 <details><summary>2. “最终追平”是否保证 R2 在 t=40 已看见 9？</summary>
 
-不保证。它需要无新写、健康传播等前提，也没有本题给定的固定追平时限。</details>
+不保证。它需要无新写、健康传播等前提，也没有本题给定的固定追平时限。
+
+</details>
 
 <details><summary>3. A 写 9 后从 R2 读 8，若承诺读己之写，结论是什么？</summary>
 
-违反该承诺；必须调整路由、等待可见水位或明确失败。</details>
+违反该承诺；必须调整路由、等待可见水位或明确失败。
+
+</details>
 
 <details><summary>4. 先见 9 后见 8，首先检查哪些等价前提？</summary>
 
-同一会话/用户范围、相同查询和授权、无删除/新写、是否有旧事务快照；固定本题后才判为单调读倒退。</details>
+同一会话/用户范围、相同查询和授权、无删除/新写、是否有旧事务快照；固定本题后才判为单调读倒退。
+
+</details>
 
 <details><summary>5. TCP 连接换了，是否自动意味着新会话？</summary>
 
-不一定。会话是产品/存储定义的操作历史范围，不等于一次网络连接。</details>
+不一定。会话是产品/存储定义的操作历史范围，不等于一次网络连接。
+
+</details>
 
 <details><summary>6. 会话保证必须四项一起启用吗？</summary>
 
-不必须。可分别选择，但各自需要范围、状态传递与失败策略。</details>
+不必须。可分别选择，但各自需要范围、状态传递与失败策略。
+
+</details>
 
 <details><summary>7. 事务 Serializable 能自动让任意 R2 读到最新 9 吗？</summary>
 
-不能。事务隔离与跨副本读路由/回放是不同问题。</details>
+不能。事务隔离与跨副本读路由/回放是不同问题。
+
+</details>
 
 <details><summary>8. B 已收到通知能证明 B 设备已展示、用户已读吗？</summary>
 
-不能。通知、补拉、展示和阅读各有不同证据。</details>
+不能。通知、补拉、展示和阅读各有不同证据。
+
+</details>
 
 <details><summary>9. A t=40 从 R2 读 8，是最终收敛模型必然违例吗？</summary>
 
-不必然。最终收敛没有要求这次立即读到 9；若另承诺 RYW 才是违例。</details>
+不必然。最终收敛没有要求这次立即读到 9；若另承诺 RYW 才是违例。
+
+</details>
 
 <details><summary>10. A t=70 在 R1 读 9，之后在 R2 读 8，违反什么？</summary>
 
-在固定本题同会话、同查询、无删除的条件下违反 Monotonic Reads。</details>
+在固定本题同会话、同查询、无删除的条件下违反 Monotonic Reads。
+
+</details>
 
 <details><summary>11. A 写 9 后撤回 9 的操作先被副本应用，可能违反哪项会话保证？</summary>
 
-Monotonic Writes：后一项写依赖前一项，不能被解释为在原消息之前生效。</details>
+Monotonic Writes：后一项写依赖前一项，不能被解释为在原消息之前生效。
+
+</details>
 
 <details><summary>12. B 读到 9 后写回执，但回执落在尚没见 9 的状态，涉及什么？</summary>
 
-Writes Follow Reads 与因果依赖：该写应建立在包含先前读结果的可见状态上。</details>
+Writes Follow Reads 与因果依赖：该写应建立在包含先前读结果的可见状态上。
+
+</details>
 
 <details><summary>13. B 通知后读 R2 只到 8，是否无条件违反因果一致？</summary>
 
-不是。若合同承诺通知后立刻可补拉到 9，则违约；若通知只是提示并允许稍后追平，则需按较弱合同判断。</details>
+不是。若合同承诺通知后立刻可补拉到 9，则违约；若通知只是提示并允许稍后追平，则需按较弱合同判断。
+
+</details>
 
 <details><summary>14. A 写 9 完成 t=10，独立 C t=20 才读 8，为什么可能仍顺序一致？</summary>
 
-A 只有写、C 只有读且两者无通信，可在抽象总序里排“C 读 8→A 写 9”，保留各自程序顺序。</details>
+A 只有写、C 只有读且两者无通信，可在抽象总序里排“C 读 8→A 写 9”，保留各自程序顺序。
+
+</details>
 
 <details><summary>15. 同一条历史为什么违反线性化？</summary>
 
-A 写的响应先于 C 读的调用；线性化须保留这段真实时间先后，读最新头不能再返回旧 8。</details>
+A 写的响应先于 C 读的调用；线性化须保留这段真实时间先后，读最新头不能再返回旧 8。
+
+</details>
 
 <details><summary>16. 若 A 自己写后读到 8，还能用把读排写前满足顺序一致吗？</summary>
 
-不能。同一客户端程序顺序要求写先于后续读。</details>
+不能。同一客户端程序顺序要求写先于后续读。
+
+</details>
 
 <details><summary>17. 若 C 在 t=5 就开始读、到 t=25 才返回，仍能直接用本题结论吗？</summary>
 
-不能。C 的读与 A 的写可能重叠，线性化判定要重新画调用/响应区间。</details>
+不能。C 的读与 A 的写可能重叠，线性化判定要重新画调用/响应区间。
+
+</details>
 
 <details><summary>18. “P/R1 有两份日志”就证明每次 R2 查询线性化吗？</summary>
 
-不能。R2 可能仍未回放，且确认/选举安全与读路由都要单独设计。</details>
+不能。R2 可能仍未回放，且确认/选举安全与读路由都要单独设计。
+
+</details>
 
 <details><summary>19. A 需要读己之写，除了读 P 还有哪条候选路径？</summary>
 
-携 W9 等指定副本回放到该位置并用新快照读取；达不到就按合同等待、回主或明确失败。</details>
+携 W9 等指定副本回放到该位置并用新快照读取；达不到就按合同等待、回主或明确失败。
+
+</details>
 
 <details><summary>20. 把 W9 直接当永久跨迁移 token 有什么风险？</summary>
 
-源位置可能变更或失效，需定义作用域、映射、保留/过期和切换后的失败政策。</details>
+源位置可能变更或失效，需定义作用域、映射、保留/过期和切换后的失败政策。
+
+</details>
 
 <details><summary>21. 为什么“强一点的读”可能降低可用性或增加延迟？</summary>
 
-可选副本更少，落后时要等待/回主；还需保存水位和处理故障，不能无条件立刻答复。</details>
+可选副本更少，落后时要等待/回主；还需保存水位和处理故障，不能无条件立刻答复。
+
+</details>
 
 <details><summary>22. MongoDB 因果会话是否只要创建 Session 就自动有耐久的四种保证？</summary>
 
-不能。需按官方要求核对因果会话与 readConcern/writeConcern 的组合、操作范围和故障条件。</details>
+不能。需按官方要求核对因果会话与 readConcern/writeConcern 的组合、操作范围和故障条件。
+
+</details>
 
 ## 本章完成标准与下一步
 

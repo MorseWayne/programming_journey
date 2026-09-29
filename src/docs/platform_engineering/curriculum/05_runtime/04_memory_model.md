@@ -140,91 +140,135 @@ Go 的 race detector 能在**实际执行到的路径**上报告数据竞争，�
 
 <details><summary>1. 数据竞争至少需要哪类并发访问？</summary>
 
-同一内存位置上的无同步读/写或写/写，且至少一方写。</details>
+同一内存位置上的无同步读/写或写/写，且至少一方写。
+
+</details>
 
 <details><summary>2. 两个 goroutine 修改不同且互不共享的位置必然是竞态吗？</summary>
 
-不必然。应看实际访问位置、共享关系与同步边。</details>
+不必然。应看实际访问位置、共享关系与同步边。
+
+</details>
 
 <details><summary>3. 写者先打印日志，能证明读者随后看到新字段吗？</summary>
 
-不能。日志时间顺序不自动建立相应内存访问的 happens-before。</details>
+不能。日志时间顺序不自动建立相应内存访问的 happens-before。
+
+</details>
 
 <details><summary>4. `time.Sleep` 能代替同步吗？</summary>
 
-不能。等待时间不是保证跨 goroutine 可见性的同步协议。</details>
+不能。等待时间不是保证跨 goroutine 可见性的同步协议。
+
+</details>
 
 <details><summary>5. Go 有数据竞争的程序与 C/C++ 式完全未定义行为一样吗？</summary>
 
-不一样。Go 有部分实现限制，但竞态程序仍错误，不能依赖无竞态的顺序一致保证。</details>
+不一样。Go 有部分实现限制，但竞态程序仍错误，不能依赖无竞态的顺序一致保证。
+
+</details>
 
 <details><summary>6. `go f()` 自动保证 f 结束后主 goroutine 才读结果吗？</summary>
 
-不保证。启动先于 f 开始，f 的完成需要另行等待或通信。</details>
+不保证。启动先于 f 开始，f 的完成需要另行等待或通信。
+
+</details>
 
 <details><summary>7. happens-before 由哪两类边组合并传递？</summary>
 
-同一 goroutine 的程序顺序和跨 goroutine 的同步关系。</details>
+同一 goroutine 的程序顺序和跨 goroutine 的同步关系。
+
+</details>
 
 <details><summary>8. `Mutex.Unlock` 与后续同一锁的 `Lock` 有何关系？</summary>
 
-前一次 Unlock 同步先于之后取得锁的 Lock 返回，使此前写入可在后续保护区读到。</details>
+前一次 Unlock 同步先于之后取得锁的 Lock 返回，使此前写入可在后续保护区读到。
+
+</details>
 
 <details><summary>9. 读者用同一锁一次复制两字段，能读到半更新吗？</summary>
 
-在本章单写者和完整保护假设下不能；它读完整旧对或完整新对。</details>
+在本章单写者和完整保护假设下不能；它读完整旧对或完整新对。
+
+</details>
 
 <details><summary>10. 两字段各自加锁，但读者分两次取值能保证同版吗？</summary>
 
-不能。两次读取之间写者可能完成更新。</details>
+不能。两次读取之间写者可能完成更新。
+
+</details>
 
 <details><summary>11. channel 发送与哪次接收建立同步？</summary>
 
-与该发送**对应**的接收完成建立同步关系。</details>
+与该发送**对应**的接收完成建立同步关系。
+
+</details>
 
 <details><summary>12. 缓冲 channel 发送返回就证明接收者完成业务了吗？</summary>
 
-不能。值可只进缓冲，处理和业务确认是后续步骤。</details>
+不能。值可只进缓冲，处理和业务确认是后续步骤。
+
+</details>
 
 <details><summary>13. 发送含 `[]byte` 的结构会自动复制底层数组吗？</summary>
 
-不会。要明确所有权转交、复制或进一步同步。</details>
+不会。要明确所有权转交、复制或进一步同步。
+
+</details>
 
 <details><summary>14. `atomic.Int64.Add(1)` 主要保护什么？</summary>
 
-这个计数器的单次原子增量，避免普通共享读改写竞态。</details>
+这个计数器的单次原子增量，避免普通共享读改写竞态。
+
+</details>
 
 <details><summary>15. 两个字段各自 atomic 就能形成同一版本快照吗？</summary>
 
-不能。两个操作之间仍可被读者观察到混合状态。</details>
+不能。两个操作之间仍可被读者观察到混合状态。
+
+</details>
 
 <details><summary>16. 写者先 `Online.Store(true)` 再 `Version.Store(1)`，中间可读到什么？</summary>
 
-可读到 `(true,0)`；这是两个 atomic 操作之间的合法交错。</details>
+可读到 `(true,0)`；这是两个 atomic 操作之间的合法交错。
+
+</details>
 
 <details><summary>17. CAS 返回失败说明什么？</summary>
 
-目标位置当时不满足预期旧值，当前这次条件替换未成功；还要按业务规则处理重试或冲突。</details>
+目标位置当时不满足预期旧值，当前这次条件替换未成功；还要按业务规则处理重试或冲突。
+
+</details>
 
 <details><summary>18. CAS 一个标志能提交数据库消息与设备推送吗？</summary>
 
-不能。它只管理目标原子位置，外部副作用另有事务和失败边界。</details>
+不能。它只管理目标原子位置，外部副作用另有事务和失败边界。
+
+</details>
 
 <details><summary>19. race detector 没报警证明所有调度都安全了吗？</summary>
 
-不能。它只观察实际执行过的路径和交错。</details>
+不能。它只观察实际执行过的路径和交错。
+
+</details>
 
 <details><summary>20. 无 data race 就必然没有重复消息吗？</summary>
 
-不能。检查与插入分段加锁仍可能违反业务判重不变量。</details>
+不能。检查与插入分段加锁仍可能违反业务判重不变量。
+
+</details>
 
 <details><summary>21. 同一 Go 进程的 Mutex 能保护另一个服务节点吗？</summary>
 
-不能。跨节点状态要用相应数据库或分布式协议保证。</details>
+不能。跨节点状态要用相应数据库或分布式协议保证。
+
+</details>
 
 <details><summary>22. 本章的 `(Online,Version)` 是真实 IM 在线协议吗？</summary>
 
-不是。它是解释两字段同版快照的虚构教学状态。</details>
+不是。它是解释两字段同版快照的虚构教学状态。
+
+</details>
 
 ## 来源与下一步
 

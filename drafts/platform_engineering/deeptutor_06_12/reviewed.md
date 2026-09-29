@@ -114,91 +114,135 @@ VALUES ('m-9','c-a','u-a',9,'你好');
 
 <details><summary>1. 当前 S2 `200 accepted_in_memory` 证明数据库提交了吗？</summary>
 
-没有。它只表示当前进程内存受理。</details>
+没有。它只表示当前进程内存受理。
+
+</details>
 
 <details><summary>2. S3 v2 `stored_in_teaching_db` 在本仓库是已部署接口吗？</summary>
 
-不是，是未来教学持久版的纸上合同提议。</details>
+不是，是未来教学持久版的纸上合同提议。
+
+</details>
 
 <details><summary>3. `"你好"` 与 `"你好呀"` 在当前正文上限下怎样？</summary>
 
-前者 UTF-8 为 6 B，合法；后者 9 B，超过现有 6 B 上限。R9 未批准。</details>
+前者 UTF-8 为 6 B，合法；后者 9 B，超过现有 6 B 上限。R9 未批准。
+
+</details>
 
 <details><summary>4. 请求体 4096 B 上限与正文 6 B 上限是同一个检查吗？</summary>
 
-不是。一个限制原始 HTTP JSON 字节，一个限制解码后的消息正文 UTF-8 字节。</details>
+不是。一个限制原始 HTTP JSON 字节，一个限制解码后的消息正文 UTF-8 字节。
+
+</details>
 
 <details><summary>5. 请求体写 `sender_id=u-b` 能让已登录 A 代 B 发信吗？</summary>
 
-不能。按既有合同拒绝未知/冲突字段，发送者来自受信认证主体。</details>
+不能。按既有合同拒绝未知/冲突字段，发送者来自受信认证主体。
+
+</details>
 
 <details><summary>6. `u-c` 知道 `c-a/m-9`，能直接查私有正文吗？</summary>
 
-不能。非成员按隐藏目标政策得到 404；索引命中不等于授权。</details>
+不能。非成员按隐藏目标政策得到 404；索引命中不等于授权。
+
+</details>
 
 <details><summary>7. 四表现有 `conversations` 已有 `next_seq` 吗？</summary>
 
-没有。本章的 `conversation_counters` 是明确新增的教学扩展，不是 06.01 原有字段。</details>
+没有。本章的 `conversation_counters` 是明确新增的教学扩展，不是 06.01 原有字段。
+
+</details>
 
 <details><summary>8. `UNIQUE(conversation_id,seq)` 会自动分配 9 吗？</summary>
 
-不会。它只阻止重复组合；分配算法仍要在受控事务中设计。</details>
+不会。它只阻止重复组合；分配算法仍要在受控事务中设计。
+
+</details>
 
 <details><summary>9. 初始 `next_seq=9`，A 成功提交 `m-9` 后计数是什么？</summary>
 
-10，消息 `m-9` 在本题得到 `seq=9`。</details>
+10，消息 `m-9` 在本题得到 `seq=9`。
+
+</details>
 
 <details><summary>10. 计数先改为 10，但同一事务插入失败后回滚，计数留下 10 吗？</summary>
 
-不会；教学计数行更新与消息插入在同一 Tx，回滚后仍是 9。不要把它与非事务性序列对象混同。</details>
+不会；教学计数行更新与消息插入在同一 Tx，回滚后仍是 9。不要把它与非事务性序列对象混同。
+
+</details>
 
 <details><summary>11. B 用不同 ID 同时向 `c-a` 发信，为何仍可能等待 A？</summary>
 
-两人锁的是不同成员行，但都要锁同一会话的计数行；若 A 提交先拿 9，B 后拿 10。</details>
+两人锁的是不同成员行，但都要锁同一会话的计数行；若 A 提交先拿 9，B 后拿 10。
+
+</details>
 
 <details><summary>12. `m-9` 提交后最新三条序号是什么？下一页边界是什么？</summary>
 
-最新页是 9、8、7；以下一页排他边界 `seq<7` 查询。</details>
+最新页是 9、8、7；以下一页排他边界 `seq<7` 查询。
 
-<details><summary>13. `seq<7 LIMIT 3 DESC` 的下一页返回什么？</summary>
+</details>
 
-6、5、4，前提是会话与排序/过滤条件保持一致。</details>
+<details><summary>13. `seq&lt;7 LIMIT 3 DESC` 的下一页返回什么？</summary>
+
+6、5、4，前提是会话与排序/过滤条件保持一致。
+
+</details>
 
 <details><summary>14. 同 ID、相同正文重试，现有合同返回什么？</summary>
 
-409，旧值与顺序不变；没有自动把第二次请求当成第一次成功。</details>
+409，旧值与顺序不变；没有自动把第二次请求当成第一次成功。
+
+</details>
 
 <details><summary>15. A 超时后收到 409，能直接判断第一次请求已成功吗？</summary>
 
-不能。409 只证明 ID 冲突；仍须经授权查权威行并核对会话、发送者和原始意图。</details>
+不能。409 只证明 ID 冲突；仍须经授权查权威行并核对会话、发送者和原始意图。
+
+</details>
 
 <details><summary>16. `Commit` 已知成功、在线通知 B 失败，消息应回滚吗？</summary>
 
-不应把外部通知失败倒灌为已提交事务回滚。通知/补拉另设可靠机制。</details>
+不应把外部通知失败倒灌为已提交事务回滚。通知/补拉另设可靠机制。
+
+</details>
 
 <details><summary>17. 预览是可重建派生状态时，允许暂时落后后还需要什么？</summary>
 
-需要定义可接受的陈旧窗口、重放和对账修复责任；不能无限期不一致。</details>
+需要定义可接受的陈旧窗口、重放和对账修复责任；不能无限期不一致。
+
+</details>
 
 <details><summary>18. 大群 `c-g` 写入慢，就能断言计数行是瓶颈吗？</summary>
 
-不能。先观察锁等待、WAL、索引、连接池、队列及业务 P95/P99 同窗口证据。</details>
+不能。先观察锁等待、WAL、索引、连接池、队列及业务 P95/P99 同窗口证据。
+
+</details>
 
 <details><summary>19. 预留 `seq` 段会影响哪个业务承诺？</summary>
 
-可能出现空洞；必须重新规定是否要求连续、只要求递增还是允许保留号码，以及游标怎样处理。</details>
+可能出现空洞；必须重新规定是否要求连续、只要求递增还是允许保留号码，以及游标怎样处理。
+
+</details>
 
 <details><summary>20. 主库已提交 9，落后副本只到 8，从副本暂时查不到 9 就等于丢失吗？</summary>
 
-不等于。先核对副本回放位置、读路由、游标和权限；写后读要求可路由权威源或等待可见水位。</details>
+不等于。先核对副本回放位置、读路由、游标和权限；写后读要求可路由权威源或等待可见水位。
+
+</details>
 
 <details><summary>21. 迁移源/目标都各 8 条，可直接切换吗？</summary>
 
-不能。06.11 的反例缺 7、多 9；须在同一水位比较键、字段/版本，修复后复查。</details>
+不能。06.11 的反例缺 7、多 9；须在同一水位比较键、字段/版本，修复后复查。
+
+</details>
 
 <details><summary>22. 给这个案例列出三种互不等价的“成功”。</summary>
 
-例如内存受理、教学数据库提交、客户端收到该确认；B 设备送达和用户已读又是后续不同事实。</details>
+例如内存受理、教学数据库提交、客户端收到该确认；B 设备送达和用户已读又是后续不同事实。
+
+</details>
 
 ## 本章完成标准与下一步
 

@@ -99,91 +99,135 @@
 
 <details><summary>1. t0 哪两个目标在 worker 中？</summary>
 
-A、B；C/D/E 排队，F 尚未接纳。</details>
+A、B；C/D/E 排队，F 尚未接纳。
+
+</details>
 
 <details><summary>2. t1 A 完成后谁开始处理？</summary>
 
-C；F 趁 C 出队后的空位进入等待队列。</details>
+C；F 趁 C 出队后的空位进入等待队列。
+
+</details>
 
 <details><summary>3. t2 哪两个慢目标占住 worker？</summary>
 
-B、D；E/F 仍等 worker。</details>
+B、D；E/F 仍等 worker。
+
+</details>
 
 <details><summary>4. B 慢就足以证明所有群一定变慢吗？</summary>
 
-不能。还要看共享 worker、队列、期限和结果汇聚方式。</details>
+不能。还要看共享 worker、队列、期限和结果汇聚方式。
+
+</details>
 
 <details><summary>5. t2 fan-in 可把 E/F 标为成功吗？</summary>
 
-不能。它们尚未由 worker 处理。</details>
+不能。它们尚未由 worker 处理。
+
+</details>
 
 <details><summary>6. t3 `cancel()` 返回就证明 B/D 已退出吗？</summary>
 
-不能。取消发意图，不等待退出。</details>
+不能。取消发意图，不等待退出。
+
+</details>
 
 <details><summary>7. worker 仍可能发结果时提前关闭 results 会怎样？</summary>
 
-晚到发送可能触发向已关闭通道发送的 panic。</details>
+晚到发送可能触发向已关闭通道发送的 panic。
+
+</details>
 
 <details><summary>8. 一直等 B/D 不退出是可接受的关闭策略吗？</summary>
 
-不应无限等；要有有限期限、退出证据和未完成状态记录。</details>
+不应无限等；要有有限期限、退出证据和未完成状态记录。
+
+</details>
 
 <details><summary>9. slow=5%×10000 是多少设备？</summary>
 
-500 个，仍是虚构比例。</details>
+500 个，仍是虚构比例。
+
+</details>
 
 <details><summary>10. 500 个慢设备各 cap2，最多多少该子集槽位？</summary>
 
-1000 个，前提是重复消息足以填满。</details>
+1000 个，前提是重复消息足以填满。
+
+</details>
 
 <details><summary>11. 每槽独立 1 KiB，纯数据约多少 MiB？</summary>
 
-1000 KiB≈0.98 MiB，不等于 RSS 或全部业务内存。</details>
+1000 KiB≈0.98 MiB，不等于 RSS 或全部业务内存。
+
+</details>
 
 <details><summary>12. 队列还引用对象，强制 GC 能清空吗？</summary>
 
-不能。仍可达的工作由业务所有者决定何时移除。</details>
+不能。仍可达的工作由业务所有者决定何时移除。
+
+</details>
 
 <details><summary>13. CPU 不高、RSS 高可直接断言 goroutine 泄漏吗？</summary>
 
-不能。还需 G 退出/阻塞栈、heap 对象与系统 RSS 的同窗证据。</details>
+不能。还需 G 退出/阻塞栈、heap 对象与系统 RSS 的同窗证据。
+
+</details>
 
 <details><summary>14. block profile 与 mutex profile 各偏向哪种问题？</summary>
 
-前者看同步等待点，后者看造成锁争用的持锁位置。</details>
+前者看同步等待点，后者看造成锁争用的持锁位置。
+
+</details>
 
 <details><summary>15. 当前 t0–t4 表是运行 trace 吗？</summary>
 
-不是，它是带假设的纸上时间线。</details>
+不是，它是带假设的纸上时间线。
+
+</details>
 
 <details><summary>16. `select` 的取消分支就绪就必定优先吗？</summary>
 
-不必定；若发送也就绪，Go 可选任一分支。</details>
+不必定；若发送也就绪，Go 可选任一分支。
+
+</details>
 
 <details><summary>17. 谁负责最终关闭共享结果通道？</summary>
 
-唯一协调者，且需先确认所有可能发送结果的 worker 已结束。</details>
+唯一协调者，且需先确认所有可能发送结果的 worker 已结束。
+
+</details>
 
 <details><summary>18. 两个 worker 加三个队列槽能直接推荐给 10000 人群吗？</summary>
 
-不能。它是六目标纸上模型，容量需真实负载与资源预算验证。</details>
+不能。它是六目标纸上模型，容量需真实负载与资源预算验证。
+
+</details>
 
 <details><summary>19. fan-in 的结果为什么要带目标 ID？</summary>
 
-完成顺序可变，必须把成功/失败/未知准确映回目标。</details>
+完成顺序可变，必须把成功/失败/未知准确映回目标。
+
+</details>
 
 <details><summary>20. 本地按 key 串行能保证跨节点消息序号吗？</summary>
 
-不能。跨节点提交、重试与恢复另需协议。</details>
+不能。跨节点提交、重试与恢复另需协议。
+
+</details>
 
 <details><summary>21. P95 改善但错误率升高，可把设计标完成吗？</summary>
 
-不能。正确性和失败合同是性能验收门。</details>
+不能。正确性和失败合同是性能验收门。
+
+</details>
 
 <details><summary>22. 本卷复盘解决了离线补拉和多端同步吗？</summary>
 
-没有。这些列入 S5 的持久可靠性与同步课程。</details>
+没有。这些列入 S5 的持久可靠性与同步课程。
+
+</details>
 
 ## 来源与下一步
 

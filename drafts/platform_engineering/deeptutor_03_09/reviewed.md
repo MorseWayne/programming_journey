@@ -95,91 +95,135 @@ Go 初学者使用 `net.Conn` 时，可让调用方看到阻塞式风格的 `Rea
 
 <details><summary>1. 空闲连接存在就意味着同数线程正在占 CPU 吗？</summary>
 
-不意味着。FD 与缓冲仍占资源，但等待事件的任务不持续运行。</details>
+不意味着。FD 与缓冲仍占资源，但等待事件的任务不持续运行。
+
+</details>
 
 <details><summary>2. 非阻塞读返回 `EAGAIN` 是对端关闭吗？</summary>
 
-不是。它表示此刻无可用进展，之后可等就绪再试。</details>
+不是。它表示此刻无可用进展，之后可等就绪再试。
+
+</details>
 
 <details><summary>3. 对已连接 TCP 流请求非零字节却读到 n=0，应想到什么？</summary>
 
-通常是对端有序关闭的 EOF；还要检查本地是否留有半帧。</details>
+通常是对端有序关闭的 EOF；还要检查本地是否留有半帧。
+
+</details>
 
 <details><summary>4. `read(7)` 返回 1 字节能当成完整帧吗？</summary>
 
-不能。TCP 只返回本次实际可得字节，帧由应用累计解析。</details>
+不能。TCP 只返回本次实际可得字节，帧由应用累计解析。
+
+</details>
 
 <details><summary>5. `epoll` 的兴趣集合保存什么？</summary>
 
-应用注册要关注哪些 FD 的哪些 I/O 事件。</details>
+应用注册要关注哪些 FD 的哪些 I/O 事件。
+
+</details>
 
 <details><summary>6. 就绪事件会把 7 字节完整帧“预留”给当前处理者吗？</summary>
 
-不会。它只是当前可尝试 I/O 的线索，仍要检查返回 n/错误。</details>
+不会。它只是当前可尝试 I/O 的线索，仍要检查返回 n/错误。
+
+</details>
 
 <details><summary>7. 玩具帧 `00 05 h e l l o` 总共几字节？</summary>
 
-2 字节长度头加 5 字节正文，共 7 字节。</details>
+2 字节长度头加 5 字节正文，共 7 字节。
+
+</details>
 
 <details><summary>8. 头部 `00 05` 表示正文长度多少？</summary>
 
-按本章的大端无符号约定，是 5 字节。</details>
+按本章的大端无符号约定，是 5 字节。
+
+</details>
 
 <details><summary>9. t0 只收到 `00` 时能分配 5 字节正文吗？</summary>
 
-还不能。长度头只有 1/2 字节，尚不知道完整长度。</details>
+还不能。长度头只有 1/2 字节，尚不知道完整长度。
+
+</details>
 
 <details><summary>10. t1 又收到 `05 h e` 后能交出消息吗？</summary>
 
-不能。长度 5 已知，但正文只有 2/5 字节。</details>
+不能。长度 5 已知，但正文只有 2/5 字节。
+
+</details>
 
 <details><summary>11. t2 收到 `l l o` 后应消费多少累计字节？</summary>
 
-7 字节：2 字节头和 5 字节正文，得到 `hello`。</details>
+7 字节：2 字节头和 5 字节正文，得到 `hello`。
+
+</details>
 
 <details><summary>12. fd12 的 `00 02 o k` 可以并到 fd11 的缓冲里吗？</summary>
 
-不能。每条连接有自己的字节流和解码状态。</details>
+不能。每条连接有自己的字节流和解码状态。
+
+</details>
 
 <details><summary>13. 长度头声明 9 字节，而本章上限为 8，应怎么做？</summary>
 
-在分配大正文缓冲前拒绝该玩具帧，并按协议处理连接错误。</details>
+在分配大正文缓冲前拒绝该玩具帧，并按协议处理连接错误。
+
+</details>
 
 <details><summary>14. 第一次非阻塞写 `hello` 只接受 `he`，剩余是什么？</summary>
 
-偏移 2，剩余 `llo`；不能从头重发 `he`。</details>
+偏移 2，剩余 `llo`；不能从头重发 `he`。
+
+</details>
 
 <details><summary>15. 可写事件证明客户端应用已收到消息吗？</summary>
 
-不能，只表示本地写入可能取得进展。</details>
+不能，只表示本地写入可能取得进展。
+
+</details>
 
 <details><summary>16. LT 下缓冲里剩余字节，之后仍可能收到什么？</summary>
 
-可读条件仍成立时，后续仍可得到可读提醒。</details>
+可读条件仍成立时，后续仍可得到可读提醒。
+
+</details>
 
 <details><summary>17. ET 下 6 字节只读 2 字节后直接等待有什么风险？</summary>
 
-剩余 4 字节可能没有新边沿，等待者可能错过现成数据。</details>
+剩余 4 字节可能没有新边沿，等待者可能错过现成数据。
+
+</details>
 
 <details><summary>18. ET 常用什么方式确定当前已无可读数据？</summary>
 
-在非阻塞模式下继续读，直到 `EAGAIN`；有限预算时保留自己的待办状态。</details>
+在非阻塞模式下继续读，直到 `EAGAIN`；有限预算时保留自己的待办状态。
+
+</details>
 
 <details><summary>19. 慢设备输出队列可以无限增长吗？</summary>
 
-不应如此。需要有限容量及满队列/背压/断开等明确策略。</details>
+不应如此。需要有限容量及满队列/背压/断开等明确策略。
+
+</details>
 
 <details><summary>20. Go 的 `io.ReadFull` 能替应用决定消息权限吗？</summary>
 
-不能。它只帮助读够指定字节数，权限和业务合同由应用检查。</details>
+不能。它只帮助读够指定字节数，权限和业务合同由应用检查。
+
+</details>
 
 <details><summary>21. 单个事件循环处理 fd11 时长时间计算，会影响谁？</summary>
 
-其他已就绪 FD 可能排队等待，需考虑工作预算与转交策略。</details>
+其他已就绪 FD 可能排队等待，需考虑工作预算与转交策略。
+
+</details>
 
 <details><summary>22. 这套两字节长度前缀就是 WebSocket 或 OpenIM 的帧吗？</summary>
 
-不是。它只用于纸上解释 TCP 字节流的应用边界。</details>
+不是。它只用于纸上解释 TCP 字节流的应用边界。
+
+</details>
 
 ## 来源与下一步
 

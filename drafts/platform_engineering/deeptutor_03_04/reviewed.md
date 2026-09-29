@@ -188,91 +188,135 @@ CPU 核心：同一核心某一瞬间执行一个普通线程的指令流（简�
 
 <details><summary>1. 有连接就一定有线程正在用 CPU 吗？</summary>
 
-不一定。连接可长期存在而没有待处理消息；还需看实现和事件。</details>
+不一定。连接可长期存在而没有待处理消息；还需看实现和事件。
+
+</details>
 
 <details><summary>2. 可运行与正在运行有什么区别？</summary>
 
-可运行表示有工作、具备条件但可能排队；正在运行表示此刻获得 CPU。</details>
+可运行表示有工作、具备条件但可能排队；正在运行表示此刻获得 CPU。
+
+</details>
 
 <details><summary>3. 等待 I/O 的任务会持续占用一个 CPU 核心吗？</summary>
 
-不会因“正在等待”本身持续占用；之后事件完成才可能重新可运行。</details>
+不会因“正在等待”本身持续占用；之后事件完成才可能重新可运行。
+
+</details>
 
 <details><summary>4. `ps` 的 `R` 一定表示此刻在核心上执行吗？</summary>
 
-不一定。Linux `ps` 把 running 和 runnable 放在同一个 `R` 状态中。</details>
+不一定。Linux `ps` 把 running 和 runnable 放在同一个 `R` 状态中。
+
+</details>
 
 <details><summary>5. 单核心上能同时执行 A、B 两个普通线程的指令吗？</summary>
 
-在本章单核简化模型里，同一瞬间只能有一个占用该核心；可快速轮换。</details>
+在本章单核简化模型里，同一瞬间只能有一个占用该核心；可快速轮换。
+
+</details>
 
 <details><summary>6. 进入内核态就必定发生线程上下文切换吗？</summary>
 
-不必。同一线程可执行系统调用后返回继续运行，未必换成另一线程。</details>
+不必。同一线程可执行系统调用后返回继续运行，未必换成另一线程。
+
+</details>
 
 <details><summary>7. 本章 FCFS 的 B 首次响应是多少？</summary>
 
-B 从 t=0 等到 t=4 才首次运行，因此是 4 ms。</details>
+B 从 t=0 等到 t=4 才首次运行，因此是 4 ms。
+
+</details>
 
 <details><summary>8. 本章 RR 的 B 首次响应是多少？</summary>
 
-B 从 t=0 等到 t=2 首次运行，因此是 2 ms。</details>
+B 从 t=0 等到 t=2 首次运行，因此是 2 ms。
+
+</details>
 
 <details><summary>9. RR 下 A 完成于何时？</summary>
 
-A 在 0..2 和 4..6 各用 2 ms，总需 4 ms，完成于 t=6。</details>
+A 在 0..2 和 4..6 各用 2 ms，总需 4 ms，完成于 t=6。
+
+</details>
 
 <details><summary>10. RR 下 B 的 CPU 就绪等待有几毫秒？</summary>
 
-t=0..2 与 t=4..6，共 4 ms。</details>
+t=0..2 与 t=4..6，共 4 ms。
+
+</details>
 
 <details><summary>11. RR 的 A 比 FCFS 更早完成吗？</summary>
 
-没有。A 在 FCFS t=4 完成，在本题 RR t=6 完成；改善的是 B 的首次响应。</details>
+没有。A 在 FCFS t=4 完成，在本题 RR t=6 完成；改善的是 B 的首次响应。
+
+</details>
 
 <details><summary>12. A 阻塞变式的 9 ms 周转都是“排队等 CPU”吗？</summary>
 
-不是。4 ms 用 CPU，5 ms 等 I/O，本题没有给出额外 CPU 就绪等待。</details>
+不是。4 ms 用 CPU，5 ms 等 I/O，本题没有给出额外 CPU 就绪等待。
+
+</details>
 
 <details><summary>13. t=5..6 两任务都未运行，一定说明系统坏了吗？</summary>
 
-不一定。在仅 A/B 的模型中 B 已完成、A 仍等 I/O，CPU 可空闲。</details>
+不一定。在仅 A/B 的模型中 B 已完成、A 仍等 I/O，CPU 可空闲。
+
+</details>
 
 <details><summary>14. 响应时间等于完成时间吗？</summary>
 
-不等于。首次响应看第一次获得 CPU，完成看所有工作结束；真实业务响应还含更多阶段。</details>
+不等于。首次响应看第一次获得 CPU，完成看所有工作结束；真实业务响应还含更多阶段。
+
+</details>
 
 <details><summary>15. 一个进程的 goroutine 数等于操作系统线程数吗？</summary>
 
-不等于。Go 运行时在操作系统线程上调度多个 goroutine，具体映射会变化。</details>
+不等于。Go 运行时在操作系统线程上调度多个 goroutine，具体映射会变化。
+
+</details>
 
 <details><summary>16. `GOMAXPROCS` 等于允许的连接数吗？</summary>
 
-不等于。它关联可并行执行用户 Go 代码的限制，连接资源另算。</details>
+不等于。它关联可并行执行用户 Go 代码的限制，连接资源另算。
+
+</details>
 
 <details><summary>17. 两核心意味着任何单任务都自动快两倍吗？</summary>
 
-不意味着。任务要能并行，还可能受 I/O、锁或配额限制。</details>
+不意味着。任务要能并行，还可能受 I/O、锁或配额限制。
+
+</details>
 
 <details><summary>18. CPU 使用低且请求慢，能直接断定“调度器有 bug”吗？</summary>
 
-不能。还要区分 I/O、锁、应用队列、远端依赖和观察口径。</details>
+不能。还要区分 I/O、锁、应用队列、远端依赖和观察口径。
+
+</details>
 
 <details><summary>19. `ps` 一次显示 `S` 能证明在等哪台存储服务吗？</summary>
 
-不能。它只是一刻的睡眠状态线索，需要请求阶段和等待对象证据。</details>
+不能。它只是一刻的睡眠状态线索，需要请求阶段和等待对象证据。
+
+</details>
 
 <details><summary>20. 连接数大就一定先到 CPU 极限吗？</summary>
 
-不一定。描述符、内存、缓冲或下游限制都可能先成为瓶颈。</details>
+不一定。描述符、内存、缓冲或下游限制都可能先成为瓶颈。
+
+</details>
 
 <details><summary>21. 群聊目标数 100 意味 100 项 CPU 工作同时运行吗？</summary>
 
-不意味。它们可排队、等待或由少量核心逐步执行，取决于实现和资源。</details>
+不意味。它们可排队、等待或由少量核心逐步执行，取决于实现和资源。
+
+</details>
 
 <details><summary>22. 仅凭两张静态时间线能证明线上 IM 消息已送达吗？</summary>
 
-不能。它们只解释特定假设下的 CPU 调度；送达需要网络与确认点证据。</details>
+不能。它们只解释特定假设下的 CPU 调度；送达需要网络与确认点证据。
+
+</details>
 
 ## 来源与下一步
 

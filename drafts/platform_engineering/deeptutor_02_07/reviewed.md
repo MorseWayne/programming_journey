@@ -111,91 +111,135 @@ Go 标准库 [`container/heap`](https://pkg.go.dev/container/heap) 提供最小�
 
 <details><summary>1. FIFO 队列与优先队列按什么顺序出队？</summary>
 
-FIFO 按到达先后；本章优先队列按较小的 `(due,task_id)` 键先出。</details>
+FIFO 按到达先后；本章优先队列按较小的 `(due,task_id)` 键先出。
+
+</details>
 
 <details><summary>2. `peek` 与 `pop` 的区别是什么？</summary>
 
-`peek` 只看根；`pop` 返回并删除根，再恢复堆序。</details>
+`peek` 只看根；`pop` 返回并删除根，再恢复堆序。
+
+</details>
 
 <details><summary>3. 两任务 due 相同，能依赖入队先后决定顺序吗？</summary>
 
-不能。若要确定性，应在比较键中加入 task_id 或明确的到达序号。</details>
+不能。若要确定性，应在比较键中加入 task_id 或明确的到达序号。
+
+</details>
 
 <details><summary>4. 完全二叉树最后一层怎样填？</summary>
 
-从左到右填，不留中间空位。</details>
+从左到右填，不留中间空位。
+
+</details>
 
 <details><summary>5. 零下标切片中，下标 3 的父节点是几？</summary>
 
-`(3-1)/2=1`。</details>
+`(3-1)/2=1`。
+
+</details>
 
 <details><summary>6. 下标 2 的左、右孩子下标是什么？</summary>
 
-分别是 5 和 6；访问前还要检查是否小于切片长度。</details>
+分别是 5 和 6；访问前还要检查是否小于切片长度。
+
+</details>
 
 <details><summary>7. 最小堆要求左子树所有键小于右子树吗？</summary>
 
-不要求。它只要求每条父子边上父键不大于子键。</details>
+不要求。它只要求每条父子边上父键不大于子键。
+
+</details>
 
 <details><summary>8. `[2,7,4,9]` 是有效最小堆吗？</summary>
 
-是。2≤7、2≤4、7≤9；数组不必整体升序。</details>
+是。2≤7、2≤4、7≤9；数组不必整体升序。
+
+</details>
 
 <details><summary>9. 插入 9、4、7 后堆数组是什么？</summary>
 
-依次到 `[4,9,7]`。</details>
+依次到 `[4,9,7]`。
+
+</details>
 
 <details><summary>10. 再插入 2 后，上浮经过哪些父项？</summary>
 
-先与 9 交换，再与 4 交换，得到 `[2,4,7,9]`。</details>
+先与 9 交换，再与 4 交换，得到 `[2,4,7,9]`。
+
+</details>
 
 <details><summary>11. 为什么新元素先放切片末尾？</summary>
 
-保持完全二叉树按层从左到右填充的形状。</details>
+保持完全二叉树按层从左到右填充的形状。
+
+</details>
 
 <details><summary>12. 从 `[2,4,7,9]` 弹出根，9 要和哪个孩子换？</summary>
 
-与较小的 4 换，结果 `[4,9,7]`；先换 7 会违背根与 4 的关系。</details>
+与较小的 4 换，结果 `[4,9,7]`；先换 7 会违背根与 4 的关系。
+
+</details>
 
 <details><summary>13. 再弹出一次后的堆和两个弹出值是什么？</summary>
 
-弹出值依次为 2、4；余下 `[7,9]`。</details>
+弹出值依次为 2、4；余下 `[7,9]`。
+
+</details>
 
 <details><summary>14. 堆插入与弹出的最坏成本为什么是 `O(log n)`？</summary>
 
-每次只沿完全二叉树的一条根路径修复，树高是对数级。</details>
+每次只沿完全二叉树的一条根路径修复，树高是对数级。
+
+</details>
 
 <details><summary>15. Top-K 示例中 K=2 的最终会话是什么？</summary>
 
-`c-c=10` 与 `c-e=9`。</details>
+`c-c=10` 与 `c-e=9`。
+
+</details>
 
 <details><summary>16. 容量 K 的最小堆堆顶代表什么？</summary>
 
-目前保留的 K 个候选中分数最低者，是下一高分候选要超越的门槛。</details>
+目前保留的 K 个候选中分数最低者，是下一高分候选要超越的门槛。
+
+</details>
 
 <details><summary>17. K=0 时还需要维护堆吗？</summary>
 
-不需要，直接返回空结果。</details>
+不需要，直接返回空结果。
+
+</details>
 
 <details><summary>18. `now=5` 时四任务中可以取哪些 due？</summary>
 
-2 和 4；根变成 7 后要等待，不能提前取出 7。</details>
+2 和 4；根变成 7 后要等待，不能提前取出 7。
+
+</details>
 
 <details><summary>19. 堆会自动在 due 到来时唤醒执行器吗？</summary>
 
-不会。它只保存当前最早键，唤醒需要时钟与执行机制。</details>
+不会。它只保存当前最早键，唤醒需要时钟与执行机制。
+
+</details>
 
 <details><summary>20. `pop` 成功能否证明设备已收到消息？</summary>
 
-不能。它只说明内存队列的候选被取出，后续执行、持久化与设备确认是不同状态。</details>
+不能。它只说明内存队列的候选被取出，后续执行、持久化与设备确认是不同状态。
+
+</details>
 
 <details><summary>21. 可以直接调用自己实现的 `PriorityQueue.Pop()` 当作标准库出队吗？</summary>
 
-不能。应调用包级 `heap.Pop(&pq)`，由它维护堆序并调用实现的末项移除方法。</details>
+不能。应调用包级 `heap.Pop(&pq)`，由它维护堆序并调用实现的末项移除方法。
+
+</details>
 
 <details><summary>22. 高频高优先级任务一直到来会发生什么？</summary>
 
-低优先级任务可能饥饿；要另定配额、老化或公平策略。</details>
+低优先级任务可能饥饿；要另定配额、老化或公平策略。
+
+</details>
 
 ## 来源与下一步
 

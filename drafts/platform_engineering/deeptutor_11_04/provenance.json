@@ -29,9 +29,9 @@
   "original_sha256": "0aebe1dc74c7035c4b1346e4b4ebe1b5b87aca2a120ed38f49b4c89164701b3c",
   "original_characters": 30674,
   "generation_request_sha256": "9a4e615086b09f1b0fbe54edc35ea908fa7227111151e8038ed3e572f1ab1a7e",
-  "reviewed_sha256": "d384d1566d29e311ce1cacb4b32d892d94ae943a2fab53fbae85b70173813f4d",
-  "reviewed_characters": 9920,
+  "reviewed_sha256": "936632f2621ece2eaae212e61885fc32d3bd380a94ec10cf37004ff17c2a347f",
+  "reviewed_characters": 9964,
   "reviewed_chinese_characters": 4251,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/04_diagnostic_method.md",
-  "course_sha256": "b935eaec1dde7cff8456ea08c896d63067ede609aad96e1fbcf201f0818d740b"
+  "course_sha256": "070f8642efe5637c8fe1e15e2a9215fa7204309d7815bcc61f414cc70099de96"
 }

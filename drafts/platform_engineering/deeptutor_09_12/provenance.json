@@ -35,9 +35,9 @@
   "original_sha256": "c969d18a0c20021e743ffaf69976789ec8338be5314ab54b6a4ee8c9ed56708d",
   "original_characters": 32345,
   "generation_request_sha256": "8319c2dc5077fb22ecf98a76825cb51452487882c7f2aee6478deb248f689bfc",
-  "reviewed_sha256": "b2be03ed4239f8ba1539261171a8fbc27d4880a33285b92b17293b75ec17d48a",
-  "reviewed_characters": 9973,
+  "reviewed_sha256": "61032e8a8bd9eb0f12eb64da93a57f4f76a2c9edda7c933afbba3d38cd809471",
+  "reviewed_characters": 10017,
   "reviewed_chinese_characters": 4271,
   "course_file": "src/docs/platform_engineering/curriculum/09_backend_security/12_im_service_capstone.md",
-  "course_sha256": "103ab3aaccb66ea47263aaf25931e2616c6939a461b97e3a9b1a3eafdb0e2c2f"
+  "course_sha256": "ba974706fab6234e1f5a18acb6b47a803cd219605e713426edd3080eec89b049"
 }

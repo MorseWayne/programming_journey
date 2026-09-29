@@ -77,95 +77,139 @@ A 客户端 --TLS/HTTP 或 WebSocket--> P 代理 --受保护的上游连接--> N
 
 <details><summary>1. 反向代理接请求后主要做什么？</summary>
 
-按配置选择/转发到上游，再把响应带回；不自动完成业务存储或授权。</details>
+按配置选择/转发到上游，再把响应带回；不自动完成业务存储或授权。
+
+</details>
 
 <details><summary>2. A→P 与 P→N1 必是同一条 TCP/TLS 连接吗？</summary>
 
-不是；它们是逐跳连接，TLS 终止与再加密需分别定义。</details>
+不是；它们是逐跳连接，TLS 终止与再加密需分别定义。
+
+</details>
 
 <details><summary>3. P 的 TCP ACK 可证明 B 设备收到吗？</summary>
 
-不能；传输 ACK 与 IM 应用/设备确认不同。</details>
+不能；传输 ACK 与 IM 应用/设备确认不同。
+
+</details>
 
 <details><summary>4. 客户端自带 `X-Forwarded-For` 就成可信源 IP 吗？</summary>
 
-不能；代理链、入口清洗和逐跳保护须明确，IP 也不等于用户授权。</details>
+不能；代理链、入口清洗和逐跳保护须明确，IP 也不等于用户授权。
+
+</details>
 
 <details><summary>5. TLS 到 P 成功，就可跳过会话成员检查吗？</summary>
 
-不能；服务端连接身份与应用对象权限不同。</details>
+不能；服务端连接身份与应用对象权限不同。
+
+</details>
 
 <details><summary>6. HTTP ready 200 能证明当前所有消息已送达吗？</summary>
 
-不能；只反映该探测路径/条件，范围取决于探测定义。</details>
+不能；只反映该探测路径/条件，范围取决于探测定义。
+
+</details>
 
 <details><summary>7. 轮询到 N1/N2 是数据复制机制吗？</summary>
 
-不是；它只选后端，不把进程内存同步或持久化。</details>
+不是；它只选后端，不把进程内存同步或持久化。
+
+</details>
 
 <details><summary>8. WebSocket 经过代理升级后属于短的一次性 HTTP 响应吗？</summary>
 
-不是；它继续作为长寿命双向通道，占逐跳连接资源。</details>
+不是；它继续作为长寿命双向通道，占逐跳连接资源。
+
+</details>
 
 ### 推演 9–16：进程内存与预算
 
 <details><summary>9. m-1 在 N1 返回 200，N2 必有 m-1 吗？</summary>
 
-不必；当前 S2 200 仅说明 N1 本进程内存受理。</details>
+不必；当前 S2 200 仅说明 N1 本进程内存受理。
+
+</details>
 
 <details><summary>10. 把 A 粘到 N1 能保证 N1 重启后 m-1 仍在吗？</summary>
 
-不能；粘性不等于持久化。</details>
+不能；粘性不等于持久化。
+
+</details>
 
 <details><summary>11. 1000 ms 纸上预算，先用 100、上游计划 700，余多少？</summary>
 
-200 ms，仍要覆盖回传/核验等；数值非实测阈值。</details>
+200 ms，仍要覆盖回传/核验等；数值非实测阈值。
+
+</details>
 
 <details><summary>12. 两次各最多 700 ms 的上游尝试能无条件放进 1000 ms 吗？</summary>
 
-不能；还含前后开销，且写操作重试可能重复副作用。</details>
+不能；还含前后开销，且写操作重试可能重复副作用。
+
+</details>
 
 <details><summary>13. P 返回 504 可断言 N1 没有受理吗？</summary>
 
-不能；上游响应未及时到 P，服务端执行状态可能未知。</details>
+不能；上游响应未及时到 P，服务端执行状态可能未知。
+
+</details>
 
 <details><summary>14. 对同 ID 向 N1 再试得 409，就证明本次重试成功吗？</summary>
 
-不能；当前 409 是重复冲突，需查原操作权威结果。</details>
+不能；当前 409 是重复冲突，需查原操作权威结果。
+
+</details>
 
 <details><summary>15. N1 已受理但 P 改投 N2，会自然保持唯一内存记录吗？</summary>
 
-不会；两进程内存互不自动同步，可能发生分裂/重复受理。</details>
+不会；两进程内存互不自动同步，可能发生分裂/重复受理。
+
+</details>
 
 <details><summary>16. WebSocket 空闲超时断开能证明用户主动退出吗？</summary>
 
-不能；需查代理/上游 timeout、心跳和客户端重连。</details>
+不能；需查代理/上游 timeout、心跳和客户端重连。
+
+</details>
 
 ### 决策 17–22：重试、错误与验收
 
 <details><summary>17. 代理把外部 `/v1` 错路由到未来 `/v2`，可把两者 200 等同吗？</summary>
 
-不能；当前与提议合同和确认点不同，先修路径。</details>
+不能；当前与提议合同和确认点不同，先修路径。
+
+</details>
 
 <details><summary>18. 502、503、504 在 RFC 中含义相同吗？</summary>
 
-不同；分别与代理无效上游响应、暂不可服务、代理等上游超时有关。</details>
+不同；分别与代理无效上游响应、暂不可服务、代理等上游超时有关。
+
+</details>
 
 <details><summary>19. 健康探测能用真实发消息写动作而不考虑副作用吗？</summary>
 
-不能；探测应限定安全范围，不能制造用户业务消息。</details>
+不能；探测应限定安全范围，不能制造用户业务消息。
+
+</details>
 
 <details><summary>20. 代理日志要记什么以连接客户端和后端证据？</summary>
 
-请求 ID、路由到的后端、逐跳阶段/超时/重试、响应来源及业务确认点，不记无保护私有正文。</details>
+请求 ID、路由到的后端、逐跳阶段/超时/重试、响应来源及业务确认点，不记无保护私有正文。
+
+</details>
 
 <details><summary>21. 转发源 IP 头可直接决定 `u-b` 能读 doc-private 吗？</summary>
 
-不能；actor 身份与对象授权由应用决定。</details>
+不能；actor 身份与对象授权由应用决定。
+
+</details>
 
 <details><summary>22. 本章代理纸图能声称教学系统已多实例持久化吗？</summary>
 
-不能；没有部署/运行，且 S2 仅进程内存，S3 DB 仍提议。</details>
+不能；没有部署/运行，且 S2 仅进程内存，S3 DB 仍提议。
+
+</details>
 
 ## 本章完成标准与后续路径
 

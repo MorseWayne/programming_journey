@@ -98,91 +98,135 @@ t3: 一部分完成，余下排队、超时或被明确拒绝
 
 <details><summary>1. 热键与击穿是同一个词吗？</summary>
 
-不是。热键是访问高度集中；击穿是热门键不可用时请求同时回源。</details>
+不是。热键是访问高度集中；击穿是热门键不可用时请求同时回源。
+
+</details>
 
 <details><summary>2. 高命中率能排除热键压 Redis 吗？</summary>
 
-不能。即使 100% hit，同一键仍可能承受高请求量。</details>
+不能。即使 100% hit，同一键仍可能承受高请求量。
+
+</details>
 
 <details><summary>3. 一个键过期和 100 个键同刻过期分别更像什么？</summary>
 
-前者若是热键可造成击穿；后者汇总失效更像雪崩。</details>
+前者若是热键可造成击穿；后者汇总失效更像雪崩。
+
+</details>
 
 <details><summary>4. 1000 个随机不存在 ID、每个只查一次，主要是什么风险？</summary>
 
-穿透：首批都可能回源，逐 ID 负缓存没有可复用的第二次命中。</details>
+穿透：首批都可能回源，逐 ID 负缓存没有可复用的第二次命中。
+
+</details>
 
 <details><summary>5. 10000 成员 Set 每次全取，与每次只测一个成员一样吗？</summary>
 
-不一样。`SMEMBERS` 全取结果量大，`SISMEMBER` 只问一个候选是否在集合。</details>
+不一样。`SMEMBERS` 全取结果量大，`SISMEMBER` 只问一个候选是否在集合。
+
+</details>
 
 <details><summary>6. 大键一定也是热键吗？</summary>
 
-不一定。前者说值/元素规模，后者说请求集中程度；可独立出现。</details>
+不一定。前者说值/元素规模，后者说请求集中程度；可独立出现。
+
+</details>
 
 <details><summary>7. `u-c` 私有隐藏 404 能按 `m-9` 全局负缓存吗？</summary>
 
-不能。它是主体相关授权结果，不证明 m-9 真不存在。</details>
+不能。它是主体相关授权结果，不证明 m-9 真不存在。
+
+</details>
 
 <details><summary>8. 缓存故障就能凭旧成员缓存放行发送吗？</summary>
 
-不能。权限要有足够新的权威证据，不能用旧许可作降级。</details>
+不能。权限要有足够新的权威证据，不能用旧许可作降级。
+
+</details>
 
 <details><summary>9. 1000 次同键请求均在首个回填前 miss，无合并时有多少回源尝试？</summary>
 
-1000 次，前提是每个 miss 都独立回源。</details>
+1000 次，前提是每个 miss 都独立回源。
+
+</details>
 
 <details><summary>10. DB 安全处理 200/s，首个整秒最多处理本批几次？还有几次未完成？</summary>
 
-最多 200；若未拒绝，至少 800 仍等待。若有有界拒绝，应分别统计拒绝量。</details>
+最多 200；若未拒绝，至少 800 仍等待。若有有界拒绝，应分别统计拒绝量。
+
+</details>
 
 <details><summary>11. 只有这一批 1000 次，理想 200/s 至少约几秒清完？</summary>
 
-约 5 秒，忽略其他负载、排队开销和重试；不是实测 P95。</details>
+约 5 秒，忽略其他负载、排队开销和重试；不是实测 P95。
+
+</details>
 
 <details><summary>12. 若持续每秒 1000 次全 miss 且从不拒绝，积压每秒净增多少？</summary>
 
-`1000−200=800` 次/秒，不能靠等待自己消失。</details>
+`1000−200=800` 次/秒，不能靠等待自己消失。
+
+</details>
 
 <details><summary>13. 四网关各 250，同键进程内合并理想多少次回源？</summary>
 
-4 次，每进程 1 次；不是全系统 1 次。</details>
+4 次，每进程 1 次；不是全系统 1 次。
+
+</details>
 
 <details><summary>14. 合并加载的领头请求失败，其他 249 请求能无限等吗？</summary>
 
-不能。需有等待期限、错误传播/重选和 DB 并发预算。</details>
+不能。需有等待期限、错误传播/重选和 DB 并发预算。
+
+</details>
 
 <details><summary>15. 100 个键每键 10 次同时 miss，共多少次回源？</summary>
 
-无合并且首个回填前都 miss 时是 `100×10=1000` 次。</details>
+无合并且首个回填前都 miss 时是 `100×10=1000` 次。
+
+</details>
 
 <details><summary>16. 理想均匀错开 10 秒，约每秒多少次 miss？</summary>
 
-约 10 键/秒×10 次/键=100 次/秒；真实到期和流量未必均匀。</details>
+约 10 键/秒×10 次/键=100 次/秒；真实到期和流量未必均匀。
+
+</details>
 
 <details><summary>17. TTL 抖动能单独解决 `preview:c-g` 一个键的 1000 次同刻 miss 吗？</summary>
 
-不能。它主要分散多键同时失效；单键仍需合并加载/限流。</details>
+不能。它主要分散多键同时失效；单键仍需合并加载/限流。
+
+</details>
 
 <details><summary>18. 1000 随机真不存在 ID 都写负缓存，第一轮 DB 压力会变零吗？</summary>
 
-不会。每个 ID 首查仍要权威判断，还会创建很多负键。</details>
+不会。每个 ID 首查仍要权威判断，还会创建很多负键。
+
+</details>
 
 <details><summary>19. Redis 失效后 1000/s 全回源，而 DB 预算 200/s，应先做什么？</summary>
 
-限制并发/队列、限流或明确拒绝/降级，保护权威源；不能无界重试。</details>
+限制并发/队列、限流或明确拒绝/降级，保护权威源；不能无界重试。
+
+</details>
 
 <details><summary>20. 允许短时旧预览，就可以允许旧权限放行吗？</summary>
 
-不能。预览派生值可否陈旧和成员授权安全是不同合同。</details>
+不能。预览派生值可否陈旧和成员授权安全是不同合同。
+
+</details>
 
 <details><summary>21. 只看平均缓存命中率足以发现这次雪崩吗？</summary>
 
-不足。要看同窗峰值 miss、DB 回源/等待/错误和用户 P95/P99。</details>
+不足。要看同窗峰值 miss、DB 回源/等待/错误和用户 P95/P99。
+
+</details>
 
 <details><summary>22. 热键观测为何不直接把所有会话 ID 作指标标签？</summary>
 
-会产生无界高基数指标；应使用受控采样、Top-K 和脱敏关联日志。</details>
+会产生无界高基数指标；应使用受控采样、Top-K 和脱敏关联日志。
+
+</details>
 
 ## 本章完成标准与下一步
 

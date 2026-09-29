@@ -110,91 +110,135 @@ DFS 可回答可达性，也能保留 `parent` 给出**某一条**路径；但�
 
 <details><summary>1. 顶点与边各表示什么？</summary>
 
-顶点表示对象，边表示预先定义的对象关系；边的含义要由业务给定。</details>
+顶点表示对象，边表示预先定义的对象关系；边的含义要由业务给定。
+
+</details>
 
 <details><summary>2. `u-a—u-b` 与 `A→B` 的方向有什么差别？</summary>
 
-前者在练习图中双向相邻；后者只表示 A 指向 B，不能反读。</details>
+前者在练习图中双向相邻；后者只表示 A 指向 B，不能反读。
+
+</details>
 
 <details><summary>3. 无向边 `u-a—u-b` 在邻接表中记几端？</summary>
 
-两端各记一次，u-a 的邻居含 u-b，u-b 的邻居含 u-a。</details>
+两端各记一次，u-a 的邻居含 u-b，u-b 的邻居含 u-a。
+
+</details>
 
 <details><summary>4. `u-f` 没有边，还算一个顶点吗？</summary>
 
-算。它要有空邻居列表，才能在整图遍历中被发现为独立分量。</details>
+算。它要有空邻居列表，才能在整图遍历中被发现为独立分量。
+
+</details>
 
 <details><summary>5. 本例无向图的 V、E 各是多少？</summary>
 
-V=6，E=5；无向边按一条计，邻接表会写两端。</details>
+V=6，E=5；无向边按一条计，邻接表会写两端。
+
+</details>
 
 <details><summary>6. Go `map` 遍历可直接承诺邻居访问顺序吗？</summary>
 
-不能。要复现固定序列，需显式排序或固定切片次序。</details>
+不能。要复现固定序列，需显式排序或固定切片次序。
+
+</details>
 
 <details><summary>7. BFS 使用队列还是栈？</summary>
 
-使用 FIFO 队列，先扩展较浅距离层。</details>
+使用 FIFO 队列，先扩展较浅距离层。
+
+</details>
 
 <details><summary>8. BFS 为什么在入队时标记 `u-d`？</summary>
 
-避免 u-b 与 u-c 都把同一个 u-d 再次加入队列。</details>
+避免 u-b 与 u-c 都把同一个 u-d 再次加入队列。
+
+</details>
 
 <details><summary>9. 从 u-a 的 BFS 取出顺序是什么？</summary>
 
-按本章邻居顺序是 u-a、u-b、u-c、u-d、u-e。</details>
+按本章邻居顺序是 u-a、u-b、u-c、u-d、u-e。
+
+</details>
 
 <details><summary>10. 从 u-a 到 u-e 的最少边数是多少？</summary>
 
-3；可经 u-b 或 u-c 到 u-d，再到 u-e。</details>
+3；可经 u-b 或 u-c 到 u-d，再到 u-e。
+
+</details>
 
 <details><summary>11. BFS 是否找到最低网络时延的路径？</summary>
 
-不一定。这里每条边只按一步计，没有时延权重。</details>
+不一定。这里每条边只按一步计，没有时延权重。
+
+</details>
 
 <details><summary>12. DFS 按排序邻居首次进入次序是什么？</summary>
 
-u-a、u-b、u-d、u-c、u-e。</details>
+u-a、u-b、u-d、u-c、u-e。
+
+</details>
 
 <details><summary>13. DFS 首次找到 u-c 的路径一定最少边吗？</summary>
 
-不一定。它可能先走 u-a→u-b→u-d→u-c，而直接边 u-a—u-c 更短。</details>
+不一定。它可能先走 u-a→u-b→u-d→u-c，而直接边 u-a—u-c 更短。
+
+</details>
 
 <details><summary>14. 从 u-b 看见父节点 u-a 就能判无向环吗？</summary>
 
-不能，那是沿原无向边返回父节点；要排除父边。</details>
+不能，那是沿原无向边返回父节点；要排除父边。
+
+</details>
 
 <details><summary>15. 本例的一个无向环是什么？</summary>
 
-u-a—u-b—u-d—u-c—u-a。</details>
+u-a—u-b—u-d—u-c—u-a。
+
+</details>
 
 <details><summary>16. 本例无向图有几个连通分量？</summary>
 
-两个：{u-a,u-b,u-c,u-d,u-e} 和 {u-f}。</details>
+两个：{u-a,u-b,u-c,u-d,u-e} 和 {u-f}。
+
+</details>
 
 <details><summary>17. 有向 DFS 遇到灰色与黑色顶点有什么不同？</summary>
 
-灰色在当前活动路径上，指向灰色的回边构成有向环；黑色已完成，汇合并不足以判环。</details>
+灰色在当前活动路径上，指向灰色的回边构成有向环；黑色已完成，汇合并不足以判环。
+
+</details>
 
 <details><summary>18. A,B,C,D,E 是合法拓扑序吗？</summary>
 
-是。A 在 B/C 前，B/C 都在 D 前，D 在 E 前。</details>
+是。A 在 B/C 前，B/C 都在 D 前，D 在 E 前。
+
+</details>
 
 <details><summary>19. A,B,D,C,E 为何不合法？</summary>
 
-边 C→D 要求 C 在 D 前，该列表把 D 放到了 C 前。</details>
+边 C→D 要求 C 在 D 前，该列表把 D 放到了 C 前。
+
+</details>
 
 <details><summary>20. 加 E→B 后的有向环是什么？</summary>
 
-B→D→E→B，因此没有拓扑顺序。</details>
+B→D→E→B，因此没有拓扑顺序。
+
+</details>
 
 <details><summary>21. 邻接表遍历整图的主要成本是什么？</summary>
 
-`O(V+E)`；每个顶点及其邻边按常数次数处理。</details>
+`O(V+E)`；每个顶点及其邻边按常数次数处理。
+
+</details>
 
 <details><summary>22. 图上 u-a 能到 u-e，能据此允许读 c-a 历史吗？</summary>
 
-不能。图可达只针对定义的关系，读取权限仍需当前身份、会话成员及对象范围规则。</details>
+不能。图可达只针对定义的关系，读取权限仍需当前身份、会话成员及对象范围规则。
+
+</details>
 
 ## 来源与下一步
 

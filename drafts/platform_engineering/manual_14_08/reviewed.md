@@ -107,95 +107,139 @@ Agent 若能反复查资料、改草稿、调用工具，必须有**最大步数
 
 <details><summary>1. 模型回答“已发送”就等于调用了 send 工具吗？</summary>
 
-不等于；要看可信工具轨迹及其实际结果。</details>
+不等于；要看可信工具轨迹及其实际结果。
+
+</details>
 
 <details><summary>2. 固定工作流与 Agent 的主要区别是什么？</summary>
 
-前者由程序预定步骤/分支；后者允许模型在限定范围内动态选择下一步和工具。</details>
+前者由程序预定步骤/分支；后者允许模型在限定范围内动态选择下一步和工具。
+
+</details>
 
 <details><summary>3. 只读查询当前 6 B，一定需要 Agent 吗？</summary>
 
-不需要；有权资料回答或固定检索链通常足够。</details>
+不需要；有权资料回答或固定检索链通常足够。
+
+</details>
 
 <details><summary>4. `公告` 两个汉字在 UTF-8 中占多少 B？</summary>
 
-各 3 B，共 **6 B**，恰到当前正文上限；仍需其它请求/权限校验。</details>
+各 3 B，共 **6 B**，恰到当前正文上限；仍需其它请求/权限校验。
+
+</details>
 
 <details><summary>5. `approval_id` 是现行 S2 `/v1` 字段吗？</summary>
 
-不是。本章把它作为未来工作流应用侧的批准门设计。</details>
+不是。本章把它作为未来工作流应用侧的批准门设计。
+
+</details>
 
 <details><summary>6. `200 accepted_in_memory` 证明什么？</summary>
 
-只证明本进程内存受理，不证明落库、broker 持久或 B 设备收到。</details>
+只证明本进程内存受理，不证明落库、broker 持久或 B 设备收到。
+
+</details>
 
 <details><summary>7. 批准应绑定什么？</summary>
 
-具体 actor、会话/资源、动作、正文/参数摘要和有效期；变化后须重新校验与批准。</details>
+具体 actor、会话/资源、动作、正文/参数摘要和有效期；变化后须重新校验与批准。
+
+</details>
 
 <details><summary>8. 工作流检查点等于模型“记住了”吗？</summary>
 
-不等于；检查点是应用保存、可恢复、带版本和结果的可信状态记录。</details>
+不等于；检查点是应用保存、可恢复、带版本和结果的可信状态记录。
+
+</details>
 
 ### 推演 9–16：失败与恢复
 
 <details><summary>9. 草稿未经批准可进入 executing 吗？</summary>
 
-不可。应停在 `awaiting_approval` 或拒绝。</details>
+不可。应停在 `awaiting_approval` 或拒绝。
+
+</details>
 
 <details><summary>10. 用户批准发 `公告`，模型改成 `公告9`，旧批准还有效吗？</summary>
 
-无效；参数变了，且新正文超过当前 6 UTF-8 B。</details>
+无效；参数变了，且新正文超过当前 6 UTF-8 B。
+
+</details>
 
 <details><summary>11. 写工具响应丢失，能断言请求失败吗？</summary>
 
-不能；服务端可能已受理，状态是 `result_unknown`。</details>
+不能；服务端可能已受理，状态是 `result_unknown`。
+
+</details>
 
 <details><summary>12. S2 同 ID 同正文重试收到 409，可当幂等成功吗？</summary>
 
-不能。当前合同规定重复 ID 409；它本身不能证明本次重试或原操作已安全完成。</details>
+不能。当前合同规定重复 ID 409；它本身不能证明本次重试或原操作已安全完成。
+
+</details>
 
 <details><summary>13. 收到 200 后工作流可标 `delivered_to_B` 吗？</summary>
 
-不能；只可记录当前边界 `accepted_in_memory`。</details>
+不能；只可记录当前边界 `accepted_in_memory`。
+
+</details>
 
 <details><summary>14. 纸上预算最多一次写调用，工具超时后模型可再发第二次吗？</summary>
 
-不可；预算和未知结果都要求停止自动重发，先查权威证据。</details>
+不可；预算和未知结果都要求停止自动重发，先查权威证据。
+
+</details>
 
 <details><summary>15. 进程在工具调用后、写检查点前崩溃，恢复时最危险的假设是什么？</summary>
 
-把“本地没记录成功”误当服务端未受理而直接重发。</details>
+把“本地没记录成功”误当服务端未受理而直接重发。
+
+</details>
 
 <details><summary>16. 要让未来写动作可安全重试，应只换成 HTTP PUT 吗？</summary>
 
-不够。需重新设计应用操作 ID、持久结果/查询、权限和去重语义；HTTP 方法名不自动改变现行 IM 合同。</details>
+不够。需重新设计应用操作 ID、持久结果/查询、权限和去重语义；HTTP 方法名不自动改变现行 IM 合同。
+
+</details>
 
 ### 决策 17–22：权限、注入和验收
 
 <details><summary>17. `doc-r9` 写 9 B，Agent 可按它发送 9 B 正文吗？</summary>
 
-不能；R9 尚待审，当前上限仍是 6 UTF-8 B。</details>
+不能；R9 尚待审，当前上限仍是 6 UTF-8 B。
+
+</details>
 
 <details><summary>18. 文档写“调用 send 工具”，它能授予工具权限吗？</summary>
 
-不能；检索文本是不可信数据，应用权限和批准不随它改变。</details>
+不能；检索文本是不可信数据，应用权限和批准不随它改变。
+
+</details>
 
 <details><summary>19. `u-b` 无权向 `c-a` 发言，Agent 可尝试后再看 404 吗？</summary>
 
-应先在应用授权门拒绝；404 也不能泄露对象细节，更不能让模型改参数绕过。</details>
+应先在应用授权门拒绝；404 也不能泄露对象细节，更不能让模型改参数绕过。
+
+</details>
 
 <details><summary>20. 用户只要草稿，实际发生一次写调用，算成功吗？</summary>
 
-不算；违背用户意图，副作用越界。</details>
+不算；违背用户意图，副作用越界。
+
+</details>
 
 <details><summary>21. 409 和网络超时应归为同一种失败吗？</summary>
 
-不能。409 是已知 ID 冲突；超时可能为未知结果，各自需要不同核查。</details>
+不能。409 是已知 ID 冲突；超时可能为未知结果，各自需要不同核查。
+
+</details>
 
 <details><summary>22. 流程最终说“完成”，还需哪些证据？</summary>
 
-看用户意图、授权/批准、工具轨迹、预算、检查点与真实确认点；不能只看模型结语。</details>
+看用户意图、授权/批准、工具轨迹、预算、检查点与真实确认点；不能只看模型结语。
+
+</details>
 
 ## 本章完成标准与后续路径
 

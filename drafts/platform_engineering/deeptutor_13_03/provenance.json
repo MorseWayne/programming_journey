@@ -30,9 +30,9 @@
   "original_sha256": "dcbcb92c865635e295833ad09e5f89db661a56360836cf7ed102dd4b3cc33080",
   "original_characters": 33378,
   "generation_request_sha256": "9e284c92963adfaaf8a330831102605c950b632c3f5625b9d0bc6b4284e1c497",
-  "reviewed_sha256": "757ab783032f33e86a9d54c7d4af3be4ff8bfab1e55a77b6cfabb747cec9aa45",
-  "reviewed_characters": 10948,
+  "reviewed_sha256": "6e37925f2e6c4067b271624d75027abf8f0bd113fcf26d1a6c4ef84dc5fcb530",
+  "reviewed_characters": 10992,
   "reviewed_chinese_characters": 4022,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/03_modules_information_hiding.md",
-  "course_sha256": "1dc9b02dc9642323e08f6a2458781797eba91f7c9eb8eac24cd643bae7117c72"
+  "course_sha256": "555fe9c766b5c538e6ae218ec3d6ae41a744904e2718fada618e28a5507302d9"
 }

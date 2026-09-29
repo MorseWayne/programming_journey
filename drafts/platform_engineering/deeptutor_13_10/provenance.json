@@ -29,9 +29,9 @@
   "original_sha256": "a8d83e2052f098e4919f44d6b72572fdbddb6c63217ac17b0eb90071c1cfb8c9",
   "original_characters": 29665,
   "generation_request_sha256": "3a322859902b53f0b85eec7b4181c889afb5e477ba334e2eed4cf17fcdad7dda",
-  "reviewed_sha256": "e64e1141cbe9eecea4ea07399d74832d53906b6bf363e5c887d53a181f8b84be",
-  "reviewed_characters": 9475,
+  "reviewed_sha256": "fd4d4a005899786f46dc45b24e16e8128fdabdc0a5750a29cb766d7a43a67dfa",
+  "reviewed_characters": 9519,
   "reviewed_chinese_characters": 4046,
   "course_file": "src/docs/platform_engineering/curriculum/13_architecture/10_technical_debt_evolution.md",
-  "course_sha256": "76271780aff9842ff91b0fe670ad747c49065a87892a001b4afe4332dec92823"
+  "course_sha256": "9c325e737c17415c414d75c6ff9ba028e7a9b9facf7a5c9ebffee4c0772abc80"
 }

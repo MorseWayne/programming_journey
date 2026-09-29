@@ -95,95 +95,139 @@
 
 <details><summary>1. `"你好"` 有几个字符、几个 UTF-8 B？</summary>
 
-本示例为 2 个字符、6 B；不能由此确定模型 token 数。</details>
+本示例为 2 个字符、6 B；不能由此确定模型 token 数。
+
+</details>
 
 <details><summary>2. 未固定 tokenizer，能说 `"你好"` 一定是两个 token 吗？</summary>
 
-不能。切分取决于模型配套分词器及版本。</details>
+不能。切分取决于模型配套分词器及版本。
+
+</details>
 
 <details><summary>3. 14.02 的 `q=(1,0)` 是训练出的模型 embedding 吗？</summary>
 
-不是，是人为规定的二维特征。</details>
+不是，是人为规定的二维特征。
+
+</details>
 
 <details><summary>4. 输入 token embedding 与检索文档向量默认同空间吗？</summary>
 
-不保证，需核模型、维度、目标和版本。</details>
+不保证，需核模型、维度、目标和版本。
+
+</details>
 
 <details><summary>5. 当前 S2 的 200 表示模型答对或 B 收到吗？</summary>
 
-都不表示，只是本进程内存受理 IM 消息。</details>
+都不表示，只是本进程内存受理 IM 消息。
+
+</details>
 
 <details><summary>6. 提示中的一个例子会自动更新模型权重吗？</summary>
 
-不会。普通提示改变本次输入上下文，训练/微调才调整参数。</details>
+不会。普通提示改变本次输入上下文，训练/微调才调整参数。
+
+</details>
 
 <details><summary>7. 模型一次上下文等于永久聊天记忆吗？</summary>
 
-不等于。长期历史/权限/检索由应用管理，一次窗口有限。</details>
+不等于。长期历史/权限/检索由应用管理，一次窗口有限。
+
+</details>
 
 <details><summary>8. RAG 把文档放进提示就能证明答案正确吗？</summary>
 
-不能。仍需权限、版本、来源和句子与证据的对应审查。</details>
+不能。仍需权限、版本、来源和句子与证据的对应审查。
+
+</details>
 
 ### 推演 9–16：分布、截断与旧答案
 
 <details><summary>9. 玩具 `0.7+0.2+0.1` 为多少？</summary>
 
-为 1，构成此纸上候选集的分布。</details>
+为 1，构成此纸上候选集的分布。
+
+</details>
 
 <details><summary>10. 贪心解码在本步选哪一个？</summary>
 
-选概率最高的玩具 `t6`；这仍不证明最终答案正确。</details>
+选概率最高的玩具 `t6`；这仍不证明最终答案正确。
+
+</details>
 
 <details><summary>11. 采样可能选 `t9` 吗？这能证明 R9 已批吗？</summary>
 
-可能选到；不能证明，R9 仍待审。</details>
+可能选到；不能证明，R9 仍待审。
+
+</details>
 
 <details><summary>12. 纸上窗口32、指令6、证据18、问题4，理想余多少输出 token？</summary>
 
-`32−6−18−4=4`；真实还可能计入特殊标记和接口开销。</details>
+`32−6−18−4=4`；真实还可能计入特殊标记和接口开销。
+
+</details>
 
 <details><summary>13. 截断掉“尚待审”，只留“R9 9 B”，会怎样？</summary>
 
-模型可能生成旧/错合同；需保留版本与限定词并核当前来源。</details>
+模型可能生成旧/错合同；需保留版本与限定词并核当前来源。
+
+</details>
 
 <details><summary>14. `P(t6)=0.7` 可说事实有70%概率正确吗？</summary>
 
-不能，它只是此玩具下一步 token 条件分布，不是事实校准概率。</details>
+不能，它只是此玩具下一步 token 条件分布，不是事实校准概率。
+
+</details>
 
 <details><summary>15. 模型输出 `"B 已收到 m-9"`，应查哪几层？</summary>
 
-查当前/未来受理、权威 DB、E9、指定设备 ACK/阅读；生成文字不是送达证据。</details>
+查当前/未来受理、权威 DB、E9、指定设备 ACK/阅读；生成文字不是送达证据。
+
+</details>
 
 <details><summary>16. `q-02` 没有已定成员历史规则，能让模型猜 B 有权吗？</summary>
 
-不能。应用先按现有规则拒绝/说明未决，不能用相似度猜权限。</details>
+不能。应用先按现有规则拒绝/说明未决，不能用相似度猜权限。
+
+</details>
 
 ### 决策 17–22：来源、权限与下一步
 
 <details><summary>17. 资料 d3 与问题余弦高，能跳过 access_scope 吗？</summary>
 
-不能。先身份和资料权限过滤，再做相似排序与证据核对。</details>
+不能。先身份和资料权限过滤，再做相似排序与证据核对。
+
+</details>
 
 <details><summary>18. 提示写“请只答真话”就能替代资料引用吗？</summary>
 
-不能。它改变输入指令，不提供当前事实或授权证据。</details>
+不能。它改变输入指令，不提供当前事实或授权证据。
+
+</details>
 
 <details><summary>19. 微调后可不再查最新 `/v1` 合同吗？</summary>
 
-不能。训练参数可能滞后，现行合同仍需版本化权威资料验证。</details>
+不能。训练参数可能滞后，现行合同仍需版本化权威资料验证。
+
+</details>
 
 <details><summary>20. 缺来源的 9 B 回答应怎样处理？</summary>
 
-按当前 `/v1` 6 B 合同判错；指出 R9 待审并要求可访问来源。</details>
+按当前 `/v1` 6 B 合同判错；指出 R9 待审并要求可访问来源。
+
+</details>
 
 <details><summary>21. 本章要先部署聊天助手验证模型能力吗？</summary>
 
-不用。先固定虚构数据/问题/权限，14.09 建基线，模型运行证据日后另收。</details>
+不用。先固定虚构数据/问题/权限，14.09 建基线，模型运行证据日后另收。
+
+</details>
 
 <details><summary>22. 一份可审模型回答至少连起哪些版本与结果？</summary>
 
-模型/tokenizer、提示、资料及权限、上下文/解码、输出与引用、当前 IM 合同和拒答条件。</details>
+模型/tokenizer、提示、资料及权限、上下文/解码、输出与引用、当前 IM 合同和拒答条件。
+
+</details>
 
 ## 本章完成标准与后续路径
 

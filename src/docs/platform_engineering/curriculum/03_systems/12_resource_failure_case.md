@@ -108,95 +108,139 @@ date: 2026-09-25
 
 <details><summary>1. `EMFILE` 与 `ENFILE` 分别指哪种范围？</summary>
 
-`EMFILE` 是进程 FD 限额，`ENFILE` 是系统范围打开文件限额。</details>
+`EMFILE` 是进程 FD 限额，`ENFILE` 是系统范围打开文件限额。
+
+</details>
 
 <details><summary>2. `pids.max` 可以代替 `RLIMIT_NOFILE` 吗？</summary>
 
-不能。前者限制内核任务创建，后者限制进程 FD 编号/数量边界。</details>
+不能。前者限制内核任务创建，后者限制进程 FD 编号/数量边界。
+
+</details>
 
 <details><summary>3. `write` 返回成功一定表示未来 S3 事务持久了吗？</summary>
 
-不一定。错误可能在后续写回/`fsync/close` 暴露，DB 提交合同另需验证。</details>
+不一定。错误可能在后续写回/`fsync/close` 暴露，DB 提交合同另需验证。
+
+</details>
 
 <details><summary>4. `ENOSPC` 必定在第一次 `write` 就出现吗？</summary>
 
-不必。缓存与写回可能使错误延迟报告。</details>
+不必。缓存与写回可能使错误延迟报告。
+
+</details>
 
 <details><summary>5. `memory.events high` 增长等于已有进程被杀吗？</summary>
 
-不等于。高水位回收/节流与 `oom_kill` 是不同证据。</details>
+不等于。高水位回收/节流与 `oom_kill` 是不同证据。
+
+</details>
 
 <details><summary>6. `SIGTERM` 和 `SIGKILL` 都能被 Go 程序捕获并优雅退出吗？</summary>
 
-不能。`SIGTERM` 可处理，`SIGKILL` 不能捕获或忽略。</details>
+不能。`SIGTERM` 可处理，`SIGKILL` 不能捕获或忽略。
+
+</details>
 
 <details><summary>7. `http.Server.Shutdown` 自动等待 WebSocket 关闭吗？</summary>
 
-不会。已 hijack 的连接要由应用另行通知与等待。</details>
+不会。已 hijack 的连接要由应用另行通知与等待。
+
+</details>
 
 <details><summary>8. 当前 S2 200 代表进程退出后消息一定恢复吗？</summary>
 
-不代表。它只承诺本进程内存受理。</details>
+不代表。它只承诺本进程内存受理。
+
+</details>
 
 ### 推导 9–16：哪一层先失败
 
 <details><summary>9. FD 软限 1024、当前打开 1020，本题静态假设还剩几个槽位？</summary>
 
-4 个；真实环境仍要看其它打开/关闭与竞争。</details>
+4 个；真实环境仍要看其它打开/关闭与竞争。
+
+</details>
 
 <details><summary>10. 达到进程 FD 限额后，老连接必立即断开吗？</summary>
 
-不必。新 `accept/open` 可能失败，老连接是否继续要另查。</details>
+不必。新 `accept/open` 可能失败，老连接是否继续要另查。
+
+</details>
 
 <details><summary>11. 把 FD 软限调高一定修复 FD 泄漏吗？</summary>
 
-不能。若对象未关闭，只会推迟下一次耗尽。</details>
+不能。若对象未关闭，只会推迟下一次耗尽。
+
+</details>
 
 <details><summary>12. 某日志卷满能直接证明权威 WAL 卷也满吗？</summary>
 
-不能。要核对挂载/卷、写入位置和同步错误。</details>
+不能。要核对挂载/卷、写入位置和同步错误。
+
+</details>
 
 <details><summary>13. `fsync` 报 ENOSPC 后能返回 `stored_in_teaching_db` 吗？</summary>
 
-若未满足未来合同的提交条件，不能伪造该成功语义；结果不明时按身份查权威状态。</details>
+若未满足未来合同的提交条件，不能伪造该成功语义；结果不明时按身份查权威状态。
+
+</details>
 
 <details><summary>14. memory.current 高、Go heap 低，可先排除资源压力吗？</summary>
 
-不能。cgroup 还计页缓存、socket、内核及后代等内存。</details>
+不能。cgroup 还计页缓存、socket、内核及后代等内存。
+
+</details>
 
 <details><summary>15. Shutdown 返回可证明 B 设备应用 ACK 到了吗？</summary>
 
-不能。它不管 hijacked WebSocket 的应用层完成，更不等于设备确认。</details>
+不能。它不管 hijacked WebSocket 的应用层完成，更不等于设备确认。
+
+</details>
 
 <details><summary>16. 进程退出且没有 OOM 事件，可直接判 OOM 吗？</summary>
 
-不能。还需查 SIGTERM/SIGKILL、健康检查、部署与退出码等证据。</details>
+不能。还需查 SIGTERM/SIGKILL、健康检查、部署与退出码等证据。
+
+</details>
 
 ### 恢复 17–22：业务事实与反证
 
 <details><summary>17. 发现磁盘满可直接删除权威 m-9 或 WAL 腾空间吗？</summary>
 
-不应。先保留权威事实并定位卷/空间/写回错误，在有权限的流程中处置。</details>
+不应。先保留权威事实并定位卷/空间/写回错误，在有权限的流程中处置。
+
+</details>
 
 <details><summary>18. 网关重启后探针绿了，可以关闭“B 缺消息”事件吗？</summary>
 
-不能。还需按权限核对历史缺口与设备处理结果。</details>
+不能。还需按权限核对历史缺口与设备处理结果。
+
+</details>
 
 <details><summary>19. 关停长连接除了 Shutdown 还需什么？</summary>
 
-停止接入、应用侧 WebSocket 通知/排空/关闭、在途期限和客户端重连补拉入口。</details>
+停止接入、应用侧 WebSocket 通知/排空/关闭、在途期限和客户端重连补拉入口。
+
+</details>
 
 <details><summary>20. B 离线 25h、教学 broker 保留 24h，恢复靠什么？</summary>
 
-靠有权权威 DB 历史按会话序号补拉，不能只靠 broker 事件。</details>
+靠有权权威 DB 历史按会话序号补拉，不能只靠 broker 事件。
+
+</details>
 
 <details><summary>21. 两处 OpenIM 固定源码可证明其真实 EMFILE/ENOSPC 事故吗？</summary>
 
-不能。只看到选定发送与 Mongo 消费异步边界。</details>
+不能。只看到选定发送与 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 完整资源故障卡至少交什么？</summary>
 
-用户确认点、错误码/信号与作用域、同窗资源证据、能推翻的观察、可逆止损、权威/在途/设备分层恢复门。</details>
+用户确认点、错误码/信号与作用域、同窗资源证据、能推翻的观察、可逆止损、权威/在途/设备分层恢复门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

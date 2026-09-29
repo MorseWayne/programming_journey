@@ -112,95 +112,139 @@ MADR 模板将 Context、选项、决策结果、后果和确认办法放在同�
 
 <details><summary>1. 当前 S2 的 200 可以写成“数据库已存”吗？</summary>
 
-不能。它只表示 `accepted_in_memory`，后续持久性没有由此证实。</details>
+不能。它只表示 `accepted_in_memory`，后续持久性没有由此证实。
+
+</details>
 
 <details><summary>2. `"你好"` 与 `"你好呀"` 分别多少 UTF-8 字节？</summary>
 
-6 B 与 9 B；R9 尚待审，当前上限仍为 6 B。</details>
+6 B 与 9 B；R9 尚待审，当前上限仍为 6 B。
+
+</details>
 
 <details><summary>3. 同 ID 同正文重复 POST 当前会得到什么？</summary>
 
-409，旧正文和顺序不改。</details>
+409，旧正文和顺序不改。
+
+</details>
 
 <details><summary>4. 已登录 `u-c` 不是 `c-a` 成员，历史 GET 应怎样？</summary>
 
-按当前隐藏目标政策 404，不泄露私有正文。</details>
+按当前隐藏目标政策 404，不泄露私有正文。
+
+</details>
 
 <details><summary>5. 需求记录最先回答什么？</summary>
 
-谁要在什么场景做什么、当前/目标可见结果及正反验收。</details>
+谁要在什么场景做什么、当前/目标可见结果及正反验收。
+
+</details>
 
 <details><summary>6. ADR-R9 的 Proposed 等于已经批准 9 B 吗？</summary>
 
-不等于。只有正式决策与相应接口/发布证据才能改变当前合同。</details>
+不等于。只有正式决策与相应接口/发布证据才能改变当前合同。
+
+</details>
 
 <details><summary>7. 运行手册和事故复盘同是一份通用文档吗？</summary>
 
-不是。手册指导出现症状时的下一动作；复盘记录已发生事件的事实、影响和行动。</details>
+不是。手册指导出现症状时的下一动作；复盘记录已发生事件的事实、影响和行动。
+
+</details>
 
 <details><summary>8. 发布新镜像能自动使旧 ADR 变成 Accepted 吗？</summary>
 
-不能。决策状态与部署事实须分别记录和核对。</details>
+不能。决策状态与部署事实须分别记录和核对。
+
+</details>
 
 ### 需求与手册 9–16：从 m-9 找证据
 
 <details><summary>9. A 说“发送成功”，手册第一问是什么？</summary>
 
-哪个接口/版本、哪种响应、哪个稳定消息 ID 和当时权限；先确定成功到哪一步。</details>
+哪个接口/版本、哪种响应、哪个稳定消息 ID 和当时权限；先确定成功到哪一步。
+
+</details>
 
 <details><summary>10. 当前 S2 可直接执行本章纸上 SQL outbox 核对吗？</summary>
 
-不能。该路径只属于未来 S3 教学方案，不能凭静态图查不存在的权威表。</details>
+不能。该路径只属于未来 S3 教学方案，不能凭静态图查不存在的权威表。
+
+</details>
 
 <details><summary>11. 未来 S3 m-9 已提交但 E9 `PENDING`，应直接换随机事件 ID 吗？</summary>
 
-不应。沿稳定 `evt:m-9:v1` 查发布/ACK，按预算受控恢复。</details>
+不应。沿稳定 `evt:m-9:v1` 查发布/ACK，按预算受控恢复。
+
+</details>
 
 <details><summary>12. SearchIndex 可搜能直接证明 B 设备收到通知吗？</summary>
 
-不能。搜索和设备/阅读是不同链路。</details>
+不能。搜索和设备/阅读是不同链路。
+
+</details>
 
 <details><summary>13. E-bad 未决时为降 lag 静默越过同会话 offset 可吗？</summary>
 
-不可。需显式顺序/缺口、隔离、修复和对账政策。</details>
+不可。需显式顺序/缺口、隔离、修复和对账政策。
+
+</details>
 
 <details><summary>14. B 离线超玩具 broker 保留，恢复消息从哪里来？</summary>
 
-在当前权限下从权威消息历史按 seq 补拉。</details>
+在当前权限下从权威消息历史按 seq 补拉。
+
+</details>
 
 <details><summary>15. 运行手册可把私有正文直接复制进普通日志供值班查看吗？</summary>
 
-不应。使用脱敏 ID/版本/阶段与受控权限查询。</details>
+不应。使用脱敏 ID/版本/阶段与受控权限查询。
+
+</details>
 
 <details><summary>16. 一条手册步骤没有下一个责任人或停止条件，算可执行吗？</summary>
 
-不足。需写清已知/未知、条件动作、交接和禁止盲重放的门槛。</details>
+不足。需写清已知/未知、条件动作、交接和禁止盲重放的门槛。
+
+</details>
 
 ### ADR 与复盘 17–22：让别人能复核
 
 <details><summary>17. ADR-R9 为什么列“直接改 v1、版本化新路径、维持 6 B”三项？</summary>
 
-让决策者看清旧客户端兼容、拒绝语义和回退成本，不能只写一个偏好。</details>
+让决策者看清旧客户端兼容、拒绝语义和回退成本，不能只写一个偏好。
+
+</details>
 
 <details><summary>18. R9 后来被拒绝，应删掉 Proposed ADR 吗？</summary>
 
-不应。记录状态及新决定/取代关系，保留当时背景与未采用原因。</details>
+不应。记录状态及新决定/取代关系，保留当时背景与未采用原因。
+
+</details>
 
 <details><summary>19. 纸上 T+14 告警能证明故障只影响 m-9 吗？</summary>
 
-不能。已知 m-9 的搜索延迟；其他消息/用户范围需另查，不能编数字。</details>
+不能。已知 m-9 的搜索延迟；其他消息/用户范围需另查，不能编数字。
+
+</details>
 
 <details><summary>20. 复盘只写“工程师操作失误，下次小心”够吗？</summary>
 
-不够。应记录促成条件、检测/缓解和有 owner/期限/验收的系统性行动，保持无责备。</details>
+不够。应记录促成条件、检测/缓解和有 owner/期限/验收的系统性行动，保持无责备。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码能证明它采用教学 SQL outbox 吗？</summary>
 
-不能。仅核对所述发送入队返回和另一 MongoDB 消费写入位置。</details>
+不能。仅核对所述发送入队返回和另一 MongoDB 消费写入位置。
+
+</details>
 
 <details><summary>22. 未参加讨论的审阅者如何判断结论可靠？</summary>
 
-沿版本/状态/适用环境，找到合同、固定源码或真实运行证据、未知项和下一负责人；不能只看“大家同意了”。</details>
+沿版本/状态/适用环境，找到合同、固定源码或真实运行证据、未知项和下一负责人；不能只看“大家同意了”。
+
+</details>
 
 ## 本章完成标准与下一步
 

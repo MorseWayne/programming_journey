@@ -25,9 +25,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "a8e41b6069fc78f2aff284b8075d7552d29a90f2822df48f33aa849451dd4fef",
-  "reviewed_sha256": "6bb36429f9fbba8dc126e9d13e92a8c603fdbb76051e80cb22fcb9aedf943589",
-  "reviewed_characters": 10149,
+  "reviewed_sha256": "2de6f912c3365209b5edb345d17cb90dfc3b58dbc2403f2afc06148dd4dbc0f0",
+  "reviewed_characters": 10193,
   "reviewed_chinese_characters": 4802,
   "course_file": "src/docs/platform_engineering/curriculum/05_runtime/01_concurrent_tasks_lifecycle.md",
-  "course_sha256": "1a0737c5a5ae6b717650657f989dc03b8aa40d6bb24383b2e3114252cc22fe3b"
+  "course_sha256": "221096d9c988fa8aaf725c4d287a83f1970a9287f3a68e309bebecb0d85ae2c8"
 }

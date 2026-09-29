@@ -113,93 +113,137 @@ Set-Cookie: __Host-im_session=<不可预测的会话标识>; Path=/; Secure; Htt
 
 ### 分层练习：先答，再展开反馈
 
-<details><summary>1. `<form action>` 和 `method` 各决定什么？</summary>
+<details><summary>1. `&lt;form action&gt;` 和 `method` 各决定什么？</summary>
 
-前者是提交目标，后者是使用的 HTTP 方法。</details>
+前者是提交目标，后者是使用的 HTTP 方法。
+
+</details>
 
 <details><summary>2. 普通 POST 表单会自动发送 09.02 约定的 JSON 吗？</summary>
 
-不会。默认是表单编码；JSON API 需由脚本或其他客户端按合同构造。</details>
+不会。默认是表单编码；JSON API 需由脚本或其他客户端按合同构造。
+
+</details>
 
 <details><summary>3. 隐藏字段中的 sender_id 能作为受信身份吗？</summary>
 
-不能。隐藏仍是客户端输入，主体应来自服务端验证后的 Session/凭据。</details>
+不能。隐藏仍是客户端输入，主体应来自服务端验证后的 Session/凭据。
+
+</details>
 
 <details><summary>4. `html/template` 处理普通消息文本主要做什么？</summary>
 
-按输出上下文转义，避免普通文本被直接当作 HTML/脚本解释。</details>
+按输出上下文转义，避免普通文本被直接当作 HTML/脚本解释。
+
+</details>
 
 <details><summary>5. 直接把不可信正文转成 `template.HTML` 有何风险？</summary>
 
-可能绕开模板转义，让不可信内容进入浏览器可执行上下文。</details>
+可能绕开模板转义，让不可信内容进入浏览器可执行上下文。
+
+</details>
 
 <details><summary>6. Cookie 与服务端 Session 是同一件事吗？</summary>
 
-不是。Cookie 携带标识；服务器用 Session 解释主体、有效期和撤销状态。</details>
+不是。Cookie 携带标识；服务器用 Session 解释主体、有效期和撤销状态。
+
+</details>
 
 <details><summary>7. `HttpOnly` 能阻止同源恶意脚本代用户发请求吗？</summary>
 
-不能。它限制脚本直接读 Cookie，不消除已执行脚本的请求能力。</details>
+不能。它限制脚本直接读 Cookie，不消除已执行脚本的请求能力。
+
+</details>
 
 <details><summary>8. `Secure` 与 `SameSite` 分别约束什么？</summary>
 
-前者约束安全传输；后者约束某些跨站请求是否带 Cookie。</details>
+前者约束安全传输；后者约束某些跨站请求是否带 Cookie。
+
+</details>
 
 <details><summary>9. 路径不同会让两个 URL 变成不同 Origin 吗？</summary>
 
-不会。Origin 比较方案、主机与端口。</details>
+不会。Origin 比较方案、主机与端口。
+
+</details>
 
 <details><summary>10. `im.example.test` 与 `api.example.test` 是同源吗？</summary>
 
-不是，主机不同；它们仍可能属于同一 site。</details>
+不是，主机不同；它们仍可能属于同一 site。
+
+</details>
 
 <details><summary>11. CORS 可以代替 `c-a` 成员授权吗？</summary>
 
-不能。CORS 控制浏览器脚本跨源读取响应，资源权限由服务端判断。</details>
+不能。CORS 控制浏览器脚本跨源读取响应，资源权限由服务端判断。
+
+</details>
 
 <details><summary>12. 跨源携 Cookie 的响应可用 `Access-Control-Allow-Origin: *` 吗？</summary>
 
-不能。浏览器要求显式允许来源，并满足凭据相关规则。</details>
+不能。浏览器要求显式允许来源，并满足凭据相关规则。
+
+</details>
 
 <details><summary>13. 脚本因 CORS 读不到响应，能断定服务端没执行 POST 吗？</summary>
 
-不能。请求可能已到达并改变状态。</details>
+不能。请求可能已到达并改变状态。
+
+</details>
 
 <details><summary>14. 非浏览器 Go 客户端会被 CORS 响应头拦住吗？</summary>
 
-不会。仍必须由服务端认证、授权和校验。</details>
+不会。仍必须由服务端认证、授权和校验。
+
+</details>
 
 <details><summary>15. CSRF 利用了浏览器的什么自动行为？</summary>
 
-浏览器可能按 Cookie 规则给目标站请求自动附带已登录凭据。</details>
+浏览器可能按 Cookie 规则给目标站请求自动附带已登录凭据。
+
+</details>
 
 <details><summary>16. `SameSite=Lax` 一定能挡住不受信兄弟子域表单吗？</summary>
 
-不能。它可能是同 site 但不同 Origin，仍需来源/CSRF 防护。</details>
+不能。它可能是同 site 但不同 Origin，仍需来源/CSRF 防护。
+
+</details>
 
 <details><summary>17. 为什么 GET 不应发送消息或退出会话？</summary>
 
-GET 应用于安全读取；跨站导航等可能触发它，若改变状态会扩大 CSRF 风险。</details>
+GET 应用于安全读取；跨站导航等可能触发它，若改变状态会扩大 CSRF 风险。
+
+</details>
 
 <details><summary>18. CSRF token 收到后服务器还要做什么？</summary>
 
-核对它与当前会话的预期值，并继续做资源授权。</details>
+核对它与当前会话的预期值，并继续做资源授权。
+
+</details>
 
 <details><summary>19. WebSocket 握手有 Cookie 就无需检查 Origin 吗？</summary>
 
-不行。浏览器可能被不受信来源诱导建立带 Cookie 的连接。</details>
+不行。浏览器可能被不受信来源诱导建立带 Cookie 的连接。
+
+</details>
 
 <details><summary>20. 握手通过能让后续所有 c-a 消息免授权吗？</summary>
 
-不能。每条发送/订阅仍要检查目标会话和当前权限。</details>
+不能。每条发送/订阅仍要检查目标会话和当前权限。
+
+</details>
 
 <details><summary>21. `private`、`no-cache`、`no-store` 可以等同吗？</summary>
 
-不能。它们分别控制共享缓存、复用前验证和是否保存本次响应。</details>
+不能。它们分别控制共享缓存、复用前验证和是否保存本次响应。
+
+</details>
 
 <details><summary>22. 注销并返回 `no-store` 能擦掉已截图的历史吗？</summary>
 
-不能。服务端撤销 Session、浏览器清理展示和既有副本是不同责任。</details>
+不能。服务端撤销 Session、浏览器清理展示和既有副本是不同责任。
+
+</details>
 
 ## 来源与下一步
 

@@ -28,9 +28,9 @@
   "original_sha256": "066ae7b03236dad46353a3c76920f44f516ea4d8f691608619fffef3548bbb82",
   "original_characters": 32484,
   "generation_request_sha256": "0fd7972edcde661f70dbf222a4ed501b49b365b12a51e9e0c11535df77e9ddd8",
-  "reviewed_sha256": "7749d7fba004e1e0df4258e44728fc90243a0b51bd7d03f7536c1531439373ee",
-  "reviewed_characters": 7781,
+  "reviewed_sha256": "41607174984a7ab882ba0ffa13d1dda222c05637115e6c1371c4989196a9ec08",
+  "reviewed_characters": 7825,
   "reviewed_chinese_characters": 3884,
   "course_file": "src/docs/platform_engineering/curriculum/03_systems/08_persistence_mechanisms.md",
-  "course_sha256": "a509c14485fcbe3854447a0233e7e661079b13eda296a271a302e001c81a4e6e"
+  "course_sha256": "a13e2c9acc908797c55a521c19d029196021d77dafcb27a0b3ff17df94fd58cb"
 }

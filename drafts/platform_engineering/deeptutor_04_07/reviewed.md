@@ -99,91 +99,135 @@ TLS 1.3 还有可选的 **0-RTT 早期数据**，其跨连接重放保护弱于�
 
 <details><summary>1. TLS 在本章主要保护什么？</summary>
 
-在正确验证下保护相应连接的机密性、完整性和服务端身份。</details>
+在正确验证下保护相应连接的机密性、完整性和服务端身份。
+
+</details>
 
 <details><summary>2. 公开哈希摘要本身能防攻击者改文并重算吗？</summary>
 
-不能，单独哈希不提供来源认证。</details>
+不能，单独哈希不提供来源认证。
+
+</details>
 
 <details><summary>3. 大量应用数据通常用对称还是每字节非对称加密？</summary>
 
-TLS 会话密钥的对称认证加密；证书公钥不是逐条聊天正文的直接加密钥。</details>
+TLS 会话密钥的对称认证加密；证书公钥不是逐条聊天正文的直接加密钥。
+
+</details>
 
 <details><summary>4. 数字签名主要证明什么？</summary>
 
-被签内容与私钥持有者相关，需结合证书信任与名称校验。</details>
+被签内容与私钥持有者相关，需结合证书信任与名称校验。
+
+</details>
 
 <details><summary>5. TCP 建连成功就证明 TLS 握手成功吗？</summary>
 
-不能。TLS 在 TCP 之后另行协商和验证。</details>
+不能。TLS 在 TCP 之后另行协商和验证。
+
+</details>
 
 <details><summary>6. TLS 成功就证明 WebSocket 已收到 101 吗？</summary>
 
-不能。HTTP/WS 升级是更高层步骤。</details>
+不能。HTTP/WS 升级是更高层步骤。
+
+</details>
 
 <details><summary>7. DNS 解析到某 IP 能证明它有权自称 im.example.test 吗？</summary>
 
-不能，还须证书链和目标名称等校验。</details>
+不能，还须证书链和目标名称等校验。
+
+</details>
 
 <details><summary>8. 证书链可信但 SAN 只有 other.example.test，可接受吗？</summary>
 
-不应接受为 im.example.test，名称不匹配。</details>
+不应接受为 im.example.test，名称不匹配。
+
+</details>
 
 <details><summary>9. 现代名称校验可只看证书 Common Name 吗？</summary>
 
-不能。应核对 SAN 中对应的 DNS/IP 名称。</details>
+不能。应核对 SAN 中对应的 DNS/IP 名称。
+
+</details>
 
 <details><summary>10. SNI 告诉服务器选证书，等于客户端已验证证书吗？</summary>
 
-不等于。客户端仍须校验链、名称和有效性。</details>
+不等于。客户端仍须校验链、名称和有效性。
+
+</details>
 
 <details><summary>11. Go `InsecureSkipVerify` 可作为生产证书过期的修复吗？</summary>
 
-不应。它跳过默认链和名称校验，会引入冒名风险。</details>
+不应。它跳过默认链和名称校验，会引入冒名风险。
+
+</details>
 
 <details><summary>12. 按 IP 访问时，只含 DNS SAN 的证书必然适用吗？</summary>
 
-不必然。应按目标 IP 与证书 IP SAN 核对。</details>
+不必然。应按目标 IP 与证书 IP SAN 核对。
+
+</details>
 
 <details><summary>13. 代理终止 TLS 后，后端一跳自动受同一 TLS 保护吗？</summary>
 
-不会。代理到 Go 服务是另一条需要单独判断的连接。</details>
+不会。代理到 Go 服务是另一条需要单独判断的连接。
+
+</details>
 
 <details><summary>14. `X-Forwarded-Proto` 来自任意客户端都可信吗？</summary>
 
-不能，只能在受控代理转发边界按配置使用。</details>
+不能，只能在受控代理转发边界按配置使用。
+
+</details>
 
 <details><summary>15. HTTPS 成功能证明 u-a 已登录吗？</summary>
 
-不能。应用 Session/Token 仍须验证。</details>
+不能。应用 Session/Token 仍须验证。
+
+</details>
 
 <details><summary>16. WSS 成功能证明 u-a 有权读 c-a 吗？</summary>
 
-不能。WebSocket 握手和每条消息仍要做应用授权。</details>
+不能。WebSocket 握手和每条消息仍要做应用授权。
+
+</details>
 
 <details><summary>17. 证书名称错误能当作 IM 历史接口 404 吗？</summary>
 
-不能。握手可能在 HTTP 请求之前就失败。</details>
+不能。握手可能在 HTTP 请求之前就失败。
+
+</details>
 
 <details><summary>18. 已建立 TLS 连接在证书到期一刻就自动完成新握手吗？</summary>
 
-不能这样推断；新连接需要按当时证书重新校验。</details>
+不能这样推断；新连接需要按当时证书重新校验。
+
+</details>
 
 <details><summary>19. mTLS 客户端证书天然等于用户 u-a 吗？</summary>
 
-不等于。证书身份还需映射到服务/设备/用户政策。</details>
+不等于。证书身份还需映射到服务/设备/用户政策。
+
+</details>
 
 <details><summary>20. TLS 1.3 0-RTT 早期数据有普通连接同等的跨连接防重放保证吗？</summary>
 
-没有；若启用，要避免未防重放的非幂等发送。</details>
+没有；若启用，要避免未防重放的非幂等发送。
+
+</details>
 
 <details><summary>21. TLS 加密能证明 m-a 已写入数据库吗？</summary>
 
-不能。数据库提交是独立业务证据。</details>
+不能。数据库提交是独立业务证据。
+
+</details>
 
 <details><summary>22. 页面小锁能证明 B 设备已读吗？</summary>
 
-不能。那是浏览器到某 TLS 端点的连接状态，不是设备/用户回执。</details>
+不能。那是浏览器到某 TLS 端点的连接状态，不是设备/用户回执。
+
+</details>
 
 ## 来源与下一步
 

@@ -98,95 +98,139 @@ cgroup v2 `pids.max` 限制的是该组可创建的内核**任务**数量，Linu
 
 <details><summary>1. namespace 直接设置 CPU 最多 0.5 核吗？</summary>
 
-不直接设置。namespace 隔离对象视图；本题 CPU 带宽来自 cgroup `cpu.max`。</details>
+不直接设置。namespace 隔离对象视图；本题 CPU 带宽来自 cgroup `cpu.max`。
+
+</details>
 
 <details><summary>2. 容器内 PID 1 一定是宿主 PID 1 吗？</summary>
 
-不一定。PID namespace 可给同一进程不同视图编号。</details>
+不一定。PID namespace 可给同一进程不同视图编号。
+
+</details>
 
 <details><summary>3. 容器内 `127.0.0.1` 默认是宿主服务吗？</summary>
 
-不是。它指该进程所在网络 namespace 的回环。</details>
+不是。它指该进程所在网络 namespace 的回环。
+
+</details>
 
 <details><summary>4. Mount namespace 会改变什么？</summary>
 
-进程看到的挂载点/路径视图；相同路径名不必指同一宿主存储位置。</details>
+进程看到的挂载点/路径视图；相同路径名不必指同一宿主存储位置。
+
+</details>
 
 <details><summary>5. 容器里 UID 0 自动拥有宿主所有权限吗？</summary>
 
-不自动。用户映射与权限/capability 等机制仍需核对。</details>
+不自动。用户映射与权限/capability 等机制仍需核对。
+
+</details>
 
 <details><summary>6. cgroup `pids.max` 可直接当最大 WebSocket 数吗？</summary>
 
-不能。它限制内核任务创建，不是 socket/连接或 FD 数。</details>
+不能。它限制内核任务创建，不是 socket/连接或 FD 数。
+
+</details>
 
 <details><summary>7. Go `GOMAXPROCS` 是容器 CPU 配额吗？</summary>
 
-不是。它约束 Go 代码可同时执行的并行度，配额由 cgroup 等资源设置决定。</details>
+不是。它约束 Go 代码可同时执行的并行度，配额由 cgroup 等资源设置决定。
+
+</details>
 
 <details><summary>8. 当前 S2 200 表示进程重启后消息一定仍在吗？</summary>
 
-不能。它仅承诺本进程内存受理。</details>
+不能。它仅承诺本进程内存受理。
+
+</details>
 
 ### 算式 9–16：同一窗口比较
 
 <details><summary>9. `cpu.max=50000 100000` 对应长期平均多少核？</summary>
 
-`50000/100000=0.5` 核的带宽额度。</details>
+`50000/100000=0.5` 核的带宽额度。
+
+</details>
 
 <details><summary>10. 一秒 `usage_usec` 增 480000，是多少核秒？</summary>
 
-0.48 核秒；`usage_usec` 需取两次快照差值。</details>
+0.48 核秒；`usage_usec` 需取两次快照差值。
+
+</details>
 
 <details><summary>11. 本题 0.48 核秒与 0.5 核额度相比占多少？</summary>
 
-`0.48/0.5=96%`。</details>
+`0.48/0.5=96%`。
+
+</details>
 
 <details><summary>12. 0.48 核秒相对宿主 8 核一秒容量占多少？</summary>
 
-`0.48/8=6%`；宿主总 CPU 10% 可含其他进程。</details>
+`0.48/8=6%`；宿主总 CPU 10% 可含其他进程。
+
+</details>
 
 <details><summary>13. `memory.current=500 MiB` 等于 Go 存活堆 500 MiB 吗？</summary>
 
-不等于。它含该 cgroup 及后代的多类内存记账，不是单进程 Go heap。</details>
+不等于。它含该 cgroup 及后代的多类内存记账，不是单进程 Go heap。
+
+</details>
 
 <details><summary>14. `memory.max=512 MiB`、current=500 MiB，能断定已经 OOM kill 吗？</summary>
 
-不能。接近上限不等于有进程被杀，须看事件增量和进程状态。</details>
+不能。接近上限不等于有进程被杀，须看事件增量和进程状态。
+
+</details>
 
 <details><summary>15. `memory.events oom_kill` 增 1 能支持什么？</summary>
 
-该 cgroup 记账范围有一个进程被 OOM killer 杀的事件；还需核对具体进程与业务影响。</details>
+该 cgroup 记账范围有一个进程被 OOM killer 杀的事件；还需核对具体进程与业务影响。
+
+</details>
 
 <details><summary>16. `GOMEMLIMIT` 可保证 cgroup current 不超过 memory.max 吗？</summary>
 
-不能。它是 Go 运行时管理内存的软限制，不控制所有进程/内核记账。</details>
+不能。它是 Go 运行时管理内存的软限制，不控制所有进程/内核记账。
+
+</details>
 
 ### 决策 17–22：从资源恢复到业务恢复
 
 <details><summary>17. 宿主 CPU 10% 就能排除网关 CPU 配额瓶颈吗？</summary>
 
-不能。按网关 cgroup 配额/使用/节流和同窗请求证据判断。</details>
+不能。按网关 cgroup 配额/使用/节流和同窗请求证据判断。
+
+</details>
 
 <details><summary>18. 节流增加与 P95 上升同窗就证明唯一根因吗？</summary>
 
-不能。还要排除队列、I/O、其他实例与负载变化，并用反证核对。</details>
+不能。还要排除队列、I/O、其他实例与负载变化，并用反证核对。
+
+</details>
 
 <details><summary>19. Go 堆低、cgroup 内存高时还应看什么？</summary>
 
-其他进程/后代、RSS、页缓存、socket/内核内存及 `memory.stat/events`。</details>
+其他进程/后代、RSS、页缓存、socket/内核内存及 `memory.stat/events`。
+
+</details>
 
 <details><summary>20. 网关被 OOM 杀后，连接恢复就能宣布旧 S2 消息恢复吗？</summary>
 
-不能。当前 S2 仅内存受理，须核对旧请求状态、客户端重试与有权查询。</details>
+不能。当前 S2 仅内存受理，须核对旧请求状态、客户端重试与有权查询。
+
+</details>
 
 <details><summary>21. OpenIM 两处源码能证明它的真实 cgroup 配额或 OOM 吗？</summary>
 
-不能。只看到选定发送与 Mongo 消费边界。</details>
+不能。只看到选定发送与 Mongo 消费边界。
+
+</details>
 
 <details><summary>22. 一张可复核诊断单至少交什么？</summary>
 
-业务确认点、版本/负载、宿主/namespace/cgroup/进程范围、窗口差值、竞争假设、OOM/退出证据、单一可逆改动与用户恢复门。</details>
+业务确认点、版本/负载、宿主/namespace/cgroup/进程范围、窗口差值、竞争假设、OOM/退出证据、单一可逆改动与用户恢复门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

@@ -86,95 +86,139 @@ Kubernetes `Ready` 只证明所配置的健康检查通过，不能写成“所�
 
 <details><summary>1. 当前 `/v1` 的 200 承诺什么？</summary>
 
-`accepted_in_memory`，不承诺数据库持久、broker/设备送达。</details>
+`accepted_in_memory`，不承诺数据库持久、broker/设备送达。
+
+</details>
 
 <details><summary>2. 拟议 S3 `/v2` 已部署了吗？它的正文上限自动变 9 B 吗？</summary>
 
-未部署；纸上仍沿用 6 B，R9 是另一份待审变更。</details>
+未部署；纸上仍沿用 6 B，R9 是另一份待审变更。
+
+</details>
 
 <details><summary>3. `event_v2` 与 `m-9:v2` 是同一版本吗？</summary>
 
-不是。前者是事件线格式，后者是消息业务编辑版本。</details>
+不是。前者是事件线格式，后者是消息业务编辑版本。
+
+</details>
 
 <details><summary>4. 镜像 digest 可证明数据库回填已完成吗？</summary>
 
-不能。制品身份与数据水位/对账是不同证据。</details>
+不能。制品身份与数据水位/对账是不同证据。
+
+</details>
 
 <details><summary>5. `Ready` 的新 Pod 能证明 B 已读消息吗？</summary>
 
-不能。Ready 只覆盖所配置就绪检查，设备回执另证。</details>
+不能。Ready 只覆盖所配置就绪检查，设备回执另证。
+
+</details>
 
 <details><summary>6. PostgreSQL 所有 `ALTER TABLE` 子命令都是无锁的吗？</summary>
 
-不是。锁级按具体子形式评估，不能笼统承诺零影响。</details>
+不是。锁级按具体子形式评估，不能笼统承诺零影响。
+
+</details>
 
 <details><summary>7. 旧 Protobuf 消费者可 parse 新字段，就一定遵守 visible 权限吗？</summary>
 
-不一定。旧逻辑可能忽略字段；需先升级/隔离读端。</details>
+不一定。旧逻辑可能忽略字段；需先升级/隔离读端。
+
+</details>
 
 <details><summary>8. 1%→10%→100% 是生产推荐灰度比例吗？</summary>
 
-不是。只是纸上阶段，实际比例和观察窗来自业务/负载/风险。</details>
+不是。只是纸上阶段，实际比例和观察窗来自业务/负载/风险。
+
+</details>
 
 ### 灰度与迁移 9–16：看什么才可推进
 
 <details><summary>9. 新 producer 发 event_v2 前，旧消费者最少要满足什么？</summary>
 
-已升级/隔离，或能按安全默认/权威回源理解版本与权限，不能只会解析字节。</details>
+已升级/隔离，或能按安全默认/权威回源理解版本与权限，不能只会解析字节。
+
+</details>
 
 <details><summary>10. 只有消息总数相同，能证明 b1 回填正确吗？</summary>
 
-不能。比 ID、seq、当前版本、删除/可见范围、outbox 和派生差集。</details>
+不能。比 ID、seq、当前版本、删除/可见范围、outbox 和派生差集。
+
+</details>
 
 <details><summary>11. 1% cohort 没有旧客户端请求，可据此删 v1 支持吗？</summary>
 
-不能。样本未覆盖旧客户端，需专门兼容负例和支持窗口证据。</details>
+不能。样本未覆盖旧客户端，需专门兼容负例和支持窗口证据。
+
+</details>
 
 <details><summary>12. 非成员 `u-c` 读到私有正文，应继续扩灰度观察吗？</summary>
 
-不应。违反安全门，应停相关新写/流量并调查、修复与对账。</details>
+不应。违反安全门，应停相关新写/流量并调查、修复与对账。
+
+</details>
 
 <details><summary>13. `maxUnavailable/maxSurge` 会自动排空旧 WebSocket 和 N9 worker 吗？</summary>
 
-不会。实例数控制与连接/任务/消费位点交接要分别设计。</details>
+不会。实例数控制与连接/任务/消费位点交接要分别设计。
+
+</details>
 
 <details><summary>14. 旧 worker 失租后迟到写任务完成状态，需要什么？</summary>
 
-目标端用 owner/token/版本条件拒绝，并另查外部推送是否发生。</details>
+目标端用 owner/token/版本条件拒绝，并另查外部推送是否发生。
+
+</details>
 
 <details><summary>15. R9 未批准前，旧 S2 对 9 B 正文应怎样？</summary>
 
-按当前 6 B 上限拒绝，不能因发布比例改变默认合同。</details>
+按当前 6 B 上限拒绝，不能因发布比例改变默认合同。
+
+</details>
 
 <details><summary>16. `event_v1` 已过 broker 保留，但 DLQ 还有旧事件，可立即删双读？</summary>
 
-不能。隔离/回放窗口仍可把旧格式带回，需先闭环或保留解释路径。</details>
+不能。隔离/回放窗口仍可把旧格式带回，需先闭环或保留解释路径。
+
+</details>
 
 ### 回退评审 17–22：旧镜像不是时光机
 
 <details><summary>17. 新 event_v2 已写入 broker，回滚旧镜像就抹掉它了吗？</summary>
 
-没有。旧消费者还可能读到新事件，需保兼容读/停新写/修复。</details>
+没有。旧消费者还可能读到新事件，需保兼容读/停新写/修复。
+
+</details>
 
 <details><summary>18. S3 已承诺 SQL 提交，能删消息行假装回到 S2 吗？</summary>
 
-不能。已承诺事实与外部观察不可无记录删除。</details>
+不能。已承诺事实与外部观察不可无记录删除。
+
+</details>
 
 <details><summary>19. N3/epoch8 已接收 m-11，可直接恢复旧 N1/epoch7 吗？</summary>
 
-不可。先围栏/反向追新写与对账，再发布更高的新 epoch。</details>
+不可。先围栏/反向追新写与对账，再发布更高的新 epoch。
+
+</details>
 
 <details><summary>20. 小灰度整体错误率低，能证明热群 c-g 和旧客户端正常吗？</summary>
 
-不能。要分 cohort/业务键/客户端版本看代表性与特定缺口。</details>
+不能。要分 cohort/业务键/客户端版本看代表性与特定缺口。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码能证明本章发布方案已部署吗？</summary>
 
-不能。只核对所述消息入队返回与另一 Mongo 消费调用。</details>
+不能。只核对所述消息入队返回与另一 Mongo 消费调用。
+
+</details>
 
 <details><summary>22. 一份可执行回退计划最少要列什么？</summary>
 
-制品/配置/DB/事件/路由各自的可逆门、先停新写方式、数据差集与权限对账、责任人和剩余未知。</details>
+制品/配置/DB/事件/路由各自的可逆门、先停新写方式、数据差集与权限对账、责任人和剩余未知。
+
+</details>
 
 ## 本章完成标准与下一步
 

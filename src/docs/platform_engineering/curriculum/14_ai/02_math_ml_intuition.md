@@ -113,95 +113,139 @@ D = [   1    1   ]               d2: (0, 1)
 
 <details><summary>1. `q=(1,0)` 有几维？</summary>
 
-二维；两个位置分别是本题人工“字节限制、权限”特征。</details>
+二维；两个位置分别是本题人工“字节限制、权限”特征。
+
+</details>
 
 <details><summary>2. `D` 有三行两列，能与几维列向量相乘？</summary>
 
-与二维列向量相乘，结果为三维分数列。</details>
+与二维列向量相乘，结果为三维分数列。
+
+</details>
 
 <details><summary>3. `q·d1` 与 `q·d3` 各是多少？</summary>
 
-分别为 1 和 2；点积会受本题向量大小影响。</details>
+分别为 1 和 2；点积会受本题向量大小影响。
+
+</details>
 
 <details><summary>4. `||d1||` 与 `||d3||` 各是多少？</summary>
 
-分别为 `√2` 和 2。</details>
+分别为 `√2` 和 2。
+
+</details>
 
 <details><summary>5. `cos(q,d2)` 是多少？</summary>
 
-`0/(1×1)=0`。</details>
+`0/(1×1)=0`。
+
+</details>
 
 <details><summary>6. 零向量与 q 的余弦能直接算吗？</summary>
 
-不能，零向量范数为 0，分母为 0。</details>
+不能，零向量范数为 0，分母为 0。
+
+</details>
 
 <details><summary>7. 本题 `(2,0)` 是真实模型生成的 embedding 吗？</summary>
 
-不是，只是人工二维特征计数的纸上示意。</details>
+不是，只是人工二维特征计数的纸上示意。
+
+</details>
 
 <details><summary>8. 高相似度能证明 B 有权读文档吗？</summary>
 
-不能。身份/资料访问范围必须独立检查。</details>
+不能。身份/资料访问范围必须独立检查。
+
+</details>
 
 ### 计算 9–16：条件概率与分类
 
 <details><summary>9. `cos(q,d1)` 约多少？</summary>
 
-`1/√2≈0.707`。</details>
+`1/√2≈0.707`。
+
+</details>
 
 <details><summary>10. `cos(q,d3)` 是多少？与点积有什么不同？</summary>
 
-`2/(1×2)=1`；点积为 2，余弦归一了向量长度。</details>
+`2/(1×2)=1`；点积为 2，余弦归一了向量长度。
+
+</details>
 
 <details><summary>11. 20 题表中 `P(E|P)` 是多少？</summary>
 
-权限主题 8 题中有证据 6 题，`6/8=0.75`。</details>
+权限主题 8 题中有证据 6 题，`6/8=0.75`。
+
+</details>
 
 <details><summary>12. `P(P|E)` 与 `P(P)` 各是多少？</summary>
 
-有证据的 12 题中权限题 6 题，`6/12=0.5`；权限题共 8/20=`0.4`。</details>
+有证据的 12 题中权限题 6 题，`6/12=0.5`；权限题共 8/20=`0.4`。
+
+</details>
 
 <details><summary>13. TP=6、FP=2，precision 是多少？</summary>
 
-`6/(6+2)=0.75`。</details>
+`6/(6+2)=0.75`。
+
+</details>
 
 <details><summary>14. TP=6、FN=3，recall 是多少？</summary>
 
-`6/(6+3)=2/3≈0.667`。</details>
+`6/(6+3)=2/3≈0.667`。
+
+</details>
 
 <details><summary>15. TP=6、TN=9、总20，accuracy 是多少？</summary>
 
-`(6+9)/20=0.75`。</details>
+`(6+9)/20=0.75`。
+
+</details>
 
 <details><summary>16. `cos=0.707` 可读成“70.7% 概率答案正确”吗？</summary>
 
-不可。它是该玩具向量的角度相似度，未被校准成正确率或权限概率。</details>
+不可。它是该玩具向量的角度相似度，未被校准成正确率或权限概率。
+
+</details>
 
 ### 决策 17–22：泛化、泄漏与业务门
 
 <details><summary>17. 12/12 训练正确、2/4 验证正确，可直接宣称真实错误率50%吗？</summary>
 
-不能。它提示过拟合或数据/标签问题，验证样本太少，不足以估真实错误率。</details>
+不能。它提示过拟合或数据/标签问题，验证样本太少，不足以估真实错误率。
+
+</details>
 
 <details><summary>18. 验证集与最终测试集的用途有何不同？</summary>
 
-验证集用于开发时选规则/阈值；最终测试在选择冻结后做独立检查。</details>
+验证集用于开发时选规则/阈值；最终测试在选择冻结后做独立检查。
+
+</details>
 
 <details><summary>19. 相邻的 `c-a` 片段同时进训练和测试，风险是什么？</summary>
 
-近重复内容泄漏使测试过分乐观；要按目标设计会话/文档/时间分组。</details>
+近重复内容泄漏使测试过分乐观；要按目标设计会话/文档/时间分组。
+
+</details>
 
 <details><summary>20. FP 可能包含无权仍回答，可只靠提高分类阈值解决吗？</summary>
 
-不能。访问控制是硬门；先权限过滤，再优化证据/分类阈值。</details>
+不能。访问控制是硬门；先权限过滤，再优化证据/分类阈值。
+
+</details>
 
 <details><summary>21. 本章算出 P=0.75，可把当前 `/v1` 非成员 404 改成概率拒绝吗？</summary>
 
-不能。AI 指标与 IM 业务授权合同无关。</details>
+不能。AI 指标与 IM 业务授权合同无关。
+
+</details>
 
 <details><summary>22. 一张可复算的纸上评测卡至少交什么？</summary>
 
-特征顺序、向量/公式、零向量规则、样本与标签来源、条件/混淆表、划分/去重方法及未运行声明。</details>
+特征顺序、向量/公式、零向量规则、样本与标签来源、条件/混淆表、划分/去重方法及未运行声明。
+
+</details>
 
 ## 本章完成标准与后续路径
 

@@ -117,95 +117,139 @@ Nygard 的 ADR 模板可用**标题、背景、决定、状态、后果**五栏�
 
 <details><summary>1. 设计说明与 ADR 主要差别是什么？</summary>
 
-设计说明比较完整方案和验证路径；ADR 留一项重大决定的背景、状态与后果。</details>
+设计说明比较完整方案和验证路径；ADR 留一项重大决定的背景、状态与后果。
+
+</details>
 
 <details><summary>2. proposed ADR 表示未来方案已部署吗？</summary>
 
-不表示，甚至尚未被决定人接受。</details>
+不表示，甚至尚未被决定人接受。
+
+</details>
 
 <details><summary>3. 当前 `/v1` 的 200 到哪一层？</summary>
 
-只到本进程内存受理，不能写成 DB 已存或 B 已收到。</details>
+只到本进程内存受理，不能写成 DB 已存或 B 已收到。
+
+</details>
 
 <details><summary>4. R9 能随 S3 一起默认为已批准吗？</summary>
 
-不能。R9 6→9 B 与 `/v2` 持久确认是不同待审变更。</details>
+不能。R9 6→9 B 与 `/v2` 持久确认是不同待审变更。
+
+</details>
 
 <details><summary>5. B 离线 25h、broker 留 24h，能只靠 broker 吗？</summary>
 
-不能保证全窗口，未来需确实保留且有权的权威历史或另审不同目标。</details>
+不能保证全窗口，未来需确实保留且有权的权威历史或另审不同目标。
+
+</details>
 
 <details><summary>6. “消息已入 DB”可直接写“B 已读”吗？</summary>
 
-不能。存储、事件、设备 ACK 与用户阅读是不同确认点。</details>
+不能。存储、事件、设备 ACK 与用户阅读是不同确认点。
+
+</details>
 
 <details><summary>7. 当前非成员发送返回什么？</summary>
 
-按 `/v1` 合同隐藏为 404；未来历史可见规则仍需另定。</details>
+按 `/v1` 合同隐藏为 404；未来历史可见规则仍需另定。
+
+</details>
 
 <details><summary>8. 13.07 的纸上 49.44 GiB 能直接当磁盘申请吗？</summary>
 
-不能。它是待批 30 天、1 KiB/记录下的逻辑原始量，未计物理放大。</details>
+不能。它是待批 30 天、1 KiB/记录下的逻辑原始量，未计物理放大。
+
+</details>
 
 ### 分析 9–16：方案、状态和反例
 
 <details><summary>9. 候选 A 维持 S2 的好处与缺口各是什么？</summary>
 
-避免未准备好的持久迁移；仍无法承诺 B 25h 有权补拉。</details>
+避免未准备好的持久迁移；仍无法承诺 B 25h 有权补拉。
+
+</details>
 
 <details><summary>10. 候选 C 延长 broker 保留就有权威历史了吗？</summary>
 
-没有。保留窗口可改变，但权威来源、权限、游标和更长离线仍需解决。</details>
+没有。保留窗口可改变，但权威来源、权限、游标和更长离线仍需解决。
+
+</details>
 
 <details><summary>11. DB 已有 `m-9/seq9`、E9 尚未发，A 的状态怎样写？</summary>
 
-未来若 DB 确认合同成立，可说权威已存，事件仍待恢复；不得说 B 已收到。</details>
+未来若 DB 确认合同成立，可说权威已存，事件仍待恢复；不得说 B 已收到。
+
+</details>
 
 <details><summary>12. E9 重投时可造第二条权威消息吗？</summary>
 
-不应。事件可重复，稳定消息意图和权威唯一性要独立守住。</details>
+不应。事件可重复，稳定消息意图和权威唯一性要独立守住。
+
+</details>
 
 <details><summary>13. B 先见 9 缺 8、此前连续到 7，游标是多少？</summary>
 
-仍为 7；不能用“最大已见 9”跳过缺口。</details>
+仍为 7；不能用“最大已见 9”跳过缺口。
+
+</details>
 
 <details><summary>14. A 超时后直接换新消息 ID 重发有何风险？</summary>
 
-未来 DB 可能已提交，换 ID 可能制造第二条意图；需稳定 ID 和查证/重试合同。</details>
+未来 DB 可能已提交，换 ID 可能制造第二条意图；需稳定 ID 和查证/重试合同。
+
+</details>
 
 <details><summary>15. 10 分钟停 E9 消费、入 20/s，积压多少？</summary>
 
-`20×600=12,000`；纸上速率条件，不是实测。</details>
+`20×600=12,000`；纸上速率条件，不是实测。
+
+</details>
 
 <details><summary>16. 消费 30/s、仍入 20/s，理想多久清旧债？</summary>
 
-净清 10/s，`12,000/10=1,200 秒=20 分钟`，还未计热点/重投。</details>
+净清 10/s，`12,000/10=1,200 秒=20 分钟`，还未计热点/重投。
+
+</details>
 
 ### 决策 17–22：审阅与 ADR
 
 <details><summary>17. 成员历史规则未定，可以让工程师在方案图中先写“全可见”吗？</summary>
 
-不能。需产品/安全决定，未定时是阻断或明确的待决项。</details>
+不能。需产品/安全决定，未定时是阻断或明确的待决项。
+
+</details>
 
 <details><summary>18. 测试通过 6 B/409/404 就能把 ADR-P1 标 accepted 吗？</summary>
 
-不能。还缺未来权限、留存、DB 权威、事件/故障和决定人批准。</details>
+不能。还缺未来权限、留存、DB 权威、事件/故障和决定人批准。
+
+</details>
 
 <details><summary>19. 回滚只写“切回 D1”漏了哪些轴？</summary>
 
-配置 K、数据模式/回填、权威读写者、事件与旧客户端语义及已有已确认消息。</details>
+配置 K、数据模式/回填、权威读写者、事件与旧客户端语义及已有已确认消息。
+
+</details>
 
 <details><summary>20. 评审问题怎样才算真正关闭？</summary>
 
-有决定人、证据、可验证结论与剩余风险/后续动作，不是评论被标 resolved。</details>
+有决定人、证据、可验证结论与剩余风险/后续动作，不是评论被标 resolved。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明候选 B 使用了 outbox 吗？</summary>
 
-不能。只支持所读发送到 MQ 与另一 Mongo 消费的异步边界。</details>
+不能。只支持所读发送到 MQ 与另一 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 可审设计说明至少连起哪条推理链？</summary>
 
-用户目标→当前事实/硬约束→候选及代价→权威/失败状态→容量/验证→发布回退→未决项和决定人。</details>
+用户目标→当前事实/硬约束→候选及代价→权威/失败状态→容量/验证→发布回退→未决项和决定人。
+
+</details>
 
 ## 本章完成标准与后续路径
 

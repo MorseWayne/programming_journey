@@ -276,40 +276,64 @@ if *format != "json" && *format != "jsonl" {
 | 本地导出成功 | 只说明本机写入调用成功，不说明服务端或设备状态 |
 
 <details><summary>1. JSON 解码成功是否等于消息可用？</summary>
-不是。还要检查版本、字段完整性、重复 ID、时间和业务规则。</details>
+不是。还要检查版本、字段完整性、重复 ID、时间和业务规则。
+
+</details>
 
 <details><summary>2. tag `json:"id"` 会阻止空 ID 吗？</summary>
-不会。tag 只映射字段名；非空规则由 `validateHistory` 检查。</details>
+不会。tag 只映射字段名；非空规则由 `validateHistory` 检查。
+
+</details>
 
 <details><summary>3. 为什么 `Unmarshal` 的目标传 `&history`？</summary>
-解码器需要写回变量；没有指针无法把字段更新到调用者变量。</details>
+解码器需要写回变量；没有指针无法把字段更新到调用者变量。
+
+</details>
 
 <details><summary>4. 为什么一次 Decode 后还要读一次？</summary>
-确认没有第二个 JSON 值或损坏尾随内容，而不是把文件的其余字节悄悄忽略。</details>
+确认没有第二个 JSON 值或损坏尾随内容，而不是把文件的其余字节悄悄忽略。
+
+</details>
 
 <details><summary>5. 为什么 JSON 文件与 JSON Lines 不能混读？</summary>
-前者是一个顶层文档，后者每行是独立对象；记录边界和解码方式不同。</details>
+前者是一个顶层文档，后者每行是独立对象；记录边界和解码方式不同。
+
+</details>
 
 <details><summary>6. Scanner 循环结束后为什么要调用 Err？</summary>
-Scan 返回 false 既可能是 EOF，也可能是读取失败或 token 过长；Err 才能区分。</details>
+Scan 返回 false 既可能是 EOF，也可能是读取失败或 token 过长；Err 才能区分。
+
+</details>
 
 <details><summary>7. 为什么 `maxLineBytes` 限制整行而非正文？</summary>
-JSON 结构、字段名、转义和时间戳也占用输入字节。</details>
+JSON 结构、字段名、转义和时间戳也占用输入字节。
+
+</details>
 
 <details><summary>8. `LimitReader(max)` 为什么不足？</summary>
-读到刚好 max 字节时无法判断原文件是否更大；读取 max+1 后检查长度才能拒绝超限。</details>
+读到刚好 max 字节时无法判断原文件是否更大；读取 max+1 后检查长度才能拒绝超限。
+
+</details>
 
 <details><summary>9. `WriteFile` 返回 nil 是否等于崩溃后仍有完整文件？</summary>
-不等于。它不承诺原子替换、稳定落盘或备份。</details>
+不等于。它不承诺原子替换、稳定落盘或备份。
+
+</details>
 
 <details><summary>10. RFC3339 中的 Z 有什么作用？</summary>
-它表示 UTC，使时间文本带有明确时区；仍不证明该时间真实或可信。</details>
+它表示 UTC，使时间文本带有明确时区；仍不证明该时间真实或可信。
+
+</details>
 
 <details><summary>11. 为什么 flag.Parse 后还要验证默认值？</summary>
-解析只把文本转换为变量，空路径、负上限和未知格式仍可能不满足业务规则。</details>
+解析只把文本转换为变量，空路径、负上限和未知格式仍可能不满足业务规则。
+
+</details>
 
 <details><summary>12. 本章下一步是什么？</summary>
-下一章[01.09 包设计与依赖演进](./09_packages_evolution.md)把消息规则、文件 I/O 和命令入口拆成包与公开 API；HTTP、网络和并发仍须先完成 S2 前置。</details>
+下一章[01.09 包设计与依赖演进](./09_packages_evolution.md)把消息规则、文件 I/O 和命令入口拆成包与公开 API；HTTP、网络和并发仍须先完成 S2 前置。
+
+</details>
 
 ## 本章来源
 

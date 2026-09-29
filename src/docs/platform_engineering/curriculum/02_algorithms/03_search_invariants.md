@@ -215,83 +215,123 @@ func main() {
 
 <details><summary>1. 空数组求下界 5，返回什么？</summary>
 
-返回 0，也是 `n`；没有可读取的下标 0。</details>
+返回 0，也是 `n`；没有可读取的下标 0。
+
+</details>
 
 <details><summary>2. 目标 0 的下界和上界？</summary>
 
-都为 0，首项 1 已满足两种比较。</details>
+都为 0，首项 1 已满足两种比较。
+
+</details>
 
 <details><summary>3. 目标 3 的下界？</summary>
 
-1，指向第一个 3；相等时不能排除中点。</details>
+1，指向第一个 3；相等时不能排除中点。
+
+</details>
 
 <details><summary>4. 目标 3 的上界？</summary>
 
-3，指向 6；两个等于 3 的键占 `[1,3)`。</details>
+3，指向 6；两个等于 3 的键占 `[1,3)`。
+
+</details>
 
 <details><summary>5. 目标 4 的两个边界都是 3，是否找到键 4？</summary>
 
-没有。边界是插入位置；`a[3]` 为 6，精确查找还要比较值。</details>
+没有。边界是插入位置；`a[3]` 为 6，精确查找还要比较值。
+
+</details>
 
 <details><summary>6. 目标 12 的下界与上界？</summary>
 
-都为 6，即 `n`；不能访问 `a[6]`。</details>
+都为 6，即 `n`；不能访问 `a[6]`。
+
+</details>
 
 <details><summary>7. `[lo,hi)` 中哪个端点不包含？</summary>
 
-`hi` 不包含；数组尚未分类的下标数量是 `hi-lo`。</details>
+`hi` 不包含；数组尚未分类的下标数量是 `hi-lo`。
+
+</details>
 
 <details><summary>8. 答案边界可能等于 `hi` 吗？</summary>
 
-可以，尤其全部元素都小于目标时答案是 `n`。答案在 `[lo,hi]`，未分类元素在 `[lo,hi)`。</details>
+可以，尤其全部元素都小于目标时答案是 `n`。答案在 `[lo,hi]`，未分类元素在 `[lo,hi)`。
 
-<details><summary>9. 下界里 `a[mid]<target` 时如何更新？</summary>
+</details>
 
-`lo=mid+1`；排序保证中点及左侧都不满足。</details>
+<details><summary>9. 下界里 `a[mid]&lt;target` 时如何更新？</summary>
 
-<details><summary>10. 下界里 `a[mid]>=target` 时为何令 `hi=mid`？</summary>
+`lo=mid+1`；排序保证中点及左侧都不满足。
 
-中点可能就是最左满足位置，不能直接排除它。</details>
+</details>
+
+<details><summary>10. 下界里 `a[mid]&gt;=target` 时为何令 `hi=mid`？</summary>
+
+中点可能就是最左满足位置，不能直接排除它。
+
+</details>
 
 <details><summary>11. 为什么 `lo=mid` 可能无法结束？</summary>
 
-当区间只剩两项且 `mid==lo` 时，`lo` 不前进；应在排除中点的分支设为 `mid+1`。</details>
+当区间只剩两项且 `mid==lo` 时，`lo` 不前进；应在排除中点的分支设为 `mid+1`。
+
+</details>
 
 <details><summary>12. `mid` 的安全计算式？</summary>
 
-`lo+(hi-lo)/2`，避免直接求 `lo+hi` 的潜在溢出。</details>
+`lo+(hi-lo)/2`，避免直接求 `lo+hi` 的潜在溢出。
 
-<details><summary>13. 无序 `[1,8,3,6]` 对 `>5` 能否直接二分？</summary>
+</details>
 
-不能。谓词为假、真、假、真，不单调；下标 1 的 8 可能被错误排除。</details>
+<details><summary>13. 无序 `[1,8,3,6]` 对 `&gt;5` 能否直接二分？</summary>
+
+不能。谓词为假、真、假、真，不单调；下标 1 的 8 可能被错误排除。
+
+</details>
 
 <details><summary>14. 对未排序数组，线性扫描返回下标 1 后能取整个后缀吗？</summary>
 
-不能。后缀中还可能有不满足的 3；若需要所有满足项，要继续逐项筛选。</details>
+不能。后缀中还可能有不满足的 3；若需要所有满足项，要继续逐项筛选。
+
+</details>
 
 <details><summary>15. `sort.Search` 返回 `n` 表示服务端没有更晚消息吗？</summary>
 
-不表示。它只说明本次本地输入中没有使谓词为真的位置。</details>
+不表示。它只说明本次本地输入中没有使谓词为真的位置。
+
+</details>
 
 <details><summary>16. `lastSeen=3` 却只确认看过第一个 3，能直接用上界跳过两个 3 吗？</summary>
 
-不能。若同键记录可共存，需要稳定复合游标或按协议重拉等值段并去重。</details>
+不能。若同键记录可共存，需要稳定复合游标或按协议重拉等值段并去重。
+
+</details>
 
 <details><summary>17. 二分 O(log n) 的前提？</summary>
 
-切片可随机访问、输入按同一键排序、谓词单调，且单次比较按本模型为 O(1)。</details>
+切片可随机访问、输入按同一键排序、谓词单调，且单次比较按本模型为 O(1)。
+
+</details>
 
 <details><summary>18. 验证输入已排序需要怎样的成本？</summary>
 
-逐项检查相邻项需 O(n) 次比较；要计入整次调用，不可只报告二分本身。</details>
+逐项检查相邻项需 O(n) 次比较；要计入整次调用，不可只报告二分本身。
+
+</details>
 
 <details><summary>19. 下界返回的下标是否就是消息 ID？</summary>
 
-不是。它是当前切片位置；消息身份必须由稳定字段表达。</details>
+不是。它是当前切片位置；消息身份必须由稳定字段表达。
+
+</details>
 
 <details><summary>20. `lastSeen=2`、数组 `[1,3,5]`，能由间隔断定丢消息吗？</summary>
 
-不能。可能是过滤或保留规则，也可能缺数据；算法只定位当前数组的首个更大键。</details>
+不能。可能是过滤或保留规则，也可能缺数据；算法只定位当前数组的首个更大键。
+
+</details>
 
 ## 来源与下一步
 

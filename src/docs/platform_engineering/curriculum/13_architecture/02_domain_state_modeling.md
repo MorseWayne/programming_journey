@@ -114,95 +114,139 @@ DDD 的**聚合**把必须一起保持的不变量围在一个边界内，并指
 
 <details><summary>1. 实体和值对象最关键的判别是什么？</summary>
 
-实体凭持续身份辨认；值对象主要凭属性组合判等，不能只看是否用 Go `struct`。</details>
+实体凭持续身份辨认；值对象主要凭属性组合判等，不能只看是否用 Go `struct`。
+
+</details>
 
 <details><summary>2. `u-b` 改昵称后为什么仍是同一用户？</summary>
 
-稳定用户身份延续，昵称是可变化属性。</details>
+稳定用户身份延续，昵称是可变化属性。
+
+</details>
 
 <details><summary>3. `r-1` 超时后 `r-2` 重试，是否必然是两条消息意图？</summary>
 
-不是。request ID 标记两次尝试，稳定 message ID 才指向同一发送意图。</details>
+不是。request ID 标记两次尝试，稳定 message ID 才指向同一发送意图。
+
+</details>
 
 <details><summary>4. 两条正文都为“你好”，能按正文认定同一消息吗？</summary>
 
-不能。内容值相等不等于消息实体身份相同。</details>
+不能。内容值相等不等于消息实体身份相同。
+
+</details>
 
 <details><summary>5. `seq9` 单独能唯一标识一条权威消息吗？</summary>
 
-不能；它至少要带会话作用域，如 `(c-a,seq9)`，且只属于未来候选。</details>
+不能；它至少要带会话作用域，如 `(c-a,seq9)`，且只属于未来候选。
+
+</details>
 
 <details><summary>6. E9 与 P0 offset42 哪个是稳定事件身份？</summary>
 
-E9 是纸上稳定事件 ID；offset42 是某分区日志位置，不能当业务身份。</details>
+E9 是纸上稳定事件 ID；offset42 是某分区日志位置，不能当业务身份。
+
+</details>
 
 <details><summary>7. 当前 S2 200 能证明权威 `seq9` 已产生吗？</summary>
 
-不能；当前只承诺本进程内存受理。</details>
+不能；当前只承诺本进程内存受理。
+
+</details>
 
 <details><summary>8. B 两台设备可共用一个“已接收”布尔值吗？</summary>
 
-不能。`dev-b1` 与 `dev-b2` 的接收进度可不同，阅读状态也另算。</details>
+不能。`dev-b1` 与 `dev-b2` 的接收进度可不同，阅读状态也另算。
+
+</details>
 
 ### 推演 9–16：不变量与缺口
 
 <details><summary>9. 当前 `/v1` 同 ID 重复返回什么？</summary>
 
-409；不能擅自换成“同正文幂等 200”。</details>
+409；不能擅自换成“同正文幂等 200”。
+
+</details>
 
 <details><summary>10. 当前非成员向 `c-a` 发送应怎样？</summary>
 
-按当前发送合同隐藏为 404；未来历史可见规则另审。</details>
+按当前发送合同隐藏为 404；未来历史可见规则另审。
+
+</details>
 
 <details><summary>11. 未来 `(c-a,seq9)` 唯一规则应由哪类权威守护？</summary>
 
-由未来权威写入边界的原子分配与唯一约束或等价机制守护，不能靠 broker offset。</details>
+由未来权威写入边界的原子分配与唯一约束或等价机制守护，不能靠 broker offset。
+
+</details>
 
 <details><summary>12. DB 已存 `m-9` 而 E9 未发，用 `delivered=false` 足够吗？</summary>
 
-不足。需分权威存储与事件派生/发布轴，才能定位恢复动作。</details>
+不足。需分权威存储与事件派生/发布轴，才能定位恢复动作。
+
+</details>
 
 <details><summary>13. E9 重投两次，就应有两条权威 `m-9` 吗？</summary>
 
-不应。稳定消息意图和权威唯一规则不因传输重复而改变。</details>
+不应。稳定消息意图和权威唯一规则不因传输重复而改变。
+
+</details>
 
 <details><summary>14. `dev-b1` 已连续确认到 7、先见 9 缺 8，连续游标是多少？</summary>
 
-仍为 7；可以缓冲/记已见 9，但不能用 `max_seen=9` 跳过 8。</details>
+仍为 7；可以缓冲/记已见 9，但不能用 `max_seen=9` 跳过 8。
+
+</details>
 
 <details><summary>15. 8 到达且 9 也满足确认条件后，游标可到多少？</summary>
 
-可由 7 连续推进到 9；前提是协议要求的确认条件均已满足。</details>
+可由 7 连续推进到 9；前提是协议要求的确认条件均已满足。
+
+</details>
 
 <details><summary>16. B 离线 25h、broker 保留 24h，仅凭 offset42 能补全吗？</summary>
 
-不能。未来应按权限从权威历史按会话序号补缺；当前 S2 无此能力。</details>
+不能。未来应按权限从权威历史按会话序号补缺；当前 S2 无此能力。
+
+</details>
 
 ### 决策 17–22：边界与证据
 
 <details><summary>17. 退群后 B 能看此前历史，可由工程师直接拍板吗？</summary>
 
-不能。属于产品/安全待定规则；模型先保留时间与权限判断位置。</details>
+不能。属于产品/安全待定规则；模型先保留时间与权限判断位置。
+
+</details>
 
 <details><summary>18. `Conversation` 含无限消息和全部设备进度，会有什么风险？</summary>
 
-聚合无界增长、并发争用和大对象读写；应按必须原子维护的不变量重审边界。</details>
+聚合无界增长、并发争用和大对象读写；应按必须原子维护的不变量重审边界。
+
+</details>
 
 <details><summary>19. 聚合边界一确定，就等于 SQL 表或微服务边界确定吗？</summary>
 
-不等。聚合是领域一致性设计，存储/部署仍需按负载与故障取舍。</details>
+不等。聚合是领域一致性设计，存储/部署仍需按负载与故障取舍。
+
+</details>
 
 <details><summary>20. 当前 S2 同 ID 409 可证明重启后跨 Pod 持久去重吗？</summary>
 
-不能。当前合同的内存受理不提供未来权威唯一性的证据。</details>
+不能。当前合同的内存受理不提供未来权威唯一性的证据。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明本章聚合/outbox/ACK 吗？</summary>
 
-不能；只支持所读发送调用 MQ 与另一 Mongo 消费路径的异步边界。</details>
+不能；只支持所读发送调用 MQ 与另一 Mongo 消费路径的异步边界。
+
+</details>
 
 <details><summary>22. 可审领域模型卡至少交付什么？</summary>
 
-对象/ID 字典、用例前后和失败条件、当前/未来不变量及责任、独立状态轴、权限时间规则、重试/漏序/事件失败反例与未决项。</details>
+对象/ID 字典、用例前后和失败条件、当前/未来不变量及责任、独立状态轴、权限时间规则、重试/漏序/事件失败反例与未决项。
+
+</details>
 
 ## 本章完成标准与后续路径
 

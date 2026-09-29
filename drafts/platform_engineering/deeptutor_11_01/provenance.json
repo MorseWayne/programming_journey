@@ -25,9 +25,9 @@
     "upstream_implementation_claims": false
   },
   "generation_request_sha256": "bfadfb341cd66065e3b2817db83874631dea165b89d97d0e880d720786df6670",
-  "reviewed_sha256": "4f884bb88eb26d5dc6914e0224f15efefc36db7cc6eb0072e8d7b15f734190e5",
-  "reviewed_characters": 8822,
+  "reviewed_sha256": "047dd3ce7a213120b153ca23b4f1b51ea1f9a7986a7f46feaa135eb7adecbf8f",
+  "reviewed_characters": 8866,
   "reviewed_chinese_characters": 4517,
   "course_file": "src/docs/platform_engineering/curriculum/11_reliability/01_business_measurement.md",
-  "course_sha256": "9b71411729b276fe955cfba56fe24ffeaa792c21177b069590421cbb44deb0e0"
+  "course_sha256": "bea280c918face4f3b8ba5c1f64394a4c7f01cd737de39453137afe70e918afc"
 }

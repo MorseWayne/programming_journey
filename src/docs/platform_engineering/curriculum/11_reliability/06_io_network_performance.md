@@ -110,95 +110,139 @@ Go 连接写入可能因 deadline 或其他错误返回 `n>0, err!=nil`，说明
 
 <details><summary>1. 当前 S2 `200 accepted_in_memory` 能证明 B 收到吗？</summary>
 
-不能。只表示本进程内存受理；本章 B 迟到是未来 S3/S5 纸上情景。</details>
+不能。只表示本进程内存受理；本章 B 迟到是未来 S3/S5 纸上情景。
+
+</details>
 
 <details><summary>2. 未来 `stored_in_teaching_db` 与设备应用 ACK 是同一个事件吗？</summary>
 
-不是。前者按未来合同指权威数据库提交，后者按另设协议指设备处理。</details>
+不是。前者按未来合同指权威数据库提交，后者按另设协议指设备处理。
+
+</details>
 
 <details><summary>3. `t=30` 到 `t=2400` 可直接定位 TCP 慢吗？</summary>
 
-不能。其间还有 outbox、broker、网关队列、客户端读取与应用处理等阶段。</details>
+不能。其间还有 outbox、broker、网关队列、客户端读取与应用处理等阶段。
+
+</details>
 
 <details><summary>4. 真实 A 与 B 的墙上时间戳能未经校准直接相减吗？</summary>
 
-不能。跨机器时钟可能有偏差，应使用各进程持续时间和关联事件。</details>
+不能。跨机器时钟可能有偏差，应使用各进程持续时间和关联事件。
+
+</details>
 
 <details><summary>5. 页缓存命中说明消息已持久存储吗？</summary>
 
-不能。命中是读取路径现象，提交和持久条件取决于数据库/WAL/存储配置。</details>
+不能。命中是读取路径现象，提交和持久条件取决于数据库/WAL/存储配置。
+
+</details>
 
 <details><summary>6. `sql.DB` 是每次查询都重新创建的单一连接吗？</summary>
 
-不是。它管理连接池；达到最大打开数时新操作可能等待连接。</details>
+不是。它管理连接池；达到最大打开数时新操作可能等待连接。
+
+</details>
 
 <details><summary>7. TCP ACK 等于 B 应用确认处理 m-9 吗？</summary>
 
-不等于。TCP ACK 是字节流传输层进展，应用确认须另设协议。</details>
+不等于。TCP ACK 是字节流传输层进展，应用确认须另设协议。
+
+</details>
 
 <details><summary>8. Go `Write` 返回成功就能报告用户已读吗？</summary>
 
-不能。`Write` 连设备应用处理都不能证明，更不能证明用户阅读。</details>
+不能。`Write` 连设备应用处理都不能证明，更不能证明用户阅读。
+
+</details>
 
 ### 推导 9–16：定位等待与算对分母
 
 <details><summary>9. 100 次获取连接，40 次实际等待，总等待 8 秒；等过者平均多久？</summary>
 
-`8/40=0.2 秒=200 ms`。</details>
+`8/40=0.2 秒=200 ms`。
+
+</details>
 
 <details><summary>10. 同一数据对全部 100 次粗均摊等待是多少？</summary>
 
-`8/100=0.08 秒=80 ms`；它不是 P95。</details>
+`8/100=0.08 秒=80 ms`；它不是 P95。
+
+</details>
 
 <details><summary>11. 服务端查询 12 ms，可以排除连接池造成 200 ms 等待吗？</summary>
 
-不能。获取连接的等待发生在查询执行之前。</details>
+不能。获取连接的等待发生在查询执行之前。
+
+</details>
 
 <details><summary>12. B 队列进入 12/s、离开 6/s 持续 5 秒且无其他流向，净积压多少？</summary>
 
-`(12−6)×5=30` 个设备任务。</details>
+`(12−6)×5=30` 个设备任务。
+
+</details>
 
 <details><summary>13. 如果 B 队列上限为 20，上题还能说必然排着 30 项吗？</summary>
 
-不能。必有拒绝、取消、溢出或上游阻塞等未计流向，需重新对账。</details>
+不能。必有拒绝、取消、溢出或上游阻塞等未计流向，需重新对账。
 
-<details><summary>14. `Write` 超时且返回 `n>0`，能把整帧认作完全没发吗？</summary>
+</details>
 
-不能。部分字节已被调用接受；重试需帧边界、稳定消息 ID 与接收侧去重。</details>
+<details><summary>14. `Write` 超时且返回 `n&gt;0`，能把整帧认作完全没发吗？</summary>
+
+不能。部分字节已被调用接受；重试需帧边界、稳定消息 ID 与接收侧去重。
+
+</details>
 
 <details><summary>15. 应用 FIFO 队头与 TCP 按序字节流队头是同一层吗？</summary>
 
-不是。前者是网关任务调度，后者是同一 TCP 流按序交付字节的约束。</details>
+不是。前者是网关任务调度，后者是同一 TCP 流按序交付字节的约束。
+
+</details>
 
 <details><summary>16. B 离线 25 小时、教学 broker 保留 24 小时，应从哪补 m-9？</summary>
 
-从有成员权限的权威 DB 历史按 `seq9` 缺口补，不仅靠 broker E9。</details>
+从有成员权限的权威 DB 历史按 `seq9` 缺口补，不仅靠 broker E9。
+
+</details>
 
 ### 决策 17–22：修复不能改坏承诺
 
 <details><summary>17. 池等待上升就立即把最大连接数翻倍吗？</summary>
 
-不应。先查长事务、未关闭资源、DB 服务能力；扩池可能把排队移到数据库。</details>
+不应。先查长事务、未关闭资源、DB 服务能力；扩池可能把排队移到数据库。
+
+</details>
 
 <details><summary>18. 把未来 S3 写入改成纯异步，可仍叫 `stored_in_teaching_db` 吗？</summary>
 
-不能直接沿用。若回应时尚未满足承诺，就必须重新定义/版本化成功语义。</details>
+不能直接沿用。若回应时尚未满足承诺，就必须重新定义/版本化成功语义。
+
+</details>
 
 <details><summary>19. 网关丢弃实时通知，什么前提下才可能可恢复？</summary>
 
-权威历史仍有消息，授权客户端能按稳定身份/序号检测缺口并补拉，且丢弃被记录。</details>
+权威历史仍有消息，授权客户端能按稳定身份/序号检测缺口并补拉，且丢弃被记录。
+
+</details>
 
 <details><summary>20. 低 CPU 加高重传率就证明网络是唯一根因吗？</summary>
 
-不能。要对齐同连接和阶段，并排查更早的池/队列等待及 B 应用处理。</details>
+不能。要对齐同连接和阶段，并排查更早的池/队列等待及 B 应用处理。
+
+</details>
 
 <details><summary>21. 两处固定 OpenIM 源码能证明真实磁盘或连接池瓶颈吗？</summary>
 
-不能。它们只支持发送与 Mongo 消费分处异步边界。</details>
+不能。它们只支持发送与 Mongo 消费分处异步边界。
+
+</details>
 
 <details><summary>22. 一份可复核的低 CPU 诊断报告至少交什么？</summary>
 
-业务确认点、同口径分段时间、池/磁盘/TCP/慢端候选及反证、等待/错误分母、单一修复、A/B 结果与回退门。</details>
+业务确认点、同口径分段时间、池/磁盘/TCP/慢端候选及反证、等待/错误分母、单一修复、A/B 结果与回退门。
+
+</details>
 
 ## 本章完成标准与后续路径
 

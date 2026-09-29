@@ -12,17 +12,22 @@
   "generation_request_file": "generation_request.json",
   "generation_request_sha256": "898180f3cb3c5b3cc1a97726674c36aad37502d33ffe44f7e05442151f64d2b3",
   "original_sha256": "014332f13e31f2c6b484356ae69a7b59ac0509672f37ea79443fc786110b362c",
-  "reviewed_sha256": "a602e409c676825eb8770e4a168fdbb3014cef2299154215042fbaddc6c6b702",
+  "reviewed_sha256": "5dfc91af4da8ee51139583f8c38c3c719dbb27bd90ce9ae6695a6ab1ea953a10",
   "original_characters": 35371,
-  "reviewed_characters": 9270,
+  "reviewed_characters": 9310,
   "reviewed_chinese_characters": 4080,
   "code_execution": false,
   "site_build": false,
   "publication_status": "integrated into local course source",
   "course_file": "src/docs/platform_engineering/curriculum/02_algorithms/05_sort_divide.md",
-  "course_sha256": "7305f734882bfc34fde87cd296e5f2ad219dce63d86edda4da788810c7d040ad",
+  "course_sha256": "04bdb0ed6f14449d863417b8c6d6112b2a2fd9fe701f8b95a543db47d6e111ef",
   "source_reference": {
-    "primary_sources": ["https://algs4.cs.princeton.edu/21elementary/", "https://algs4.cs.princeton.edu/22mergesort/", "https://algs4.cs.princeton.edu/23quicksort/", "https://pkg.go.dev/sort#SliceStable"],
+    "primary_sources": [
+      "https://algs4.cs.princeton.edu/21elementary/",
+      "https://algs4.cs.princeton.edu/22mergesort/",
+      "https://algs4.cs.princeton.edu/23quicksort/",
+      "https://pkg.go.dev/sort#SliceStable"
+    ],
     "upstream_implementation_claims": false
   }
 }

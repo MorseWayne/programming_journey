@@ -139,91 +139,135 @@ Prometheus 一类监控系统的传统直方图桶常用**累计**计数，例�
 
 <details><summary>1. 这十个数的确认点是什么？</summary>
 
-从 A 点击发送到收到本教学服务的内存受理回应，不是 B 设备收到。</details>
+从 A 点击发送到收到本教学服务的内存受理回应，不是 B 设备收到。
+
+</details>
 
 <details><summary>2. 前九个整数 10 到 18 之和是多少？</summary>
 
-`126 ms`。</details>
+`126 ms`。
+
+</details>
 
 <details><summary>3. 加上 200 后总耗时是多少？</summary>
 
-`326 ms`。</details>
+`326 ms`。
+
+</details>
 
 <details><summary>4. 十个样本的均值是多少？</summary>
 
-`326/10=32.6 ms`。</details>
+`326/10=32.6 ms`。
+
+</details>
 
 <details><summary>5. 十个样本的中位数是多少？</summary>
 
-第 5 和第 6 项为 14、15 ms，平均为 14.5 ms。</details>
+第 5 和第 6 项为 14、15 ms，平均为 14.5 ms。
+
+</details>
 
 <details><summary>6. 本章最近秩 P90 取第几个？</summary>
 
-`ceil(0.90×10)=9`，第 9 项为 18 ms。</details>
+`ceil(0.90×10)=9`，第 9 项为 18 ms。
+
+</details>
 
 <details><summary>7. 本章最近秩 P99 是多少？</summary>
 
-`ceil(0.99×10)=10`，第 10 项为 200 ms。</details>
+`ceil(0.99×10)=10`，第 10 项为 200 ms。
+
+</details>
 
 <details><summary>8. 十个样本的 P99 能稳定代表长期尾延迟吗？</summary>
 
-不能。它在本题等于最大值，对单个极值和抽样非常敏感。</details>
+不能。它在本题等于最大值，对单个极值和抽样非常敏感。
+
+</details>
 
 <details><summary>9. `[0,20) ms` 非累计桶有几项？</summary>
 
-9 项，即 10–18 ms。</details>
+9 项，即 10–18 ms。
+
+</details>
 
 <details><summary>10. 累计 `le=100 ms` 桶有几项？</summary>
 
-9 项。200 ms 不在其中。</details>
+9 项。200 ms 不在其中。
+
+</details>
 
 <details><summary>11. 三个累计桶 9、9、10 能相加得总数 28 吗？</summary>
 
-不能。它们相互包含，总数为 `+Inf` 的 10。</details>
+不能。它们相互包含，总数为 `+Inf` 的 10。
+
+</details>
 
 <details><summary>12. 只看 `[100,+∞)` 桶能知道慢项恰好是 200 ms 吗？</summary>
 
-不能。该桶只说明它至少 100 ms。</details>
+不能。该桶只说明它至少 100 ms。
+
+</details>
 
 <details><summary>13. A 组 99 个 10 ms、1 个 1000 ms 的最近秩 P99？</summary>
 
-第 99 项为 10 ms。</details>
+第 99 项为 10 ms。
+
+</details>
 
 <details><summary>14. B 组 99 个 100 ms、1 个 1000 ms 的最近秩 P99？</summary>
 
-第 99 项为 100 ms。</details>
+第 99 项为 100 ms。
+
+</details>
 
 <details><summary>15. 两组 P99 平均 55 ms 等于合并后 P99 吗？</summary>
 
-不等于。合并 200 项的第 198 项为 100 ms。</details>
+不等于。合并 200 项的第 198 项为 100 ms。
+
+</details>
 
 <details><summary>16. 另例 A10×10、B90×100 的总体均值？</summary>
 
-按样本数加权为 `(100+9000)/100=91 ms`，不是 55 ms。</details>
+按样本数加权为 `(100+9000)/100=91 ms`，不是 55 ms。
+
+</details>
 
 <details><summary>17. 十次完成、五次超时，已确认完成比例？</summary>
 
-`10/15≈66.7%`；时延图也需注明五次未确认。</details>
+`10/15≈66.7%`；时延图也需注明五次未确认。
+
+</details>
 
 <details><summary>18. 超时的五次能按 0 ms 参与均值吗？</summary>
 
-不能。没有观测到完成时延，不是零时延成功。</details>
+不能。没有观测到完成时延，不是零时延成功。
+
+</details>
 
 <details><summary>19. A 受理回应 P99 与 B 设备送达 P99 可混成一组吗？</summary>
 
-不能，两个分布的终点和业务问题不同。</details>
+不能，两个分布的终点和业务问题不同。
+
+</details>
 
 <details><summary>20. 部署后 P99 升高就一定是 CPU 竞争吗？</summary>
 
-不能。网络、队列、锁、存储和样本组成变化都需排查。</details>
+不能。网络、队列、锁、存储和样本组成变化都需排查。
+
+</details>
 
 <details><summary>21. 均值与 P99 相同即可忽略样本量吗？</summary>
 
-不能。样本量、算法、时间窗和遗漏失败决定结论范围。</details>
+不能。样本量、算法、时间窗和遗漏失败决定结论范围。
+
+</details>
 
 <details><summary>22. 本章数字能当作 OpenIM 实测性能吗？</summary>
 
-不能。它们全是纸上样本，本轮没有运行或采集。</details>
+不能。它们全是纸上样本，本轮没有运行或采集。
+
+</details>
 
 ## 来源与下一步
 

@@ -102,95 +102,139 @@ B 离线 **25h**，玩具 broker 只保留 **24h** E9。旧事件可能已过期
 
 <details><summary>1. 本章谁保存 `m-9` 的权威聊天事实？</summary>
 
-仅未来教学 S3 的 SQL 消息事务；当前 S2 尚没有这个持久承诺。</details>
+仅未来教学 S3 的 SQL 消息事务；当前 S2 尚没有这个持久承诺。
+
+</details>
 
 <details><summary>2. 复制协调服务的多数提交能证明 SQL 已保存 m-9 吗？</summary>
 
-不能。它在本章只保护路由/owner 元数据，SQL Commit 要另证。</details>
+不能。它在本章只保护路由/owner 元数据，SQL Commit 要另证。
+
+</details>
 
 <details><summary>3. C1 同一本地事务保存哪两类记录？</summary>
 
-`messages(m-9,c-a,seq9)` 与 `outbox(evt:m-9:v1,PENDING)`，以及必要的同库计数状态。</details>
+`messages(m-9,c-a,seq9)` 与 `outbox(evt:m-9:v1,PENDING)`，以及必要的同库计数状态。
+
+</details>
 
 <details><summary>4. C3 broker 接受 E9 能证明 B 已读吗？</summary>
 
-不能。搜索、通知、设备收到和阅读各有后续证据。</details>
+不能。搜索、通知、设备收到和阅读各有后续证据。
+
+</details>
 
 <details><summary>5. N9 与 `m-9` 是同一 ID 吗？</summary>
 
-不是。N9 是针对 B 设备的稳定提示任务，`m-9` 是权威消息身份。</details>
+不是。N9 是针对 B 设备的稳定提示任务，`m-9` 是权威消息身份。
+
+</details>
 
 <details><summary>6. 当前 S2 相同消息 ID、相同正文重复 POST 是多少？</summary>
 
-409；本章没有把它暗改成幂等 200。</details>
+409；本章没有把它暗改成幂等 200。
+
+</details>
 
 <details><summary>7. `u-c` 已登录但非 c-a 成员，知道 m-9 ID 能读正文吗？</summary>
 
-不能。当前隐藏目标政策是 404，对象授权仍是门。</details>
+不能。当前隐藏目标政策是 404，对象授权仍是门。
+
+</details>
 
 <details><summary>8. 本章还采用 08.06 的独立 Raft 消息日志作 m-9 权威吗？</summary>
 
-不采用。Raft/etcd 类服务在本章只管 owner/路由元数据。</details>
+不采用。Raft/etcd 类服务在本章只管 owner/路由元数据。
+
+</details>
 
 ### 故障 9–16：每一步找恢复来源
 
 <details><summary>9. C1 Commit 成功、C2 回应丢，A 能断言消息未保存吗？</summary>
 
-不能。按稳定业务 ID 查权威 SQL；超时是 A 的结果未知。</details>
+不能。按稳定业务 ID 查权威 SQL；超时是 A 的结果未知。
+
+</details>
 
 <details><summary>10. C3 broker 接受 E9 但 relay ACK 丢，下一次可能怎样？</summary>
 
-同一 `evt:m-9:v1` 被重发，消费者按 ID/版本幂等，不能宣称只投一次。</details>
+同一 `evt:m-9:v1` 被重发，消费者按 ID/版本幂等，不能宣称只投一次。
+
+</details>
 
 <details><summary>11. E-bad=P0:44 未决时静默提交 next offset46 有何风险？</summary>
 
-恢复越过坏事件，必要搜索效果可能无记录地缺失。</details>
+恢复越过坏事件，必要搜索效果可能无记录地缺失。
+
+</details>
 
 <details><summary>12. G1 租约失效后旧 socket 还在，能代表 G1 仍是 owner 吗？</summary>
 
-不能。须按协调域当前代次与目标端围栏判断，外部尝试另证。</details>
+不能。须按协调域当前代次与目标端围栏判断，外部尝试另证。
+
+</details>
 
 <details><summary>13. 元数据复制组只剩少数一侧，可自行分配新 b1 owner 并向 A 承诺写成功吗？</summary>
 
-不应。无合法多数不能按该协议授予新归属；先区分 C0 未提交与 C1 已提交事实。</details>
+不应。无合法多数不能按该协议授予新归属；先区分 C0 未提交与 C1 已提交事实。
+
+</details>
 
 <details><summary>14. S0 只有 `m-9:v1`，迁移中产生 v2 与 m-10，可直接切给 N3 吗？</summary>
 
-不可。追 `L0` 后增量，核对版本、seq、权限与 outbox，围栏旧写再切。</details>
+不可。追 `L0` 后增量，核对版本、seq、权限与 outbox，围栏旧写再切。
+
+</details>
 
 <details><summary>15. B 离线 25h 超过玩具 broker 24h 保留，如何取回 m-9？</summary>
 
-按当前权限从权威 SQL 历史用 seq 游标补拉。</details>
+按当前权限从权威 SQL 历史用 seq 游标补拉。
+
+</details>
 
 <details><summary>16. 已发错误提示后 SQL ROLLBACK 能抹掉 B 曾看到它吗？</summary>
 
-不能。要以新的撤回/更正动作和设备侧证据处理。</details>
+不能。要以新的撤回/更正动作和设备侧证据处理。
+
+</details>
 
 ### 评审 17–22：别把局部通过写成全局正确
 
 <details><summary>17. 数据库 b1 搬迁会自动搬 Kafka P0:42 的旧 E9 吗？</summary>
 
-不会。存储路由与 broker 分区是不同映射。</details>
+不会。存储路由与 broker 分区是不同映射。
+
+</details>
 
 <details><summary>18. 事件格式新字段能被旧程序解析/忽略，就能保证权限语义安全？</summary>
 
-不能。旧消费者可能忽略当前版本/可见性，须审真实处理逻辑和混部顺序。</details>
+不能。旧消费者可能忽略当前版本/可见性，须审真实处理逻辑和混部顺序。
+
+</details>
 
 <details><summary>19. S3 已知 Commit 后权威读返回 seq8，必然违反现有 S3 合同吗？</summary>
 
-不必然。S3 只声明本地提交；只有另声明适用于该读端点的 L 等合同，才按其历史判。</details>
+不必然。S3 只声明本地提交；只有另声明适用于该读端点的 L 等合同，才按其历史判。
+
+</details>
 
 <details><summary>20. `SearchIndex` 已追上就证明 B 的设备已收到？</summary>
 
-不能。派生索引与设备/阅读是独立确认链。</details>
+不能。派生索引与设备/阅读是独立确认链。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两处源码足以证明本章 SQL+etcd+N9 架构吗？</summary>
 
-不能。仅核对所述发送入队返回与另一 MongoDB 消费调用。</details>
+不能。仅核对所述发送入队返回与另一 MongoDB 消费调用。
+
+</details>
 
 <details><summary>22. 综合事故单何时可关闭？</summary>
 
-按已声明的用户合同逐项核对权威 ID/版本/权限、outbox 与派生目标、N9/设备、离线补拉、迁移和剩余未知，留下范围与修复证据。</details>
+按已声明的用户合同逐项核对权威 ID/版本/权限、outbox 与派生目标、N9/设备、离线补拉、迁移和剩余未知，留下范围与修复证据。
+
+</details>
 
 ## 本章完成标准与后续路径
 

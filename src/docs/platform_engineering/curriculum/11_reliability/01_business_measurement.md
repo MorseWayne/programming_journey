@@ -156,91 +156,135 @@ HTTP 200 比例：45/50 = 90%
 
 <details><summary>1. 发送的“成功”只有一个确认点吗？</summary>
 
-不是。客户端回应、内存受理、持久、设备收到和已读分别有自己的证据。</details>
+不是。客户端回应、内存受理、持久、设备收到和已读分别有自己的证据。
+
+</details>
 
 <details><summary>2. 当前课程实际有在线 IM 的送达样本吗？</summary>
 
-没有。本章所有线上事件与数字都是纸上假设。</details>
+没有。本章所有线上事件与数字都是纸上假设。
+
+</details>
 
 <details><summary>3. 比例的分母为零时填 0% 合适吗？</summary>
 
-不合适。应报告该窗口无样本、比例未定义。</details>
+不合适。应报告该窗口无样本、比例未定义。
+
+</details>
 
 <details><summary>4. 100 次尝试在 300 秒内开始，平均尝试速率？</summary>
 
-约 `0.333 次/秒`，不表示每秒到达都均匀。</details>
+约 `0.333 次/秒`，不表示每秒到达都均匀。
+
+</details>
 
 <details><summary>5. 92 次受理相对 100 次尝试是多少？</summary>
 
-`92%`，只对题设同一队列和 60 秒观察期限成立。</details>
+`92%`，只对题设同一队列和 60 秒观察期限成立。
+
+</details>
 
 <details><summary>6. 80 次未来持久相对全部尝试是多少？</summary>
 
-`80%`；不是当前 S2 实测的数据库写入率。</details>
+`80%`；不是当前 S2 实测的数据库写入率。
+
+</details>
 
 <details><summary>7. 70 次设备确认相对全部尝试是多少？</summary>
 
-`70%`，不能叫阅读比例。</details>
+`70%`，不能叫阅读比例。
+
+</details>
 
 <details><summary>8. 已持久 80 次中设备确认 70 次，条件比例是多少？</summary>
 
-`70/80=87.5%`，分母已改，不等于全部尝试中的 70%。</details>
+`70/80=87.5%`，分母已改，不等于全部尝试中的 70%。
+
+</details>
 
 <details><summary>9. 65 次阅读相对全部 100 次尝试是多少？</summary>
 
-`65%`；仍需说明本题的阅读事件定义和 60 秒观察期限。</details>
+`65%`；仍需说明本题的阅读事件定义和 60 秒观察期限。
+
+</details>
 
 <details><summary>10. 起始队列窗口与事件发生窗口能直接相除吗？</summary>
 
-不能。后续事件可能来自较早尝试或延迟到窗外。</details>
+不能。后续事件可能来自较早尝试或延迟到窗外。
+
+</details>
 
 <details><summary>11. 同一 m-a 重试两次意味着两条业务消息吗？</summary>
 
-不一定。它可以是一个用户意图的两次请求尝试。</details>
+不一定。它可以是一个用户意图的两次请求尝试。
+
+</details>
 
 <details><summary>12. 第二次返回 409，就能说第一次没有受理吗？</summary>
 
-不能。本章 S2 可能正因第一次已受理才识别重复。</details>
+不能。本章 S2 可能正因第一次已受理才识别重复。
+
+</details>
 
 <details><summary>13. 客户端受理回应时延在题设中是多少？</summary>
 
-`40−0=40 ms`，从 A 点击到收到回应。</details>
+`40−0=40 ms`，从 A 点击到收到回应。
+
+</details>
 
 <details><summary>14. 服务端收到请求到内存提交是多少？</summary>
 
-`25−12=13 ms`，不等于客户端端到端时延。</details>
+`25−12=13 ms`，不等于客户端端到端时延。
+
+</details>
 
 <details><summary>15. B 设备确认与阅读事件各相对点击多久？</summary>
 
-题设为 `200 ms` 和 `5000 ms=5 s`，属于不同确认点。</details>
+题设为 `200 ms` 和 `5000 ms=5 s`，属于不同确认点。
+
+</details>
 
 <details><summary>16. 跨设备未校准墙钟能直接相减吗？</summary>
 
-不能。可能有时钟偏差，需局部时长与关联证据。</details>
+不能。可能有时钟偏差，需局部时长与关联证据。
+
+</details>
 
 <details><summary>17. 50 次 GET 有 45 次 200，HTTP 200 比例？</summary>
 
-`45/50=90%`。</details>
+`45/50=90%`。
+
+</details>
 
 <details><summary>18. 其中 42 次结果正确，业务正确结果比例？</summary>
 
-`42/50=84%`，低于单看状态码的 90%。</details>
+`42/50=84%`，低于单看状态码的 90%。
+
+</details>
 
 <details><summary>19. 正确返回 `messages:[]` 应计为查询失败吗？</summary>
 
-不应。对正确范围确无可见项时，它是合法成功结果。</details>
+不应。对正确范围确无可见项时，它是合法成功结果。
+
+</details>
 
 <details><summary>20. CPU 低就证明所有资源容量充足吗？</summary>
 
-不能。队列、内存、描述符、存储或网络都可能先饱和。</details>
+不能。队列、内存、描述符、存储或网络都可能先饱和。
+
+</details>
 
 <details><summary>21. 超时请求的完成时延可以填 0 ms 吗？</summary>
 
-不能。它的结果未知或在观察期限内未完成，不是零时延成功。</details>
+不能。它的结果未知或在观察期限内未完成，不是零时延成功。
+
+</details>
 
 <details><summary>22. 本章纸上比例能作为 OpenIM 或本项目实测 SLO 吗？</summary>
 
-不能。没有运行数据，也尚未在 11.08 设定目标与观测实现。</details>
+不能。没有运行数据，也尚未在 11.08 设定目标与观测实现。
+
+</details>
 
 ## 来源与下一步
 

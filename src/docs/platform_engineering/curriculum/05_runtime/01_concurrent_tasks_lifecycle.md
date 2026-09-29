@@ -204,91 +204,135 @@ func CheckAll(inputs []string, check func(string) error) []error {
 
 <details><summary>1. 并发和并行分别回答什么？</summary>
 
-并发说多个任务可交错推进；并行说不同执行单位能在同一时刻真正运行。</details>
+并发说多个任务可交错推进；并行说不同执行单位能在同一时刻真正运行。
+
+</details>
 
 <details><summary>2. 单核还能有并发吗？</summary>
 
-能。任务可轮流执行，并在一个等待时让另一个推进。</details>
+能。任务可轮流执行，并在一个等待时让另一个推进。
+
+</details>
 
 <details><summary>3. 两条连接一定等于两个 goroutine 吗？</summary>
 
-不一定，取决于应用组织任务的方式；本课程未实现在线服务。</details>
+不一定，取决于应用组织任务的方式；本课程未实现在线服务。
+
+</details>
 
 <details><summary>4. `go f()` 会等 `f` 完成才执行下一行吗？</summary>
 
-不会。它安排新 goroutine 后，启动者继续执行。</details>
+不会。它安排新 goroutine 后，启动者继续执行。
+
+</details>
 
 <details><summary>5. `go` 后面的参数表达式在哪个 goroutine 中求值？</summary>
 
-在执行 `go` 语句的 goroutine 中求值；被调用函数在新 goroutine 执行。</details>
+在执行 `go` 语句的 goroutine 中求值；被调用函数在新 goroutine 执行。
+
+</details>
 
 <details><summary>6. `go f()` 的 `error` 返回值会自动传给启动者吗？</summary>
 
-不会。需要设计独立的结果收集路径。</details>
+不会。需要设计独立的结果收集路径。
+
+</details>
 
 <details><summary>7. 先写 `go recordID("m-a")` 能保证它先完成吗？</summary>
 
-不能。任务调度、等待和执行时长都可能改变完成顺序。</details>
+不能。任务调度、等待和执行时长都可能改变完成顺序。
+
+</details>
 
 <details><summary>8. `time.Sleep(10*time.Millisecond)` 能证明任务已结束吗？</summary>
 
-不能。它只让调用者等待一段墙上时间，不接收完成与错误信号。</details>
+不能。它只让调用者等待一段墙上时间，不接收完成与错误信号。
+
+</details>
 
 <details><summary>9. `main` 返回时其他 goroutine 一定做完吗？</summary>
 
-不保证。进程结束会终止尚未完成的工作。</details>
+不保证。进程结束会终止尚未完成的工作。
+
+</details>
 
 <details><summary>10. 本章为何在 `go` 之前调用 `wg.Add(1)`？</summary>
 
-先登记待完成任务，再允许子任务开始并可能迅速调用 `Done`。</details>
+先登记待完成任务，再允许子任务开始并可能迅速调用 `Done`。
+
+</details>
 
 <details><summary>11. `defer wg.Done()` 负责什么？</summary>
 
-该子任务按正常函数返回路径结束时把待完成计数减一。</details>
+该子任务按正常函数返回路径结束时把待完成计数减一。
+
+</details>
 
 <details><summary>12. `wg.Wait()` 返回就证明每条 IM 消息已送达吗？</summary>
 
-不能。它只说明登记任务的函数已结束，送达要有业务确认。</details>
+不能。它只说明登记任务的函数已结束，送达要有业务确认。
+
+</details>
 
 <details><summary>13. `BodyByteLengths` 中 `你好` 的结果是多少？</summary>
 
-按 UTF-8 字节数是 6，结果放在与输入相同的下标。</details>
+按 UTF-8 字节数是 6，结果放在与输入相同的下标。
+
+</details>
 
 <details><summary>14. 该函数返回的长度顺序由完成顺序决定吗？</summary>
 
-不是。每个任务写固定 `lengths[i]`，返回前 `Wait`。</details>
+不是。每个任务写固定 `lengths[i]`，返回前 `Wait`。
+
+</details>
 
 <details><summary>15. 把每项都写进 `lengths[0]` 仍安全吗？</summary>
 
-不安全。多个任务会同时写同一位置，需要重新设计所有权或同步。</details>
+不安全。多个任务会同时写同一位置，需要重新设计所有权或同步。
+
+</details>
 
 <details><summary>16. `CheckAll` 中某项失败，其他任务自动停止吗？</summary>
 
-不会。它等待并收集全部结果，取消需另行设计。</details>
+不会。它等待并收集全部结果，取消需另行设计。
+
+</details>
 
 <details><summary>17. 两个 goroutine 同时改共享 map，能靠“任务很快”避免竞争吗？</summary>
 
-不能。需要 05.02 的共享状态保护与不变量设计。</details>
+不能。需要 05.02 的共享状态保护与不变量设计。
+
+</details>
 
 <details><summary>18. 任务等待网络时 CPU 低，资源就可以无限增加吗？</summary>
 
-不能。等待任务仍可能保留栈、缓冲、连接等资源。</details>
+不能。等待任务仍可能保留栈、缓冲、连接等资源。
+
+</details>
 
 <details><summary>19. 每秒 100 个任务各停留约 60 秒，纸上同时未完成量约多少？</summary>
 
-在题设稳定条件下约 `100×60=6000`，不是实测结果。</details>
+在题设稳定条件下约 `100×60=6000`，不是实测结果。
+
+</details>
 
 <details><summary>20. 谁负责关闭已移交给连接处理任务的连接？</summary>
 
-由明确的所有权合同决定；不能让接纳者和处理者都以为对方负责。</details>
+由明确的所有权合同决定；不能让接纳者和处理者都以为对方负责。
+
+</details>
 
 <details><summary>21. 请求已取消，子 goroutine 会自动知道并停止吗？</summary>
 
-不会自动获得业务取消意图；05.03 要设计传播与响应路径。</details>
+不会自动获得业务取消意图；05.03 要设计传播与响应路径。
+
+</details>
 
 <details><summary>22. `go deliver(m-a)` 之后能直接向 `u-a` 报“u-b 已读”吗？</summary>
 
-不能。启动任务与服务接受、设备收到、用户已读各是不同证据。</details>
+不能。启动任务与服务接受、设备收到、用户已读各是不同证据。
+
+</details>
 
 ## 来源与下一步
 

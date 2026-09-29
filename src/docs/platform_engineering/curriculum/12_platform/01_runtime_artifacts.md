@@ -103,95 +103,139 @@ Docker 构建里的 `ARG` 与 `ENV` 各有作用，但**不适合传密码、令
 
 <details><summary>1. Go 源码与编译后二进制是同一对象吗？</summary>
 
-不是。源码还要经工具链、依赖、生成代码和构建设置形成目标平台二进制。</details>
+不是。源码还要经工具链、依赖、生成代码和构建设置形成目标平台二进制。
+
+</details>
 
 <details><summary>2. OCI 镜像等于运行中的容器吗？</summary>
 
-不等于。容器按镜像加运行配置、权限、网络和挂载启动进程。</details>
+不等于。容器按镜像加运行配置、权限、网络和挂载启动进程。
+
+</details>
 
 <details><summary>3. 镜像文件层自动保存未来权威消息历史吗？</summary>
 
-不自动。数据库/卷与进程内状态要另定义数据身份和恢复合同。</details>
+不自动。数据库/卷与进程内状态要另定义数据身份和恢复合同。
+
+</details>
 
 <details><summary>4. tag `course-v1` 必然永远指向同一镜像吗？</summary>
 
-不必然。tag 可重指向，应记录解析的 digest。</details>
+不必然。tag 可重指向，应记录解析的 digest。
+
+</details>
 
 <details><summary>5. digest D1 与 tag T 的首要区别是什么？</summary>
 
-D1 是相应内容标识；T 是方便引用、可移动的名字。</details>
+D1 是相应内容标识；T 是方便引用、可移动的名字。
+
+</details>
 
 <details><summary>6. `go.sum` 是完整运行环境锁文件吗？</summary>
 
-不是。它校验模块内容，但不锁镜像、工具链全部细节、运行配置或 DB 状态。</details>
+不是。它校验模块内容，但不锁镜像、工具链全部细节、运行配置或 DB 状态。
+
+</details>
 
 <details><summary>7. `ReadBuildInfo` 能保证读出全部源码和运行秘密吗？</summary>
 
-不能。它提供二进制内嵌的部分构建信息，不覆盖全部源码、配置或外部数据。</details>
+不能。它提供二进制内嵌的部分构建信息，不覆盖全部源码、配置或外部数据。
+
+</details>
 
 <details><summary>8. 当前 S2 的 200 是存数据库成功吗？</summary>
 
-不是。它只表示本进程内存受理。</details>
+不是。它只表示本进程内存受理。
+
+</details>
 
 ### 路径 9–16：分析同名或同摘要反例
 
 <details><summary>9. 两环境都部署 tag T，A 解析 D1、B 解析 D2，代码一定相同吗？</summary>
 
-不能断定。T 指向的内容在两次解析时不同，应查发布记录和 digest。</details>
+不能断定。T 指向的内容在两次解析时不同，应查发布记录和 digest。
+
+</details>
 
 <details><summary>10. A/B 都用 D1，但配置 K1/K2 不同，结果一定相同吗？</summary>
 
-不一定。启动配置可能改变允许的环境行为；公开合同漂移仍属错误。</details>
+不一定。启动配置可能改变允许的环境行为；公开合同漂移仍属错误。
+
+</details>
 
 <details><summary>11. 同 D1+K1，但两环境 DB 成员状态不同，非成员 404 结果可不同吗？</summary>
 
-有权成员与非成员身份不同会影响授权结果；须对照相同主体/会话的数据状态，不能只查镜像。</details>
+有权成员与非成员身份不同会影响授权结果；须对照相同主体/会话的数据状态，不能只查镜像。
+
+</details>
 
 <details><summary>12. `BODY_LIMIT=9` 让当前 `/v1` 接纳 9 B，能作为合理环境差异吗？</summary>
 
-不能。这违反当前 6 B 合同，R9 仍待审。</details>
+不能。这违反当前 6 B 合同，R9 仍待审。
+
+</details>
 
 <details><summary>13. 同一个多平台索引 digest 在 amd64/arm64 下必选同一平台二进制吗？</summary>
 
-不必。索引可指向不同平台 manifest，需记录实际平台和所选镜像。</details>
+不必。索引可指向不同平台 manifest，需记录实际平台和所选镜像。
+
+</details>
 
 <details><summary>14. Dockerfile 的 ARG/ENV 可以安全存构建密码吗？</summary>
 
-不应。可能暴露在镜像/元数据或历史中，构建秘密用受控 secret mount。</details>
+不应。可能暴露在镜像/元数据或历史中，构建秘密用受控 secret mount。
+
+</details>
 
 <details><summary>15. 固定基础镜像 digest 后就无需审更新了吗？</summary>
 
-不是。固定有助追溯，也要定期评审新版本与安全修复。</details>
+不是。固定有助追溯，也要定期评审新版本与安全修复。
+
+</details>
 
 <details><summary>16. 同 D1 重新创建容器可保证旧 S2 内存消息还在吗？</summary>
 
-不能。当前 S2 无跨进程持久承诺。</details>
+不能。当前 S2 无跨进程持久承诺。
+
+</details>
 
 ### 决策 17–22：可复核发布和回退
 
 <details><summary>17. 制品卡最少应关联哪些构建来源？</summary>
 
-源提交、Go 工具链/目标平台、模块/生成代码、构建参数和二进制身份。</details>
+源提交、Go 工具链/目标平台、模块/生成代码、构建参数和二进制身份。
+
+</details>
 
 <details><summary>18. 为什么运行实例还要记录配置版本和秘密来源？</summary>
 
-同镜像可因配置/权限不同而行为不同；记录来源即可，不暴露秘密值。</details>
+同镜像可因配置/权限不同而行为不同；记录来源即可，不暴露秘密值。
+
+</details>
 
 <details><summary>19. 回退时只把 tag T 改回旧名字就够吗？</summary>
 
-不够。要固定实际旧 digest，并审配置、数据、旧客户端与状态兼容。</details>
+不够。要固定实际旧 digest，并审配置、数据、旧客户端与状态兼容。
+
+</details>
 
 <details><summary>20. 未来 S3 200 可由镜像内有 DB 驱动直接证明吗？</summary>
 
-不能。要有批准的接口/提交合同及真实运行证据。</details>
+不能。要有批准的接口/提交合同及真实运行证据。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明其镜像 digest 或本项目运行配置吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费的异步边界。</details>
+不能。只支持所读发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一张可审的运行制品交接卡交什么？</summary>
 
-源码/二进制/镜像 digest、tag 与平台、配置与秘密来源、外部数据身份、当前业务正反例、回退兼容和未验证项。</details>
+源码/二进制/镜像 digest、tag 与平台、配置与秘密来源、外部数据身份、当前业务正反例、回退兼容和未验证项。
+
+</details>
 
 ## 本章完成标准与后续路径
 

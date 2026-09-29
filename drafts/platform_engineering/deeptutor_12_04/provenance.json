@@ -32,9 +32,9 @@
   "original_sha256": "9534dc149627bb2c6f02bf89330e6995bdfa8a761ad21d05f8a9b1a314bf7f13",
   "original_characters": 32851,
   "generation_request_sha256": "76841da298faf9aca27d7c5924a14d6d0024c92d276b5a640d71046e161a9c5a",
-  "reviewed_sha256": "fa8a7803fd8954f543a046451621da5c2eb623789f03bb44e10b795b28cfe389",
-  "reviewed_characters": 10721,
+  "reviewed_sha256": "e1573164b493c35bb6fe4a024d8e680c108220b15c7ca5bd54a60faffa5eab3f",
+  "reviewed_characters": 10765,
   "reviewed_chinese_characters": 3272,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/04_cluster_control_model.md",
-  "course_sha256": "b92b3904ac5c8da7a912ef097bb8b6a61b7b96a56d019867629181e27b3add7c"
+  "course_sha256": "7627eb908ac9ac7768cc6fdeee440d87496c3c37b4e9e44eb11854bdd350107b"
 }

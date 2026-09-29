@@ -116,91 +116,135 @@ TCP 把应用交给它的是**连续字节流**。A 进程两次 `Write` 不必�
 
 <details><summary>1. TCP 序列号编号的是消息 ID 还是字节？</summary>
 
-字节在该连接字节流中的位置，不是业务消息 ID。</details>
+字节在该连接字节流中的位置，不是业务消息 ID。
+
+</details>
 
 <details><summary>2. `[100,104)` 含几个字节？</summary>
 
-4 个，序号 100、101、102、103。</details>
+4 个，序号 100、101、102、103。
+
+</details>
 
 <details><summary>3. 收到这四字节后 ACK=104 表示什么？</summary>
 
-连续接收到 103，下一字节期望 104。</details>
+连续接收到 103，下一字节期望 104。
+
+</details>
 
 <details><summary>4. 两段 `[100,104)`、`[104,108)` 连续收到，可累计确认到哪里？</summary>
 
-ACK=108。</details>
+ACK=108。
+
+</details>
 
 <details><summary>5. A 两次 Write，B 就一定两次等长 Read 吗？</summary>
 
-不一定。TCP 是字节流，不保留应用写调用的边界。</details>
+不一定。TCP 是字节流，不保留应用写调用的边界。
+
+</details>
 
 <details><summary>6. ACK=104 能证明服务器数据库已保存 m-a 吗？</summary>
 
-不能，只是 TCP 接收进度的证据。</details>
+不能，只是 TCP 接收进度的证据。
+
+</details>
 
 <details><summary>7. 数据到了但 ACK 丢了，发送端可能怎样？</summary>
 
-等不到确认后重传同序号字节，接收端识别重复并再次确认。</details>
+等不到确认后重传同序号字节，接收端识别重复并再次确认。
+
+</details>
 
 <details><summary>8. 抓包看到同一段两次，handler 一定收到两次 POST 吗？</summary>
 
-不一定。TCP 重传段应由协议去重，不自动变成两次应用请求。</details>
+不一定。TCP 重传段应由协议去重，不自动变成两次应用请求。
+
+</details>
 
 <details><summary>9. 首次数据段丢了，接收端能凭空 ACK=104 吗？</summary>
 
-不能。需先收到连续范围。</details>
+不能。需先收到连续范围。
+
+</details>
 
 <details><summary>10. 看到重传就能断言原始数据段丢失吗？</summary>
 
-不能，也可能是 ACK 丢失或延迟等导致没有及时新确认。</details>
+不能，也可能是 ACK 丢失或延迟等导致没有及时新确认。
+
+</details>
 
 <details><summary>11. `[104,108)` 先到但 `[100,104)` 未到，基本累计 ACK 指向哪里？</summary>
 
-最早缺口 100。</details>
+最早缺口 100。
+
+</details>
 
 <details><summary>12. 前段随后到达，两段连成连续范围后可 ACK 到哪里？</summary>
 
-108。</details>
+108。
+
+</details>
 
 <details><summary>13. TCP ACK 的序号能跨重连当会话消息序号吗？</summary>
 
-不能。它只属于该连接的字节序列，业务 seq 另有含义。</details>
+不能。它只属于该连接的字节序列，业务 seq 另有含义。
+
+</details>
 
 <details><summary>14. RTO 应始终固定为 20 ms 吗？</summary>
 
-不能。它依赖 RTT 估计与波动，例子不是内核配置。</details>
+不能。它依赖 RTT 估计与波动，例子不是内核配置。
+
+</details>
 
 <details><summary>15. 客户端 HTTP 超时能证明服务端没处理吗？</summary>
 
-不能。请求可能已处理，只是回应未在期限内到达。</details>
+不能。请求可能已处理，只是回应未在期限内到达。
+
+</details>
 
 <details><summary>16. Go context 取消会自动撤销已完成的数据库提交吗？</summary>
 
-不会。取消是协作信号，已完成状态要按实际提交点判断。</details>
+不会。取消是协作信号，已完成状态要按实际提交点判断。
+
+</details>
 
 <details><summary>17. 8 B 窗口里先发两个 4 B 段，在途多少字节？</summary>
 
-8 B。</details>
+8 B。
+
+</details>
 
 <details><summary>18. ACK=104 后，在途未确认字节还剩多少？</summary>
 
-第二段 4 B；纸上窗口可再允许 4 B 新数据。</details>
+第二段 4 B；纸上窗口可再允许 4 B 新数据。
+
+</details>
 
 <details><summary>19. 接收方窗口与拥塞窗口是同一问题吗？</summary>
 
-不是。前者关心对端接收能力，后者关心网络路径拥塞，04.06 深入。</details>
+不是。前者关心对端接收能力，后者关心网络路径拥塞，04.06 深入。
+
+</details>
 
 <details><summary>20. TCP 重传与客户端重新 POST m-a 是同一动作吗？</summary>
 
-不是。前者重发旧字节范围，后者是新应用请求。</details>
+不是。前者重发旧字节范围，后者是新应用请求。
+
+</details>
 
 <details><summary>21. 当前教学接口对同会话重复 m-a 返回什么？</summary>
 
-409 `DUPLICATE_MESSAGE`，不覆盖旧正文；幂等回放尚未设计。</details>
+409 `DUPLICATE_MESSAGE`，不覆盖旧正文；幂等回放尚未设计。
+
+</details>
 
 <details><summary>22. `Conn.Write` 成功能证明 u-b 已读吗？</summary>
 
-不能。还需应用处理、持久/设备确认和阅读证据。</details>
+不能。还需应用处理、持久/设备确认和阅读证据。
+
+</details>
 
 ## 来源与下一步
 

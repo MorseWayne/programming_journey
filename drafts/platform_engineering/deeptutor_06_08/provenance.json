@@ -28,9 +28,9 @@
   "original_sha256": "2bd7ca811433516e71dcc64ba73bc9bbc8e4e756fbe3e2b1f4bcc0e90b6a17a6",
   "original_characters": 30918,
   "generation_request_sha256": "fb233be4797b95eb9c459c19220fa03dd793298d3cd18754bfd85149649296d8",
-  "reviewed_sha256": "d475a542d3a00f056ec60665b81ab268d135f2e4d187deaa116f84c6e9ea14c8",
-  "reviewed_characters": 9805,
+  "reviewed_sha256": "9297c18e39425ee17d13ff4bf59015a0425cc33dec456ddb6c9a6fd7764f7deb",
+  "reviewed_characters": 9849,
   "reviewed_chinese_characters": 4276,
   "course_file": "src/docs/platform_engineering/curriculum/06_databases/08_locks_mvcc.md",
-  "course_sha256": "b00f49fc35e1ba0251ec30f9990f1e9fa0101264f5498a9b043c6705d447bdb0"
+  "course_sha256": "3a7c1628ce3ec4cdbdc320f55fdafca0d158ce844a88a6f12418c31c92912150"
 }

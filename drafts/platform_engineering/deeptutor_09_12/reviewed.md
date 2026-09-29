@@ -109,91 +109,135 @@ TLS 只保护被配置的每一跳。若浏览器与代理间是 WSS、代理到
 
 <details><summary>1. 本章“完整”表示已具备所有 IM 可靠性保证吗？</summary>
 
-不表示。它只把 S3 当前功能和证据边界组合完整。</details>
+不表示。它只把 S3 当前功能和证据边界组合完整。
+
+</details>
 
 <details><summary>2. 09.02 当前 v1 的正文上限和成功状态是什么？</summary>
 
-最多 6 个 UTF-8 字节，`200 accepted_in_memory`。</details>
+最多 6 个 UTF-8 字节，`200 accepted_in_memory`。
+
+</details>
 
 <details><summary>3. R9 的 9 字节规则现在能当 v1/v2 已生效合同吗？</summary>
 
-不能。它仍是待审变更，需版本和客户端兼容评审。</details>
+不能。它仍是待审变更，需版本和客户端兼容评审。
+
+</details>
 
 <details><summary>4. 本章 v2 `stored_in_teaching_db` 是已部署接口吗？</summary>
 
-不是，是教学持久服务的纸上新合同。</details>
+不是，是教学持久服务的纸上新合同。
+
+</details>
 
 <details><summary>5. 四张教学表中的 members 能自动保存退群重入两段历史吗？</summary>
 
-不能。当前复合键只表达当前关系，需要资格历史扩展。</details>
+不能。当前复合键只表达当前关系，需要资格历史扩展。
+
+</details>
 
 <details><summary>6. u-c 已登录却请求 c-a 历史会怎样？</summary>
 
-按当前隐藏目标政策拒绝，不能返回私有正文。</details>
+按当前隐藏目标政策拒绝，不能返回私有正文。
+
+</details>
 
 <details><summary>7. 客户端填 sender_id=u-b 能让 u-a 代 B 发信吗？</summary>
 
-不能。发送者由服务端认证主体确定。</details>
+不能。发送者由服务端认证主体确定。
+
+</details>
 
 <details><summary>8. `"你好呀"` 在当前 6 B 合同下怎样？</summary>
 
-它是 9 B，应拒绝且不改消息状态。</details>
+它是 9 B，应拒绝且不改消息状态。
+
+</details>
 
 <details><summary>9. `GET` 首页 m-c/m-b 后下一游标如何取 m-a？</summary>
 
-在同一会话和排序规则下以末项 seq=2 作 `seq<2` 条件。</details>
+在同一会话和排序规则下以末项 seq=2 作 `seq<2` 条件。
+
+</details>
 
 <details><summary>10. SQL 参数安全能替代会话成员授权吗？</summary>
 
-不能。结构安全与资源权限是不同判断。</details>
+不能。结构安全与资源权限是不同判断。
+
+</details>
 
 <details><summary>11. `*sql.DB` 应每个请求打开并关闭吗？</summary>
 
-不应。它是应用复用的连接池句柄。</details>
+不应。它是应用复用的连接池句柄。
+
+</details>
 
 <details><summary>12. Commit 附近断网能直接说数据库未写吗？</summary>
 
-不能。结果未知，沿稳定消息/操作身份查验。</details>
+不能。结果未知，沿稳定消息/操作身份查验。
+
+</details>
 
 <details><summary>13. 消息库内提交后 WebSocket Write 成功能证明 B 展示了吗？</summary>
 
-不能，写调用与设备应用确认不同。</details>
+不能，写调用与设备应用确认不同。
+
+</details>
 
 <details><summary>14. B 离线时，当前 S3 课程已承诺自动补拉吗？</summary>
 
-没有。完整离线恢复属于 S5 后续合同。</details>
+没有。完整离线恢复属于 S5 后续合同。
+
+</details>
 
 <details><summary>15. 慢设备队列满可以无条件丢弃聊天正文吗？</summary>
 
-不能。须有权威保存、失败反馈和真实可用的恢复合同。</details>
+不能。须有权威保存、失败反馈和真实可用的恢复合同。
+
+</details>
 
 <details><summary>16. WSS 证书正确能证明 A 有 c-a 发言权吗？</summary>
 
-不能。TLS 服务端身份与应用用户/资源授权分开。</details>
+不能。TLS 服务端身份与应用用户/资源授权分开。
+
+</details>
 
 <details><summary>17. 浏览器到代理 TLS 能自动保护代理到数据库吗？</summary>
 
-不能。每一跳独立判断。</details>
+不能。每一跳独立判断。
+
+</details>
 
 <details><summary>18. 错误发生在数据库提交后、A 收到回应前，A 应怎样表述？</summary>
 
-A 看到结果未知；服务端应凭提交证据和稳定消息 ID 查验。</details>
+A 看到结果未知；服务端应凭提交证据和稳定消息 ID 查验。
+
+</details>
 
 <details><summary>19. 已核对 OpenIM 发送 RPC 返回的位置等于 MongoDB 消费写入完成吗？</summary>
 
-不等于，两处源码在不同阶段调用。</details>
+不等于，两处源码在不同阶段调用。
+
+</details>
 
 <details><summary>20. 仅看 MsgToMQ 和 BatchInsertChat2DB 两处能证明队列失败重试吗？</summary>
 
-不能，还要核对生产者、消费者和配置。</details>
+不能，还要核对生产者、消费者和配置。
+
+</details>
 
 <details><summary>21. CI 绿色能替代真实 B 设备送达观察吗？</summary>
 
-不能。需按运行层次和设备确认点分别记录。</details>
+不能。需按运行层次和设备确认点分别记录。
+
+</details>
 
 <details><summary>22. 交付文档为何要列“未验证”？</summary>
 
-避免把纸上设计、局部测试或别的确认点误报为完整服务保证。</details>
+避免把纸上设计、局部测试或别的确认点误报为完整服务保证。
+
+</details>
 
 ## 来源与下一步
 

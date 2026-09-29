@@ -143,91 +143,135 @@ stage=app_send result=DUPLICATE_MESSAGE http_status=409 duration_ms=<实际测�
 
 <details><summary>1. 中间件调用 `next.ServeHTTP` 前后分别处于哪段？</summary>
 
-调用前在请求进入阶段，调用返回后在回应返回阶段。</details>
+调用前在请求进入阶段，调用返回后在回应返回阶段。
+
+</details>
 
 <details><summary>2. 本章嵌套中请求先经过 requestID 还是 api？</summary>
 
-先经过最外层 requestID，再逐层到 api。</details>
+先经过最外层 requestID，再逐层到 api。
+
+</details>
 
 <details><summary>3. `auth` 提前拒绝后 api 还会执行吗？</summary>
 
-不会，除非 auth 明确继续调用 next。</details>
+不会，除非 auth 明确继续调用 next。
+
+</details>
 
 <details><summary>4. 安装 `MaxBytesReader` 就已经读完并验证了 4096 B 吗？</summary>
 
-没有。它先设置读取上限，实际越界在内层读取时观察。</details>
+没有。它先设置读取上限，实际越界在内层读取时观察。
+
+</details>
 
 <details><summary>5. `sender_id:"u-a"` 可代替可信 principal 吗？</summary>
 
-不能。它是客户端可控 JSON 字段。</details>
+不能。它是客户端可控 JSON 字段。
+
+</details>
 
 <details><summary>6. 401 与非成员的 404 是同一个前置条件吗？</summary>
 
-不是。前者缺可信主体，后者是本章对已知主体的资源隐藏策略。</details>
+不是。前者缺可信主体，后者是本章对已知主体的资源隐藏策略。
+
+</details>
 
 <details><summary>7. `r.Context()` 何时可能取消？</summary>
 
-客户端连接关闭、请求取消，或 handler 返回等条件下可取消。</details>
+客户端连接关闭、请求取消，或 handler 返回等条件下可取消。
+
+</details>
 
 <details><summary>8. `WithTimeout` 的 `cancel` 正常提前结束时还应调用吗？</summary>
 
-应调用，以释放派生上下文相关资源。</details>
+应调用，以释放派生上下文相关资源。
+
+</details>
 
 <details><summary>9. `ctx.Done()` 关闭会强制终止不理会 ctx 的函数吗？</summary>
 
-不会。下层需协作检查或使用支持取消的操作。</details>
+不会。下层需协作检查或使用支持取消的操作。
+
+</details>
 
 <details><summary>10. 内存已提交后客户端断连，消息自动回滚吗？</summary>
 
-不会。客户端结果可能未知，服务端内存状态可能已变化。</details>
+不会。客户端结果可能未知，服务端内存状态可能已变化。
+
+</details>
 
 <details><summary>11. handler 返回后继续用 `r.Context()` 做可靠后台任务合适吗？</summary>
 
-不合适。该请求上下文在 handler 返回时取消；长期任务须另有所有者。</details>
+不合适。该请求上下文在 handler 返回时取消；长期任务须另有所有者。
+
+</details>
 
 <details><summary>12. 业务重复 ID 应用 panic 还是返回 ErrDuplicate？</summary>
 
-返回可识别的普通业务错误，由 HTTP 边界映射 409。</details>
+返回可识别的普通业务错误，由 HTTP 边界映射 409。
+
+</details>
 
 <details><summary>13. handler 的 recover 能抓住另起 goroutine 的 panic 吗？</summary>
 
-不能。`recover` 只作用于对应 panic 的同一 goroutine。</details>
+不能。`recover` 只作用于对应 panic 的同一 goroutine。
+
+</details>
 
 <details><summary>14. panic 恢复就自动把内存状态回滚了吗？</summary>
 
-没有。需核对它发生在提交前还是提交后。</details>
+没有。需核对它发生在提交前还是提交后。
+
+</details>
 
 <details><summary>15. `WriteHeader` 未调用就先 `Write`，Go 默认最终状态是什么？</summary>
 
-第一次写出会隐式提交 200。</details>
+第一次写出会隐式提交 200。
+
+</details>
 
 <details><summary>16. 已写出半份成功 JSON，能在同一响应里重写完整 500 吗？</summary>
 
-不能。状态与部分正文可能已提交，应记录部分响应事实。</details>
+不能。状态与部分正文可能已提交，应记录部分响应事实。
+
+</details>
 
 <details><summary>17. 为什么小 JSON 回应先准备正文再写？</summary>
 
-尽量在最终状态提交前发现编码错误，避免部分成功体。</details>
+尽量在最终状态提交前发现编码错误，避免部分成功体。
+
+</details>
 
 <details><summary>18. 错误映射应分散在 domain 和 memorystore 吗？</summary>
 
-不应。业务层保留错误身份，HTTP 边界统一映射状态与机器码。</details>
+不应。业务层保留错误身份，HTTP 边界统一映射状态与机器码。
+
+</details>
 
 <details><summary>19. 日志可直接记录访问令牌和完整正文吗？</summary>
 
-不应。记录必要阶段、类别、时长和脱敏关联信息。</details>
+不应。记录必要阶段、类别、时长和脱敏关联信息。
+
+</details>
 
 <details><summary>20. 日志中出现 status=200 能证明客户端完整收到吗？</summary>
 
-不能。它仅记录服务端某条写出路径，网络/客户端仍有独立边界。</details>
+不能。它仅记录服务端某条写出路径，网络/客户端仍有独立边界。
+
+</details>
 
 <details><summary>21. 写一个 ResponseWriter 包装器只实现 Write/WriteHeader 就总兼容 WebSocket 吗？</summary>
 
-不一定。可选刷新/升级能力可能被包装器遗漏，需另行审查。</details>
+不一定。可选刷新/升级能力可能被包装器遗漏，需另行审查。
+
+</details>
 
 <details><summary>22. 09.04 的请求时间线能证明 `u-b` 已读吗？</summary>
 
-不能。它最多走到本进程内存受理和 HTTP 回应，设备与阅读状态需后续证据。</details>
+不能。它最多走到本进程内存受理和 HTTP 回应，设备与阅读状态需后续证据。
+
+</details>
 
 ## 来源与下一步
 

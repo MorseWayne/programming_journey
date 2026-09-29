@@ -84,91 +84,135 @@ MongoDB 副本集的次节点异步应用主节点 oplog。`w:1` 请求主节点
 
 <details><summary>1. P、R1、R2 在本题分别是什么？</summary>
 
-P 是当前权威写主库，R1/R2 是复制它变化的两个副本。</details>
+P 是当前权威写主库，R1/R2 是复制它变化的两个副本。
+
+</details>
 
 <details><summary>2. 主库本机提交 `seq=9`，能直接证明 R2 可读 9 吗？</summary>
 
-不能。R2 可能尚未收到、持久或回放该变化。</details>
+不能。R2 可能尚未收到、持久或回放该变化。
+
+</details>
 
 <details><summary>3. “R1 已持久日志”与“R1 热备查询看见 9”一样吗？</summary>
 
-不一样。R1 在 t=40 已持久日志但未回放，查询仍可能只见到 8。</details>
+不一样。R1 在 t=40 已持久日志但未回放，查询仍可能只见到 8。
+
+</details>
 
 <details><summary>4. 会话 `seq=9` 能直接当 PostgreSQL WAL LSN 比较吗？</summary>
 
-不能。前者是会话内业务顺序，后者是数据库日志位置。</details>
+不能。前者是会话内业务顺序，后者是数据库日志位置。
+
+</details>
 
 <details><summary>5. 多一份副本是否等于多一份可回到误删前的备份？</summary>
 
-不等于。误删/错误更新可能被复制，仍需要独立备份与恢复点。</details>
+不等于。误删/错误更新可能被复制，仍需要独立备份与恢复点。
+
+</details>
 
 <details><summary>6. 本题 1 KiB×3=3 KiB 是完整存储成本吗？</summary>
 
-不是。它只数三份玩具记录数据，未算 WAL、索引、元数据、备份、网络与运维。</details>
+不是。它只数三份玩具记录数据，未算 WAL、索引、元数据、备份、网络与运维。
+
+</details>
 
 <details><summary>7. 1 KiB 玩具记录与当前正文 6 B 上限是同一单位对象吗？</summary>
 
-不是。6 B 是教学 HTTP 消息正文限额，1 KiB 是本题另设的已编码记录成本单位。</details>
+不是。6 B 是教学 HTTP 消息正文限额，1 KiB 是本题另设的已编码记录成本单位。
+
+</details>
 
 <details><summary>8. 有三台节点，就能把每次历史读均分且永不读旧值吗？</summary>
 
-不能。副本可能滞后，且读负载也会影响其资源/回放；须按业务一致性要求路由。</details>
+不能。副本可能滞后，且读负载也会影响其资源/回放；须按业务一致性要求路由。
+
+</details>
 
 <details><summary>9. t=10 时谁已按本题假设持久 9？</summary>
 
-只有 P；R1 尚未确认 9，R2 停在 8。</details>
+只有 P；R1 尚未确认 9，R2 停在 8。
+
+</details>
 
 <details><summary>10. t=40 时 R1 的日志与查询各到哪里？</summary>
 
-日志已持久到 9，但未回放，查询仍可能只见到 8。</details>
+日志已持久到 9，但未回放，查询仍可能只见到 8。
+
+</details>
 
 <details><summary>11. t=70 时 R1、R2 各自最新历史三条是什么？</summary>
 
-R1 已回放 9，得 9、8、7；R2 仍到 8，得 8、7、6。</details>
+R1 已回放 9，得 9、8、7；R2 仍到 8，得 8、7、6。
+
+</details>
 
 <details><summary>12. 本题只要求 P 本地持久，最早对应哪个时刻？</summary>
 
-t=10 ms。它不代表任何副本可读。</details>
+t=10 ms。它不代表任何副本可读。
+
+</details>
 
 <details><summary>13. 若要求所选 R1 的日志持久，最早对应哪个时刻？</summary>
 
-t=40 ms；仍未保证 R1 热备查询看到 9。</details>
+t=40 ms；仍未保证 R1 热备查询看到 9。
+
+</details>
 
 <details><summary>14. 若要求所选 R1 回放可读，最早对应哪个时刻？</summary>
 
-t=70 ms；不能外推到仍停在 8 的 R2。</details>
+t=70 ms；不能外推到仍停在 8 的 R2。
+
+</details>
 
 <details><summary>15. PostgreSQL 没有配置同步备库时，`synchronous_commit=on` 意味所有副本回放了吗？</summary>
 
-不是。其本地同步边界不能直接变成远端回放承诺。</details>
+不是。其本地同步边界不能直接变成远端回放承诺。
+
+</details>
 
 <details><summary>16. `remote_write` 与远端持久 flush、`remote_apply` 是同一条件吗？</summary>
 
-不是。它们分别处于远端写入、远端持久和远端回放的不同里程碑；须结合同步备库配置。</details>
+不是。它们分别处于远端写入、远端持久和远端回放的不同里程碑；须结合同步备库配置。
+
+</details>
 
 <details><summary>17. t=40 P 与 R1 有 9，盲目提升只到 8 的 R2 有什么风险？</summary>
 
-新权威可能缺失已在 P/R1 持久的 9；两份存储不等于任意选主都安全。</details>
+新权威可能缺失已在 P/R1 持久的 9；两份存储不等于任意选主都安全。
+
+</details>
 
 <details><summary>18. R1 不可用而 R2 落后，等 R1 与提升 R2 各牺牲什么？</summary>
 
-等待可能增加恢复时间/降低可用性；提升 R2 可能扩大数据丢失窗口。需按 RPO/RTO 与确认合同决定。</details>
+等待可能增加恢复时间/降低可用性；提升 R2 可能扩大数据丢失窗口。需按 RPO/RTO 与确认合同决定。
+
+</details>
 
 <details><summary>19. A 发完后必须立刻见到 9，读路径怎样设计？</summary>
 
-路由权威节点，或等选定副本回放到该提交可见位置后再读；同时设等待期限和失败策略。</details>
+路由权威节点，或等选定副本回放到该提交可见位置后再读；同时设等待期限和失败策略。
+
+</details>
 
 <details><summary>20. `w:"majority"` 能保证 MongoDB 任意 secondary 立刻可读吗？</summary>
 
-不能。写关注与副本实际应用、读偏好/读关注是不同条件。</details>
+不能。写关注与副本实际应用、读偏好/读关注是不同条件。
+
+</details>
 
 <details><summary>21. MongoDB `wtimeout` 后，能认定先前写入已撤销吗？</summary>
 
-不能。写关注超时不撤销已完成的数据修改，结果需按稳定 ID 和权威状态核对。</details>
+不能。写关注超时不撤销已完成的数据修改，结果需按稳定 ID 和权威状态核对。
+
+</details>
 
 <details><summary>22. 为什么发送资格不能只从落后副本读取？</summary>
 
-退群可能已在 P 生效而副本仍显示活跃；凭旧资格放行会违反发送/退群的业务先后规则。</details>
+退群可能已在 P 生效而副本仍显示活跃；凭旧资格放行会违反发送/退群的业务先后规则。
+
+</details>
 
 ## 本章完成标准与下一步
 

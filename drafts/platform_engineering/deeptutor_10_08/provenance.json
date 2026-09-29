@@ -31,9 +31,9 @@
   "original_sha256": "259874bf22308b1c993e848418463195da2ed1bad1baa0469553f2eacc638a2a",
   "original_characters": 34828,
   "generation_request_sha256": "f098052916cc4e2afe6e0e37163dc8915918323955b347a5e556526a012000ef",
-  "reviewed_sha256": "410bef099b607481dbb0b756b7e14df1f36ff08269e4aa713be877de8b278afa",
-  "reviewed_characters": 10033,
+  "reviewed_sha256": "4c952b3909a98c73e0755a14058600303bc76b253862d2f8af2d215c7aace0d3",
+  "reviewed_characters": 10077,
   "reviewed_chinese_characters": 3365,
   "course_file": "src/docs/platform_engineering/curriculum/10_engineering/08_dependency_quality_tools.md",
-  "course_sha256": "27ef88a6839775bd9eda7e948c905e2fca579b25edf1fdcf6805c8c06e97487c"
+  "course_sha256": "c1d9c4f50ee3c0f6fc0c2221c4792aa03d473fe711b8b1aa75403e11ed62e16c"
 }

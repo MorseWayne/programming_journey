@@ -308,83 +308,123 @@ func TestSaveThenLoadLocalHistory(t *testing.T) {
 
 <details><summary>1. 测试文件放在哪里？</summary>
 
-与被测包同目录，文件名以 `_test.go` 结尾，例如 `history/validate_test.go`。</details>
+与被测包同目录，文件名以 `_test.go` 结尾，例如 `history/validate_test.go`。
+
+</details>
 
 <details><summary>2. `package history_test` 和 `package history` 的区别？</summary>
 
-前者从外部调用者视角导入公开 API；后者与生产代码同包，可访问包内未导出名字。</details>
+前者从外部调用者视角导入公开 API；后者与生产代码同包，可访问包内未导出名字。
+
+</details>
 
 <details><summary>3. `TestXxx` 的参数为什么是 `*testing.T`？</summary>
 
-它指向测试上下文，提供报告失败、命名子测试等能力；测试函数本身不返回 `bool` 表示成功。</details>
+它指向测试上下文，提供报告失败、命名子测试等能力；测试函数本身不返回 `bool` 表示成功。
+
+</details>
 
 <details><summary>4. `t.Errorf` 后，当前测试函数还会继续吗？</summary>
 
-会；测试已标记失败，但后续独立断言仍可执行。</details>
+会；测试已标记失败，但后续独立断言仍可执行。
+
+</details>
 
 <details><summary>5. 什么时候用 `t.Fatalf`？</summary>
 
-当前测试无法安全继续时，例如 `New` 失败导致后续对象不可用；它不会终止所有独立测试。</details>
+当前测试无法安全继续时，例如 `New` 失败导致后续对象不可用；它不会终止所有独立测试。
+
+</details>
 
 <details><summary>6. 为什么只测试 5 和 7 字节不足以发现等号写错？</summary>
 
-`>6` 与 `>=6` 在 5、7 上可能给相同结果；恰好 6 字节的案例才区分两种规则。</details>
+`>6` 与 `>=6` 在 5、7 上可能给相同结果；恰好 6 字节的案例才区分两种规则。
+
+</details>
 
 <details><summary>7. `"你好"` 按本章规则占几个字节？</summary>
 
-UTF-8 编码下为 6 字节；本章上限为 6 时应通过。</details>
+UTF-8 编码下为 6 字节；本章上限为 6 时应通过。
+
+</details>
 
 <details><summary>8. 空格正文是否按空文本拒绝？</summary>
 
-不应。10.01 选择原始字符串非空且不自动裁剪；一个空格占 1 字节。</details>
+不应。10.01 选择原始字符串非空且不自动裁剪；一个空格占 1 字节。
+
+</details>
 
 <details><summary>9. `kind=other, body="", max=0` 的预期原因？</summary>
 
-`BAD_KIND`。分类检查优先于上限与空文本。</details>
+`BAD_KIND`。分类检查优先于上限与空文本。
+
+</details>
 
 <details><summary>10. 表驱动会自动产生好的用例吗？</summary>
 
-不会。它只组织案例；边界、反例和预期仍要从需求推导。</details>
+不会。它只组织案例；边界、反例和预期仍要从需求推导。
+
+</details>
 
 <details><summary>11. 为什么每条子测试最好有唯一名称？</summary>
 
-失败报告才能清楚指向具体规则；同名案例会增加定位负担。</details>
+失败报告才能清楚指向具体规则；同名案例会增加定位负担。
+
+</details>
 
 <details><summary>12. 只检查 `err != nil` 就能证明重复消息未覆盖旧正文吗？</summary>
 
-不能。还要比较操作前后的可观察历史，确认原消息正文和消息数不变。</details>
+不能。还要比较操作前后的可观察历史，确认原消息正文和消息数不变。
+
+</details>
 
 <details><summary>13. 为什么 `errors.Is(err, ErrDuplicateMessage)` 比比较文案合适？</summary>
 
-它按稳定错误身份判断，能识别按 `%w` 包装后的原因；文案可能改变。</details>
+它按稳定错误身份判断，能识别按 `%w` 包装后的原因；文案可能改变。
+
+</details>
 
 <details><summary>14. `t.TempDir()` 的本地文件测试覆盖网络吗？</summary>
 
-不覆盖。它只观察本机文件适配器与领域值协作。</details>
+不覆盖。它只观察本机文件适配器与领域值协作。
+
+</details>
 
 <details><summary>15. 端到端测试为何不能由函数名决定？</summary>
 
-要看是否真的经过用户目标涉及的入口、依赖与可见结果；只调用一个名为 `Send` 的函数不够。</details>
+要看是否真的经过用户目标涉及的入口、依赖与可见结果；只调用一个名为 `Send` 的函数不够。
+
+</details>
 
 <details><summary>16. 覆盖率 100% 是否证明上限需求正确？</summary>
 
-不证明。即使执行每行代码，预期可能写错或没有断言关键边界。</details>
+不证明。即使执行每行代码，预期可能写错或没有断言关键边界。
+
+</details>
 
 <details><summary>17. 需求从 6 改 9，至少新增哪两个边界？</summary>
 
-9 字节应通过，10 字节应拒绝；还要保留 6 字节通过和其他未变规则。</details>
+9 字节应通过，10 字节应拒绝；还要保留 6 字节通过和其他未变规则。
+
+</details>
 
 <details><summary>18. 测试失败时能否把 `want` 改成当前 `got`？</summary>
 
-先核对需求。只有需求确实改变，预期才应更新；否则这样做会掩盖实现错误。</details>
+先核对需求。只有需求确实改变，预期才应更新；否则这样做会掩盖实现错误。
+
+</details>
 
 <details><summary>19. 教材给出的假想 FAIL 报告算真实执行证据吗？</summary>
 
-不算。个人记录中的“实际结果”应写未运行，直到自己执行并保存输出。</details>
+不算。个人记录中的“实际结果”应写未运行，直到自己执行并保存输出。
+
+</details>
 
 <details><summary>20. 本地校验测试能证明 OpenIM 已送达消息吗？</summary>
 
-不能。它只覆盖虚构教学函数的已观察边界；服务端和设备状态需要另行接入与验证。</details>
+不能。它只覆盖虚构教学函数的已观察边界；服务端和设备状态需要另行接入与验证。
+
+</details>
 
 ## 来源与下一步
 

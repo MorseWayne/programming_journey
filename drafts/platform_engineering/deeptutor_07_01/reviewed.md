@@ -99,91 +99,135 @@ TTL 只是**键的生命周期边界**，不是“在 TTL 内始终新鲜”的�
 
 <details><summary>1. 当前 S2 的 `accepted_in_memory` 等于数据库历史权威已持久吗？</summary>
 
-不等于。它只确认当前进程受理，进程故障后可能丢失。</details>
+不等于。它只确认当前进程受理，进程故障后可能丢失。
+
+</details>
 
 <details><summary>2. 未来 S3 已提交消息在本题属于哪类状态？</summary>
 
-权威消息事实，具体可恢复范围仍依数据库提交与故障合同。</details>
+权威消息事实，具体可恢复范围仍依数据库提交与故障合同。
+
+</details>
 
 <details><summary>3. 会话预览是派生状态，需要哪些重建输入？</summary>
 
-至少权威消息及编辑/撤回、会话可见规则；缺少唯一输入的标注不能凭空重建。</details>
+至少权威消息及编辑/撤回、会话可见规则；缺少唯一输入的标注不能凭空重建。
+
+</details>
 
 <details><summary>4. `members.left_at` 的过期缓存能独立裁决退群者可否发送吗？</summary>
 
-不能。要按受控权威/版本边界判断，旧许可不得放行。</details>
+不能。要按受控权威/版本边界判断，旧许可不得放行。
+
+</details>
 
 <details><summary>5. `conversation_counters.next_seq` 只因名字叫 counter 就可随意清空吗？</summary>
 
-不能。它是 06.12 的事务序号权威扩展，恢复须有受控写入和约束核对。</details>
+不能。它是 06.12 的事务序号权威扩展，恢复须有受控写入和约束核对。
+
+</details>
 
 <details><summary>6. 在线键没了就证明用户真的离线吗？</summary>
 
-不证明。可能是 TTL、逐出或缓存故障；当前状态应按合同未知/重建。</details>
+不证明。可能是 TTL、逐出或缓存故障；当前状态应按合同未知/重建。
+
+</details>
 
 <details><summary>7. Redis 实例是否天生只能存派生和临时数据？</summary>
 
-不是。角色取决于业务合同；若它承载唯一权威事实，就须设计相应持久与恢复，不可按普通可丢缓存逐出。</details>
+不是。角色取决于业务合同；若它承载唯一权威事实，就须设计相应持久与恢复，不可按普通可丢缓存逐出。
+
+</details>
 
 <details><summary>8. 历史范围查询的基本键形状是什么？</summary>
 
-先以 `conversation_id` 限定会话，再以 `seq` 范围/游标按业务顺序取页。</details>
+先以 `conversation_id` 限定会话，再以 `seq` 范围/游标按业务顺序取页。
+
+</details>
 
 <details><summary>9. 十次预览读 7 hit、3 miss，命中率是多少？</summary>
 
-`7/(7+3)=70%`。</details>
+`7/(7+3)=70%`。
+
+</details>
 
 <details><summary>10. 在最简单无并发 cache-aside 假设下，三次 miss 对应多少次预览回源？</summary>
 
-在“每次 miss 查一次权威”的本题假设下是 3 次预览回源；不包含额外授权、其他键和并发工作。</details>
+在“每次 miss 查一次权威”的本题假设下是 3 次预览回源；不包含额外授权、其他键和并发工作。
+
+</details>
 
 <details><summary>11. 命中缓存 seq8，权威已到 seq9，hit 证明正确吗？</summary>
 
-不证明。键存在但值旧，若合同要求刚发后预览含 9，这个 hit 不合格。</details>
+不证明。键存在但值旧，若合同要求刚发后预览含 9，这个 hit 不合格。
+
+</details>
 
 <details><summary>12. 缓存 miss 可直接返回“消息不存在”吗？</summary>
 
-不能。需要按权限查询权威源，并区分负缓存、落后副本和依赖失败。</details>
+不能。需要按权限查询权威源，并区分负缓存、落后副本和依赖失败。
+
+</details>
 
 <details><summary>13. TTL 还剩 30 秒，能保证这 30 秒内值一直最新吗？</summary>
 
-不能。源可能立即变化，若未失效/校验，缓存可一直旧到 TTL 到期。</details>
+不能。源可能立即变化，若未失效/校验，缓存可一直旧到 TTL 到期。
+
+</details>
 
 <details><summary>14. TTL 到期、主动失效和内存逐出是一回事吗？</summary>
 
-不是。分别是生命周期结束、应用响应源变化、容量政策淘汰，需记录不同原因。</details>
+不是。分别是生命周期结束、应用响应源变化、容量政策淘汰，需记录不同原因。
+
+</details>
 
 <details><summary>15. `keyspace_hits` 高就证明权限安全、用户满意吗？</summary>
 
-不能。hit 可能旧或未经授权，还要看陈旧率、业务结果、延迟和错误。</details>
+不能。hit 可能旧或未经授权，还要看陈旧率、业务结果、延迟和错误。
+
+</details>
 
 <details><summary>16. 缓存重启后在线键缺失，如何避免谎报？</summary>
 
-先按产品合同标未知或保守降级，再用新连接/心跳重新建立提示。</details>
+先按产品合同标未知或保守降级，再用新连接/心跳重新建立提示。
+
+</details>
 
 <details><summary>17. 临时限流计数故障重置，为什么也要评审？</summary>
 
-短时可能放宽速率限制；应明确 fail-open/fail-closed、影响范围与监控。</details>
+短时可能放宽速率限制；应明确 fail-open/fail-closed、影响范围与监控。
+
+</details>
 
 <details><summary>18. 精确业务配额可和易失速率计数共用“可丢”政策吗？</summary>
 
-不可。精确配额若决定受理/收费等权威事实，丢失与重置有业务后果，须另设持久边界。</details>
+不可。精确配额若决定受理/收费等权威事实，丢失与重置有业务后果，须另设持久边界。
+
+</details>
 
 <details><summary>19. S3 缓存重启后消息历史一定随着缓存一起消失吗？</summary>
 
-在本题 S3 数据库仍可读假设下不会；缓存页可从权威重建。</details>
+在本题 S3 数据库仍可读假设下不会；缓存页可从权威重建。
+
+</details>
 
 <details><summary>20. 同一问题换成当前 S2 进程崩溃，能套第 19 题答案吗？</summary>
 
-不能。S2 消息仅进程内存受理，尚无数据库持久承诺。</details>
+不能。S2 消息仅进程内存受理，尚无数据库持久承诺。
+
+</details>
 
 <details><summary>21. 成员已退群、缓存仍显示活跃，最快返回旧值可接受吗？</summary>
 
-不可据此放行发送或泄露私有历史。权限必须走足够新的受控权威/版本证据。</details>
+不可据此放行发送或泄露私有历史。权限必须走足够新的受控权威/版本证据。
+
+</details>
 
 <details><summary>22. 选择 Redis 结构前，至少写出哪四项访问证据？</summary>
 
-例如访问键/范围、读写与失效频率、对象/工作集大小、热点分布；还需损失与陈旧政策。</details>
+例如访问键/范围、读写与失效频率、对象/工作集大小、热点分布；还需损失与陈旧政策。
+
+</details>
 
 ## 本章完成标准与下一步
 

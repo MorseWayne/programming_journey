@@ -90,91 +90,135 @@ Go 官方 race detector 可在未来学习者的代码中通过 `go test -race` 
 
 <details><summary>1. 本章要分别验收哪两类“竞争”？</summary>
 
-共享内存数据竞争与业务检查/变更交错，两者不是同一问题。</details>
+共享内存数据竞争与业务检查/变更交错，两者不是同一问题。
+
+</details>
 
 <details><summary>2. `ready` 门闩证明什么？</summary>
 
-发送者已到测试指定关键点；不能只靠睡眠猜测。</details>
+发送者已到测试指定关键点；不能只靠睡眠猜测。
+
+</details>
 
 <details><summary>3. `release` 在本章起什么作用？</summary>
 
-由测试方在安排好取消/队列状态后，明确放行发送者进入 `select`。</details>
+由测试方在安排好取消/队列状态后，明确放行发送者进入 `select`。
+
+</details>
 
 <details><summary>4. `done` 为什么不能由 `cancel()` 替代？</summary>
 
-取消仅发停止信号，不等待工作结束；done 才给退出确认。</details>
+取消仅发停止信号，不等待工作结束；done 才给退出确认。
+
+</details>
 
 <details><summary>5. T1 队列里已有谁，容量多少？</summary>
 
-容量 1，已存 `m-b`，且消费者在发送者决策前保持暂停。</details>
+容量 1，已存 `m-b`，且消费者在发送者决策前保持暂停。
+
+</details>
 
 <details><summary>6. T1 先 cancel 再 release，`m-a` 会被接纳吗？</summary>
 
-在固定前提下不会：队列仍满，发送不可进行，只能走已就绪的取消分支。</details>
+在固定前提下不会：队列仍满，发送不可进行，只能走已就绪的取消分支。
+
+</details>
 
 <details><summary>7. T1 若消费者提前取走 m-b，上一题结论还稳吗？</summary>
 
-不稳。发送也可能变就绪，需要重新分析。</details>
+不稳。发送也可能变就绪，需要重新分析。
+
+</details>
 
 <details><summary>8. T2 队列空且 Context 已取消，哪个分支就绪？</summary>
 
-发送和取消两个分支都就绪。</details>
+发送和取消两个分支都就绪。
+
+</details>
 
 <details><summary>9. T2 能断言 m-a 绝不入队吗？</summary>
 
-不能。Go `select` 可选择任一可进行分支。</details>
+不能。Go `select` 可选择任一可进行分支。
+
+</details>
 
 <details><summary>10. 严格“取消确认后不再接纳”需要什么？</summary>
 
-需要串行接纳所有者或锁内状态协议，且取消调用方等待停止接纳确认。</details>
+需要串行接纳所有者或锁内状态协议，且取消调用方等待停止接纳确认。
+
+</details>
 
 <details><summary>11. 取消后立刻由接收者关闭 queue 安全吗？</summary>
 
-不安全。仍有发送者可选择发送分支，可能 send-on-closed panic。</details>
+不安全。仍有发送者可选择发送分支，可能 send-on-closed panic。
+
+</details>
 
 <details><summary>12. 谁应负责最终关闭多生产者共享的输出 channel？</summary>
 
-唯一协调者在确认所有生产者结束后关闭。</details>
+唯一协调者在确认所有生产者结束后关闭。
+
+</details>
 
 <details><summary>13. `close(queue)` 会丢弃缓冲中的 m-b 吗？</summary>
 
-不会。缓冲值仍可被接收，处理或放弃由业务合同决定。</details>
+不会。缓冲值仍可被接收，处理或放弃由业务合同决定。
+
+</details>
 
 <details><summary>14. `go test -race` 无报告能证明所有路径安全吗？</summary>
 
-不能。它只检测实际执行到的竞态。</details>
+不能。它只检测实际执行到的竞态。
+
+</details>
 
 <details><summary>15. 用 `Sleep` 让发送“先于”关闭能给语言同步保证吗？</summary>
 
-不能。睡眠不建立所需的同步边，也不能控制调度。</details>
+不能。睡眠不建立所需的同步边，也不能控制调度。
+
+</details>
 
 <details><summary>16. 两个锁区间分别检查不存在、再插入，可能重复吗？</summary>
 
-可能。两者都可先读到不存在，虽无数据竞争仍破坏业务不变量。</details>
+可能。两者都可先读到不存在，虽无数据竞争仍破坏业务不变量。
+
+</details>
 
 <details><summary>17. race detector 会替测试检查唯一消息 ID 规则吗？</summary>
 
-不会。业务结果需要单独的断言与受控交错。</details>
+不会。业务结果需要单独的断言与受控交错。
+
+</details>
 
 <details><summary>18. 下游退出而上游还向无人读的 channel 发送，可能怎样？</summary>
 
-上游 goroutine 长期阻塞并保留资源；取消与退出要可观察。</details>
+上游 goroutine 长期阻塞并保留资源；取消与退出要可观察。
+
+</details>
 
 <details><summary>19. 测试一直等不到 done，应无限等待还是设上限？</summary>
 
-设有限上限，超时报告具体任务/等待位置；上限不是产品时延指标。</details>
+设有限上限，超时报告具体任务/等待位置；上限不是产品时延指标。
+
+</details>
 
 <details><summary>20. `runtime.NumGoroutine()` 测试前后相等就充分证明无泄漏吗？</summary>
 
-不充分。背景任务和任务身份不同，优先等本测试启动的任务各自退出。</details>
+不充分。背景任务和任务身份不同，优先等本测试启动的任务各自退出。
+
+</details>
 
 <details><summary>21. 假发送器返回短写能证明真实设备收到消息吗？</summary>
 
-不能。它只验证应用对这个可控返回值的处理。</details>
+不能。它只验证应用对这个可控返回值的处理。
+
+</details>
 
 <details><summary>22. 纸上预期可写成“本仓库 race 检测已通过”吗？</summary>
 
-不能。本章没有运行任何 Go 或并发检测，实际证据由学习者后来记录。</details>
+不能。本章没有运行任何 Go 或并发检测，实际证据由学习者后来记录。
+
+</details>
 
 ## 来源与下一步
 

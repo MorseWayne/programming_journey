@@ -84,95 +84,139 @@ Go 的 `-race` 检测**实际运行路径中**的内存数据竞争，是 Go 并
 
 <details><summary>1. 当前 S2 的 200 可证明 `m-9` 已持久化吗？</summary>
 
-不能。它仅 `accepted_in_memory`；未来 S3 本地 SQL 提交仍是教学提议。</details>
+不能。它仅 `accepted_in_memory`；未来 S3 本地 SQL 提交仍是教学提议。
+
+</details>
 
 <details><summary>2. 拟议 S3 的 `stored_in_teaching_db` 自动承诺 SearchIndex 线性化吗？</summary>
 
-不承诺。它只描述本地 DB Commit，搜索派生链另有追赶合同。</details>
+不承诺。它只描述本地 DB Commit，搜索派生链另有追赶合同。
+
+</details>
 
 <details><summary>3. 本章 L 的被检读端点是什么？</summary>
 
-纸上额外声明的指定权威 `HistoryRead(c-a)`，不能自动套到缓存/副本/搜索。</details>
+纸上额外声明的指定权威 `HistoryRead(c-a)`，不能自动套到缓存/副本/搜索。
+
+</details>
 
 <details><summary>4. 一条可检查操作为何要同时存调用与返回？</summary>
 
-二者给出操作可能生效的时间区间和与其他操作的真实先后。</details>
+二者给出操作可能生效的时间区间和与其他操作的真实先后。
+
+</details>
 
 <details><summary>5. `seq9` 是跨客户端墙钟吗？</summary>
 
-不是。它是会话业务顺序，不能替代调用/返回时间。</details>
+不是。它是会话业务顺序，不能替代调用/返回时间。
+
+</details>
 
 <details><summary>6. Send 无回应可直接记作“确定失败”吗？</summary>
 
-不能。结果未知；服务端可能已提交，要按稳定 ID 核对。</details>
+不能。结果未知；服务端可能已提交，要按稳定 ID 核对。
+
+</details>
 
 <details><summary>7. SearchIndex 暂时落后可直接作为 L 的反例吗？</summary>
 
-不可。L 只适用于额外指定的权威读对象；搜索按自己的派生追赶合同检查。</details>
+不可。L 只适用于额外指定的权威读对象；搜索按自己的派生追赶合同检查。
+
+</details>
 
 <details><summary>8. `u-c` 已登录但非成员，能绕过对象授权看 `m-9` 吗？</summary>
 
-不能。当前隐藏目标政策为 404，搜索和补拉也不可泄露正文。</details>
+不能。当前隐藏目标政策为 404，搜索和补拉也不可泄露正文。
+
+</details>
 
 ### 历史与故障 9–16：判定真正反例
 
 <details><summary>9. Hbad 中 Send 返回先于 Read 调用，Read 返回 8，是否违反 L？</summary>
 
-是。在无撤回/权限变化的顺序规格里，写 9 完成后才开始的权威读不能读 8。</details>
+是。在无撤回/权限变化的顺序规格里，写 9 完成后才开始的权威读不能读 8。
+
+</details>
 
 <details><summary>10. Hoverlap 中 Read 与 Send 重叠、Read 先返回 8，必然违反 L 吗？</summary>
 
-不必然。可把读的生效点排在写之前，仍保留调用/返回区间。</details>
+不必然。可把读的生效点排在写之前，仍保留调用/返回区间。
+
+</details>
 
 <details><summary>11. B 先读 9 后读 8，若声明单调读，结论是什么？</summary>
 
-在无可见规则变更时违反该会话合同；它与 L 的被检对象要分别说明。</details>
+在无可见规则变更时违反该会话合同；它与 L 的被检对象要分别说明。
+
+</details>
 
 <details><summary>12. 两台机器的本地时间戳不校准，可直接给跨客户端操作排非重叠吗？</summary>
 
-不可。需单一测试协调器或可核对的同步/交接顺序与时间误差证据。</details>
+不可。需单一测试协调器或可核对的同步/交接顺序与时间误差证据。
+
+</details>
 
 <details><summary>13. Porcupine 说这份历史可线性化，能推出全部未来执行都正确吗？</summary>
 
-不能。只说明输入的有限历史相对所给顺序模型未发现反例。</details>
+不能。只说明输入的有限历史相对所给顺序模型未发现反例。
+
+</details>
 
 <details><summary>14. 故障脚本返回 0 就证明真实服务路径已被隔离吗？</summary>
 
-不能。还须核对实际路由、丢包/连接错误与注入生效区间。</details>
+不能。还须核对实际路由、丢包/连接错误与注入生效区间。
+
+</details>
 
 <details><summary>15. 丢 HTTP 回应后 A 超时，怎样分辨 DB 是否已提交？</summary>
 
-按稳定 `message_id/operation_id` 查询权威库及同事务记录，超时本身不判定成败。</details>
+按稳定 `message_id/operation_id` 查询权威库及同事务记录，超时本身不判定成败。
+
+</details>
 
 <details><summary>16. W1 租约过期后 W2 接管，应检查什么旧动作？</summary>
 
-W2 新 token、W1 迟到任务状态写被拒，以及外部推送是否已发生/可能重复。</details>
+W2 新 token、W1 迟到任务状态写被拒，以及外部推送是否已发生/可能重复。
+
+</details>
 
 ### 证据评审 17–22：给“通过”加上范围
 
 <details><summary>17. 分开时刻读 `messages` 与 `outbox`，看到一有一无可直接判本地事务破坏吗？</summary>
 
-不能。用同一一致快照和未清理窗口核对，避免读时间/副本差异。</details>
+不能。用同一一致快照和未清理窗口核对，避免读时间/副本差异。
+
+</details>
 
 <details><summary>18. 搜索最终追上却没有截止时间，一次样本可证明“永远最终一致”吗？</summary>
 
-不能。只能报告这次样本何时追上；可检验时效要有明确期限/分母。</details>
+不能。只能报告这次样本何时追上；可检验时效要有明确期限/分母。
+
+</details>
 
 <details><summary>19. B 离线 25h，玩具 broker 只保留 24h，还应从哪里补拉？</summary>
 
-从权威消息历史按当前权限和 seq 游标补拉。</details>
+从权威消息历史按当前权限和 seq 游标补拉。
+
+</details>
 
 <details><summary>20. `go test -race` 通过可证明跨节点 HistoryRead 线性化吗？</summary>
 
-不能。`-race` 只检查实际运行到的本地内存数据竞争，跨节点历史另建模。</details>
+不能。`-race` 只检查实际运行到的本地内存数据竞争，跨节点历史另建模。
+
+</details>
 
 <details><summary>21. 固定 OpenIM 两段源码可写成“已完成故障注入验证”吗？</summary>
 
-不能。源码阅读不是运行历史；本章未运行 OpenIM。</details>
+不能。源码阅读不是运行历史；本章未运行 OpenIM。
+
+</details>
 
 <details><summary>22. 一份可信的失败报告至少保留什么？</summary>
 
-被检合同、代码/模型版本、脱敏原始调用返回、故障实际生效证据、路由/配置、检查器反例与未覆盖范围。</details>
+被检合同、代码/模型版本、脱敏原始调用返回、故障实际生效证据、路由/配置、检查器反例与未覆盖范围。
+
+</details>
 
 ## 本章完成标准与下一步
 

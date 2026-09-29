@@ -108,95 +108,139 @@ T2 不应靠强删 P1 制造“可用容量”，否则可能让长连接提前�
 
 <details><summary>1. 本章 D1→D2 计划改变当前 `/v1` 正文上限吗？</summary>
 
-不改变。D2 只作教学日志/观测改进，旧上限仍 6 UTF-8 B。</details>
+不改变。D2 只作教学日志/观测改进，旧上限仍 6 UTF-8 B。
+
+</details>
 
 <details><summary>2. R9 9 B 已批准、可由配置启用吗？</summary>
 
-没有。R9 待审，旧 `/v1` 不能被偷偷放宽。</details>
+没有。R9 待审，旧 `/v1` 不能被偷偷放宽。
+
+</details>
 
 <details><summary>3. `maxSurge=1` 对期望 3 副本表示什么？</summary>
 
-受控滚动可额外创建一个非终止中的候选 Pod，需可调度资源。</details>
+受控滚动可额外创建一个非终止中的候选 Pod，需可调度资源。
+
+</details>
 
 <details><summary>4. `maxUnavailable=0` 能保证 Node 突然故障时 Ready 永远是 3 吗？</summary>
 
-不能。它是受控滚动预算，不是所有外部故障的绝对可用保证。</details>
+不能。它是受控滚动预算，不是所有外部故障的绝对可用保证。
+
+</details>
 
 <details><summary>5. 一台 D2 Pod/共三台就是 1% 用户金丝雀吗？</summary>
 
-不是。请求、连接、用户曝光各有分母，须路由能力和实际计数。</details>
+不是。请求、连接、用户曝光各有分母，须路由能力和实际计数。
+
+</details>
 
 <details><summary>6. 蓝绿切新连接后旧 WebSocket 自动迁到绿组吗？</summary>
 
-不会。旧组连接需有界摘流、客户端重连与有权补拉。</details>
+不会。旧组连接需有界摘流、客户端重连与有权补拉。
+
+</details>
 
 <details><summary>7. `rollout undo` 会自动回滚数据库已写消息吗？</summary>
 
-不会。Deployment 回退仅涉及相应 Pod 模板修订。</details>
+不会。Deployment 回退仅涉及相应 Pod 模板修订。
+
+</details>
 
 <details><summary>8. 当前 S2 200 表示 B 设备已收到吗？</summary>
 
-不表示，仅是本进程内存受理。</details>
+不表示，仅是本进程内存受理。
+
+</details>
 
 ### 推导 9–16：金丝雀与兼容矩阵
 
 <details><summary>9. 纸上 1000 次新握手，计划 10% 去 D2，目标约多少？</summary>
 
-约 100 次新握手；真实请求/用户占比仍需另计。</details>
+约 100 次新握手；真实请求/用户占比仍需另计。
+
+</details>
 
 <details><summary>10. P4 因 Node 无 requests 空间 Pending，应强删 P1 吗？</summary>
 
-不应为推进进度盲删。先保留旧可用副本，查资源与发布门。</details>
+不应为推进进度盲删。先保留旧可用副本，查资源与发布门。
+
+</details>
 
 <details><summary>11. D2 Ready 但接纳旧 `/v1` 9 B，能继续扩量吗？</summary>
 
-不能。违反当前 6 B 合同，应停扩并核对镜像/配置/路由。</details>
+不能。违反当前 6 B 合同，应停扩并核对镜像/配置/路由。
+
+</details>
 
 <details><summary>12. 更新 ConfigMap 对象就必产生 Deployment 修订吗？</summary>
 
-不必。修订与 Pod 模板变化有关；env 旧 Pod 也不会自动热更新。</details>
+不必。修订与 Pod 模板变化有关；env 旧 Pod 也不会自动热更新。
+
+</details>
 
 <details><summary>13. D2 发出 event_v2 后回 D1，旧消费者自动能读吗？</summary>
 
-不能假定。要审事件格式、broker/DLQ/备份回放与双读窗口。</details>
+不能假定。要审事件格式、broker/DLQ/备份回放与双读窗口。
+
+</details>
 
 <details><summary>14. 新数据有 9 B 正文，改回 6 B 常量可使其“从未存在”吗？</summary>
 
-不能。只有 R9 获批后才可能合法产生，回退须能解释已接纳数据。</details>
+不能。只有 R9 获批后才可能合法产生，回退须能解释已接纳数据。
+
+</details>
 
 <details><summary>15. 同 ID 跨 Pod 未返回 409，能立即证明是 D2 引入吗？</summary>
 
-不能。可能是旧 S2 本地判重的多副本缺口，须对照 D1 和请求路由。</details>
+不能。可能是旧 S2 本地判重的多副本缺口，须对照 D1 和请求路由。
+
+</details>
 
 <details><summary>16. 蓝绿两组并行的主要代价至少是什么？</summary>
 
-额外网关/连接/网络容量与旧连接摘流时间，另有数据兼容责任。</details>
+额外网关/连接/网络容量与旧连接摘流时间，另有数据兼容责任。
+
+</details>
 
 ### 决策 17–22：停止与回退
 
 <details><summary>17. 平台 Ready 全绿，仍须哪几个当前业务反例？</summary>
 
-6 B 合法、9 B 当前拒绝、重复 409、非成员 404、200 仅内存受理。</details>
+6 B 合法、9 B 当前拒绝、重复 409、非成员 404、200 仅内存受理。
+
+</details>
 
 <details><summary>18. Config K2 已变，回退 D1 后为什么仍可能失败？</summary>
 
-D1 可能不兼容 K2；ConfigMap 值也不会随 Pod 模板 undo 自动还原。</details>
+D1 可能不兼容 K2；ConfigMap 值也不会随 Pod 模板 undo 自动还原。
+
+</details>
 
 <details><summary>19. 何时应选择前滚修复而非立即代码回退？</summary>
 
-当旧代码无法安全解释已写新数据/事件时，需按预案停写、对账并评审兼容修复。</details>
+当旧代码无法安全解释已写新数据/事件时，需按预案停写、对账并评审兼容修复。
+
+</details>
 
 <details><summary>20. 只看金丝雀请求 P95 就够吗？</summary>
 
-不够。还要看实际连接/用户曝光、拒绝/超时、重连/积压与确认点。</details>
+不够。还要看实际连接/用户曝光、拒绝/超时、重连/积压与确认点。
+
+</details>
 
 <details><summary>21. 两处 OpenIM 固定源码能证明真实金丝雀比例或回滚方案吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费的异步边界。</details>
+不能。只支持所读发送与 Mongo 消费的异步边界。
+
+</details>
 
 <details><summary>22. 一张可审发布卡至少交什么？</summary>
 
-制品 digest/配置和数据/事件/客户端轴、滚动预算、实际曝光、现行合同与用户门、停止/回退各轴及未证项。</details>
+制品 digest/配置和数据/事件/客户端轴、滚动预算、实际曝光、现行合同与用户门、停止/回退各轴及未证项。
+
+</details>
 
 ## 本章完成标准与后续路径
 

@@ -32,9 +32,9 @@
   "original_sha256": "b05de130e971db23656dcab8b2b86a4050148bd5079499b3a7f7ec7456cefada",
   "original_characters": 35584,
   "generation_request_sha256": "4fd4fabbd6423fd692156f8f434132c020df28ccbbd52d3cab275d738d2fcc67",
-  "reviewed_sha256": "a04564548c70190b2d89a54fcf4500b1e86d27e6ca8b7141de29299e279c8595",
-  "reviewed_characters": 11588,
+  "reviewed_sha256": "bb4f33c6d025259c45c8a6c423dc012927bdf31acb6c8a3543fa04073ea696ee",
+  "reviewed_characters": 11632,
   "reviewed_chinese_characters": 3883,
   "course_file": "src/docs/platform_engineering/curriculum/12_platform/11_declarative_delivery.md",
-  "course_sha256": "1db87b52819c97c86ce37337798c1857b9293b0beff12ba147d064eae1f884d6"
+  "course_sha256": "ad35eba4ca3d9034741a14c2c3af12b8f80576c4715dce9564ddfdc55e1a8fe1"
 }

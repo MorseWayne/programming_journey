@@ -79,91 +79,135 @@ DLQ/隔离队列不是“失败垃圾桶”。一条合格的隔离条目至少�
 
 <details><summary>1. 到达 120/s、完成 90/s，净积压速率是多少？</summary>
 
-`120−90=30` 条/秒，前提是无丢弃、重试等额外工作。</details>
+`120−90=30` 条/秒，前提是无丢弃、重试等额外工作。
+
+</details>
 
 <details><summary>2. 10 分钟是多少秒？本题积压多少？</summary>
 
-600 秒；从零开始有 `30×600=18000` 条未完成。</details>
+600 秒；从零开始有 `30×600=18000` 条未完成。
+
+</details>
 
 <details><summary>3. 第十分钟停止新到达，理想 90/s 清空需多久？</summary>
 
-`18000/90=200` 秒，约三分二十秒，忽略其他负载和故障。</details>
+`18000/90=200` 秒，约三分二十秒，忽略其他负载和故障。
+
+</details>
 
 <details><summary>4. 到达继续 120/s、处理仍 90/s，可以只等 200 秒追平吗？</summary>
 
-不能。净增长 30/s，不会自然追平。</details>
+不能。净增长 30/s，不会自然追平。
+
+</details>
 
 <details><summary>5. “积压 18000”就等于最老事件等待 18000 秒吗？</summary>
 
-不等于。数量与年龄不同，要定义起点并单独观察年龄。</details>
+不等于。数量与年龄不同，要定义起点并单独观察年龄。
+
+</details>
 
 <details><summary>6. Kafka offset lag 为零，就一定说明外部搜索索引无缺口吗？</summary>
 
-不能。错误地越过未完成事件提交位点，也可出现位置追平而副作用缺失。</details>
+不能。错误地越过未完成事件提交位点，也可出现位置追平而副作用缺失。
+
+</details>
 
 <details><summary>7. Redis `XPENDING` 会直接给出所有从未投递的新事件吗？</summary>
 
-不会。它看的是特定消费组已投递未 ACK 的 PEL 条目。</details>
+不会。它看的是特定消费组已投递未 ACK 的 PEL 条目。
+
+</details>
 
 <details><summary>8. SearchIndex 落后可以直接推断 B 设备未读吗？</summary>
 
-不能。搜索派生视图与设备阅读确认是不同链路。</details>
+不能。搜索派生视图与设备阅读确认是不同链路。
+
+</details>
 
 <details><summary>9. E-bad 在哪个玩具 offset？E11 在哪？</summary>
 
-同一 `c-a` 分区中 E-bad=44、E11=45。</details>
+同一 `c-a` 分区中 E-bad=44、E11=45。
+
+</details>
 
 <details><summary>10. “三次总尝试”包含首次吗？</summary>
 
-包含：首次加最多两次重试，之后仍失败则进入本题隔离政策。</details>
+包含：首次加最多两次重试，之后仍失败则进入本题隔离政策。
+
+</details>
 
 <details><summary>11. 永久缺必需字段，重复同一 E-bad 三次会自动修好吗？</summary>
 
-不会。应隔离并修规则/数据后受控重放。</details>
+不会。应隔离并修规则/数据后受控重放。
+
+</details>
 
 <details><summary>12. 外部索引写入可能成功但 ACK 丢了，应直接再次执行非幂等副作用吗？</summary>
 
-不应。先按稳定 ID/版本查目标或采用幂等条件更新，避免重复效果。</details>
+不应。先按稳定 ID/版本查目标或采用幂等条件更新，避免重复效果。
+
+</details>
 
 <details><summary>13. NATS JetStream `MaxDeliver` 到上限会自动生成完整业务 DLQ 工单吗？</summary>
 
-不会。它限制该消费者重投并有相应状态/通知；应用隔离、权限和修复流程要自己设计。</details>
+不会。它限制该消费者重投并有相应状态/通知；应用隔离、权限和修复流程要自己设计。
+
+</details>
 
 <details><summary>14. E-bad 未决就提交 Kafka next offset46 有何风险？</summary>
 
-恢复从 46 开始，offset44 的 E-bad 被无记录地跳过，必要索引效果可能永久缺失。</details>
+恢复从 46 开始，offset44 的 E-bad 被无记录地跳过，必要索引效果可能永久缺失。
+
+</details>
 
 <details><summary>15. 严格同会话顺序下，E11 可绕过 E-bad 无条件对外完成吗？</summary>
 
-不能。需等待 E-bad 可解释结果，或按显式缺口/派生修复合同允许跳过。</details>
+不能。需等待 E-bad 可解释结果，或按显式缺口/派生修复合同允许跳过。
+
+</details>
 
 <details><summary>16. `c-b` 在另一分区，必须因为 `c-a` 的 E-bad 一起停止吗？</summary>
 
-不必。若无跨会话依赖，可独立继续处理 F1 等事件。</details>
+不必。若无跨会话依赖，可独立继续处理 F1 等事件。
+
+</details>
 
 <details><summary>17. 把坏消息快速无限重投会怎样影响积压？</summary>
 
-重试消耗处理能力，可能降低有效完成率并扩大队列与下游故障。</details>
+重试消耗处理能力，可能降低有效完成率并扩大队列与下游故障。
+
+</details>
 
 <details><summary>18. DLQ 条目可以无上限保存私有正文以方便排障吗？</summary>
 
-不应。应保存最小脱敏身份/错误/版本，按访问、保留和修复责任管理。</details>
+不应。应保存最小脱敏身份/错误/版本，按访问、保留和修复责任管理。
+
+</details>
 
 <details><summary>19. v1 E-bad 隔离后源已是 v2，修好后能无条件重放 v1 覆盖搜索吗？</summary>
 
-不能。先核对权威当前版本，用条件更新/对账避免旧值覆盖新值。</details>
+不能。先核对权威当前版本，用条件更新/对账避免旧值覆盖新值。
+
+</details>
 
 <details><summary>20. Broker 保留期过了，隔离的原事件还能理所当然重读吗？</summary>
 
-不能。需要权威数据库、备份或专门保留的隔离材料来重建。</details>
+不能。需要权威数据库、备份或专门保留的隔离材料来重建。
+
+</details>
 
 <details><summary>21. 消费 TPS 上升就能说用户体验恢复吗？</summary>
 
-不能。还要看最老年龄、尾延迟、错误、隔离量和用户可见结果。</details>
+不能。还要看最老年龄、尾延迟、错误、隔离量和用户可见结果。
+
+</details>
 
 <details><summary>22. 一条 E-bad 工单何时能关闭？</summary>
 
-隔离原因已修、按权威版本重放成功并对账确认目标状态，且留下责任/时间/结果证据。</details>
+隔离原因已修、按权威版本重放成功并对账确认目标状态，且留下责任/时间/结果证据。
+
+</details>
 
 ## 本章完成标准与下一步
 

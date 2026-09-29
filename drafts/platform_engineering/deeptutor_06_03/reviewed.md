@@ -109,91 +109,135 @@ ADD COLUMN sender_display_name_at_send TEXT;
 
 <details><summary>1. `user_id → current_display_name` 表示什么？</summary>
 
-在当前资料语义下，同一稳定用户 ID 只有一个当前昵称。</details>
+在当前资料语义下，同一稳定用户 ID 只有一个当前昵称。
+
+</details>
 
 <details><summary>2. 函数依赖就是 Go 函数调用吗？</summary>
 
-不是。它描述同一关系中字段值之间的确定关系。</details>
+不是。它描述同一关系中字段值之间的确定关系。
+
+</details>
 
 <details><summary>3. 把当前昵称复制到每条消息会带来哪种异常？</summary>
 
-改名须更新多行，漏更新就出现同一当前事实的多个版本。</details>
+改名须更新多行，漏更新就出现同一当前事实的多个版本。
+
+</details>
 
 <details><summary>4. “发送时昵称”为什么可以与当前昵称不同？</summary>
 
-它们指向不同时间的事实；历史快照不应随当前资料改名而变。</details>
+它们指向不同时间的事实；历史快照不应随当前资料改名而变。
+
+</details>
 
 <details><summary>5. `sender_name` 这个模糊列名有什么问题？</summary>
 
-读者无法知道它是当前名、副本、发送时快照还是回退值。</details>
+读者无法知道它是当前名、副本、发送时快照还是回退值。
+
+</details>
 
 <details><summary>6. 为什么不把成员名单存成逗号分隔文本？</summary>
 
-成员关系失去独立身份和可约束的键，权限查询容易变成脆弱的字符串处理。</details>
+成员关系失去独立身份和可约束的键，权限查询容易变成脆弱的字符串处理。
+
+</details>
 
 <details><summary>7. 复合键 `(conversation_id,seq)` 下标题只依赖 conversation_id，说明什么？</summary>
 
-标题只依赖键的一部分，适合放回 conversations，避免每条消息重复当前标题。</details>
+标题只依赖键的一部分，适合放回 conversations，避免每条消息重复当前标题。
+
+</details>
 
 <details><summary>8. `message_id → sender_id → current_display_name` 提醒我们什么？</summary>
 
-当前昵称是用户资料的事实，不应无意复制为每条消息的当前值。</details>
+当前昵称是用户资料的事实，不应无意复制为每条消息的当前值。
+
+</details>
 
 <details><summary>9. 拆表越多就必然越好吗？</summary>
 
-不是。要检查业务语义、正确连接、关键约束和读取/维护成本。</details>
+不是。要检查业务语义、正确连接、关键约束和读取/维护成本。
+
+</details>
 
 <details><summary>10. `sender_id` 外键能证明发送时成员资格吗？</summary>
 
-不能。它只证明用户存在。</details>
+不能。它只证明用户存在。
+
+</details>
 
 <details><summary>11. 当前 `members` 复合键能保存退出再加入两段吗？</summary>
 
-不能，同一用户与会话组合只能有一行；要独立资格身份或事件。</details>
+不能，同一用户与会话组合只能有一行；要独立资格身份或事件。
 
-<details><summary>12. 一行 `CHECK(left_at>=joined_at)` 能防两段资格重叠吗？</summary>
+</details>
 
-不能，它只查看该行，无法比较其他资格行的时间区间。</details>
+<details><summary>12. 一行 `CHECK(left_at&gt;=joined_at)` 能防两段资格重叠吗？</summary>
+
+不能，它只查看该行，无法比较其他资格行的时间区间。
+
+</details>
 
 <details><summary>13. `UNIQUE(conversation_id,seq)` 会自动产生并发安全序号吗？</summary>
 
-不会。它只拒绝重复，分配与冲突处理要另行设计。</details>
+不会。它只拒绝重复，分配与冲突处理要另行设计。
+
+</details>
 
 <details><summary>14. 为什么不把全部历史消息嵌入一个会话文档？</summary>
 
-历史无界增长，文档大小、分页和独立更新会失去可控边界。</details>
+历史无界增长，文档大小、分页和独立更新会失去可控边界。
+
+</details>
 
 <details><summary>15. `last_message_preview` 应把谁当权威？</summary>
 
-它是派生摘要；消息记录及其业务状态才是应明确指定的权威来源。</details>
+它是派生摘要；消息记录及其业务状态才是应明确指定的权威来源。
+
+</details>
 
 <details><summary>16. 新增发送时昵称列，第一步为何允许 NULL？</summary>
 
-旧行没有快照，旧版写入者也可能暂时不会填；先保证兼容。</details>
+旧行没有快照，旧版写入者也可能暂时不会填；先保证兼容。
+
+</details>
 
 <details><summary>17. 当前昵称能直接回填为所有旧消息的发送时昵称吗？</summary>
 
-不能，用户可能改过名；缺可信历史时应保留未知并标注。</details>
+不能，用户可能改过名；缺可信历史时应保留未知并标注。
+
+</details>
 
 <details><summary>18. 回填到一半停止，下一步先核对什么？</summary>
 
-稳定键范围、已处理量、未知量、失败批次和来源，不盲目从头覆盖。</details>
+稳定键范围、已处理量、未知量、失败批次和来源，不盲目从头覆盖。
+
+</details>
 
 <details><summary>19. 还有旧服务写入时能直接设新列全表 NOT NULL 吗？</summary>
 
-不应。旧行和旧写入可能为 NULL，需先完成兼容与覆盖策略。</details>
+不应。旧行和旧写入可能为 NULL，需先完成兼容与覆盖策略。
+
+</details>
 
 <details><summary>20. 直接删除旧列后能保证回退旧代码吗？</summary>
 
-不能。旧代码可能依赖被删除的结构，删除数据也未必可逆。</details>
+不能。旧代码可能依赖被删除的结构，删除数据也未必可逆。
+
+</details>
 
 <details><summary>21. 模式图能证明数据崩溃后一定恢复吗？</summary>
 
-不能。事务、提交与恢复另需实现和证据。</details>
+不能。事务、提交与恢复另需实现和证据。
+
+</details>
 
 <details><summary>22. 本章演进方案验收应区分哪些名称？</summary>
 
-当前昵称、真实发送时快照、旧数据未知/回退名称必须分开。</details>
+当前昵称、真实发送时快照、旧数据未知/回退名称必须分开。
+
+</details>
 
 ## 来源与下一步
 

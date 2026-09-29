@@ -169,91 +169,135 @@ FROM messages;
 
 <details><summary>1. `INSERT` 为什么建议写出列名？</summary>
 
-避免依赖表的列位置，便于审阅和模式增列后的核对。</details>
+避免依赖表的列位置，便于审阅和模式增列后的核对。
+
+</details>
 
 <details><summary>2. `SELECT message_id` 与 `WHERE conversation_id='c-a'` 分别做什么？</summary>
 
-前者选择输出列，后者筛选候选行。</details>
+前者选择输出列，后者筛选候选行。
+
+</details>
 
 <details><summary>3. 基线里 `c-a` 有几条消息？</summary>
 
-三条：`m-a/m-b/m-c`。</details>
+三条：`m-a/m-b/m-c`。
+
+</details>
 
 <details><summary>4. 不写 ORDER BY 能保证返回 m-a、m-b、m-c 吗？</summary>
 
-不能。表和 SELECT 的输出顺序默认无承诺。</details>
+不能。表和 SELECT 的输出顺序默认无承诺。
+
+</details>
 
 <details><summary>5. `WHERE left_at = NULL` 会找到未记退出时刻吗？</summary>
 
-不会按预期找到；应使用 `IS NULL`。</details>
+不会按预期找到；应使用 `IS NULL`。
+
+</details>
 
 <details><summary>6. UPDATE 退出语句为什么同时限制会话、用户和空 left_at？</summary>
 
-限定目标关系及当前状态，避免修改其他成员或重复处理。</details>
+限定目标关系及当前状态，避免修改其他成员或重复处理。
+
+</details>
 
 <details><summary>7. UPDATE 影响 0 行一定表示成功吗？</summary>
 
-不一定。目标可能不存在、已变更或被并发先更新。</details>
+不一定。目标可能不存在、已变更或被并发先更新。
+
+</details>
 
 <details><summary>8. DELETE 没有 WHERE 会试图作用于什么范围？</summary>
 
-满足语法的整张表所有行；实际结果还受约束与权限影响。</details>
+满足语法的整张表所有行；实际结果还受约束与权限影响。
+
+</details>
 
 <details><summary>9. `c-a` 的三条消息与两条成员行只按会话 JOIN 后有几行？</summary>
 
-六行，每条消息分别与两条成员关系配对。</details>
+六行，每条消息分别与两条成员关系配对。
+
+</details>
 
 <details><summary>10. 限定 `mb.user_id='u-a'` 后基线 JOIN 返回几行？</summary>
 
-三行，对应 `c-a` 的三条消息。</details>
+三行，对应 `c-a` 的三条消息。
+
+</details>
 
 <details><summary>11. LEFT JOIN 右侧没有匹配时会怎样？</summary>
 
-保留左行，右侧列填 NULL。</details>
+保留左行，右侧列填 NULL。
+
+</details>
 
 <details><summary>12. 外连接后在 WHERE 限制右表字段有什么风险？</summary>
 
-未匹配行的右侧 NULL 可能被筛掉，外连接效果消失。</details>
+未匹配行的右侧 NULL 可能被筛掉，外连接效果消失。
+
+</details>
 
 <details><summary>13. `ORDER BY seq DESC LIMIT 2` 在 c-a 返回什么？</summary>
 
-`m-c(seq=3)`、`m-b(seq=2)`。</details>
+`m-c(seq=3)`、`m-b(seq=2)`。
+
+</details>
 
 <details><summary>14. 新增 seq=4 后，第二页 `OFFSET 2` 为什么可能重复？</summary>
 
-新行挤到最前，第二页变为 m-b、m-a，m-b 已在原首页。</details>
+新行挤到最前，第二页变为 m-b、m-a，m-b 已在原首页。
+
+</details>
 
 <details><summary>15. 原首页末项 seq=2，下一页游标条件是什么？</summary>
 
-同一会话、相同排序规则下用 `seq < 2`，再 DESC 和 LIMIT。</details>
+同一会话、相同排序规则下用 `seq < 2`，再 DESC 和 LIMIT。
+
+</details>
 
 <details><summary>16. 游标分页自动提供同一数据库快照吗？</summary>
 
-不会。它处理顺序边界，事务快照与权限变化另需定义。</details>
+不会。它处理顺序边界，事务快照与权限变化另需定义。
+
+</details>
 
 <details><summary>17. c-a 按发送者分组的 COUNT 各是多少？</summary>
 
-u-a 为 2，u-b 为 1。</details>
+u-a 为 2，u-b 为 1。
+
+</details>
 
 <details><summary>18. WHERE 与 HAVING 分别在哪个阶段过滤？</summary>
 
-WHERE 过滤分组前的行，HAVING 过滤聚合后的组。</details>
+WHERE 过滤分组前的行，HAVING 过滤聚合后的组。
+
+</details>
 
 <details><summary>19. 基线四条成员的 COUNT(*) 与 COUNT(left_at) 是多少？</summary>
 
-分别是 4 和 0；后者忽略 NULL 值。</details>
+分别是 4 和 0；后者忽略 NULL 值。
+
+</details>
 
 <details><summary>20. UNION 与 UNION ALL 对 u-b 的重复行有何不同？</summary>
 
-UNION 去重只保留一次，UNION ALL 保留来自两个会话的两次出现。</details>
+UNION 去重只保留一次，UNION ALL 保留来自两个会话的两次出现。
+
+</details>
 
 <details><summary>21. ROW_NUMBER 的 row_no 会写回 messages.seq 吗？</summary>
 
-不会。它是当前查询结果的窗口计算值。</details>
+不会。它是当前查询结果的窗口计算值。
+
+</details>
 
 <details><summary>22. 消息表 COUNT=3 能证明 c-a 的所有发送尝试或设备送达数吗？</summary>
 
-不能。表只含这份纸上消息记录；尝试、超时和设备确认各有独立分母与证据。</details>
+不能。表只含这份纸上消息记录；尝试、超时和设备确认各有独立分母与证据。
+
+</details>
 
 ## 来源与下一步
 

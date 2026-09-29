@@ -90,95 +90,139 @@ Pod IP 可随替换变化。**Service** 可按标签选择一组 Pod，向集群
 
 <details><summary>1. gateway 长期运行且 Pod 可替换，可考虑哪种工作负载？</summary>
 
-Deployment 加 Service 是候选；连接/消息状态仍需应用处理。</details>
+Deployment 加 Service 是候选；连接/消息状态仍需应用处理。
+
+</details>
 
 <details><summary>2. StatefulSet 的稳定 Pod 名/PVC 能自动给数据库复制吗？</summary>
 
-不能。复制、仲裁、事务、备份要由数据库系统另证。</details>
+不能。复制、仲裁、事务、备份要由数据库系统另证。
+
+</details>
 
 <details><summary>3. 一次性历史回填可考虑什么对象？</summary>
 
-Job；它可能重跑，任务要幂等且可对账。</details>
+Job；它可能重跑，任务要幂等且可对账。
+
+</details>
 
 <details><summary>4. Service 与单个 Pod IP 的区别是什么？</summary>
 
-Service 提供稳定服务访问身份，后端 Pod IP 可替换。</details>
+Service 提供稳定服务访问身份，后端 Pod IP 可替换。
+
+</details>
 
 <details><summary>5. Ingress 主要描述哪类外部流量？</summary>
 
-HTTP(S) host/path 等路由到 Service，需控制器实现。</details>
+HTTP(S) host/path 等路由到 Service，需控制器实现。
+
+</details>
 
 <details><summary>6. Ingress 必可直接暴露任意 TCP 端口吗？</summary>
 
-不能。任意 TCP 不是通用 Ingress 语义。</details>
+不能。任意 TCP 不是通用 Ingress 语义。
+
+</details>
 
 <details><summary>7. 同 namespace 访问 Service 可用短名吗？</summary>
 
-通常可以；跨 namespace 应明确目标 namespace，集群域后缀依环境。</details>
+通常可以；跨 namespace 应明确目标 namespace，集群域后缀依环境。
+
+</details>
 
 <details><summary>8. 当前 S2 200 代表 B 的设备已收到吗？</summary>
 
-不是。仅本进程内存受理。</details>
+不是。仅本进程内存受理。
+
+</details>
 
 ### 选型 9–16：平台类型与数据责任
 
 <details><summary>9. transfer 消费者用 Deployment 就可声明恰好一次处理吗？</summary>
 
-不能。仍要定义外部检查点/归属、稳定事件身份、顺序和幂等。</details>
+不能。仍要定义外部检查点/归属、稳定事件身份、顺序和幂等。
+
+</details>
 
 <details><summary>10. 自管 DB 有 PVC，Pod 重建后可以直接宣布 m-9/seq9 正确吗？</summary>
 
-不能。要验证事务/恢复、复制、备份与成员权限。</details>
+不能。要验证事务/恢复、复制、备份与成员权限。
+
+</details>
 
 <details><summary>11. Job `parallelism=1, completions=1` 能保证程序只运行一次吗？</summary>
 
-不能。失败/替换等可使同一程序再次启动。</details>
+不能。失败/替换等可使同一程序再次启动。
+
+</details>
 
 <details><summary>12. Job Complete 可证明所有 B 设备应用 ACK 吗？</summary>
 
-不能。Job 完成条件与设备结果是两套证据。</details>
+不能。Job 完成条件与设备结果是两套证据。
+
+</details>
 
 <details><summary>13. Service selector 选到三个 Ready Pod，跨 Pod 判重自动共享吗？</summary>
 
-不会。Service 管发现/路由，不提供统一消息身份裁决。</details>
+不会。Service 管发现/路由，不提供统一消息身份裁决。
+
+</details>
 
 <details><summary>14. P1 被删、P4 替代，原 WebSocket 能迁移吗？</summary>
 
-不能透明迁移。客户端需重连，按有权历史补缺口。</details>
+不能透明迁移。客户端需重连，按有权历史补缺口。
+
+</details>
 
 <details><summary>15. EndpointSlice 的 ready=true 等于用户已读吗？</summary>
 
-不等于。它是平台端点状态，用户阅读是独立事件。</details>
+不等于。它是平台端点状态，用户阅读是独立事件。
+
+</details>
 
 <details><summary>16. StatefulSet 一定比外部数据库更适合任何 IM 吗？</summary>
 
-不一定。先审状态/存储/复制与运行责任，本章不替实际环境选产品。</details>
+不一定。先审状态/存储/复制与运行责任，本章不替实际环境选产品。
+
+</details>
 
 ### 故障 17–22：业务反例
 
 <details><summary>17. `m-a` 在 P1 内存受理，重试落 P2 能自动给 409 吗？</summary>
 
-不能保证。若判重只在 P1，本地状态不跨 Pod；要统一身份裁决。</details>
+不能保证。若判重只在 P1，本地状态不跨 Pod；要统一身份裁决。
+
+</details>
 
 <details><summary>18. headless Service 给 DB 稳定 Pod 身份，能解决 WAL 半提交吗？</summary>
 
-不能。网络身份不替代数据库事务/恢复。</details>
+不能。网络身份不替代数据库事务/恢复。
+
+</details>
 
 <details><summary>19. 迁移 Job 重跑两次，最先守什么？</summary>
 
-稳定任务范围/身份、幂等写、检查点与对账，避免双插或遗漏。</details>
+稳定任务范围/身份、幂等写、检查点与对账，避免双插或遗漏。
+
+</details>
 
 <details><summary>20. gateway Service DNS 仍解析，旧 TCP 已断，应该怎样判断 B 恢复？</summary>
 
-看客户端重连、有权历史缺口与设备应用确认，DNS 只是入口。</details>
+看客户端重连、有权历史缺口与设备应用确认，DNS 只是入口。
+
+</details>
 
 <details><summary>21. OpenIM 两处固定源码能证明它使用本章这些 K8s 对象吗？</summary>
 
-不能。只支持所读发送与 Mongo 消费异步边界。</details>
+不能。只支持所读发送与 Mongo 消费异步边界。
+
+</details>
 
 <details><summary>22. 一份可审工作负载选择表至少交什么？</summary>
 
-角色生命周期、数据/检查点归属、候选控制器、Service/入口与 DNS、Pod 替换反例和分层业务验收。</details>
+角色生命周期、数据/检查点归属、候选控制器、Service/入口与 DNS、Pod 替换反例和分层业务验收。
+
+</details>
 
 ## 本章完成标准与后续路径
 

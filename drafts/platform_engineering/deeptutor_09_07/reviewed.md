@@ -102,91 +102,135 @@ JWT 中的角色声明可能比服务端成员状态旧；如果用它独自决�
 
 <details><summary>1. 认证与授权分别回答什么？</summary>
 
-认证回答请求主体是谁；授权回答这个主体能否对具体对象做具体动作。</details>
+认证回答请求主体是谁；授权回答这个主体能否对具体对象做具体动作。
+
+</details>
 
 <details><summary>2. 已登录的 u-c 能读 c-a 吗？</summary>
 
-按本章当前成员政策不能；u-c 不在 c-a。</details>
+按本章当前成员政策不能；u-c 不在 c-a。
+
+</details>
 
 <details><summary>3. 为什么不能只存快速 SHA-256(password)？</summary>
 
-它便于高速度离线猜测；口令需要慢且可调成本的专用哈希方案。</details>
+它便于高速度离线猜测；口令需要慢且可调成本的专用哈希方案。
+
+</details>
 
 <details><summary>4. 每用户独立盐主要解决什么？</summary>
 
-相同密码不必产生相同哈希，降低预计算攻击收益。</details>
+相同密码不必产生相同哈希，降低预计算攻击收益。
+
+</details>
 
 <details><summary>5. 调一次 Argon2id 底层函数就得到完整安全登录系统吗？</summary>
 
-不能。还要处理盐、参数、编码、比较、迁移、限速和会话生命周期。</details>
+不能。还要处理盐、参数、编码、比较、迁移、限速和会话生命周期。
+
+</details>
 
 <details><summary>6. 服务器 Session ID 能直接等于 user_id 吗？</summary>
 
-不应。它应不可预测且无业务含义，主体信息由服务端映射。</details>
+不应。它应不可预测且无业务含义，主体信息由服务端映射。
+
+</details>
 
 <details><summary>7. 登录或权限升级为什么要更新 Session ID？</summary>
 
-避免此前低权限或被固定的会话标识继续作为高权限凭据。</details>
+避免此前低权限或被固定的会话标识继续作为高权限凭据。
+
+</details>
 
 <details><summary>8. Bearer Token 的核心风险是什么？</summary>
 
-持有有效令牌的人可能使用其权限，故必须保护传输、保存与撤销。</details>
+持有有效令牌的人可能使用其权限，故必须保护传输、保存与撤销。
+
+</details>
 
 <details><summary>9. JWT 签名通过就证明 A 仍属于 c-a 吗？</summary>
 
-不能。成员关系可能已变化，需按当前权限合同核对。</details>
+不能。成员关系可能已变化，需按当前权限合同核对。
+
+</details>
 
 <details><summary>10. Cookie 与 Token 一定互斥吗？</summary>
 
-不一定。Cookie 是浏览器传输载体，里面也可以承载某种令牌。</details>
+不一定。Cookie 是浏览器传输载体，里面也可以承载某种令牌。
+
+</details>
 
 <details><summary>11. u-b 是 c-a 管理员，就能读所有私聊吗？</summary>
 
-不能。角色作用于其定义的资源范围。</details>
+不能。角色作用于其定义的资源范围。
+
+</details>
 
 <details><summary>12. 知道随机且很长的 message_id 能跳过授权吗？</summary>
 
-不能。ID 定位对象，不是允许读取该对象的证据。</details>
+不能。ID 定位对象，不是允许读取该对象的证据。
+
+</details>
 
 <details><summary>13. 把 conversation_id 从 c-a 改成 c-b，服务端该做什么？</summary>
 
-以已认证主体对 c-b 重新做对象级权限判断。</details>
+以已认证主体对 c-b 重新做对象级权限判断。
+
+</details>
 
 <details><summary>14. 客户端正文写 sender_id=u-b 可让 A 代 B 发消息吗？</summary>
 
-不能。发送者要由受信认证上下文决定。</details>
+不能。发送者要由受信认证上下文决定。
+
+</details>
 
 <details><summary>15. 握手时通过成员校验，后续 WebSocket 消息可免查吗？</summary>
 
-不能。成员和会话状态可能变化，后续动作仍须授权。</details>
+不能。成员和会话状态可能变化，后续动作仍须授权。
+
+</details>
 
 <details><summary>16. A 退群等于 A 账号登出吗？</summary>
 
-不是。账号身份可仍有效，c-a 资源权限按政策撤销。</details>
+不是。账号身份可仍有效，c-a 资源权限按政策撤销。
+
+</details>
 
 <details><summary>17. 当前设备注销会自动撤销手机会话吗？</summary>
 
-不一定。需要区分当前设备和全设备的撤销合同。</details>
+不一定。需要区分当前设备和全设备的撤销合同。
+
+</details>
 
 <details><summary>18. 长期 JWT 的 exp 能保证“立刻”撤销吗？</summary>
 
-不能。即时撤销还需服务端状态/版本/撤销机制。</details>
+不能。即时撤销还需服务端状态/版本/撤销机制。
+
+</details>
 
 <details><summary>19. 权限缓存为何要记录最长陈旧时间？</summary>
 
-退群/角色变更后旧权限可能仍被缓存使用，合同需明确延迟边界。</details>
+退群/角色变更后旧权限可能仍被缓存使用，合同需明确延迟边界。
+
+</details>
 
 <details><summary>20. 无凭据与已登录但无权读 c-a 必须在内部区分吗？</summary>
 
-必须。对外状态可按防枚举合同选择，内部仍需正确分类。</details>
+必须。对外状态可按防枚举合同选择，内部仍需正确分类。
+
+</details>
 
 <details><summary>21. 权限拒绝日志可以存完整 Token 吗？</summary>
 
-不应。记录受控关联和错误类别即可，原始凭据不得进普通日志。</details>
+不应。记录受控关联和错误类别即可，原始凭据不得进普通日志。
+
+</details>
 
 <details><summary>22. 撤销登录 Token 会自动把 m-a 标为未读吗？</summary>
 
-不会。登录会话和消息送达/已读是不同业务状态。</details>
+不会。登录会话和消息送达/已读是不同业务状态。
+
+</details>
 
 ## 来源与下一步
 

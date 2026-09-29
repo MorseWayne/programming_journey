@@ -120,95 +120,139 @@ date: 2026-09-25
 
 <details><summary>1. “消息不能丢”为什么还不是可验收需求？</summary>
 
-未定哪条消息、确认点、时间窗口、失败条件、用户可见结果与度量。</details>
+未定哪条消息、确认点、时间窗口、失败条件、用户可见结果与度量。
+
+</details>
 
 <details><summary>2. 当前 S2 `/v1` 的 200 保证什么？</summary>
 
-`accepted_in_memory` 只表示本进程内存受理。</details>
+`accepted_in_memory` 只表示本进程内存受理。
+
+</details>
 
 <details><summary>3. 未来 `stored_in_teaching_db` 能直接代表 B 已阅读吗？</summary>
 
-不能。存储、设备 ACK 和阅读是不同确认点，且 S3 尚为提议。</details>
+不能。存储、设备 ACK 和阅读是不同确认点，且 S3 尚为提议。
+
+</details>
 
 <details><summary>4. 三副本、Kafka、30 天保留属于目标还是方案/参数？</summary>
 
-是候选方案或可协商参数，不能替代用户目标。</details>
+是候选方案或可协商参数，不能替代用户目标。
+
+</details>
 
 <details><summary>5. 当前 7 B 正文可因 R9 提议而放行吗？</summary>
 
-不能。当前上限仍为 6 UTF-8 B，R9 待审。</details>
+不能。当前上限仍为 6 UTF-8 B，R9 待审。
+
+</details>
 
 <details><summary>6. B、客户端团队和安全负责人为何都是利益相关者？</summary>
 
-B 承受缺口，客户端负责展示/兼容，安全决定有权历史范围；三者影响需求与验收。</details>
+B 承受缺口，客户端负责展示/兼容，安全决定有权历史范围；三者影响需求与验收。
+
+</details>
 
 <details><summary>7. 目标与假设最简单怎样区分？</summary>
 
-目标说期望用户结果；假设说尚待取证的事实或因果判断。</details>
+目标说期望用户结果；假设说尚待取证的事实或因果判断。
+
+</details>
 
 <details><summary>8. SEI 质量属性场景有哪六项？</summary>
 
-刺激源、刺激、环境、受影响对象、响应、响应度量。</details>
+刺激源、刺激、环境、受影响对象、响应、响应度量。
+
+</details>
 
 ### 分析 9–16：旅程与反例
 
 <details><summary>9. B 离线 25h、broker 保留 24h，可只凭 broker 补全吗？</summary>
 
-不能保证覆盖全窗口；未来应审有权权威历史补拉及其成本/可行性。</details>
+不能保证覆盖全窗口；未来应审有权权威历史补拉及其成本/可行性。
+
+</details>
 
 <details><summary>10. A 重试同 ID，当前 `/v1` 应返回什么？</summary>
 
-同 ID 重复按当前合同返回 409，即使正文相同。</details>
+同 ID 重复按当前合同返回 409，即使正文相同。
+
+</details>
 
 <details><summary>11. B 在离线期间失去成员资格，能直接规定旧历史可见吗？</summary>
 
-不能。需产品与安全确认成员历史规则，再据此写授权验收。</details>
+不能。需产品与安全确认成员历史规则，再据此写授权验收。
+
+</details>
 
 <details><summary>12. 纸上 120 秒从哪里算到哪里？</summary>
 
-候选场景是从合资格设备发起重连请求，到客户端取得 `seq9`；分母/网络条件仍待定。</details>
+候选场景是从合资格设备发起重连请求，到客户端取得 `seq9`；分母/网络条件仍待定。
+
+</details>
 
 <details><summary>13. 网关记录 E9，能证明 B 的设备拿到 `seq9` 吗？</summary>
 
-不能。事件记录与设备 ACK 是不同确认点。</details>
+不能。事件记录与设备 ACK 是不同确认点。
+
+</details>
 
 <details><summary>14. 当前非成员向 `c-a` 发送，能用 403 暴露会话吗？</summary>
 
-不能。当前发送合同要求隐藏为 404；未来历史补拉另需明确授权合同。</details>
+不能。当前发送合同要求隐藏为 404；未来历史补拉另需明确授权合同。
+
+</details>
 
 <details><summary>15. 只有平均离线 2h，就能忽略 25h 尾部吗？</summary>
 
-不能。需要分布、用户影响和恢复代价，不能只看平均值。</details>
+不能。需要分布、用户影响和恢复代价，不能只看平均值。
+
+</details>
 
 <details><summary>16. 当前 S2 200 后进程故障，应写“权威消息丢失”吗？</summary>
 
-不应。当前并无权威持久承诺；应按现行受理语义写用户可见影响和能力缺口。</details>
+不应。当前并无权威持久承诺；应按现行受理语义写用户可见影响和能力缺口。
+
+</details>
 
 ### 决策 17–22：问题简报
 
 <details><summary>17. 产品要把 A 页面改成“已送达”，先问哪层证据？</summary>
 
-先确认是否有 B 指定设备 ACK/展示证据及其协议含义；当前 200 不足以支撑。</details>
+先确认是否有 B 指定设备 ACK/展示证据及其协议含义；当前 200 不足以支撑。
+
+</details>
 
 <details><summary>18. 延长 broker 保留期就满足全部目标吗？</summary>
 
-未必。还需权威来源、权限、游标、旧端、故障和运行成本。</details>
+未必。还需权威来源、权限、游标、旧端、故障和运行成本。
+
+</details>
 
 <details><summary>19. “B 25h 离线很常见”应放在简报哪一栏？</summary>
 
-待验证假设；用实际离线分布和用户反馈核对，不能把虚构案例当统计。</details>
+待验证假设；用实际离线分布和用户反馈核对，不能把虚构案例当统计。
+
+</details>
 
 <details><summary>20. 无法估计 120 秒目标可行性时怎样写？</summary>
 
-标为待审候选度量，列工作量、依赖、样本与隔离实验，不宣称已有 SLO。</details>
+标为待审候选度量，列工作量、依赖、样本与隔离实验，不宣称已有 SLO。
+
+</details>
 
 <details><summary>21. 需求优先级至少比较哪五项？</summary>
 
-影响范围、发生频率、恢复难度、证据不确定性及实现/运行代价。</details>
+影响范围、发生频率、恢复难度、证据不确定性及实现/运行代价。
+
+</details>
 
 <details><summary>22. 一页问题简报必须使审阅人回答什么？</summary>
 
-谁受益、现状与目标差在哪、哪些是约束/假设、如何验收、失败代价、谁决定以及哪些方案留后比较。</details>
+谁受益、现状与目标差在哪、哪些是约束/假设、如何验收、失败代价、谁决定以及哪些方案留后比较。
+
+</details>
 
 ## 本章完成标准与后续路径
 
