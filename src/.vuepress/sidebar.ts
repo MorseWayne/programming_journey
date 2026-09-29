@@ -18,122 +18,6 @@ export default sidebar({
       ]
     },
     {
-      "text": "入门与衔接 · 35 课",
-      "collapsible": true,
-      "children": [
-        {
-          "text": "A · Go 编程入门",
-          "collapsible": true,
-          "children": [
-            "beginner/",
-            "beginner/01_first_program",
-            "beginner/02_values_types",
-            "beginner/03_control_flow",
-            "beginner/04_functions",
-            "beginner/05_collections",
-            "beginner/06_structs_pointers",
-            "beginner/07_interfaces_errors",
-            "beginner/08_packages_modules",
-            "beginner/09_testing",
-            "beginner/10_files_json"
-          ]
-        },
-        {
-          "text": "B · 后端开发基础",
-          "collapsible": true,
-          "children": [
-            "backend_basics/",
-            "00_system_model",
-            "backend_basics/02_network",
-            "backend_basics/03_http",
-            "backend_basics/04_local_tools",
-            "backend_basics/05_sql",
-            "backend_basics/06_goroutines_mutex",
-            "backend_basics/07_channels_context"
-          ]
-        },
-        {
-          "text": "C · 从单服务到可靠平台",
-          "collapsible": true,
-          "children": [
-            {
-              "text": "C01–C02：状态、契约与所有权",
-              "collapsible": true,
-              "children": [
-                "stages/01_foundations",
-                "01_contracts",
-                "02_ownership"
-              ]
-            },
-            {
-              "text": "C03–C04：并发、网络与性能",
-              "collapsible": true,
-              "children": [
-                "stages/02_concurrency",
-                "03_concurrency",
-                "04_performance"
-              ]
-            },
-            {
-              "text": "C05–C07：持久化与数据正确性",
-              "collapsible": true,
-              "children": [
-                "stages/03_data",
-                "05_storage",
-                "06_transactions",
-                "07_cache_recovery"
-              ]
-            },
-            {
-              "text": "C08–C09：跨服务与状态归属",
-              "collapsible": true,
-              "children": [
-                "stages/04_distributed",
-                "08_rpc_messages",
-                "09_distributed_state"
-              ]
-            },
-            {
-              "text": "C10–C12：平台运行与演进",
-              "collapsible": true,
-              "children": [
-                "stages/05_platform",
-                "10_observability",
-                "11_delivery",
-                "12_platform_design"
-              ]
-            }
-          ]
-        },
-        {
-          "text": "D · 综合实践与 AI 方向",
-          "collapsible": true,
-          "children": [
-            {
-              "text": "D05–D06：业务方案与综合实践",
-              "collapsible": true,
-              "children": [
-                "stages/07_capstone",
-                "17_architecture",
-                "18_capstone"
-              ]
-            },
-            {
-              "text": "D01–D04：AI 方向扩展",
-              "collapsible": true,
-              "children": [
-                "stages/06_ai",
-                "13_python",
-                "14_rag",
-                "15_agents",
-                "16_evaluation"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
       "text": "专业分卷 · 理论与工程",
       "collapsible": true,
       "children": [
@@ -153,8 +37,7 @@ export default sidebar({
             "curriculum/01_go/09_packages_evolution",
             "curriculum/01_go/10_generics_reusable_algorithms",
             "curriculum/01_go/11_reflection_unsafe_boundaries",
-            "curriculum/01_go/12_cli_capstone",
-            "curriculum/01_go/core"
+            "curriculum/01_go/12_cli_capstone"
           ]
         },
         {
@@ -173,8 +56,7 @@ export default sidebar({
             "curriculum/02_algorithms/09_weighted_paths_state_space",
             "curriculum/02_algorithms/10_dynamic_programming_greedy",
             "curriculum/02_algorithms/11_specialized_structures_approximation",
-            "curriculum/02_algorithms/12_business_algorithm_review",
-            "curriculum/02_algorithms/core"
+            "curriculum/02_algorithms/12_business_algorithm_review"
           ]
         },
         {
@@ -193,8 +75,7 @@ export default sidebar({
             "curriculum/03_systems/09_io_event_notification",
             "curriculum/03_systems/10_system_diagnostics",
             "curriculum/03_systems/11_isolation_limits",
-            "curriculum/03_systems/12_resource_failure_case",
-            "curriculum/03_systems/core"
+            "curriculum/03_systems/12_resource_failure_case"
           ]
         },
         {
@@ -213,8 +94,7 @@ export default sidebar({
             "curriculum/04_networks/09_proxies_load_balancing",
             "curriculum/04_networks/10_http_versions_rpc",
             "curriculum/04_networks/11_network_link_layers",
-            "curriculum/04_networks/12_network_diagnostics_evolution",
-            "curriculum/04_networks/core"
+            "curriculum/04_networks/12_network_diagnostics_evolution"
           ]
         },
         {
@@ -233,8 +113,7 @@ export default sidebar({
             "curriculum/05_runtime/09_concurrency_verification",
             "curriculum/05_runtime/10_performance_tools",
             "curriculum/05_runtime/11_optimization_boundaries",
-            "curriculum/05_runtime/12_concurrency_service_review",
-            "curriculum/05_runtime/core"
+            "curriculum/05_runtime/12_concurrency_service_review"
           ]
         },
         {
@@ -253,8 +132,7 @@ export default sidebar({
             "curriculum/06_databases/09_logging_recovery",
             "curriculum/06_databases/10_go_data_access",
             "curriculum/06_databases/11_replication_migration_reconciliation",
-            "curriculum/06_databases/12_database_business_case",
-            "curriculum/06_databases/core"
+            "curriculum/06_databases/12_database_business_case"
           ]
         },
         {
@@ -273,8 +151,7 @@ export default sidebar({
             "curriculum/07_cache_messaging/09_backlog_poison_messages",
             "curriculum/07_cache_messaging/10_transaction_outbox",
             "curriculum/07_cache_messaging/11_derived_views_event_time",
-            "curriculum/07_cache_messaging/12_cross_system_consistency_case",
-            "curriculum/07_cache_messaging/core"
+            "curriculum/07_cache_messaging/12_cross_system_consistency_case"
           ]
         },
         {
@@ -293,8 +170,7 @@ export default sidebar({
             "curriculum/08_distributed/09_reliable_jobs_scheduling",
             "curriculum/08_distributed/10_membership_evolution",
             "curriculum/08_distributed/11_distributed_validation",
-            "curriculum/08_distributed/12_full_consistency_case",
-            "curriculum/08_distributed/core"
+            "curriculum/08_distributed/12_full_consistency_case"
           ]
         },
         {
@@ -313,8 +189,7 @@ export default sidebar({
             "curriculum/09_backend_security/09_async_long_tasks",
             "curriculum/09_backend_security/10_protocol_compatibility_rpc",
             "curriculum/09_backend_security/11_application_tests_delivery",
-            "curriculum/09_backend_security/12_im_service_capstone",
-            "curriculum/09_backend_security/core"
+            "curriculum/09_backend_security/12_im_service_capstone"
           ]
         },
         {
@@ -333,8 +208,7 @@ export default sidebar({
             "curriculum/10_engineering/09_ci_artifacts",
             "curriculum/10_engineering/10_continuous_delivery_versions",
             "curriculum/10_engineering/11_technical_writing_collaboration",
-            "curriculum/10_engineering/12_maintainability_assessment",
-            "curriculum/10_engineering/core"
+            "curriculum/10_engineering/12_maintainability_assessment"
           ]
         },
         {
@@ -353,8 +227,7 @@ export default sidebar({
             "curriculum/11_reliability/09_overload_cascades",
             "curriculum/11_reliability/10_incident_response",
             "curriculum/11_reliability/11_postmortem_improvement",
-            "curriculum/11_reliability/12_capacity_cost_decision",
-            "curriculum/11_reliability/core"
+            "curriculum/11_reliability/12_capacity_cost_decision"
           ]
         },
         {
@@ -373,8 +246,7 @@ export default sidebar({
             "curriculum/12_platform/09_release_rollback",
             "curriculum/12_platform/10_autoscaling_fault_domains",
             "curriculum/12_platform/11_declarative_delivery",
-            "curriculum/12_platform/12_platform_as_product",
-            "curriculum/12_platform/core"
+            "curriculum/12_platform/12_platform_as_product"
           ]
         },
         {
@@ -393,8 +265,7 @@ export default sidebar({
             "curriculum/13_architecture/09_cross_team_delivery",
             "curriculum/13_architecture/10_technical_debt_evolution",
             "curriculum/13_architecture/11_complex_im_defense",
-            "curriculum/13_architecture/12_engineer_long_term_responsibility",
-            "curriculum/13_architecture/core"
+            "curriculum/13_architecture/12_engineer_long_term_responsibility"
           ]
         },
         {
@@ -413,20 +284,16 @@ export default sidebar({
             "curriculum/14_ai/08_tools_workflows_agents",
             "curriculum/14_ai/10_optimization_deployment",
             "curriculum/14_ai/11_finetuning_multimodal",
-            "curriculum/14_ai/12_sustainable_delivery",
-            "curriculum/14_ai/core"
+            "curriculum/14_ai/12_sustainable_delivery"
           ]
         }
       ]
     },
     {
-      "text": "复习与资料",
+      "text": "学习记录",
       "collapsible": true,
       "children": [
-        "progress",
-        "references",
-        "teaching_research",
-        "verification"
+        "progress"
       ]
     }
   ],

@@ -52,3 +52,25 @@ date: 2026-09-22
 - AI 先补模型与数学基础，再讨论检索、工具、数据、评测和优化。
 
 这些是课程设计决定。对应 14 卷的 168 个单元见[系列总纲](./README.md)，实际正文完成度见[编写与能力验收](./assessment.md)。
+
+## 按章节查官方资料
+
+以下查阅入口从早期资料导航合并到本页。先学习对应章稿，再带着一个具体机制或版本问题阅读官方资料；这些链接不代替章内的基础讲解。版本相关行为以实际使用版本及其官方文档为准。
+
+| 课程位置 | 官方资料 | 核对的问题 |
+|---|---|---|
+| 01.01–01.06 | [Go 入门](https://go.dev/doc/tutorial/getting-started)、[A Tour of Go](https://go.dev/tour/) | 工具链、类型、方法与接口如何关联 |
+| 01.07–01.09 | [错误处理](https://go.dev/blog/error-handling-and-go)、[模块依赖](https://go.dev/doc/modules/managing-dependencies) | 失败语义、包路径与依赖版本 |
+| 10.02、09.04 | [testing](https://pkg.go.dev/testing)、[net/http](https://pkg.go.dev/net/http) | 测试预期、handler 与客户端生命周期 |
+| 05.02–05.04 | [Go 内存模型](https://go.dev/ref/mem)、[Go Pipelines](https://go.dev/blog/pipelines) | 同步可见性、取消和 goroutine 退出 |
+| 03.10、11.04 | [Go Diagnostics](https://go.dev/doc/diagnostics) | 计算、内存与等待怎样分别观察 |
+| 06.07–06.08 | [InnoDB 事务模型](https://dev.mysql.com/doc/refman/8.4/en/innodb-transaction-model.html)、[锁定读取](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html) | 事务与行锁保护到哪一步 |
+| 07.05–07.07 | [Redis Pub/Sub](https://redis.io/docs/latest/develop/pubsub/)、[NATS Consumers](https://docs.nats.io/learn/jetstream/pull-consumers) | 实时通知、重投与恢复来源 |
+| 04.10、08.01 | [gRPC Deadlines](https://grpc.io/docs/guides/deadlines/)、[Protobuf 实践](https://protobuf.dev/best-practices/dos-donts/) | 截止时间、协议字段与业务兼容 |
+| 08.07 | [etcd API](https://etcd.io/docs/v3.6/learning/api/) | 租约、归属和接收端写入校验 |
+| 11.08、11.03 | [SRE SLO](https://sre.google/workbook/implementing-slos/)、[OpenTelemetry 上下文](https://opentelemetry.io/docs/concepts/context-propagation/) | 用户结果与跨服务证据怎样关联 |
+| 12.08 | [Kubernetes Pod 生命周期](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) | 启动、接流量、退出各由谁负责 |
+| 14.01、14.07–14.08 | [Python sqlite3](https://docs.python.org/3/library/sqlite3.html)、[RAG 原始研究](https://arxiv.org/abs/2005.11401)、[工作流与 Agent](https://www.anthropic.com/engineering/building-effective-agents) | 数据处理、证据与工具副作用 |
+| 06、08 卷深化 | [CMU 15-445](https://15445.courses.cs.cmu.edu/fall2025/)、[MIT 6.5840](https://pdos.csail.mit.edu/6.824/) | 数据库内部、复制与一致性 |
+
+技术资料用于核对机制；课程的虚构 IM 需求、先修安排、实际运行范围和业务保证仍以各章明确的条件为准。

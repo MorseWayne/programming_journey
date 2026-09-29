@@ -5,74 +5,62 @@ order: -0.5
 date: 2026-09-23
 ---
 
-## 这份索引怎样使用
+读正式章稿时遇到陌生术语，先在下表找到**第一次系统讲解**，完成其中最小例子和基础练习，再回到当前章节。[S0–S7 学习路线](./curriculum/learning_path.md)规定实际学习顺序；这里用于定点补前置，不要求按表从头到尾阅读。
 
-正文遇到陌生词时，先找到对应基础课。这里用一句话帮你定位，完整的例子、推导和练习在链接页面。实际顺序见[分阶段学习路线](./curriculum/learning_path.md)，按先修跨卷进入；A/B/C/D 用于定位衔接材料，AI 不作为主线架构答辩的前置。
+## Go 语言与程序起点
 
-已完成的独立章稿提供更细的先修讲解：[01.01 程序与工具链](./curriculum/01_go/01_program_toolchain.md)对应文件、终端、包和模块；[01.02 类型与数据表示](./curriculum/01_go/02_types_data.md)对应变量、零值、常量、作用域、整数边界、浮点、最小 if、文本与解析错误。下表保留原有短课定位，便于回顾；控制流、集合和错误机制的完整深化仍按后续章节推进。
-
-已完成的新章还包括：[01.04 集合与文本](./curriculum/01_go/04_collections_text.md)定位数组、切片、共享、UTF-8 与字素簇；[10.01 可验证需求](./curriculum/10_engineering/01_verifiable_requirements.md)定位契约、状态、决策表和边界用例；[10.02 测试方法](./curriculum/10_engineering/02_testing_basics.md)定位测试入口、表驱动、状态断言和证据边界；[10.03 Git 状态](./curriculum/10_engineering/03_git_state.md)定位工作区、索引、提交和远端。
-
-第二批新增：[01.05](./curriculum/01_go/05_maps_structs_pointers.md)定位 map、对象身份、指针和复制；[02.01](./curriculum/02_algorithms/01_discrete_cost.md)定位集合、计数、渐近界与概率前提；[03.01](./curriculum/03_systems/01_data_instructions_storage.md)定位位、字节、地址、缓存与资源预算。后续 [02.02](./curriculum/02_algorithms/02_linear_structures.md)至[02.05](./curriculum/02_algorithms/05_sort_divide.md)依次定位线性结构、查找、哈希与排序；[01.06](./curriculum/01_go/06_methods_interfaces.md)至[01.09](./curriculum/01_go/09_packages_evolution.md)深化方法、错误、文件和包，再由[01.12 CLI](./curriculum/01_go/12_cli_capstone.md)组合本地工具合同。
-
-## Go 语法与工程基础
-
-[01.03 IM 控制流与函数](./curriculum/01_go/03_control_functions.md)已补齐分支、switch、有限循环、函数调用、多返回值、副作用以及递归与闭包的长篇讲解。基础主线先读一至五节和第八节，深化部分第二遍阅读；下表保留原有短课入口。
-
-| 概念 | 先理解什么 | 首次系统讲解 | 后面会在哪里用到 |
-|---|---|---|---|
-| 文件、终端、当前目录 | 代码保存位置与命令执行位置不同 | [A01](./beginner/01_first_program.md) | 所有实践命令 |
-| package main、import、入口函数 | 程序从哪里开始执行 | [A01](./beginner/01_first_program.md) | HTTP、命令行与实验 |
-| 变量、类型、零值 | 数据是什么、允许怎样操作 | [A02](./beginner/02_values_types.md) | 字段校验、状态模型 |
-| if、for、switch、作用域 | 分支、重复和名字的可见范围 | [A03](./beginner/03_control_flow.md) | 业务规则、状态机 |
-| 参数、返回、函数值、闭包 | 工作步骤与数据怎样传递 | [A04](./beginner/04_functions.md) | HTTP handler、工作池 |
-| 数组、切片、map、range | 顺序访问、键查找和共享 | [A05](./beginner/05_collections.md) | 所有权、缓存、事件集合 |
-| 字节、rune、字符串 | 数据大小与文字含义不同 | [A02](./beginner/02_values_types.md)、[A05](./beginner/05_collections.md) | JSON、网络帧 |
-| struct、指针、接收者 | 副本与同一对象的修改 | [A06](./beginner/06_structs_pointers.md) | Account、Ledger、请求对象 |
-| interface、error、nil | 能力约定与失败返回 | [A07](./beginner/07_interfaces_errors.md) | 存储接口、I/O、context |
-| defer、panic | 函数退出与异常控制流 | [A07](./beginner/07_interfaces_errors.md) | 文件关闭、解锁、取消清理 |
-| 包、模块、导出、依赖 | 跨文件复用与访问边界 | [A08](./beginner/08_packages_modules.md) | 整合实验与多入口 |
-| Test、断言、子测试 | 实际结果如何与规则比较 | [A09](./beginner/09_testing.md) | 所有正确性实践 |
-| JSON、编码与解码 | 对象如何转成可交换字节 | [A10](./beginner/10_files_json.md) | HTTP、Python、配置 |
-| 时间点、Duration、单位 | 何时发生与持续多久不同 | [A10](./beginner/10_files_json.md) | 超时、测量与期限 |
-
-## 后端运行与协作
-
-| 概念 | 含义入口 | 基础课 | 进阶应用 |
-|---|---|---|---|
-| 进程、内存、持久状态 | 数据在哪里，退出后怎么办 | [B01](./00_system_model.md) | C01、C07 |
-| 客户端、服务端、IP、端口 | 谁请求谁，怎样找到对方 | [B02](./backend_basics/02_network.md) | C04、C08 |
-| TCP 字节流、HTTP、URL | 运送字节与解释消息的不同层面 | [B02](./backend_basics/02_network.md) | C04 帧解析 |
-| handler、路由、状态码 | 请求怎样对应函数与响应 | [B03](./backend_basics/03_http.md) | C11–C12 |
-| 环境变量、镜像、容器、volume | 启动配置与依赖的数据位置 | [B04](./backend_basics/04_local_tools.md) | SQL 环境、C11 |
-| 表、主键、约束、CRUD、JOIN | 查询和修改关系数据 | [B05](./backend_basics/05_sql.md) | C05–C06 |
-| goroutine、WaitGroup、Mutex | 启动、等待和共享保护 | [B06](./backend_basics/06_goroutines_mutex.md) | C02–C03 |
-| channel、close、select | 通信、结束和等待条件 | [B07](./backend_basics/07_channels_context.md) | C03 工作池 |
-| context、deadline、取消 | 传递停止意图与等待预算 | [B07](./backend_basics/07_channels_context.md) | C08、C11 |
-
-CRUD 指创建、读取、更新、删除四类基本数据操作，B05 对应 INSERT、SELECT、UPDATE、DELETE。它只是这组操作的简称。
-
-## 高阶概念也有明确讲解位置
-
-| 概念 | 首次完整讨论 | 不应混淆的边界 |
+| 卡住的概念 | 先读哪章 | 回到 IM 时要解释什么 |
 |---|---|---|
-| 契约、不变量 | [C01](./01_contracts.md) | 返回无错误与业务正确 |
-| 所有权、业务竞争 | [C02](./02_ownership.md) | 传值与底层独立；race 与业务顺序 |
-| 排队、背压、并发上限 | [C03](./03_concurrency.md) | 缓冲容量与处理能力 |
-| profile、吞吐、尾延迟 | [C04](./04_performance.md) | 计算时间与等待时间 |
-| 索引、B+ 树、访问路径 | [C05](./05_storage.md) | 查询正确与成本合理 |
-| 事务、隔离、MVCC、幂等 | [C06](./06_transactions.md) | 原子提交、请求重复与领域唯一性 |
-| 缓存、WAL、恢复目标 | [C07](./07_cache_recovery.md) | 权威数据与派生结果 |
-| RPC、outbox、交付语义 | [C08](./08_rpc_messages.md) | 超时与失败、传输与业务效果 |
-| 路由、租约、CAS、fencing | [C09](./09_distributed_state.md) | 去哪里、谁能处理、谁能写入 |
-| SLI、SLO、Trace | [C10](./10_observability.md) | 中间状态与用户成功 |
-| Kubernetes、探针与生命周期 | [C11](./11_delivery.md) | 进程存活、接流量与持久性 |
-| 多租户、认证、授权与兼容 | [C12](./12_platform_design.md) | 请求字段与可信身份 |
-| token、embedding、RAG | [D02](./14_rag.md) | 相似、证据充分与正确回答 |
-| Agent、工具与 checkpoint | [D03](./15_agents.md) | 流程状态与实际副作用 |
+| 文件、终端、当前目录、运行命令 | [01.01 工具链与一次运行](./curriculum/01_go/01_program_toolchain.md) | 源码、进程和输出各在哪里 |
+| 变量、类型、零值、数值边界 | [01.02 类型与数据](./curriculum/01_go/02_types_data.md) | 消息 ID、长度与缺失字段不能混作一个值 |
+| if、for、switch、函数、返回值 | [01.03 控制流与函数](./curriculum/01_go/03_control_functions.md) | 逐步执行消息校验和失败分支 |
+| 数组、切片、range、UTF-8 与共享 | [01.04 集合与文本](./curriculum/01_go/04_collections_text.md) | 历史列表、预览和正文字节上限 |
+| map、结构体、指针、副本 | [01.05 对象与指针](./curriculum/01_go/05_maps_structs_pointers.md) | 按身份查消息，区分复制与修改原对象 |
+| 方法、接口、typed nil | [01.06 方法与接口](./curriculum/01_go/06_methods_interfaces.md) | 为会话存储定义最小能力边界 |
+| error、defer、Reader、关闭责任 | [01.07 错误与资源](./curriculum/01_go/07_errors_resources.md) | 正文错误、部分 I/O 与文件关闭 |
+| JSON、文件、时间、flag | [01.08 标准库协作](./curriculum/01_go/08_standard_library.md) | 本地消息格式、时间与资源上限 |
+| 包、模块、公开 API | [01.09 包设计](./curriculum/01_go/09_packages_evolution.md) | 拆分消息规则、存储适配和命令入口 |
+| 测试、预期与实际结果 | [10.02 测试基本方法](./curriculum/10_engineering/02_testing_basics.md) | 为正常、边界和拒绝结果写独立预期 |
+| 泛型、反射与运行期检查 | [01.10 泛型](./curriculum/01_go/10_generics_reusable_algorithms.md)、[01.11 反射](./curriculum/01_go/11_reflection_unsafe_boundaries.md) | 基础工具完成后第二遍深化；抽象不改变业务合同 |
 
-## 不知道该回哪一课
+## 系统、网络与并发
 
-先把卡住的句子拆开。例如“用 context 控制工作池取消”包含函数接口、goroutine、channel、select 与取消协议，按 A07 → B06 → B07 的顺序补齐，再回 C03。
+| 卡住的概念 | 先读哪章 | 回到 IM 时要解释什么 |
+|---|---|---|
+| 进程、内存、系统调用 | [03.02 进程与系统调用](./curriculum/03_systems/02_process_syscalls.md) | 本进程受理为何不等于跨重启历史 |
+| 文件、刷盘和持久化 | [03.07 文件与目录](./curriculum/03_systems/07_files_directories.md)、[03.08 持久化机制](./curriculum/03_systems/08_persistence_mechanisms.md) | 本地写入、确认与崩溃窗口 |
+| IP、端口、DNS、路由 | [04.02 地址与名称](./curriculum/04_networks/02_addresses_names_routes.md) | 两端如何定位服务及失败发生在哪一跳 |
+| TCP 字节流、HTTP、WebSocket | [04.03 HTTP/WebSocket](./curriculum/04_networks/03_http_websocket_basics.md)、[04.04 可靠传输](./curriculum/04_networks/04_reliable_transport.md) | 帧、连接与业务消息边界 |
+| TLS 与服务身份 | [04.07 TLS](./curriculum/04_networks/07_tls_identity.md) | 连接对端身份不代替会话成员授权 |
+| goroutine、等待与 Mutex | [05.01 任务生命周期](./curriculum/05_runtime/01_concurrent_tasks_lifecycle.md)、[05.02 同步原语](./curriculum/05_runtime/02_sync_primitives.md) | 发送任务退出与共享状态保护 |
+| channel、select、context | [05.03 通道与取消](./curriculum/05_runtime/03_channels_cancellation.md) | 有界工作、停止意图和结果未知 |
+| 排队、背压、容量 | [05.08 并发组合](./curriculum/05_runtime/08_concurrency_composition.md)、[11.09 过载级联](./curriculum/11_reliability/09_overload_cascades.md) | 慢客户端、大群扇出与资源拒绝 |
 
-如果基础概念都理解，却仍无法解释某个故障，就把正常路径缩小成几步，再只加入一个失败位置。这样能区分知识缺口与具体设计尚未确定。
+## 数据、分布式与业务合同
+
+| 卡住的概念 | 先读哪章 | 回到 IM 时要解释什么 |
+|---|---|---|
+| 表、主键、SQL 与查询 | [06.01 关系身份](./curriculum/06_databases/01_relational_identity.md)、[06.02 SQL 查询](./curriculum/06_databases/02_sql_queries.md) | 会话、消息与查询范围怎样表示 |
+| 索引、执行计划 | [06.05 索引结构](./curriculum/06_databases/05_index_structures.md)、[06.06 查询执行](./curriculum/06_databases/06_query_execution.md) | 历史分页的正确性与成本 |
+| 事务、隔离、MVCC | [06.07 事务与异常](./curriculum/06_databases/07_transactions_anomalies.md)、[06.08 锁与 MVCC](./curriculum/06_databases/08_locks_mvcc.md) | 发消息与退群并发时谁能看见什么 |
+| 缓存、权威数据、失效 | [07.01 状态角色](./curriculum/07_cache_messaging/01_access_state_roles.md)、[07.03 缓存更新](./curriculum/07_cache_messaging/03_cache_read_update.md) | 哪些状态可丢、撤权后旧值如何失效 |
+| 消息确认、重投与去重 | [07.06 消息抽象](./curriculum/07_cache_messaging/06_message_abstractions.md)、[07.07 确认与重投](./curriculum/07_cache_messaging/07_ack_retry_dedup.md) | 传输成功、内存受理与设备确认 |
+| 部分失败、超时、结果未知 | [08.01 系统模型](./curriculum/08_distributed/01_system_partial_failure.md) | 响应丢失后为何不能按失败自动重试 |
+| 复制、一致性、归属 | [08.03 复制目标](./curriculum/08_distributed/03_replication_goals_costs.md)、[08.04 一致性](./curriculum/08_distributed/04_consistency_models.md)、[08.07 协调与归属](./curriculum/08_distributed/07_coordination_ownership.md) | 多设备、跨节点和故障接管的保证范围 |
+| 身份认证、对象授权 | [09.07 认证与授权](./curriculum/09_backend_security/07_authentication_authorization.md) | 当前 actor 是否可对目标会话执行动作 |
+| API 合同与错误码 | [09.02 HTTP API 合同](./curriculum/09_backend_security/02_http_api_contract.md) | 当前 6 B、重复 409、非成员 404 和内存确认点 |
+
+## 高级工程与方向扩展
+
+| 卡住的概念 | 先读哪章 | 应交付的证据 |
+|---|---|---|
+| 契约、边界、不变量 | [10.01 可验证需求](./curriculum/10_engineering/01_verifiable_requirements.md) | 需求表、失败状态和独立预期 |
+| Git、评审与交付 | [10.03 Git 状态](./curriculum/10_engineering/03_git_state.md)、[10.06 代码评审](./curriculum/10_engineering/06_code_review_merge.md) | 可追溯的版本、评审与修订记录 |
+| 指标、Trace、SLO | [11.03 日志指标与 Trace](./curriculum/11_reliability/03_logs_metrics_traces.md)、[11.08 SLO](./curriculum/11_reliability/08_slo_alerting.md) | 用户结果与跨服务失败层的关联 |
+| 容器、探针、发布 | [12.02 容器机制](./curriculum/12_platform/02_container_mechanisms.md)、[12.08 启动探针与退出](./curriculum/12_platform/08_startup_probes_exit.md)、[12.09 发布回滚](./curriculum/12_platform/09_release_rollback.md) | 启动、接流量、停止和回滚证据 |
+| 架构取舍与迁移 | [13.07 设计评审](./curriculum/13_architecture/07_design_review_adr.md)、[13.08 迁移兼容](./curriculum/13_architecture/08_migration_compatibility.md) | 方案比较、旧端兼容和接手说明 |
+| 模型、检索、RAG 与工具 | [14.03 语言模型](./curriculum/14_ai/03_language_model_foundations.md)、[14.06 检索](./curriculum/14_ai/06_retrieval_indexing.md)、[14.07 RAG](./curriculum/14_ai/07_rag_pipeline.md)、[14.08 工具](./curriculum/14_ai/08_tools_workflows_agents.md) | 有权限、有证据、可评测且受控的选修助手 |
+
+## 找不到入口时
+
+把不懂的一句拆成最小前置。例如看不懂“用 context 取消工作池”，先回 01.03 的函数、01.07 的错误，再读 05.01 的任务生命周期与 05.03 的通道取消。理解单个机制后再回原题，不需重学整卷。

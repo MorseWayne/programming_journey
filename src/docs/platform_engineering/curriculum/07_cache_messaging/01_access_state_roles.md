@@ -5,7 +5,7 @@ order: 2
 date: 2026-09-24
 ---
 
-[返回第七卷](./README.md) · [数据库业务前置：06.12](../06_databases/12_database_business_case.md) · [一致性前置：08.04](../08_distributed/04_consistency_models.md) · [缓存基础复习](./core.md)
+[返回第七卷](./README.md) · [数据库业务前置：06.12](../06_databases/12_database_business_case.md) · [一致性前置：08.04](../08_distributed/04_consistency_models.md)
 
 # 07.01 访问模式与状态角色：哪些数据可以丢
 
